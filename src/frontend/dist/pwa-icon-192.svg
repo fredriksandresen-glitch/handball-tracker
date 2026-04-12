@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <!-- Background -->
+  <rect width="192" height="192" rx="40" fill="#1a1f3a"/>
+  <!-- Ball shadow -->
+  <ellipse cx="98" cy="108" rx="48" ry="8" fill="#000" opacity="0.25"/>
+  <!-- Ball body -->
+  <circle cx="96" cy="88" r="52" fill="#f0ead6" stroke="#222" stroke-width="2"/>
+  <!-- Ball highlight -->
+  <ellipse cx="80" cy="70" rx="16" ry="10" fill="#fff" opacity="0.20"/>
+  <!-- Handball panel lines -->
+  <path d="M44,88 Q96,48 148,88" stroke="#2a2a2a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M44,88 Q96,128 148,88" stroke="#2a2a2a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M96,36 Q58,88 96,140" stroke="#2a2a2a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M96,36 Q134,88 96,140" stroke="#2a2a2a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Horizontal equator line -->
+  <line x1="44" y1="88" x2="148" y2="88" stroke="#2a2a2a" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+  <!-- App name text -->
+  <text x="96" y="162" text-anchor="middle" font-family="system-ui,Arial,sans-serif" font-size="20" font-weight="800" fill="#e2e8f0" letter-spacing="3" opacity="0.9">HANDBALL</text>
+</svg>

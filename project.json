@@ -1,0 +1,25 @@
+{
+  "overview": "A mobile-first, player-centric web app for following individual female handball players in the Norwegian REMA 1000-ligaen. Follow your favorite players, get a personalized feed, explore team rosters, and compare players by position — all in a sleek dark sports-app design with real Profixio API data and mock-data fallback.",
+  "features": [
+    "Personalized feed showing only followed players with form sparklines",
+    "Follow/unfollow players from anywhere — cards, team profiles, search",
+    "Player profile hub with next match, comparison, and team navigation",
+    "Team roster grid with clickable player cards and direct follow buttons",
+    "Position-based player comparison with tables and mini charts",
+    "Sticky bottom navigation: Home, Search, Teams, Favorites",
+    "Real data from Profixio API with graceful mock-data fallback",
+    "Loading skeletons and empty states throughout"
+  ],
+  "category": "sports-fitness",
+  "tags": [
+    "handball",
+    "sports",
+    "player-tracker",
+    "norwegian",
+    "women-s-sports",
+    "statistics",
+    "follow",
+    "comparison"
+  ],
+  "last_updated": "2026-04-12T10:41:32.330Z"
+}
