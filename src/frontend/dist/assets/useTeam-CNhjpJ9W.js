@@ -1,4 +1,4 @@
-import { c as createLucideIcon, b as useActor, d as useQuery, e as createActor } from "./index-urhzO2zV.js";
+import { c as createLucideIcon, b as useQuery, d as useMockActor } from "./index-BUh7ltUv.js";
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -50,38 +50,38 @@ const __iconNode = [
 ];
 const MapPin = createLucideIcon("map-pin", __iconNode);
 function useTeam(id) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor } = useMockActor();
   return useQuery({
     queryKey: ["team", id.toString()],
     queryFn: async () => {
       if (!actor) return null;
       return actor.getTeam(id);
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && true,
     staleTime: 6e4
   });
 }
 function useNextMatchForTeam(teamId) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor } = useMockActor();
   return useQuery({
     queryKey: ["nextMatch", teamId.toString()],
     queryFn: async () => {
       if (!actor) return null;
       return actor.getNextMatchForTeam(teamId);
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && true,
     staleTime: 6e4
   });
 }
 function usePlayersByTeam(teamId) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor } = useMockActor();
   return useQuery({
     queryKey: ["playersByTeam", teamId.toString()],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getPlayersByTeam(teamId);
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && true,
     staleTime: 6e4
   });
 }

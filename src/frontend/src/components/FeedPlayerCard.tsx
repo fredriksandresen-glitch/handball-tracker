@@ -1,9 +1,9 @@
 import { cn } from "@/lib/utils";
-import { useActor } from "@caffeineai/core-infrastructure";
+import { useMockActor } from "../hooks/useMockActor";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { createActor } from "../backend";
+import { createActor } from "../backend-mock";
 import {
   computeFormSparkline,
   formatMatchDate,
@@ -48,7 +48,7 @@ function Sparkline({ values }: { values: number[] }) {
 
 // ── Next match pill inside card overlay ────────────────────────────────────
 function NextMatchPill({ teamId }: { teamId: bigint }) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useMockActor();
   const { data: nextMatch } = useQuery({
     queryKey: ["nextMatch", teamId.toString()],
     queryFn: async () => {

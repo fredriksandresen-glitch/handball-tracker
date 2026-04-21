@@ -1,9 +1,9 @@
-import { j as jsxRuntimeExports, L as Link, a as cn, f as SkeletonCard } from "./index-urhzO2zV.js";
-import { f as formatMatchDate } from "./handballService-CnucPkFX.js";
-import { S as Shield } from "./shield-pPFJhFNE.js";
-import { T as Trophy } from "./trophy-Cq-qet6d.js";
-import { u as useTeams, a as useUpcomingMatches } from "./useTeams-BxId6XoH.js";
-import { m as motion } from "./proxy-Bzlgllao.js";
+import { j as jsxRuntimeExports, L as Link, a as cn, e as SkeletonCard } from "./index-BUh7ltUv.js";
+import { f as formatMatchDate } from "./handballService-DVNxpaGE.js";
+import { S as Shield } from "./shield-Dyj1qskd.js";
+import { T as Trophy } from "./trophy-CSvhvNkj.js";
+import { u as useTeams, a as useUpcomingMatches } from "./useTeams-B5D7rnLw.js";
+import { m as motion } from "./proxy-BTfPN9Tx.js";
 function TeamCard({ team, nextMatch, opponentName, className }) {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     Link,

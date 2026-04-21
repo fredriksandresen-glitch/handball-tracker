@@ -1,6 +1,6 @@
-import { useActor } from "@caffeineai/core-infrastructure";
+import { useMockActor } from "./useMockActor";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createActor } from "../backend";
+import { createActor } from "../backend-mock";
 import type { Player } from "../types/handball";
 import { enrichPlayersWithImages } from "../utils/playerImages";
 
@@ -9,7 +9,7 @@ import { enrichPlayersWithImages } from "../utils/playerImages";
 const DEMO_PLAYER_IDS = [BigInt(3), BigInt(14), BigInt(68)]; // Camilla Herrem, Ida Alstad, Sarah Solheim
 
 export function useFollowedPlayers() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useMockActor();
   return useQuery<Player[]>({
     queryKey: ["followedPlayers"],
     queryFn: async () => {
@@ -47,7 +47,7 @@ export function useFollowedPlayers() {
 }
 
 export function useIsFollowing(playerId: bigint) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useMockActor();
   return useQuery<boolean>({
     queryKey: ["isFollowing", playerId.toString()],
     queryFn: async () => {
@@ -60,7 +60,7 @@ export function useIsFollowing(playerId: bigint) {
 }
 
 export function useFollowPlayer() {
-  const { actor } = useActor(createActor);
+  const { actor } = useMockActor();
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (playerId: bigint) => {
@@ -76,7 +76,7 @@ export function useFollowPlayer() {
 }
 
 export function useUnfollowPlayer() {
-  const { actor } = useActor(createActor);
+  const { actor } = useMockActor();
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (playerId: bigint) => {

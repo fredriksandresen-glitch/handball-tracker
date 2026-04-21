@@ -1,4 +1,4 @@
-import { j as jsxRuntimeExports, a as cn, b as useActor, d as useQuery, m as useQueryClient, n as useMutation, e as createActor } from "./index-urhzO2zV.js";
+import { j as jsxRuntimeExports, a as cn, b as useQuery, l as useQueryClient, m as useMutation, d as useMockActor } from "./index-BUh7ltUv.js";
 const POSITION_LABELS = {
   Keeper: "Keeper",
   Bakspiller: "Bakspiller",
@@ -35,9 +35,8 @@ function PositionBadge({
   );
 }
 const ID_OVERRIDES = {
-  "14": "/assets/ida-alstad.jpg",
-  "68": "/assets/sara-solheim.jpg",
-  "3": "/assets/generated/camilla-herrem.dim_600x800.jpg"
+  "23": "/assets/generated/camilla-herrem.dim_600x800.jpg",
+  "241": "/assets/sara-solheim.jpg"
 };
 const NAME_OVERRIDES = [
   {
@@ -70,7 +69,7 @@ function enrichPlayersWithImages(players) {
 }
 const DEMO_PLAYER_IDS = [BigInt(3), BigInt(14), BigInt(68)];
 function useFollowedPlayers() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor } = useMockActor();
   return useQuery({
     queryKey: ["followedPlayers"],
     queryFn: async () => {
@@ -96,24 +95,24 @@ function useFollowedPlayers() {
       }
       return enrichPlayersWithImages(followed);
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && true,
     staleTime: 3e4
   });
 }
 function useIsFollowing(playerId) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor } = useMockActor();
   return useQuery({
     queryKey: ["isFollowing", playerId.toString()],
     queryFn: async () => {
       if (!actor) return false;
       return actor.isFollowing(playerId);
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && true,
     staleTime: 3e4
   });
 }
 function useFollowPlayer() {
-  const { actor } = useActor(createActor);
+  const { actor } = useMockActor();
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (playerId) => {
@@ -128,7 +127,7 @@ function useFollowPlayer() {
   });
 }
 function useUnfollowPlayer() {
-  const { actor } = useActor(createActor);
+  const { actor } = useMockActor();
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (playerId) => {

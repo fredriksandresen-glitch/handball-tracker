@@ -1,10 +1,10 @@
-import { useActor } from "@caffeineai/core-infrastructure";
+import { useMockActor } from "./useMockActor";
 import { useQuery } from "@tanstack/react-query";
-import { createActor } from "../backend";
+import { createActor } from "../backend-mock";
 import type { FeedEvent } from "../types/handball";
 
 export function useFeedEvents() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useMockActor();
   return useQuery<FeedEvent[]>({
     queryKey: ["feedEvents"],
     queryFn: async () => {

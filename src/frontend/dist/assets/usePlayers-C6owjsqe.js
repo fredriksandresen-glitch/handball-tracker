@@ -1,7 +1,7 @@
-import { b as useActor, d as useQuery, e as createActor } from "./index-urhzO2zV.js";
-import { e as enrichPlayersWithImages } from "./useFollowedPlayers-BzkFyYPh.js";
+import { b as useQuery, d as useMockActor } from "./index-BUh7ltUv.js";
+import { e as enrichPlayersWithImages } from "./useFollowedPlayers-BzEo3yve.js";
 function usePlayers() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor } = useMockActor();
   return useQuery({
     queryKey: ["players"],
     queryFn: async () => {
@@ -9,12 +9,12 @@ function usePlayers() {
       const players = await actor.getPlayers();
       return enrichPlayersWithImages(players);
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && true,
     staleTime: 12e4
   });
 }
 function useSearchPlayers(term) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor } = useMockActor();
   return useQuery({
     queryKey: ["searchPlayers", term],
     queryFn: async () => {
@@ -22,7 +22,7 @@ function useSearchPlayers(term) {
       const players = await actor.searchPlayers(term.trim());
       return enrichPlayersWithImages(players);
     },
-    enabled: !!actor && !isFetching && term.trim().length > 0,
+    enabled: !!actor && true && term.trim().length > 0,
     staleTime: 3e4
   });
 }

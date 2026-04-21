@@ -1,49 +1,49 @@
-import { r as reactExports, b as useActor, d as useQuery, e as createActor } from "./index-urhzO2zV.js";
+import { r as reactExports, b as useQuery, d as useMockActor } from "./index-BUh7ltUv.js";
 function usePlayer(id) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor } = useMockActor();
   return useQuery({
     queryKey: ["player", id.toString()],
     queryFn: async () => {
       if (!actor) return null;
       return actor.getPlayer(id);
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && true,
     staleTime: 6e4
   });
 }
 function usePlayerMatchStats(playerId) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor } = useMockActor();
   return useQuery({
     queryKey: ["playerMatchStats", playerId.toString()],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getPlayerMatchStats(playerId);
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && true,
     staleTime: 6e4
   });
 }
 function usePlayerSeasonStats(playerId) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor } = useMockActor();
   return useQuery({
     queryKey: ["playerSeasonStats", playerId.toString()],
     queryFn: async () => {
       if (!actor) return null;
       return actor.getPlayerSeasonStats(playerId);
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && true,
     staleTime: 6e4
   });
 }
 function useSingleMatchStats(id, enabled) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor } = useMockActor();
   return useQuery({
     queryKey: ["playerMatchStats", id.toString()],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getPlayerMatchStats(id);
     },
-    enabled: enabled && !!actor && !isFetching,
+    enabled: enabled && !!actor && true,
     staleTime: 6e4
   });
 }

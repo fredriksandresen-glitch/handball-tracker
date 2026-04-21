@@ -1,10 +1,10 @@
-import { c as createLucideIcon, u as useNavigate, F as FeedEventType, j as jsxRuntimeExports, a as cn, b as useActor, d as useQuery, e as createActor, r as reactExports, L as Link, S as Search, f as SkeletonCard, P as Position, U as Users } from "./index-urhzO2zV.js";
-import { c as computeFormSparkline, g as getCountdown, f as formatMatchDate } from "./handballService-CnucPkFX.js";
-import { P as PositionBadge, u as useFollowedPlayers, a as useUnfollowPlayer, b as POSITION_LABELS } from "./useFollowedPlayers-BzkFyYPh.js";
-import { m as motion } from "./proxy-Bzlgllao.js";
-import { u as usePlayerMatchStatsBatch } from "./usePlayer-Dt_o8oEf.js";
-import { u as useTeams } from "./useTeams-BxId6XoH.js";
-import { S as Shield } from "./shield-pPFJhFNE.js";
+import { c as createLucideIcon, u as useNavigate, F as FeedEventType, j as jsxRuntimeExports, a as cn, b as useQuery, d as useMockActor, r as reactExports, L as Link, S as Search, e as SkeletonCard, P as Position, U as Users } from "./index-BUh7ltUv.js";
+import { c as computeFormSparkline, g as getCountdown, f as formatMatchDate } from "./handballService-DVNxpaGE.js";
+import { P as PositionBadge, u as useFollowedPlayers, a as useUnfollowPlayer, b as POSITION_LABELS } from "./useFollowedPlayers-BzEo3yve.js";
+import { m as motion } from "./proxy-BTfPN9Tx.js";
+import { u as usePlayerMatchStatsBatch } from "./usePlayer-COOYO7ui.js";
+import { u as useTeams } from "./useTeams-B5D7rnLw.js";
+import { S as Shield } from "./shield-Dyj1qskd.js";
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -61,14 +61,14 @@ function Sparkline({ values }) {
 }
 function NextMatchPill({ teamId }) {
   var _a, _b;
-  const { actor, isFetching } = useActor(createActor);
+  const { actor } = useMockActor();
   const { data: nextMatch } = useQuery({
     queryKey: ["nextMatch", teamId.toString()],
     queryFn: async () => {
       if (!actor) return null;
       return actor.getNextMatchForTeam(teamId);
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && true,
     staleTime: 6e4
   });
   const { data: homeTeam } = useQuery({
@@ -77,7 +77,7 @@ function NextMatchPill({ teamId }) {
       if (!actor || !nextMatch) return null;
       return actor.getTeam(nextMatch.homeTeamId);
     },
-    enabled: !!actor && !isFetching && !!nextMatch,
+    enabled: !!actor && true && !!nextMatch,
     staleTime: 12e4
   });
   const { data: awayTeam } = useQuery({
@@ -86,7 +86,7 @@ function NextMatchPill({ teamId }) {
       if (!actor || !nextMatch) return null;
       return actor.getTeam(nextMatch.awayTeamId);
     },
-    enabled: !!actor && !isFetching && !!nextMatch,
+    enabled: !!actor && true && !!nextMatch,
     staleTime: 12e4
   });
   if (!nextMatch) return null;
@@ -212,14 +212,14 @@ function FeedPlayerCard({
   );
 }
 function useFeedEvents() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor } = useMockActor();
   return useQuery({
     queryKey: ["feedEvents"],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getFeedEvents();
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && true,
     staleTime: 6e4,
     refetchInterval: 12e4
   });

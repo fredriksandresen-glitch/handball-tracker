@@ -1,7 +1,7 @@
-import { useActor } from "@caffeineai/core-infrastructure";
+import { useMockActor } from "./useMockActor";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { createActor } from "../backend";
+import { createActor } from "../backend-mock";
 import type {
   Player,
   PlayerMatchStats,
@@ -9,7 +9,7 @@ import type {
 } from "../types/handball";
 
 export function usePlayer(id: bigint) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useMockActor();
   return useQuery<Player | null>({
     queryKey: ["player", id.toString()],
     queryFn: async () => {
@@ -22,7 +22,7 @@ export function usePlayer(id: bigint) {
 }
 
 export function usePlayerMatchStats(playerId: bigint) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useMockActor();
   return useQuery<PlayerMatchStats[]>({
     queryKey: ["playerMatchStats", playerId.toString()],
     queryFn: async () => {
@@ -35,7 +35,7 @@ export function usePlayerMatchStats(playerId: bigint) {
 }
 
 export function usePlayerSeasonStats(playerId: bigint) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useMockActor();
   return useQuery<PlayerSeasonStats | null>({
     queryKey: ["playerSeasonStats", playerId.toString()],
     queryFn: async () => {
@@ -50,7 +50,7 @@ export function usePlayerSeasonStats(playerId: bigint) {
 // Batch hook: returns a map of playerId -> PlayerMatchStats[]
 // Uses individual usePlayerMatchStats calls to leverage query cache
 function useSingleMatchStats(id: bigint, enabled: boolean) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useMockActor();
   return useQuery<PlayerMatchStats[]>({
     queryKey: ["playerMatchStats", id.toString()],
     queryFn: async () => {

@@ -1,11 +1,11 @@
-import { useActor } from "@caffeineai/core-infrastructure";
+import { useMockActor } from "./useMockActor";
 import { useQuery } from "@tanstack/react-query";
-import { createActor } from "../backend";
+import { createActor } from "../backend-mock";
 import type { Player } from "../types/handball";
 import { enrichPlayersWithImages } from "../utils/playerImages";
 
 export function usePlayers() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useMockActor();
   return useQuery<Player[]>({
     queryKey: ["players"],
     queryFn: async () => {
@@ -19,7 +19,7 @@ export function usePlayers() {
 }
 
 export function useSearchPlayers(term: string) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useMockActor();
   return useQuery<Player[]>({
     queryKey: ["searchPlayers", term],
     queryFn: async () => {

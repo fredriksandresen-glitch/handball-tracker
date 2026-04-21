@@ -1,25 +1,25 @@
-import { b as useActor, d as useQuery, e as createActor } from "./index-urhzO2zV.js";
+import { b as useQuery, d as useMockActor } from "./index-BUh7ltUv.js";
 function useTeams() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor } = useMockActor();
   return useQuery({
     queryKey: ["teams"],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getTeams();
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && true,
     staleTime: 12e4
   });
 }
 function useUpcomingMatches() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor } = useMockActor();
   return useQuery({
     queryKey: ["upcomingMatches"],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getUpcomingMatches();
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && true,
     staleTime: 6e4
   });
 }

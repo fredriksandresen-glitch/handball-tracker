@@ -1,14 +1,14 @@
-import { c as createLucideIcon, M as MatchStatus, j as jsxRuntimeExports, H as House, a as cn, i as useParams, u as useNavigate, r as reactExports, P as Position, h as Skeleton, L as Link, U as Users } from "./index-urhzO2zV.js";
-import { B as Button } from "./button-Ca3rB_wU.js";
-import { g as getCountdown, f as formatMatchDate } from "./handballService-CnucPkFX.js";
-import { C as Clock, M as MapPin, u as useTeam, c as usePlayersByTeam, b as useNextMatchForTeam, A as ArrowLeft, a as ArrowRight } from "./useTeam-DCOOV_R0.js";
-import { u as useFollowedPlayers, d as useFollowPlayer, c as useIsFollowing, a as useUnfollowPlayer, P as PositionBadge } from "./useFollowedPlayers-BzkFyYPh.js";
-import { c as usePlayerMatchStats } from "./usePlayer-Dt_o8oEf.js";
-import { u as useTeams } from "./useTeams-BxId6XoH.js";
-import { S as Shield } from "./shield-pPFJhFNE.js";
-import { m as motion } from "./proxy-Bzlgllao.js";
-import { T as Trophy } from "./trophy-Cq-qet6d.js";
-import { U as User } from "./user-BzLonnf2.js";
+import { c as createLucideIcon, M as MatchStatus, j as jsxRuntimeExports, H as House, a as cn, h as useParams, u as useNavigate, r as reactExports, P as Position, g as Skeleton, L as Link, U as Users } from "./index-BUh7ltUv.js";
+import { B as Button } from "./button-DslLDKsX.js";
+import { g as getCountdown, f as formatMatchDate } from "./handballService-DVNxpaGE.js";
+import { C as Clock, M as MapPin, u as useTeam, c as usePlayersByTeam, b as useNextMatchForTeam, A as ArrowLeft, a as ArrowRight } from "./useTeam-CNhjpJ9W.js";
+import { u as useFollowedPlayers, d as useFollowPlayer, c as useIsFollowing, a as useUnfollowPlayer, P as PositionBadge } from "./useFollowedPlayers-BzEo3yve.js";
+import { c as usePlayerMatchStats } from "./usePlayer-COOYO7ui.js";
+import { u as useTeams } from "./useTeams-B5D7rnLw.js";
+import { S as Shield } from "./shield-Dyj1qskd.js";
+import { m as motion } from "./proxy-BTfPN9Tx.js";
+import { T as Trophy } from "./trophy-CSvhvNkj.js";
+import { U as User } from "./user-Os1oBPGz.js";
 /**
  * @license lucide-react v0.511.0 - ISC
  *
