@@ -2,9 +2,8 @@ import type { Player } from "../types/handball";
 
 // Known player image mappings — keyed by player ID (primary) and name variants (fallback).
 const ID_OVERRIDES: Record<string, string> = {
-  "14": "/assets/ida-alstad.jpg",
-  "68": "/assets/sara-solheim.jpg",
-  "3": "/assets/generated/camilla-herrem.dim_600x800.jpg",
+  "23": "/assets/generated/camilla-herrem.dim_600x800.jpg",
+  "241": "/assets/sara-solheim.jpg",
 };
 
 const NAME_OVERRIDES: Array<{ matchNames: string[]; imageUrl: string }> = [

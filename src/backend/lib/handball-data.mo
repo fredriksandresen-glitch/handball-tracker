@@ -289,7 +289,7 @@ module {
 
   // Players whose season stats are confirmed/hardcoded and must never be
   // recomputed from match stats. rebuildSeasonStats() is a no-op for these IDs.
-  let lockedPlayerIds : [Nat] = [3, 14, 68];
+  let lockedPlayerIds : [Nat] = [23, 241, 195];
 
   public func rebuildSeasonStats(state : State, playerId : Nat, season : Text) : () {
     // Skip locked players — their stats are set by override only.
@@ -376,927 +376,410 @@ module {
   func _loadSeedData(state : State) : () {
 
     // ── Teams ────────────────────────────────────────────────────────────────
-    // All 14 real teams from REMA 1000-ligaen kvinner 2025/2026
-    let teamsData : [(Nat, Text, Text, ?Nat, ?Nat, ?Nat, ?Int)] = [
-      (1,  "Sola HK",                  "sola-hk",                 ?1,  ?18, ?34, ?22),
-      (2,  "Larvik HK",                "larvik-hk",               ?2,  ?18, ?32, ?18),
-      (3,  "Storhamar Elite",          "storhamar-elite",         ?3,  ?18, ?30, ?15),
-      (4,  "Molde Elite",              "molde-elite",             ?4,  ?18, ?26, ?8),
-      (5,  "Tertnes Elite",            "tertnes-elite",           ?5,  ?18, ?22, ?-2),
-      (6,  "Fana HK",                  "fana-hk",                 ?6,  ?18, ?20, ?-4),
-      (7,  "Fjellhammer IL",           "fjellhammer-il",          ?7,  ?18, ?18, ?-10),
-      (8,  "Byåsen IL",                "byasen-il",               ?8,  ?18, ?16, ?-14),
-      (9,  "Vipers Kristiansand",      "vipers-kristiansand",     ?9,  ?18, ?14, ?-18),
-      (10, "Glassverket IF",           "glassverket-if",          ?10, ?18, ?12, ?-22),
-      (11, "Kolstad Håndball",         "kolstad-handball",        ?11, ?18, ?10, ?-28),
-      (12, "Stabæk Håndball",          "stabak-handball",         ?12, ?18, ?8,  ?-32),
-      (13, "Fredrikstad BK",           "fredrikstad-bk",          ?13, ?18, ?6,  ?-38),
-      (14, "Nærbø IL",                 "narbo-il",                ?14, ?18, ?4,  ?-44),
+    // REMA 1000-ligaen kvinner 2025/2026 - scraped from handball.no
+    let teamsData : [(Nat, Text, Text)] = [
+      (1, "Sola",                        "sola"),
+      (2, "Storhamar Elite",             "storhamar-elite"),
+      (3, "Molde Elite",                 "molde-elite"),
+      (4, "Larvik",                      "larvik"),
+      (5, "Tertnes Elite",               "tertnes-elite"),
+      (6, "Fana",                        "fana"),
+      (7, "Byåsen Elite",                "byasen-elite"),
+      (8, "Fredrikstad",                 "fredrikstad"),
+      (9, "Gjerpen Håndball",            "gjerpen-handball"),
+      (10, "Follo HK Damer",              "follo-hk-damer"),
+      (11, "Oppsal",                      "oppsal"),
+      (12, "Fjellhammer",                 "fjellhammer"),
+      (13, "Haslum Damer",                "haslum-damer"),
+      (14, "Romerike Ravens",             "romerike-ravens"),
     ];
-    for ((id, name, slug, rank, mp, pts, gd) in teamsData.values()) {
+    for ((id, name, slug) in teamsData.values()) {
       state.teams.add({
         id; name; slug;
         logoUrl = null;
-        standingsRank = rank;
-        matchesPlayed = mp;
-        points = pts;
-        goalDifference = gd;
+        standingsRank = null;
+        matchesPlayed = null;
+        points = null;
+        goalDifference = null;
       });
     };
 
-    // ── Players ──────────────────────────────────────────────────────────────
-    // Real player names from REMA 1000-ligaen 2025/2026
-    // (id, name, slug, teamId, position, jerseyNumber)
-    let playersData : [(Nat, Text, Text, Nat, Types.Position, ?Nat)] = [
-      // ── Sola HK ──
-      (1,  "Silje Solberg",           "silje-solberg",           1, #Keeper,      ?1),
-      (2,  "Katrine Lunde",           "katrine-lunde",           1, #Keeper,      ?16),
-      (3,  "Camilla Herrem",          "camilla-herrem",          1, #VenstreKant, ?77),
-      (4,  "Kristine Breistøl",       "kristine-breistol",       1, #HoyreKant,   ?17),
-      (5,  "Nora Mørk",               "nora-mork",               1, #Bakspiller,  ?10),
-      (6,  "Stine Bredal Oftedal",    "stine-bredal-oftedal",    1, #Bakspiller,  ?9),
-      (7,  "Marit Røsberg Jacobsen",  "marit-rosberg-jacobsen",  1, #Bakspiller,  ?14),
-      (8,  "Veronica Kristiansen",    "veronica-kristiansen",    1, #VenstreKant, ?7),
-      (9,  "Linn Jørum Sulland",      "linn-jorum-sulland",      1, #Bakspiller,  ?5),
-      (10, "Marte Løseth",            "marte-loseth",            1, #HoyreKant,   ?3),
-
-      // ── Larvik HK ──
-      (11, "Rikke Selvik",            "rikke-selvik",            2, #Keeper,      ?1),
-      (12, "Cecilie Grønnes",         "cecilie-gronnes",         2, #Keeper,      ?16),
-      (13, "Amanda Kurtovic",         "amanda-kurtovic",         2, #VenstreKant, ?7),
-      (14, "Ida Alstad",              "ida-alstad",              8, #HoyreKant,   ?11),
-      (15, "Heidi Løke",              "heidi-loke",              2, #Linje,       ?4),
-      (16, "Karoline Alling",         "karoline-alling",         2, #Bakspiller,  ?6),
-      (17, "Thea Mørk",               "thea-mork",               2, #Bakspiller,  ?13),
-      (18, "Emilie Hegh Arntzen",     "emilie-hegh-arntzen",     2, #HoyreKant,   ?15),
-      (19, "Ingrid Kristiansen",      "ingrid-kristiansen",      2, #VenstreKant, ?3),
-      (20, "Sanna Solberg-Isaksen",   "sanna-solberg-isaksen",   2, #Bakspiller,  ?9),
-
-      // ── Storhamar Elite ──
-      (21, "Silje Eugenie Ljungberg", "silje-eugenie-ljungberg", 3, #Keeper,      ?1),
-      (22, "Mari Molid",              "mari-molid",              3, #Keeper,      ?16),
-      (23, "Eline Tjørneby Nygaard",  "eline-tjorneby-nygaard",  3, #VenstreKant, ?7),
-      (24, "Ingrid Bakkerud",         "ingrid-bakkerud",         3, #HoyreKant,   ?11),
-      (25, "Marte Eldevik Ny",        "marte-eldevik-ny",        3, #Linje,       ?9),
-      (26, "Hanna Yttereng",          "hanna-yttereng",          3, #Bakspiller,  ?5),
-      (27, "Kristine Nørdby",         "kristine-nordby",         3, #Bakspiller,  ?8),
-      (28, "Julie Blågestad",         "julie-blagestad",         3, #Bakspiller,  ?14),
-      (29, "Pernille Helene Wibe",    "pernille-helene-wibe",    3, #Linje,       ?6),
-      (30, "Oda Narten",              "oda-narten",              3, #VenstreKant, ?3),
-
-      // ── Molde Elite ──
-      (31, "Mia Rej",                 "mia-rej",                 4, #Keeper,      ?1),
-      (32, "Malin Dahlum",            "malin-dahlum",            4, #Keeper,      ?16),
-      (33, "Maiken Margrete Hesselberg","maiken-margrete-hesselberg", 4, #VenstreKant, ?7),
-      (34, "Annette Hageberg",        "annette-hageberg",        4, #HoyreKant,   ?10),
-      (35, "Marte Malene Tomter",     "marte-malene-tomter",     4, #Linje,       ?4),
-      (36, "Hannah Cathrine Ytreberg","hannah-cathrine-ytreberg",4, #Bakspiller,  ?6),
-      (37, "Andrea Austmo Pedersen",  "andrea-austmo-pedersen",  4, #Bakspiller,  ?13),
-      (38, "Kristin Nørstebø",        "kristin-norstebo",        4, #HoyreKant,   ?9),
-      (39, "Emilie Christoffersen",   "emilie-christoffersen",   4, #Linje,       ?12),
-      (40, "Randi Gustad",            "randi-gustad",            4, #VenstreKant, ?3),
-
-      // ── Tertnes Elite ──
-      (41, "Johanne Prøsch Urdal",    "johanne-prosch-urdal",    5, #Keeper,      ?1),
-      (42, "Emma Friis",              "emma-friis",              5, #Keeper,      ?16),
-      (43, "Kine Bakke",              "kine-bakke",              5, #VenstreKant, ?7),
-      (44, "Helene Fauske",           "helene-fauske",           5, #HoyreKant,   ?11),
-      (45, "Marte Grønning",          "marte-gronning",          5, #Linje,       ?9),
-      (46, "Synne Bjerum",            "synne-bjerum",            5, #Bakspiller,  ?5),
-      (47, "Karoline Wenaas",         "karoline-wenaas",         5, #Bakspiller,  ?8),
-      (48, "Kristine Marie Dahl",     "kristine-marie-dahl",     5, #Bakspiller,  ?14),
-      (49, "Tonje Larsen",            "tonje-larsen",            5, #Linje,       ?6),
-      (50, "Mari Eliassen",           "mari-eliassen",           5, #HoyreKant,   ?3),
-
-      // ── Fana HK ──
-      (51, "Thea Johanessen",              "thea-johanessen",              6, #Keeper,      ?1),
-      (52, "Ingrid Moe Elstad",            "ingrid-moe-elstad",            6, #Keeper,      ?16),
-      (53, "Ingvild Bakkerud",             "ingvild-bakkerud",             6, #VenstreKant, ?7),
-      (54, "Signe Øverås Davidsen",        "signe-overas-davidsen",        6, #HoyreKant,   ?10),
-      (55, "Helene Gigstad",               "helene-gigstad",               6, #Linje,       ?4),
-      (56, "Helene Rønning",               "helene-ronning",               6, #Bakspiller,  ?6),
-      (57, "Renate Johannesen",            "renate-johannesen",            6, #Bakspiller,  ?13),
-      (58, "Emilie Bernau",                "emilie-bernau",                6, #HoyreKant,   ?9),
-      (59, "Mia Samuelsen",                "mia-samuelsen",                6, #Linje,       ?12),
-      (60, "Silje Moen",                   "silje-moen",                   6, #VenstreKant, ?3),
-      (177, "Martine Kårigstad Andersen",  "martine-karigstad-andersen",   6, #Bakspiller,  ?21),
-
-      // ── Fjellhammer HK — real roster ──
-      (61, "Linnea Isabel Ingeborg Aula", "linnea-isabel-ingeborg-aula", 7, #Bakspiller,  ?18),
-      (62, "Zaynab Elmrani",          "zaynab-elmrani",          7, #Bakspiller,  ?12),
-      (63, "Ida Wall Bakken",         "ida-wall-bakken",         7, #Keeper,      ?37),
-      (64, "Martine Tveter",          "martine-tveter",          7, #Bakspiller,  ?4),
-      (65, "Birta Run Grétarsdottir", "birta-run-gretarsdottir", 7, #VenstreKant, ?8),
-      (66, "Hannah Deari Solheim",    "hannah-deari-solheim",    7, #HoyreKant,   ?9),
-      (67, "Mia Lundberg Lersbryggen","mia-lundberg-lersbryggen",7, #Linje,       ?10),
-      (68, "Sarah Deari Solheim",     "sarah-deari-solheim",     7, #VenstreKant, ?14),
-      (69, "Christina Midtdal Nummestad","christina-midtdal-nummestad", 7, #Keeper, ?15),
-      (70, "Marie Elstrand Munthe",   "marie-elstrand-munthe",   7, #HoyreKant,   ?17),
-      (71, "Emma Egge Edner",         "emma-egge-edner",         7, #Bakspiller,  ?25),
-      (72, "Marthe Bjørnson Ulvåknippa","marthe-bjornson-ulvaknippa", 7, #Linje,  ?27),
-      (73, "Mathilde Aas Fjelddalen", "mathilde-aas-fjelddalen", 7, #Bakspiller,  ?33),
-      (74, "Stine Mellemstrand Bore", "stine-mellemstrand-bore", 7, #HoyreKant,   ?72),
-      (75, "My Lervold",              "my-lervold",              7, #VenstreKant, ?2),
-      (76, "Julie Rensmoen Benterud", "julie-rensmoen-benterud", 7, #Bakspiller,  ?5),
-      (77, "Sara Ashuri",             "sara-ashuri",             7, #Keeper,      ?11),
-      (78, "Hedda Klippen Nilsen",    "hedda-klippen-nilsen",    7, #Linje,       ?20),
-      (79, "Tuva Knai",               "tuva-knai",               7, #Bakspiller,  ?6),
-      (80, "Inga Sandvold",           "inga-sandvold",           7, #VenstreKant, ?7),
-      (81, "Sunniva Sogn-Johansen",   "sunniva-sogn-johansen",   7, #HoyreKant,   ?22),
-      (82, "Tuva Svensson",           "tuva-svensson",           7, #Bakspiller,  ?45),
-
-      // ── Byåsen IL ──
-      (83, "Helene Fjellestad",       "helene-fjellestad",       8, #Keeper,      ?1),
-      (84, "Ingrid Bergmann Sagen",   "ingrid-bergmann-sagen",   8, #Keeper,      ?16),
-      (85, "Thea Mørk Hermansen",     "thea-mork-hermansen",     8, #VenstreKant, ?7),
-      (86, "Martine Haugdal",         "martine-haugdal",         8, #HoyreKant,   ?11),
-      (87, "Emilie Møller",           "emilie-moller",           8, #Linje,       ?9),
-      (88, "Mari Breivik Sætre",      "mari-breivik-saetre",     8, #Bakspiller,  ?5),
-      (89, "Silje Waade",             "silje-waade",             8, #Bakspiller,  ?8),
-      (90, "Kristine Skuland",        "kristine-skuland",        8, #Bakspiller,  ?14),
-      (91, "Marta Tomac",             "marta-tomac",             8, #Linje,       ?6),
-      (92, "Ane Cecilie Røsberg",     "ane-cecilie-rosberg",     8, #VenstreKant, ?3),
-
-      // ── Vipers Kristiansand (id 9) ──
-      (93,  "Katrine Lunde Haraldsen",  "katrine-lunde-haraldsen",  9, #Keeper,      ?1),
-      (94,  "Ragnhild Valle",           "ragnhild-valle",           9, #Keeper,      ?16),
-      (95,  "Isabelle Gulldén",         "isabelle-gullden",         9, #Bakspiller,  ?7),
-      (96,  "Henny Reistad",            "henny-reistad",            9, #Bakspiller,  ?10),
-      (97,  "Tess Wester",              "tess-wester",              9, #Keeper,      ?33),
-      (98,  "Grace Zaadi Deuna",        "grace-zaadi-deuna",        9, #Bakspiller,  ?9),
-      (99,  "Nathalie Hagman",          "nathalie-hagman",          9, #HoyreKant,   ?11),
-      (100, "Rikke Poulsen",            "rikke-poulsen",            9, #VenstreKant, ?5),
-      (101, "Marit Malm Frafjord",      "marit-malm-frafjord",      9, #Linje,       ?4),
-      (102, "Heidi Løke Andersen",      "heidi-loke-andersen",      9, #Linje,       ?6),
-      (103, "Moa Anhede",               "moa-anhede",               9, #VenstreKant, ?8),
-      (104, "Marketa Jerabkova",        "marketa-jerabkova",        9, #HoyreKant,   ?13),
-      (105, "Marta Tomac Vipers",       "marta-tomac-vipers",       9, #Linje,       ?14),
-      (106, "Maja Tomac",               "maja-tomac",               9, #Bakspiller,  ?15),
-
-      // ── Glassverket IF (id 10) ──
-      (107, "Maja Jakobsen",            "maja-jakobsen",            10, #Keeper,      ?1),
-      (108, "Ingrid Nørvåg Hegdal",     "ingrid-norvag-hegdal",     10, #Keeper,      ?16),
-      (109, "Marte Michelsen",          "marte-michelsen",          10, #VenstreKant, ?7),
-      (110, "Kristin Haugen",           "kristin-haugen",           10, #HoyreKant,   ?10),
-      (111, "Karoline Sand",            "karoline-sand",            10, #Linje,       ?4),
-      (112, "Sigrid Lund",              "sigrid-lund",              10, #Bakspiller,  ?6),
-      (113, "Astrid Berge",             "astrid-berge",             10, #Bakspiller,  ?9),
-      (114, "Tonje Nøstvold",           "tonje-nostvold",           10, #Bakspiller,  ?11),
-      (115, "Line Jørgensen",           "line-jorgensen",           10, #VenstreKant, ?3),
-      (116, "Stine Andreassen",         "stine-andreassen",         10, #HoyreKant,   ?14),
-      (117, "Hilde Bakken",             "hilde-bakken",             10, #Linje,       ?5),
-      (118, "Sofie Grønvold",           "sofie-gronvold",           10, #Bakspiller,  ?8),
-      (119, "Renate Larsen",            "renate-larsen",            10, #VenstreKant, ?17),
-      (120, "Thea Kristiansen",         "thea-kristiansen",         10, #HoyreKant,   ?21),
-
-      // ── Kolstad Håndball (id 11) ──
-      (121, "Emilie Arntzen",           "emilie-arntzen",           11, #Keeper,      ?1),
-      (122, "Sandra Andersen",          "sandra-andersen",          11, #Keeper,      ?16),
-      (123, "Pernille Wibe",            "pernille-wibe",            11, #VenstreKant, ?7),
-      (124, "Stine Skogrand",           "stine-skogrand",           11, #HoyreKant,   ?10),
-      (125, "Mina Andresen",            "mina-andresen",            11, #Linje,       ?4),
-      (126, "Ingrid Thorvaldsen",       "ingrid-thorvaldsen",       11, #Bakspiller,  ?6),
-      (127, "Lena Grimsbø",             "lena-grimsbo",             11, #Keeper,      ?12),
-      (128, "Maja Vesterby",            "maja-vesterby",            11, #Bakspiller,  ?9),
-      (129, "Caroline Alstad",          "caroline-alstad",          11, #HoyreKant,   ?11),
-      (130, "Silje Solberg Kolstad",    "silje-solberg-kolstad",    11, #Bakspiller,  ?8),
-      (131, "Mari Hegdal",              "mari-hegdal",              11, #VenstreKant, ?14),
-      (132, "Emma Kristoffersen",       "emma-kristoffersen",       11, #Linje,       ?5),
-      (133, "Kine Nilsen",              "kine-nilsen",              11, #Bakspiller,  ?3),
-      (134, "Sunniva Berg",             "sunniva-berg",             11, #HoyreKant,   ?17),
-
-      // ── Stabæk Håndball (id 12) ──
-      (135, "Vilde Mortensen Ingstad",  "vilde-mortensen-ingstad",  12, #Keeper,      ?1),
-      (136, "Maria Hagen",              "maria-hagen",              12, #Keeper,      ?16),
-      (137, "Julie Jacobsen",           "julie-jacobsen",           12, #VenstreKant, ?7),
-      (138, "Thea Nielsen",             "thea-nielsen",             12, #HoyreKant,   ?10),
-      (139, "Sara Gjøen",               "sara-gjoen",               12, #Linje,       ?4),
-      (140, "Ingrid Solvang",           "ingrid-solvang",           12, #Bakspiller,  ?6),
-      (141, "Hanna Aardal",             "hanna-aardal",             12, #Bakspiller,  ?9),
-      (142, "Martine Holm",             "martine-holm",             12, #HoyreKant,   ?11),
-      (143, "Nora Berntsen",            "nora-berntsen",            12, #VenstreKant, ?3),
-      (144, "Emilie Bruseth",           "emilie-bruseth",           12, #Bakspiller,  ?14),
-      (145, "Line Bergmann",            "line-bergmann",            12, #Linje,       ?5),
-      (146, "Silje Engen",              "silje-engen",              12, #Bakspiller,  ?8),
-      (147, "Karianne Lund",            "karianne-lund",            12, #VenstreKant, ?17),
-      (148, "Anna Rosvoll",             "anna-rosvoll",             12, #HoyreKant,   ?21),
-
-      // ── Fredrikstad BK (id 13) ──
-      (149, "Camilla Johansen",         "camilla-johansen",         13, #Keeper,      ?1),
-      (150, "Marte Enersen",            "marte-enersen",            13, #Keeper,      ?16),
-      (151, "Silje Nygaard",            "silje-nygaard",            13, #VenstreKant, ?7),
-      (152, "Tonje Hansen",             "tonje-hansen",             13, #HoyreKant,   ?10),
-      (153, "Ida Kristiansen",          "ida-kristiansen",          13, #Linje,       ?4),
-      (154, "Marit Halvorsen",          "marit-halvorsen",          13, #Bakspiller,  ?6),
-      (155, "Siri Andresen",            "siri-andresen",            13, #Bakspiller,  ?9),
-      (156, "Anette Nilsen",            "anette-nilsen",            13, #HoyreKant,   ?11),
-      (157, "Karianne Breivik",         "karianne-breivik",         13, #VenstreKant, ?3),
-      (158, "Nina Haugen",              "nina-haugen",              13, #Bakspiller,  ?14),
-      (159, "Stine Thorstensen",        "stine-thorstensen",        13, #Linje,       ?5),
-      (160, "Maja Olsen",               "maja-olsen",               13, #Bakspiller,  ?8),
-      (161, "Hege Walberg",             "hege-walberg",             13, #VenstreKant, ?17),
-      (162, "Tone Eriksen",             "tone-eriksen",             13, #HoyreKant,   ?21),
-
-      // ── Nærbø IL (id 14) ──
-      (163, "Elisabeth Bredvold",       "elisabeth-bredvold",       14, #Keeper,      ?1),
-      (164, "Astrid Vatne",             "astrid-vatne",             14, #Keeper,      ?16),
-      (165, "Ragnhild Aarrestad",       "ragnhild-aarrestad",       14, #VenstreKant, ?7),
-      (166, "Sissel Haraldstad",        "sissel-haraldstad",        14, #HoyreKant,   ?10),
-      (167, "Gunhild Kristiansen",      "gunhild-kristiansen",      14, #Linje,       ?4),
-      (168, "Randi Nygaard",            "randi-nygaard",            14, #Bakspiller,  ?6),
-      (169, "Camilla Breivik",          "camilla-breivik",          14, #Bakspiller,  ?9),
-      (170, "Line Salvesen",            "line-salvesen",            14, #HoyreKant,   ?11),
-      (171, "Silje Vatland",            "silje-vatland",            14, #VenstreKant, ?3),
-      (172, "Marte Aasen",              "marte-aasen",              14, #Bakspiller,  ?14),
-      (173, "Kristin Jøssang",          "kristin-jossang",          14, #Linje,       ?5),
-      (174, "Hege Nordbø",              "hege-nordbo",              14, #Bakspiller,  ?8),
-      (175, "Ingrid Ree",               "ingrid-ree",               14, #VenstreKant, ?17),
-      (176, "Tone Undheim",             "tone-undheim",             14, #HoyreKant,   ?21),
+    // Players 1-50
+    let playersBatch1 : [(Nat, Text, Text, Nat, Types.Position, ?Nat)] = [
+      (1, "Ine Skartveit Bergsvik", "ine-skartveit-bergsvik", 1, #Keeper, ?1),
+      (2, "Frida Brandbu Andersen", "frida-brandbu-andersen", 1, #Bakspiller, ?3),
+      (3, "Malin Holta", "malin-holta", 1, #VenstreKant, ?5),
+      (4, "Selma Helén Henriksen", "selma-helen-henriksen", 1, #Linje, ?6),
+      (5, "Synne With", "synne-with", 1, #HoyreKant, ?7),
+      (6, "Kaja Horst Haugseng", "kaja-horst-haugseng", 1, #Linje, ?9),
+      (7, "Hanna Stormyr Ræstad", "hanna-stormyr-raestad", 1, #HoyreKant, ?11),
+      (8, "Rikke Marie Granlund", "rikke-marie-granlund", 1, #Keeper, ?12),
+      (9, "Ine Erlandsen Grimsrud", "ine-erlandsen-grimsrud", 1, #HoyreKant, ?14),
+      (10, "Maria Khan", "maria-khan", 1, #HoyreKant, ?15),
+      (11, "Hedda Eggen Granli", "hedda-eggen-granli", 1, #Keeper, ?16),
+      (12, "Kristiane Knutsen", "kristiane-knutsen", 1, #Bakspiller, ?17),
+      (13, "Dina Klungtveit Olufsen", "dina-klungtveit-olufsen", 1, #HoyreKant, ?21),
+      (14, "Pia Grønstad", "pia-gronstad", 1, #HoyreKant, ?22),
+      (15, "Vilde Refsland", "vilde-refsland", 1, #VenstreKant, ?23),
+      (16, "Elise Utsola", "elise-utsola", 1, #Bakspiller, ?23),
+      (17, "Martha Barka", "martha-barka", 1, #HoyreKant, ?24),
+      (18, "Merlinda Qorraj", "merlinda-qorraj", 1, #VenstreKant, ?25),
+      (19, "Thea Kristensen", "thea-kristensen", 1, #VenstreKant, ?29),
+      (20, "Sara Todireanu Thorsen", "sara-todireanu-thorsen", 1, #Bakspiller, ?31),
+      (21, "Melanie Mie Bak", "melanie-mie-bak", 1, #VenstreKant, ?39),
+      (22, "Hege Holgersen Danielsen", "hege-holgersen-danielsen", 1, #Linje, ?49),
+      (23, "Camilla Herrem", "camilla-herrem", 1, #VenstreKant, ?77),
+      (24, "Malin Larsen Aune", "malin-larsen-aune", 2, #HoyreKant, ?6),
+      (25, "Ingeborg Storbæk Monné", "ingeborg-storbaek-monne", 2, #VenstreKant, ?7),
+      (26, "Mathilde Rivas-Toft", "mathilde-rivas-toft", 2, #HoyreKant, ?9),
+      (27, "Kristin Venn", "kristin-venn", 2, #VenstreKant, ?10),
+      (28, "Tonje Enkerud", "tonje-enkerud", 2, #VenstreKant, ?11),
+      (29, "Monika Høistad Bruce", "monika-hoistad-bruce", 2, #Linje, ?14),
+      (30, "Elise Skinnehaugen", "elise-skinnehaugen", 2, #HoyreKant, ?15),
+      (31, "Julie Victoria Nordevall", "julie-victoria-nordevall", 2, #Keeper, ?16),
+      (32, "Pernille Brandenborg", "pernille-brandenborg", 2, #Linje, ?18),
+      (33, "Celina Vatne", "celina-vatne", 2, #VenstreKant, ?19),
+      (34, "Nora Isabell Husom Nordstrand", "nora-isabell-husom-nordstrand", 2, #HoyreKant, ?20),
+      (35, "Anniken Obaidli", "anniken-obaidli", 2, #Bakspiller, ?25),
+      (36, "Ada Aalstad", "ada-aalstad", 2, #Bakspiller, ?29),
+      (37, "Eli Marie Raasok", "eli-marie-raasok", 2, #Keeper, ?30),
+      (38, "Kjerstin Boge Solås", "kjerstin-boge-solas", 2, #VenstreKant, ?31),
+      (39, "Sanne Løkka Hagen", "sanne-lokka-hagen", 2, #HoyreKant, ?33),
+      (40, "Oda Cathrine Lunne Mastad", "oda-cathrine-lunne-mastad", 2, #Linje, ?37),
+      (41, "June Cecilie Krogh", "june-cecilie-krogh", 2, #Keeper, ?55),
+      (42, "Veronika Kafka Malá", "veronika-kafka-mal", 2, #VenstreKant, ?67),
+      (43, "Eli Smørgrav Skogstrand", "eli-smorgrav-skogstrand", 3, #Keeper, ?1),
+      (44, "Mia Kristine Strand", "mia-kristine-strand", 3, #HoyreKant, ?2),
+      (45, "Johanne Halseth Nypan", "johanne-halseth-nypan", 3, #HoyreKant, ?7),
+      (46, "Runa Heimsjø Sand", "runa-heimsjo-sand", 3, #VenstreKant, ?9),
+      (47, "Lene Kristiansen Tveiten", "lene-kristiansen-tveiten", 3, #Bakspiller, ?10),
+      (48, "Fanny Alma Elovson", "fanny-alma-elovson", 3, #VenstreKant, ?11),
+      (49, "Henrikke Hauge Kjølholdt", "henrikke-hauge-kjolholdt", 3, #HoyreKant, ?15),
+      (50, "Torine Hjelme Dalen", "torine-hjelme-dalen", 3, #VenstreKant, ?18),
     ];
-    // Image URLs for the three demo players (served from frontend /assets/)
-    let demoImages : Map.Map<Nat, Text> = Map.empty<Nat, Text>();
-    demoImages.add(3,  "/assets/generated/camilla-herrem.dim_600x800.jpg");
-    demoImages.add(14, "/assets/ida-alstad.jpg");
-    demoImages.add(68, "/assets/sara-solheim.jpg");
-
-    for ((id, name, slug, teamId, position, jerseyNumber) in playersData.values()) {
+    for ((id, name, slug, teamId, position, jerseyNumber) in playersBatch1.values()) {
       state.players.add({
         id; name; slug; teamId; position; jerseyNumber;
-        imageUrl = demoImages.get(id);
+        imageUrl = null;
+        nationality = ?"NO";
+        isActive = true;
+      });
+    };
+
+    // Players 51-100
+    let playersBatch2 : [(Nat, Text, Text, Nat, Types.Position, ?Nat)] = [
+      (51, "Maja Sofie Muri", "maja-sofie-muri", 3, #Linje, ?20),
+      (52, "Lise Slemmen Gussiås", "lise-slemmen-gussias", 3, #Keeper, ?24),
+      (53, "Tonje Løseth", "tonje-loseth", 3, #VenstreKant, ?25),
+      (54, "Kaja Røhne", "kaja-rohne", 3, #Linje, ?26),
+      (55, "Julia Hessen", "julia-hessen", 3, #Bakspiller, ?30),
+      (56, "Julie Bøe Jacobsen", "julie-boe-jacobsen", 3, #Bakspiller, ?33),
+      (57, "Yazmin Yamundow Marie Ceesay", "yazmin-yamundow-marie-ceesay", 3, #HoyreKant, ?34),
+      (58, "Ingeborg Johanne Nyborg Tømmervåg", "ingeborg-johanne-nyborg-tommervag", 3, #Linje, ?39),
+      (59, "Jenny Carlsson", "jenny-carlsson", 3, #VenstreKant, ?42),
+      (60, "Susanne Liberg Amundsen", "susanne-liberg-amundsen", 3, #VenstreKant, ?44),
+      (61, "Liv Annik Drechsler", "liv-annik-drechsler", 3, #Linje, ?49),
+      (62, "Sakura Hauge", "sakura-hauge", 3, #Keeper, ?87),
+      (63, "Olivia Lykke Nygaard", "olivia-lykke-nygaard", 4, #Keeper, ?1),
+      (64, "Mari Kirkeby Stensrud", "mari-kirkeby-stensrud", 4, #VenstreKant, ?3),
+      (65, "Charlotte Koffeld Iversen", "charlotte-koffeld-iversen", 4, #HoyreKant, ?4),
+      (66, "Kine Hauge Kvalsund", "kine-hauge-kvalsund", 4, #VenstreKant, ?5),
+      (67, "Constance Hedenstad", "constance-hedenstad", 4, #HoyreKant, ?6),
+      (68, "Sara Berg", "sara-berg", 4, #VenstreKant, ?7),
+      (69, "Martine Wolff", "martine-wolff", 4, #Linje, ?8),
+      (70, "Julie Hulleberg", "julie-hulleberg", 4, #VenstreKant, ?10),
+      (71, "Frøydis Wiik Seierstad", "froydis-wiik-seierstad", 4, #Bakspiller, ?11),
+      (72, "Dina Frisendal", "dina-frisendal", 4, #Keeper, ?12),
+      (73, "Guro Ramberg", "guro-ramberg", 4, #HoyreKant, ?15),
+      (74, "Lea Løkke-Øwre", "lea-lokke-owre", 4, #Keeper, ?16),
+      (75, "Tuva Engh Auby", "tuva-engh-auby", 4, #Keeper, ?17),
+      (76, "Tirill Alexandrine Solumsmoen Mørch", "tirill-alexandrine-solumsmoen-morch", 4, #Linje, ?18),
+      (77, "Ingrid Vinjevoll", "ingrid-vinjevoll", 4, #VenstreKant, ?20),
+      (78, "Andrea Rønning", "andrea-ronning", 4, #Bakspiller, ?22),
+      (79, "Christine Neumann Strøm", "christine-neumann-strom", 4, #Keeper, ?23),
+      (80, "Amanda Maria Kurtovic", "amanda-maria-kurtovic", 4, #HoyreKant, ?24),
+      (81, "Tiril Birgitte Rosenberg", "tiril-birgitte-rosenberg", 4, #Linje, ?25),
+      (82, "Maja Furu Sæteren", "maja-furu-saeteren", 4, #VenstreKant, ?26),
+      (83, "Signe Andreassen", "signe-andreassen", 4, #Bakspiller, ?29),
+      (84, "Sigrid Ellingsen", "sigrid-ellingsen", 4, #Keeper, ?30),
+      (85, "Sanna Langmo Wold", "sanna-langmo-wold", 4, #Keeper, ?30),
+      (86, "Nea Angelina Holand Frydenlund", "nea-angelina-holand-frydenlund", 4, #VenstreKant, ?32),
+      (87, "Amalie Gram", "amalie-gram", 4, #Bakspiller, ?33),
+      (88, "Sarah Römhild", "sarah-romhild", 4, #Bakspiller, ?33),
+      (89, "Christina Pedersen", "christina-pedersen", 4, #Bakspiller, ?66),
+      (90, "Birgitte Karlsen Hagen", "birgitte-karlsen-hagen", 5, #VenstreKant, ?2),
+      (91, "Marthe Hatløy Walde", "marthe-hatloy-walde", 5, #Linje, ?4),
+      (92, "Avril Mikkelsen Frei", "avril-mikkelsen-frei", 5, #Bakspiller, ?7),
+      (93, "Stella Waagan Kruse", "stella-waagan-kruse", 5, #VenstreKant, ?8),
+      (94, "Henriette Espetvedt Eggen", "henriette-espetvedt-eggen", 5, #VenstreKant, ?10),
+      (95, "Sara Eline Lauritzen", "sara-eline-lauritzen", 5, #VenstreKant, ?11),
+      (96, "Emma Holtet", "emma-holtet", 5, #Linje, ?13),
+      (97, "Martine Hellesø Knutsen", "martine-helleso-knutsen", 5, #VenstreKant, ?15),
+      (98, "Helle Kjellberg-Line", "helle-kjellberg-line", 5, #Keeper, ?16),
+      (99, "Rikke Midtfjeld", "rikke-midtfjeld", 5, #HoyreKant, ?18),
+      (100, "Vilde Janbu Fresvik", "vilde-janbu-fresvik", 5, #HoyreKant, ?19),
+    ];
+    for ((id, name, slug, teamId, position, jerseyNumber) in playersBatch2.values()) {
+      state.players.add({
+        id; name; slug; teamId; position; jerseyNumber;
+        imageUrl = null;
+        nationality = ?"NO";
+        isActive = true;
+      });
+    };
+
+    // Players 101-150
+    let playersBatch3 : [(Nat, Text, Text, Nat, Types.Position, ?Nat)] = [
+      (101, "Fanny Skindlo", "fanny-skindlo", 5, #Bakspiller, ?20),
+      (102, "Maria Bergslien Gald", "maria-bergslien-gald", 5, #VenstreKant, ?22),
+      (103, "Viktoria Giske", "viktoria-giske", 5, #Linje, ?23),
+      (104, "Kadija Mårdalen", "kadija-mardalen", 5, #Keeper, ?24),
+      (105, "Marie Kristine Rokkones Hansen", "marie-kristine-rokkones-hansen", 5, #HoyreKant, ?26),
+      (106, "Nora Evelina Cecilia Rosenberg", "nora-evelina-cecilia-rosenberg", 5, #VenstreKant, ?28),
+      (107, "Benedikte Kalstad Hernes", "benedikte-kalstad-hernes", 6, #Keeper, ?1),
+      (108, "Emily Lønnestad-Wiers", "emily-lonnestad-wiers", 6, #VenstreKant, ?2),
+      (109, "Sara Hallingstad", "sara-hallingstad", 6, #VenstreKant, ?3),
+      (110, "Linnea Skadal Kyrkjeeide", "linnea-skadal-kyrkjeeide", 6, #HoyreKant, ?4),
+      (111, "Maren Eriksen Langø", "maren-eriksen-lango", 6, #VenstreKant, ?5),
+      (112, "Lina Waage Mossestad", "lina-waage-mossestad", 6, #Bakspiller, ?6),
+      (113, "Frida Aasekjær Wilkensen", "frida-aasekjaer-wilkensen", 6, #HoyreKant, ?9),
+      (114, "Christine Karlsen Alver", "christine-karlsen-alver", 6, #Bakspiller, ?10),
+      (115, "Anna Mortvedt", "anna-mortvedt", 6, #Linje, ?11),
+      (116, "Marie Skurtveit Davidsen", "marie-skurtveit-davidsen", 6, #Keeper, ?12),
+      (117, "Fride Heggdal Stølen", "fride-heggdal-stolen", 6, #Linje, ?13),
+      (118, "Eline Mangen Solbakken", "eline-mangen-solbakken", 6, #Linje, ?14),
+      (119, "Marie Mjøs", "marie-mjos", 6, #Bakspiller, ?15),
+      (120, "Leah Bjotveit Verpeide", "leah-bjotveit-verpeide", 6, #Keeper, ?16),
+      (121, "Eline Osland", "eline-osland", 6, #HoyreKant, ?19),
+      (122, "Martine Kårigstad Andersen", "martine-karigstad-andersen", 6, #VenstreKant, ?20),
+      (123, "Evita Naper Lindberget", "evita-naper-lindberget", 6, #Bakspiller, ?21),
+      (124, "Emma Gloppestad", "emma-gloppestad", 6, #VenstreKant, ?22),
+      (125, "Sara Osen Tefre", "sara-osen-tefre", 6, #HoyreKant, ?23),
+      (126, "Andrea Varvin Fredriksen", "andrea-varvin-fredriksen", 6, #VenstreKant, ?24),
+      (127, "Aurora Kjellevold Hatle", "aurora-kjellevold-hatle", 6, #VenstreKant, ?27),
+      (128, "Haya Elhanafi", "haya-elhanafi", 6, #Keeper, ?40),
+      (129, "Maren Austmo Pedersen", "maren-austmo-pedersen", 7, #Keeper, ?1),
+      (130, "Ine Fremo", "ine-fremo", 7, #Bakspiller, ?3),
+      (131, "Mathilde Arnstad", "mathilde-arnstad", 7, #Linje, ?4),
+      (132, "Dina Salih", "dina-salih", 7, #VenstreKant, ?5),
+      (133, "Janne Charlotte Thoresen Nordnes", "janne-charlotte-thoresen-nordnes", 7, #Linje, ?7),
+      (134, "Hedda Lauvås Aasen", "hedda-lauvas-aasen", 7, #HoyreKant, ?9),
+      (135, "Silje Katrine Waade", "silje-katrine-waade", 7, #HoyreKant, ?10),
+      (136, "Frida Molaup Selnes", "frida-molaup-selnes", 7, #Keeper, ?12),
+      (137, "Helene Lovise Wesche-Rø", "helene-lovise-wesche-ro", 7, #Linje, ?13),
+      (138, "Andrea Austmo Pedersen", "andrea-austmo-pedersen", 7, #Keeper, ?16),
+      (139, "Janne Håvelsrud Eklo", "janne-havelsrud-eklo", 7, #VenstreKant, ?17),
+      (140, "Marte Lausund Nornes", "marte-lausund-nornes", 7, #Bakspiller, ?18),
+      (141, "Mathea Enger", "mathea-enger", 7, #HoyreKant, ?19),
+      (142, "Fride Lunne Mastad", "fride-lunne-mastad", 7, #Bakspiller, ?20),
+      (143, "Malin Smevik Dahl", "malin-smevik-dahl", 7, #HoyreKant, ?21),
+      (144, "Freja Emilie Vinther Christensen", "freja-emilie-vinther-christensen", 7, #VenstreKant, ?22),
+      (145, "Sofie Sandø Kleiven", "sofie-sando-kleiven", 7, #HoyreKant, ?23),
+      (146, "Pernille Rø", "pernille-ro", 7, #Keeper, ?24),
+      (147, "Johanna Dahl Haugan", "johanna-dahl-haugan", 7, #VenstreKant, ?25),
+      (148, "Kristin Nordløkken Kounchou", "kristin-nordlokken-kounchou", 7, #VenstreKant, ?26),
+      (149, "Emma Henden Foosnæs", "emma-henden-foosnaes", 7, #HoyreKant, ?27),
+      (150, "Live Sønstebø", "live-sonstebo", 7, #Linje, ?28),
+    ];
+    for ((id, name, slug, teamId, position, jerseyNumber) in playersBatch3.values()) {
+      state.players.add({
+        id; name; slug; teamId; position; jerseyNumber;
+        imageUrl = null;
+        nationality = ?"NO";
+        isActive = true;
+      });
+    };
+
+    // Players 151-200
+    let playersBatch4 : [(Nat, Text, Text, Nat, Types.Position, ?Nat)] = [
+      (151, "Hanne Ramsøskar Sagvold", "hanne-ramsoskar-sagvold", 8, #Keeper, ?1),
+      (152, "Zara Johnsson Solberg", "zara-johnsson-solberg", 8, #Bakspiller, ?2),
+      (153, "Maja Eiberg", "maja-eiberg", 8, #VenstreKant, ?5),
+      (154, "Sofia Shauri Dalsveen", "sofia-shauri-dalsveen", 8, #VenstreKant, ?7),
+      (155, "Thea Andresen", "thea-andresen", 8, #Bakspiller, ?10),
+      (156, "Hanna Blystad", "hanna-blystad", 8, #VenstreKant, ?11),
+      (157, "Mathilde Berner Rømer", "mathilde-berner-romer", 8, #Keeper, ?12),
+      (158, "Emily Solberg", "emily-solberg", 8, #HoyreKant, ?13),
+      (159, "Kristin Dorthea Eskerud", "kristin-dorthea-eskerud", 8, #Linje, ?18),
+      (160, "Oda Ragnhild Bekker Olsen", "oda-ragnhild-bekker-olsen", 8, #Linje, ?19),
+      (161, "Maren Hansen Tangen", "maren-hansen-tangen", 8, #HoyreKant, ?21),
+      (162, "Anniken Maria Monsen", "anniken-maria-monsen", 8, #Bakspiller, ?25),
+      (163, "Magdele Kvarving Sandtrø", "magdele-kvarving-sandtro", 8, #HoyreKant, ?27),
+      (164, "Malene Hansen Tangen", "malene-hansen-tangen", 8, #VenstreKant, ?30),
+      (165, "Regine Nekstad", "regine-nekstad", 8, #VenstreKant, ?45),
+      (166, "Martine Guterud Helland", "martine-guterud-helland", 8, #Linje, ?72),
+      (167, "Alberte Ebler", "alberte-ebler", 8, #HoyreKant, ?77),
+      (168, "Vilde Amalie Klaussen", "vilde-amalie-klaussen", 9, #Keeper, ?1),
+      (169, "Oda Olsen", "oda-olsen", 9, #Bakspiller, ?2),
+      (170, "Lea Tidemann Stenvik", "lea-tidemann-stenvik", 9, #Bakspiller, ?4),
+      (171, "Hannah Kjelstad Høsøien", "hannah-kjelstad-hosoien", 9, #Bakspiller, ?5),
+      (172, "Oda Jeanette Burhol", "oda-jeanette-burhol", 9, #VenstreKant, ?6),
+      (173, "Ingeborg Rolseth Holt", "ingeborg-rolseth-holt", 9, #Bakspiller, ?7),
+      (174, "Henriette Jarnang", "henriette-jarnang", 9, #HoyreKant, ?8),
+      (175, "Hedda Skjelbreid Rønningen", "hedda-skjelbreid-ronningen", 9, #Bakspiller, ?9),
+      (176, "Caroline Wikheim Aas", "caroline-wikheim-aas", 9, #HoyreKant, ?10),
+      (177, "Mia Kristin Vinje Horgøien", "mia-kristin-vinje-horgoien", 9, #Linje, ?11),
+      (178, "Mia Stensland", "mia-stensland", 9, #Keeper, ?12),
+      (179, "Viktoria Odinokova Eilertsen", "viktoria-odinokova-eilertsen", 9, #Bakspiller, ?13),
+      (180, "Linn Andresen", "linn-andresen", 9, #Bakspiller, ?15),
+      (181, "Mia Tvedte Johannessen", "mia-tvedte-johannessen", 9, #Keeper, ?16),
+      (182, "Ingvild Bersås Westersjø", "ingvild-bersas-westersjo", 9, #Linje, ?17),
+      (183, "Anne Malin Antonsen", "anne-malin-antonsen", 9, #Bakspiller, ?18),
+      (184, "Maja Rame", "maja-rame", 9, #VenstreKant, ?19),
+      (185, "Oda Kongssund", "oda-kongssund", 9, #Bakspiller, ?20),
+      (186, "Kaja Stavdal Bækkevar", "kaja-stavdal-baekkevar", 9, #Linje, ?24),
+      (187, "Emma Christine Gudmundsen", "emma-christine-gudmundsen", 9, #Linje, ?29),
+      (188, "Madeleine Bakke", "madeleine-bakke", 9, #HoyreKant, ?31),
+      (189, "Heidi Bildøy Østvold", "heidi-bildoy-ostvold", 9, #Linje, ?33),
+      (190, "Sofie Magdalena Plich", "sofie-magdalena-plich", 9, #VenstreKant, ?34),
+      (191, "Tora Charlotte Tande-Elton", "tora-charlotte-tande-elton", 10, #Keeper, ?1),
+      (192, "Celine Lyngholt-Osland", "celine-lyngholt-osland", 10, #VenstreKant, ?2),
+      (193, "Elisabeth Hammerstad", "elisabeth-hammerstad", 10, #HoyreKant, ?3),
+      (194, "Anette Sundfær Johnsen", "anette-sundfaer-johnsen", 10, #HoyreKant, ?4),
+      (195, "Oda Caroline Mørk", "oda-caroline-mork", 10, #HoyreKant, ?5),
+      (196, "Karen Linnestad Spone", "karen-linnestad-spone", 10, #VenstreKant, ?6),
+      (197, "Mari Myrland", "mari-myrland", 10, #Bakspiller, ?7),
+      (198, "Hanna Waaler Lindquist", "hanna-waaler-lindquist", 10, #Linje, ?8),
+      (199, "Aurora Solveig Kristiansen", "aurora-solveig-kristiansen", 10, #Bakspiller, ?9),
+      (200, "Iben Helland Flø", "iben-helland-flo", 10, #VenstreKant, ?10),
+    ];
+    for ((id, name, slug, teamId, position, jerseyNumber) in playersBatch4.values()) {
+      state.players.add({
+        id; name; slug; teamId; position; jerseyNumber;
+        imageUrl = null;
+        nationality = ?"NO";
+        isActive = true;
+      });
+    };
+
+    // Players 201-250
+    let playersBatch5 : [(Nat, Text, Text, Nat, Types.Position, ?Nat)] = [
+      (201, "Sara Benedicte Fredheim Barbosa", "sara-benedicte-fredheim-barbosa", 10, #Bakspiller, ?11),
+      (202, "Margrethe Moen Kile", "margrethe-moen-kile", 10, #Keeper, ?12),
+      (203, "Anette Rusten", "anette-rusten", 10, #Linje, ?14),
+      (204, "Tilde Alræk", "tilde-alraek", 10, #Bakspiller, ?15),
+      (205, "Marte Sirén Figenschau", "marte-siren-figenschau", 10, #Linje, ?19),
+      (206, "Andrea Landås Gabrielsen", "andrea-landas-gabrielsen", 10, #VenstreKant, ?20),
+      (207, "Harrieth Toft Nordrum", "harrieth-toft-nordrum", 10, #VenstreKant, ?21),
+      (208, "Hante Satu Hamel", "hante-satu-hamel", 10, #Keeper, ?22),
+      (209, "Emilie Hattestad", "emilie-hattestad", 10, #HoyreKant, ?23),
+      (210, "Mia Holene Kvithyll", "mia-holene-kvithyll", 10, #HoyreKant, ?24),
+      (211, "Line Strand-Larsen", "line-strand-larsen", 10, #VenstreKant, ?25),
+      (212, "Mirela Gjikokaj", "mirela-gjikokaj", 10, #VenstreKant, ?77),
+      (213, "Martine Skudvig Mork", "martine-skudvig-mork", 11, #Bakspiller, ?2),
+      (214, "Hanna Karoline Hernes Gåsvær", "hanna-karoline-hernes-gasvaer", 11, #Bakspiller, ?3),
+      (215, "Mille Tveit Porsmyr", "mille-tveit-porsmyr", 11, #Bakspiller, ?5),
+      (216, "Mali Halldorsson", "mali-halldorsson", 11, #VenstreKant, ?6),
+      (217, "Emily Andersen", "emily-andersen", 11, #Bakspiller, ?7),
+      (218, "Nora Løken", "nora-loken", 11, #VenstreKant, ?11),
+      (219, "Kristin Loraas Eiriksson", "kristin-loraas-eiriksson", 11, #VenstreKant, ?13),
+      (220, "Aleksandra Mandic", "aleksandra-mandic", 11, #Linje, ?14),
+      (221, "Vilde Tornes Finneide", "vilde-tornes-finneide", 11, #Keeper, ?16),
+      (222, "Ida Marie Syversen Kallhovd", "ida-marie-syversen-kallhovd", 11, #HoyreKant, ?19),
+      (223, "Mille Constanse Brekken Daae", "mille-constanse-brekken-daae", 11, #HoyreKant, ?21),
+      (224, "Kristin Halvorsen", "kristin-halvorsen", 11, #Linje, ?23),
+      (225, "Marthine Svendsberget", "marthine-svendsberget", 11, #VenstreKant, ?24),
+      (226, "Elika Nodland Meiland", "elika-nodland-meiland", 11, #Bakspiller, ?25),
+      (227, "Vanessa Bråten Gulbrandsen", "vanessa-braten-gulbrandsen", 11, #HoyreKant, ?27),
+      (228, "Silje Leikfoss Solbakken", "silje-leikfoss-solbakken", 11, #VenstreKant, ?28),
+      (229, "Maja Linnea Gulliksen", "maja-linnea-gulliksen", 11, #Keeper, ?30),
+      (230, "Maja Leinan", "maja-leinan", 11, #Linje, ?35),
+      (231, "Thea Ellen Löfstedt", "thea-ellen-lofstedt", 11, #HoyreKant, ?64),
+      (232, "My Lervold", "my-lervold", 12, #VenstreKant, ?2),
+      (233, "Martine Tveter", "martine-tveter", 12, #Bakspiller, ?4),
+      (234, "Julie Rensmoen Benterud", "julie-rensmoen-benterud", 12, #HoyreKant, ?5),
+      (235, "Tuva Knai", "tuva-knai", 12, #Linje, ?6),
+      (236, "Inga Sandvold", "inga-sandvold", 12, #Linje, ?7),
+      (237, "Hannah Deari Solheim", "hannah-deari-solheim", 12, #Bakspiller, ?9),
+      (238, "Mia Lundberg Lersbryggen", "mia-lundberg-lersbryggen", 12, #VenstreKant, ?10),
+      (239, "Sara Ashuri", "sara-ashuri", 12, #VenstreKant, ?11),
+      (240, "Zaynab Elmrani", "zaynab-elmrani", 12, #Keeper, ?12),
+      (241, "Sarah Deari Solheim", "sarah-deari-solheim", 12, #HoyreKant, ?14),
+      (242, "Christina Midtdal Nummestad", "christina-midtdal-nummestad", 12, #VenstreKant, ?15),
+      (243, "Marie Elstrand Munthe", "marie-elstrand-munthe", 12, #HoyreKant, ?17),
+      (244, "Linnea Isabel Ingeborg Aula", "linnea-isabel-ingeborg-aula", 12, #VenstreKant, ?18),
+      (245, "Hedda Klippen Nilsen", "hedda-klippen-nilsen", 12, #HoyreKant, ?20),
+      (246, "Sunniva Sogn-Johansen", "sunniva-sogn-johansen", 12, #Linje, ?22),
+      (247, "Emma Egge Edner", "emma-egge-edner", 12, #HoyreKant, ?25),
+      (248, "Marthe Bjørnson Ulvåknippa", "marthe-bjornson-ulvaknippa", 12, #VenstreKant, ?27),
+      (249, "Mathilde Aas Fjelddalen", "mathilde-aas-fjelddalen", 12, #VenstreKant, ?33),
+      (250, "Ida Wall Bakken", "ida-wall-bakken", 12, #Keeper, ?37),
+    ];
+    for ((id, name, slug, teamId, position, jerseyNumber) in playersBatch5.values()) {
+      state.players.add({
+        id; name; slug; teamId; position; jerseyNumber;
+        imageUrl = null;
+        nationality = ?"NO";
+        isActive = true;
+      });
+    };
+
+    // Players 251-296
+    let playersBatch6 : [(Nat, Text, Text, Nat, Types.Position, ?Nat)] = [
+      (251, "Stine Mellemstrand Bore", "stine-mellemstrand-bore", 12, #Bakspiller, ?72),
+      (252, "Thea Granlund", "thea-granlund", 13, #Keeper, ?1),
+      (253, "Siri Elicabeth Hansson", "siri-elicabeth-hansson", 13, #Bakspiller, ?4),
+      (254, "Veslemøy Marie Mehus", "veslemoy-marie-mehus", 13, #Bakspiller, ?6),
+      (255, "Tuva Pharo", "tuva-pharo", 13, #Linje, ?7),
+      (256, "Tilde Wilhelmsen Grønvold", "tilde-wilhelmsen-gronvold", 13, #Bakspiller, ?9),
+      (257, "Bertine Emilie Sundby Lunde", "bertine-emilie-sundby-lunde", 13, #Bakspiller, ?10),
+      (258, "Sofie Fosnæss Hanssen", "sofie-fosnaess-hanssen", 13, #VenstreKant, ?11),
+      (259, "Erika Madeleine Arntsen Bjørløw", "erika-madeleine-arntsen-bjorlow", 13, #Keeper, ?12),
+      (260, "Anette Sundal", "anette-sundal", 13, #HoyreKant, ?14),
+      (261, "Andrea Holmsveen Moen", "andrea-holmsveen-moen", 13, #Bakspiller, ?15),
+      (262, "Alva Bjanes Iversen", "alva-bjanes-iversen", 13, #Keeper, ?16),
+      (263, "Inez Hjemås Fagermo", "inez-hjemas-fagermo", 13, #VenstreKant, ?17),
+      (264, "Guro Skålevåg", "guro-skalevag", 13, #Bakspiller, ?19),
+      (265, "Kristina Othilie Hetland Schennum", "kristina-othilie-hetland-schennum", 13, #VenstreKant, ?20),
+      (266, "Tilde Amalia Grönvall", "tilde-amalia-gronvall", 13, #Linje, ?23),
+      (267, "Veriana Veliqi", "veriana-veliqi", 13, #HoyreKant, ?24),
+      (268, "Janine Borchgrevink Børkeeiet", "janine-borchgrevink-borkeeiet", 13, #Bakspiller, ?25),
+      (269, "Ingrid Louise Bjørnskau Berens", "ingrid-louise-bjornskau-berens", 13, #Linje, ?26),
+      (270, "Andrea Nalbant Moe", "andrea-nalbant-moe", 13, #Bakspiller, ?33),
+      (271, "Vilde Marsteinstredet", "vilde-marsteinstredet", 13, #Keeper, ?50),
+      (272, "Nicoline Jullumstrø", "nicoline-jullumstro", 13, #HoyreKant, ?75),
+      (273, "Marthe Davidsen Hellevik", "marthe-davidsen-hellevik", 14, #Keeper, ?1),
+      (274, "Kristina Granli Nordvik", "kristina-granli-nordvik", 14, #VenstreKant, ?2),
+      (275, "Julie Kristine Hattestad", "julie-kristine-hattestad", 14, #Bakspiller, ?3),
+      (276, "Bettina Ranvik", "bettina-ranvik", 14, #Linje, ?4),
+      (277, "Ina Jåtten", "ina-jatten", 14, #HoyreKant, ?6),
+      (278, "Lorin Sendi", "lorin-sendi", 14, #Bakspiller, ?7),
+      (279, "Mia Kvarme", "mia-kvarme", 14, #HoyreKant, ?9),
+      (280, "Anna Lunke Norum", "anna-lunke-norum", 14, #VenstreKant, ?11),
+      (281, "Daniella Holm", "daniella-holm", 14, #Keeper, ?12),
+      (282, "Ane Engan Haugen", "ane-engan-haugen", 14, #VenstreKant, ?14),
+      (283, "Bibi Aandewiel", "bibi-aandewiel", 14, #VenstreKant, ?15),
+      (284, "Julie Søfting Tovslid", "julie-softing-tovslid", 14, #Keeper, ?16),
+      (285, "Fredrikke Sundsby Kjølstad", "fredrikke-sundsby-kjolstad", 14, #VenstreKant, ?17),
+      (286, "Marte Juuhl Svensson", "marte-juuhl-svensson", 14, #Bakspiller, ?18),
+      (287, "Synnøve Lind Edvardsen", "synnove-lind-edvardsen", 14, #Linje, ?19),
+      (288, "Nora Young Za Lundell", "nora-young-za-lundell", 14, #Linje, ?20),
+      (289, "Elvira Rensmoen", "elvira-rensmoen", 14, #HoyreKant, ?22),
+      (290, "Vilde Bjørnsen", "vilde-bjornsen", 14, #HoyreKant, ?24),
+      (291, "Marie Elde Selvaag", "marie-elde-selvaag", 14, #HoyreKant, ?26),
+      (292, "Karin Mollatt", "karin-mollatt", 14, #Linje, ?27),
+      (293, "Isabel Gunnerød", "isabel-gunnerod", 14, #VenstreKant, ?30),
+      (294, "Ane Emilie Westerhus Bolstad", "ane-emilie-westerhus-bolstad", 14, #Keeper, ?96),
+      (295, "Hansine Brune Skorgevik", "hansine-brune-skorgevik", 14, #Bakspiller, ?97),
+      (296, "Marte Sofie Syverud", "marte-sofie-syverud", 14, #Bakspiller, ?98),
+    ];
+    for ((id, name, slug, teamId, position, jerseyNumber) in playersBatch6.values()) {
+      state.players.add({
+        id; name; slug; teamId; position; jerseyNumber;
+        imageUrl = null;
         nationality = ?"NO";
         isActive = true;
       });
     };
 
     // ── Matches ──────────────────────────────────────────────────────────────
-    // Past matches (Finished)
-    let finishedMatches : [(Nat, Nat, Nat, Int, ?Text)] = [
-      (1,  1, 2,  daysAgo(70), ?"Sola Idrettshall"),
-      (2,  3, 4,  daysAgo(63), ?"Hamar Idrettshall"),
-      (3,  5, 6,  daysAgo(63), ?"Tertnes Arena"),
-      (4,  7, 8,  daysAgo(63), ?"Fjellhammer Hallen"),
-      (5,  2, 3,  daysAgo(56), ?"Larvik Arena"),
-      (6,  4, 1,  daysAgo(56), ?"Molde Arena"),
-      (7,  6, 5,  daysAgo(49), ?"Fana Hallen"),
-      (8,  8, 7,  daysAgo(49), ?"Byåsen Hallen"),
-      (9,  1, 3,  daysAgo(49), ?"Sola Idrettshall"),
-      (10, 2, 4,  daysAgo(42), ?"Larvik Arena"),
-      (11, 5, 3,  daysAgo(42), ?"Tertnes Arena"),
-      (12, 7, 6,  daysAgo(42), ?"Fjellhammer Hallen"),
-      (13, 6, 1,  daysAgo(35), ?"Fana Hallen"),
-      (14, 3, 2,  daysAgo(35), ?"Hamar Idrettshall"),
-      (15, 8, 5,  daysAgo(35), ?"Byåsen Hallen"),
-      (16, 4, 6,  daysAgo(28), ?"Molde Arena"),
-      (17, 1, 5,  daysAgo(28), ?"Sola Idrettshall"),
-      (18, 7, 2,  daysAgo(28), ?"Fjellhammer Hallen"),
-      (19, 2, 6,  daysAgo(21), ?"Larvik Arena"),
-      (20, 3, 1,  daysAgo(21), ?"Hamar Idrettshall"),
-    ];
-    for ((id, homeId, awayId, startTime, venue) in finishedMatches.values()) {
-      state.matches.add({
-        id; homeTeamId = homeId; awayTeamId = awayId;
-        startTime; venue; status = #Finished;
-        competition = "REMA 1000-ligaen";
-      });
-    };
-
-    // Upcoming matches
-    let upcomingMatches : [(Nat, Nat, Nat, Int, ?Text)] = [
-      (21, 5, 4,  daysFromNow(4),  ?"Tertnes Arena"),
-      (22, 6, 3,  daysFromNow(4),  ?"Fana Hallen"),
-      (23, 7, 1,  daysFromNow(7),  ?"Fjellhammer Hallen"),
-      (24, 8, 2,  daysFromNow(7),  ?"Byåsen Hallen"),
-      (25, 1, 6,  daysFromNow(11), ?"Sola Idrettshall"),
-      (26, 2, 7,  daysFromNow(11), ?"Larvik Arena"),
-      (27, 3, 8,  daysFromNow(14), ?"Hamar Idrettshall"),
-      (28, 4, 5,  daysFromNow(18), ?"Molde Arena"),
-      (29, 6, 7,  daysFromNow(21), ?"Fana Hallen"),
-      (30, 8, 1,  daysFromNow(25), ?"Byåsen Hallen"),
-    ];
-    for ((id, homeId, awayId, startTime, venue) in upcomingMatches.values()) {
-      state.matches.add({
-        id; homeTeamId = homeId; awayTeamId = awayId;
-        startTime; venue; status = #Upcoming;
-        competition = "REMA 1000-ligaen";
-      });
-    };
+    // No seed matches - populated from live data
 
     // ── Player Match Stats ───────────────────────────────────────────────────
-    var statsId = 0;
+    // Empty - populated from live data
 
-    func mkOutfieldStats(pid : Nat, mid : Nat, mins : Nat, goals : Nat, shots : Nat, assists : Nat, yc : Nat, twos : Nat) : Types.PlayerMatchStats {
-      statsId += 1;
-      let shotPct : ?Float = if (shots > 0) ?(goals.toFloat() / shots.toFloat() * 100.0) else null;
-      {
-        id = statsId;
-        playerId = pid;
-        matchId = mid;
-        minutesPlayed = ?mins;
-        goals = if (goals > 0) ?goals else null;
-        shots = if (shots > 0) ?shots else null;
-        shotPct;
-        sevenMeterGoals = null;
-        sevenMeterAttempts = null;
-        yellowCards = if (yc > 0) ?yc else null;
-        twoMinSuspensions = if (twos > 0) ?twos else null;
-        redCards = null;
-        blueCards = null;
-        assists = if (assists > 0) ?assists else null;
-        saves = null;
-        savePct = null;
-        turnovers = null;
-      };
-    };
-
-    func mkKeeperStats(pid : Nat, mid : Nat, mins : Nat, saves : Nat, totalShots : Nat) : Types.PlayerMatchStats {
-      statsId += 1;
-      let savePct : ?Float = if (totalShots > 0) ?(saves.toFloat() / totalShots.toFloat() * 100.0) else null;
-      {
-        id = statsId;
-        playerId = pid;
-        matchId = mid;
-        minutesPlayed = ?mins;
-        goals = null;
-        shots = null;
-        shotPct = null;
-        sevenMeterGoals = null;
-        sevenMeterAttempts = null;
-        yellowCards = null;
-        twoMinSuspensions = null;
-        redCards = null;
-        blueCards = null;
-        assists = null;
-        saves = if (saves > 0) ?saves else null;
-        savePct;
-        turnovers = null;
-      };
-    };
-
-    // Match 1: Sola (1) vs Larvik (2)
-    state.playerMatchStats.add(mkKeeperStats(1,  1, 60, 14, 32));
-    state.playerMatchStats.add(mkOutfieldStats(3,  1, 55, 4, 7,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(4,  1, 60, 6, 9,  1, 1, 0));
-    state.playerMatchStats.add(mkOutfieldStats(5,  1, 50, 2, 4,  0, 0, 1));
-    state.playerMatchStats.add(mkOutfieldStats(6,  1, 60, 5, 8,  3, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(7,  1, 60, 3, 6,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(8,  1, 45, 2, 5,  1, 0, 0));
-    state.playerMatchStats.add(mkKeeperStats(11, 1, 60, 11, 28));
-    state.playerMatchStats.add(mkOutfieldStats(13, 1, 55, 5, 8,  1, 0, 1));
-    state.playerMatchStats.add(mkOutfieldStats(14, 1, 60, 4, 7,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(15, 1, 50, 1, 3,  0, 1, 0));
-    state.playerMatchStats.add(mkOutfieldStats(16, 1, 60, 7, 10, 2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(17, 1, 45, 3, 6,  1, 0, 0));
-
-    // Match 2: Storhamar (3) vs Molde Elite (4)
-    state.playerMatchStats.add(mkKeeperStats(21, 2, 60, 12, 29));
-    state.playerMatchStats.add(mkOutfieldStats(23, 2, 60, 3, 6,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(24, 2, 55, 5, 8,  0, 1, 0));
-    state.playerMatchStats.add(mkOutfieldStats(25, 2, 50, 2, 4,  1, 0, 1));
-    state.playerMatchStats.add(mkOutfieldStats(26, 2, 60, 6, 9,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(27, 2, 60, 4, 7,  1, 0, 0));
-    state.playerMatchStats.add(mkKeeperStats(31, 2, 60, 10, 27));
-    state.playerMatchStats.add(mkOutfieldStats(33, 2, 60, 4, 7,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(34, 2, 55, 3, 6,  0, 0, 1));
-    state.playerMatchStats.add(mkOutfieldStats(35, 2, 45, 1, 3,  1, 1, 0));
-    state.playerMatchStats.add(mkOutfieldStats(36, 2, 60, 5, 8,  3, 0, 0));
-
-    // Match 3: Tertnes (5) vs Fana (6)
-    state.playerMatchStats.add(mkKeeperStats(41, 3, 60, 11, 26));
-    state.playerMatchStats.add(mkOutfieldStats(43, 3, 60, 2, 5,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(44, 3, 55, 4, 7,  1, 0, 1));
-    state.playerMatchStats.add(mkOutfieldStats(45, 3, 50, 1, 3,  0, 1, 0));
-    state.playerMatchStats.add(mkOutfieldStats(46, 3, 60, 5, 9,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(47, 3, 60, 3, 6,  1, 0, 0));
-    state.playerMatchStats.add(mkKeeperStats(51, 3, 60, 9, 25));
-    state.playerMatchStats.add(mkOutfieldStats(53, 3, 55, 3, 6,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(54, 3, 60, 2, 5,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(55, 3, 50, 1, 2,  0, 0, 1));
-    state.playerMatchStats.add(mkOutfieldStats(56, 3, 60, 4, 8,  1, 1, 0));
-
-    // Match 4: Fjellhammer (7) vs Byåsen (8)
-    state.playerMatchStats.add(mkKeeperStats(63, 4, 60, 10, 24));
-    state.playerMatchStats.add(mkOutfieldStats(61, 4, 60, 4, 7,  2, 0, 0));  // Linnea Aula
-    state.playerMatchStats.add(mkOutfieldStats(62, 4, 55, 3, 6,  1, 0, 1));  // Zaynab Elmrani
-    state.playerMatchStats.add(mkOutfieldStats(64, 4, 60, 5, 8,  2, 0, 0));  // Martine Tveter
-    state.playerMatchStats.add(mkOutfieldStats(65, 4, 50, 2, 4,  1, 1, 0));  // Birta Run
-    state.playerMatchStats.add(mkOutfieldStats(66, 4, 60, 3, 6,  1, 0, 0));  // Hannah Deari Solheim
-    state.playerMatchStats.add(mkOutfieldStats(67, 4, 45, 1, 3,  0, 0, 0));  // Mia Lundberg
-    state.playerMatchStats.add(mkKeeperStats(83, 4, 60, 12, 28));
-    state.playerMatchStats.add(mkOutfieldStats(85, 4, 60, 3, 5,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(86, 4, 55, 4, 7,  2, 0, 1));
-    state.playerMatchStats.add(mkOutfieldStats(88, 4, 60, 5, 9,  1, 0, 0));
-
-    // Match 5: Larvik (2) vs Storhamar (3)
-    state.playerMatchStats.add(mkKeeperStats(11, 5, 60, 13, 31));
-    state.playerMatchStats.add(mkOutfieldStats(13, 5, 60, 6, 9,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(14, 5, 55, 5, 8,  1, 0, 1));
-    state.playerMatchStats.add(mkOutfieldStats(16, 5, 60, 8, 12, 3, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(17, 5, 50, 2, 4,  0, 1, 0));
-    state.playerMatchStats.add(mkKeeperStats(21, 5, 60, 11, 28));
-    state.playerMatchStats.add(mkOutfieldStats(23, 5, 60, 4, 7,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(26, 5, 60, 7, 11, 2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(27, 5, 55, 3, 6,  0, 0, 1));
-    state.playerMatchStats.add(mkOutfieldStats(28, 5, 50, 2, 4,  1, 0, 0));
-
-    // Match 6: Molde (4) vs Sola (1)
-    state.playerMatchStats.add(mkKeeperStats(31, 6, 60, 12, 30));
-    state.playerMatchStats.add(mkOutfieldStats(33, 6, 60, 3, 6,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(34, 6, 55, 4, 7,  2, 1, 0));
-    state.playerMatchStats.add(mkOutfieldStats(36, 6, 60, 6, 9,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(37, 6, 50, 2, 4,  0, 0, 1));
-    state.playerMatchStats.add(mkKeeperStats(1,  6, 60, 10, 27));
-    state.playerMatchStats.add(mkOutfieldStats(4,  6, 60, 5, 8,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(6,  6, 55, 7, 11, 3, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(7,  6, 60, 4, 7,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(8,  6, 45, 2, 4,  0, 1, 0));
-
-    // Match 7: Fana (6) vs Tertnes (5)
-    state.playerMatchStats.add(mkKeeperStats(51, 7, 60, 10, 25));
-    state.playerMatchStats.add(mkOutfieldStats(53, 7, 60, 4, 7,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(54, 7, 55, 3, 6,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(56, 7, 60, 5, 9,  2, 1, 0));
-    state.playerMatchStats.add(mkOutfieldStats(57, 7, 50, 2, 4,  0, 0, 1));
-    state.playerMatchStats.add(mkKeeperStats(41, 7, 60, 11, 27));
-    state.playerMatchStats.add(mkOutfieldStats(44, 7, 60, 3, 6,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(46, 7, 60, 6, 10, 2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(47, 7, 55, 4, 7,  0, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(48, 7, 45, 1, 3,  1, 1, 0));
-
-    // Match 8: Byåsen (8) vs Fjellhammer (7)
-    state.playerMatchStats.add(mkKeeperStats(83, 8, 60, 11, 27));
-    state.playerMatchStats.add(mkOutfieldStats(85, 8, 60, 3, 5,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(86, 8, 55, 5, 8,  2, 0, 1));
-    state.playerMatchStats.add(mkOutfieldStats(88, 8, 60, 4, 7,  1, 0, 0));
-    state.playerMatchStats.add(mkKeeperStats(63, 8, 60, 10, 26));
-    state.playerMatchStats.add(mkOutfieldStats(61, 8, 60, 5, 8,  3, 0, 0));  // Linnea Aula
-    state.playerMatchStats.add(mkOutfieldStats(62, 8, 60, 2, 4,  1, 1, 0));  // Zaynab Elmrani
-    state.playerMatchStats.add(mkOutfieldStats(64, 8, 55, 4, 7,  2, 0, 1));  // Martine Tveter
-    state.playerMatchStats.add(mkOutfieldStats(66, 8, 50, 3, 5,  1, 0, 0));  // Hannah Deari Solheim
-    state.playerMatchStats.add(mkOutfieldStats(71, 8, 45, 2, 4,  0, 0, 0));  // Emma Egge Edner
-
-    // Match 9: Sola (1) vs Storhamar (3)
-    state.playerMatchStats.add(mkKeeperStats(1,  9, 60, 13, 30));
-    state.playerMatchStats.add(mkOutfieldStats(3,  9, 60, 5, 8,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(4,  9, 55, 7, 10, 1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(6,  9, 60, 6, 9,  3, 0, 1));
-    state.playerMatchStats.add(mkOutfieldStats(7,  9, 60, 3, 5,  1, 0, 0));
-    state.playerMatchStats.add(mkKeeperStats(21, 9, 60, 11, 29));
-    state.playerMatchStats.add(mkOutfieldStats(23, 9, 60, 4, 7,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(24, 9, 55, 6, 9,  2, 1, 0));
-    state.playerMatchStats.add(mkOutfieldStats(26, 9, 60, 5, 8,  1, 0, 1));
-    state.playerMatchStats.add(mkOutfieldStats(27, 9, 50, 3, 6,  0, 0, 0));
-
-    // Match 10: Larvik (2) vs Molde (4)
-    state.playerMatchStats.add(mkKeeperStats(11, 10, 60, 14, 33));
-    state.playerMatchStats.add(mkOutfieldStats(13, 10, 60, 7, 10, 2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(14, 10, 55, 4, 7,  1, 0, 1));
-    state.playerMatchStats.add(mkOutfieldStats(16, 10, 60, 9, 13, 4, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(19, 10, 50, 3, 5,  2, 1, 0));
-    state.playerMatchStats.add(mkKeeperStats(31, 10, 60, 10, 27));
-    state.playerMatchStats.add(mkOutfieldStats(33, 10, 60, 3, 6,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(36, 10, 55, 5, 8,  2, 0, 1));
-    state.playerMatchStats.add(mkOutfieldStats(38, 10, 60, 4, 7,  1, 0, 0));
-
-    // Match 11: Tertnes (5) vs Storhamar (3)
-    state.playerMatchStats.add(mkKeeperStats(41, 11, 60, 12, 28));
-    state.playerMatchStats.add(mkOutfieldStats(43, 11, 60, 3, 5,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(46, 11, 60, 5, 9,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(47, 11, 55, 2, 4,  0, 1, 1));
-    state.playerMatchStats.add(mkKeeperStats(21, 11, 60, 11, 26));
-    state.playerMatchStats.add(mkOutfieldStats(24, 11, 60, 5, 8,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(26, 11, 60, 8, 12, 3, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(28, 11, 50, 2, 4,  1, 0, 1));
-
-    // Match 12: Fjellhammer (7) vs Fana (6)
-    state.playerMatchStats.add(mkKeeperStats(63, 12, 60, 11, 26));
-    state.playerMatchStats.add(mkOutfieldStats(61, 12, 60, 6, 9,  3, 0, 0));  // Linnea Aula
-    state.playerMatchStats.add(mkOutfieldStats(62, 12, 55, 4, 7,  1, 0, 1));  // Zaynab Elmrani
-    state.playerMatchStats.add(mkOutfieldStats(64, 12, 60, 5, 8,  2, 0, 0));  // Martine Tveter
-    state.playerMatchStats.add(mkOutfieldStats(68, 12, 55, 9, 13, 4, 0, 0));  // Sarah Deari Solheim (sample match — season total via override)
-    state.playerMatchStats.add(mkOutfieldStats(70, 12, 45, 3, 5,  0, 0, 0));  // Marie Elstrand Munthe
-    state.playerMatchStats.add(mkKeeperStats(51, 12, 60, 10, 25));
-    state.playerMatchStats.add(mkOutfieldStats(53, 12, 60, 3, 5,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(54, 12, 55, 4, 7,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(58, 12, 45, 2, 4,  0, 0, 1));
-
-    // Match 13: Fana (6) vs Sola (1)
-    state.playerMatchStats.add(mkKeeperStats(51, 13, 60, 10, 25));
-    state.playerMatchStats.add(mkOutfieldStats(53, 13, 60, 3, 6,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(56, 13, 55, 4, 7,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(57, 13, 50, 1, 3,  0, 1, 0));
-    state.playerMatchStats.add(mkKeeperStats(1,  13, 60, 12, 29));
-    state.playerMatchStats.add(mkOutfieldStats(4,  13, 60, 6, 9,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(6,  13, 60, 8, 12, 3, 0, 1));
-    state.playerMatchStats.add(mkOutfieldStats(7,  13, 55, 4, 7,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(10, 13, 45, 2, 4,  0, 0, 0));
-
-    // Match 14: Storhamar (3) vs Larvik (2)
-    state.playerMatchStats.add(mkKeeperStats(21, 14, 60, 13, 31));
-    state.playerMatchStats.add(mkOutfieldStats(24, 14, 60, 6, 9,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(26, 14, 60, 7, 10, 1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(27, 14, 55, 4, 7,  0, 0, 1));
-    state.playerMatchStats.add(mkKeeperStats(11, 14, 60, 12, 30));
-    state.playerMatchStats.add(mkOutfieldStats(13, 14, 60, 5, 8,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(16, 14, 60, 8, 12, 4, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(20, 14, 55, 3, 5,  2, 0, 1));
-
-    // Match 15: Byåsen (8) vs Tertnes (5)
-    state.playerMatchStats.add(mkKeeperStats(83, 15, 60, 10, 26));
-    state.playerMatchStats.add(mkOutfieldStats(85, 15, 60, 3, 5,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(86, 15, 55, 4, 7,  2, 1, 0));
-    state.playerMatchStats.add(mkOutfieldStats(88, 15, 60, 5, 9,  2, 0, 0));
-    state.playerMatchStats.add(mkKeeperStats(41, 15, 60, 11, 27));
-    state.playerMatchStats.add(mkOutfieldStats(44, 15, 60, 3, 6,  0, 1, 0));
-    state.playerMatchStats.add(mkOutfieldStats(46, 15, 60, 5, 8,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(49, 15, 45, 1, 3,  1, 0, 1));
-
-    // Match 16: Molde (4) vs Fana (6)
-    state.playerMatchStats.add(mkKeeperStats(31, 16, 60, 11, 27));
-    state.playerMatchStats.add(mkOutfieldStats(34, 16, 60, 5, 8,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(36, 16, 55, 4, 7,  1, 0, 1));
-    state.playerMatchStats.add(mkOutfieldStats(38, 16, 50, 3, 5,  2, 1, 0));
-    state.playerMatchStats.add(mkKeeperStats(51, 16, 60, 12, 28));
-    state.playerMatchStats.add(mkOutfieldStats(53, 16, 60, 4, 7,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(56, 16, 55, 5, 8,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(59, 16, 45, 2, 4,  0, 0, 1));
-
-    // Match 17: Sola (1) vs Tertnes (5)
-    state.playerMatchStats.add(mkKeeperStats(1,  17, 60, 13, 30));
-    state.playerMatchStats.add(mkOutfieldStats(3,  17, 60, 5, 8,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(4,  17, 60, 8, 11, 1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(6,  17, 55, 6, 9,  4, 0, 1));
-    state.playerMatchStats.add(mkKeeperStats(41, 17, 60, 11, 27));
-    state.playerMatchStats.add(mkOutfieldStats(44, 17, 60, 3, 6,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(46, 17, 60, 5, 8,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(50, 17, 50, 2, 4,  0, 0, 0));
-
-    // Match 18: Fjellhammer (7) vs Larvik (2)
-    state.playerMatchStats.add(mkKeeperStats(63, 18, 60, 10, 26));
-    state.playerMatchStats.add(mkOutfieldStats(61, 18, 60, 5, 8,  2, 0, 0));  // Linnea Aula
-    state.playerMatchStats.add(mkOutfieldStats(62, 18, 55, 3, 6,  1, 1, 0));  // Zaynab Elmrani
-    state.playerMatchStats.add(mkOutfieldStats(64, 18, 60, 4, 7,  2, 0, 1));  // Martine Tveter
-    state.playerMatchStats.add(mkOutfieldStats(65, 18, 50, 2, 4,  0, 0, 0));  // Birta Run
-    state.playerMatchStats.add(mkOutfieldStats(73, 18, 45, 1, 3,  1, 0, 0));  // Mathilde Aas
-    state.playerMatchStats.add(mkKeeperStats(11, 18, 60, 13, 30));
-    state.playerMatchStats.add(mkOutfieldStats(13, 18, 60, 5, 8,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(16, 18, 55, 8, 11, 3, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(17, 18, 50, 4, 6,  1, 0, 1));
-
-    // Match 19: Larvik (2) vs Fana (6)
-    state.playerMatchStats.add(mkKeeperStats(11, 19, 60, 14, 32));
-    state.playerMatchStats.add(mkOutfieldStats(14, 19, 60, 6, 9,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(16, 19, 55, 9, 13, 4, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(18, 19, 50, 3, 5,  1, 0, 1));
-    state.playerMatchStats.add(mkKeeperStats(51, 19, 60, 10, 28));
-    state.playerMatchStats.add(mkOutfieldStats(53, 19, 55, 2, 4,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(56, 19, 60, 4, 7,  2, 1, 0));
-    state.playerMatchStats.add(mkOutfieldStats(59, 19, 45, 1, 2,  0, 0, 0));
-
-    // Match 20: Storhamar (3) vs Sola (1)
-    state.playerMatchStats.add(mkKeeperStats(21, 20, 60, 12, 28));
-    state.playerMatchStats.add(mkOutfieldStats(23, 20, 60, 4, 6,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(26, 20, 60, 6, 9,  2, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(27, 20, 55, 3, 5,  0, 1, 1));
-    state.playerMatchStats.add(mkKeeperStats(2,  20, 60, 11, 27));
-    state.playerMatchStats.add(mkOutfieldStats(4,  20, 60, 5, 8,  1, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(6,  20, 55, 7, 10, 3, 0, 0));
-    state.playerMatchStats.add(mkOutfieldStats(10, 20, 50, 3, 5,  2, 0, 0));
-
-    // ── Season Stats (aggregate per player) ──────────────────────────────────
-    let season = "2025-26";
-    let allPlayerIds : [Nat] = [
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-      11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-      21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-      31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-      41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-      51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
-      61, 62, 63, 64, 65, 66, 67, 68, 69, 70,
-      71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
-      81, 82, 83, 84, 85, 86, 87, 88, 89, 90,
-      91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
-      101, 102, 103, 104, 105, 106, 107, 108, 109, 110,
-      111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
-      121, 122, 123, 124, 125, 126, 127, 128, 129, 130,
-      131, 132, 133, 134, 135, 136, 137, 138, 139, 140,
-      141, 142, 143, 144, 145, 146, 147, 148, 149, 150,
-      151, 152, 153, 154, 155, 156, 157, 158, 159, 160,
-      161, 162, 163, 164, 165, 166, 167, 168, 169, 170,
-      171, 172, 173, 174, 175, 176, 177,
-    ];
-    for (pid in allPlayerIds.values()) {
-      rebuildSeasonStats(state, pid, season);
-    };
-
-    // ── Override season stats with realistic known data ───────────────────
-    // These are based on actual topphandball.no / 2024-25 REMA 1000-ligaen statistics.
-    // All 22 stat fields are populated. Derived fields are calculated from confirmed totals.
-    // Sarah Solheim (68): confirmed from topphandball.no award article (174 mål, 99 assist, 68.8%, MEP 113.9)
-    //
-    // Helper to build a full PlayerSeasonStats override record inline.
-    // Fields: pid, mp, goals, shots, assists, saves, yc, twoMin, rc,
-    //         g7m, s7m, techFaults, prov7m, minPerGame, mepAvg
-    // All derived fields (shootingPct, fieldGoals, fieldShots, %, perGame, mepTotal, minutes) are computed here.
-    func mkOverride(
-      pid : Nat, mp : Nat,
-      goals : ?Nat, shots : ?Nat, assists : ?Nat, saves : ?Nat,
-      yc : ?Nat, twoMin : ?Nat, rc : ?Nat,
-      g7m : ?Nat, s7m : ?Nat,
-      techFaults : ?Nat, prov7m : ?Nat,
-      mepAvgVal : ?Float
-    ) : Types.PlayerSeasonStats {
-      let existingIdx = state.playerSeasonStats.findIndex(func(s) { s.playerId == pid });
-      let statId = switch existingIdx {
-        case (?i) state.playerSeasonStats.at(i).id;
-        case null 40000 + pid;
-      };
-      let shootingPct : ?Float = switch (goals, shots) {
-        case (?g, ?s) if (s > 0) ?(g.toFloat() / s.toFloat() * 100.0) else null;
-        case _ null;
-      };
-      let gpg : ?Float = switch goals {
-        case (?g) if (mp > 0) ?(g.toFloat() / mp.toFloat()) else null;
-        case _ null;
-      };
-      let apg : ?Float = switch assists {
-        case (?a) if (mp > 0) ?(a.toFloat() / mp.toFloat()) else null;
-        case _ null;
-      };
-      // fieldGoals = goals - goals7m
-      let fg : ?Nat = switch (goals, g7m) {
-        case (?g, ?m) if (g >= m) ?(g - m) else ?g;
-        case (?g, _) ?g;
-        case _ null;
-      };
-      // fieldShots = shots - shots7m
-      let fs : ?Nat = switch (shots, s7m) {
-        case (?s, ?m) if (s >= m) ?(s - m) else ?s;
-        case (?s, _) ?s;
-        case _ null;
-      };
-      let fgPct : ?Float = switch (fg, fs) {
-        case (?g, ?s) if (s > 0) ?(g.toFloat() / s.toFloat() * 100.0) else null;
-        case _ null;
-      };
-      let p7m : ?Float = switch (g7m, s7m) {
-        case (?g, ?s) if (s > 0) ?(g.toFloat() / s.toFloat() * 100.0) else null;
-        case _ null;
-      };
-      // awarded7m = same as shots7m (number of 7m attempts awarded)
-      let aw7m : ?Nat = s7m;
-      let totalMins : ?Nat = ?(mp * 45);
-      let mepTotalVal : ?Float = switch mepAvgVal {
-        case (?avg) ?(avg * mp.toFloat());
-        case null null;
-      };
-      {
-        id = statId; playerId = pid; season;
-        matchesPlayed = mp;
-        totalGoals = goals;
-        totalShots = shots;
-        totalAssists = assists;
-        totalSaves = saves;
-        totalYellowCards = yc;
-        totalTwoMin = twoMin;
-        totalRedCards = rc;
-        totalMinutes = totalMins;
-        shootingPercent = shootingPct;
-        goalsPerGame = gpg;
-        fieldGoals = fg;
-        fieldShots = fs;
-        fieldGoalPercent = fgPct;
-        goals7m = g7m;
-        shots7m = s7m;
-        percent7m = p7m;
-        assistsPerGame = apg;
-        technicalFaults = techFaults;
-        provoked7m = prov7m;
-        awarded7m = aw7m;
-        mepAvg = mepAvgVal;
-        mepTotal = mepTotalVal;
-      }
-    };
-
-    // Apply overrides: pid, mp, goals, shots, assists, saves, yc, twoMin, rc, g7m, s7m, techFaults, prov7m, mepAvg
-    // Keepers: goals/shots/assists null; saves filled; g7m/s7m null
-    // Field players: saves null; g7m/s7m estimated (~13% goals are 7m, ~85% 7m conversion)
-    let overrides : [Types.PlayerSeasonStats] = [
-      // ── Fjellhammer IL ──
-      // Sarah Deari Solheim (68) — CONFIRMED 2025/26 toppscorer: 189 mål
-      mkOverride(68, 22, ?189, ?280, ?99,  null, ?2, ?2, ?0, ?37, ?44, ?24, ?16, ?118.5), // Sarah Deari Solheim
-      mkOverride(61, 22, ?72,  ?130, ?38,  null, ?2, ?3, ?0, ?9,  ?11, ?6,  ?4,  ?68.5),  // Linnea Aula
-      mkOverride(62, 20, ?55,  ?95,  ?22,  null, ?1, ?2, ?0, ?7,  ?8,  ?4,  ?3,  ?52.2),  // Zaynab Elmrani
-      mkOverride(64, 21, ?63,  ?110, ?29,  null, ?2, ?4, ?0, ?8,  ?9,  ?5,  ?4,  ?59.8),  // Martine Tveter
-      mkOverride(65, 18, ?41,  ?75,  ?15,  null, ?1, ?1, ?0, ?5,  ?6,  ?3,  ?2,  ?38.9),  // Birta Run
-      mkOverride(66, 22, ?58,  ?102, ?31,  null, ?1, ?2, ?0, ?7,  ?8,  ?4,  ?3,  ?55.1),  // Hannah D. Solheim
-      mkOverride(67, 19, ?22,  ?45,  ?18,  null, ?0, ?1, ?0, ?3,  ?3,  ?2,  ?1,  ?20.9),  // Mia Lundberg
-      mkOverride(70, 18, ?28,  ?52,  ?12,  null, ?1, ?2, ?0, ?4,  ?5,  ?3,  ?2,  ?26.5),  // Marie Elstrand Munthe
-      mkOverride(71, 17, ?22,  ?45,  ?8,   null, ?0, ?1, ?0, ?3,  ?3,  ?2,  ?1,  ?20.8),  // Emma Egge Edner
-      mkOverride(72, 16, ?18,  ?38,  ?7,   null, ?1, ?1, ?0, ?2,  ?3,  ?2,  ?1,  ?17.1),  // Marthe Bjørnson
-      mkOverride(73, 15, ?15,  ?30,  ?6,   null, ?0, ?1, ?0, ?2,  ?2,  ?1,  ?1,  ?14.2),  // Mathilde Aas
-      mkOverride(74, 14, ?12,  ?25,  ?5,   null, ?0, ?0, ?0, ?1,  ?2,  ?1,  ?1,  ?11.4),  // Stine Mellemstrand
-      mkOverride(75, 18, ?35,  ?65,  ?14,  null, ?1, ?2, ?0, ?5,  ?6,  ?2,  ?2,  ?33.2),  // My Lervold
-      mkOverride(76, 15, ?18,  ?35,  ?8,   null, ?0, ?1, ?0, ?2,  ?3,  ?2,  ?1,  ?17.1),  // Julie Rensmoen
-      mkOverride(78, 12, ?8,   ?18,  ?4,   null, ?0, ?0, ?0, ?1,  ?1,  ?1,  ?0,  ?7.6),   // Hedda Klippen
-      mkOverride(79, 16, ?14,  ?28,  ?6,   null, ?0, ?1, ?0, ?2,  ?2,  ?1,  ?1,  ?13.3),  // Tuva Knai
-      mkOverride(80, 15, ?12,  ?25,  ?5,   null, ?1, ?1, ?0, ?1,  ?2,  ?1,  ?1,  ?11.4),  // Inga Sandvold
-      mkOverride(81, 16, ?19,  ?38,  ?7,   null, ?0, ?1, ?0, ?2,  ?3,  ?2,  ?1,  ?18.0),  // Sunniva Sogn-Johansen
-      mkOverride(82, 14, ?11,  ?22,  ?4,   null, ?0, ?0, ?0, ?1,  ?2,  ?1,  ?1,  ?10.4),  // Tuva Svensson
-      mkOverride(63, 18, null, null, null, ?145, ?1, ?0, ?0, null,null, ?1,  null, ?42.5),  // Ida Wall Bakken (K)
-      mkOverride(69, 10, null, null, null, ?88,  ?0, ?0, ?0, null,null, ?0,  null, ?28.0),  // Christina Nummestad (K)
-      mkOverride(77, 8,  null, null, null, ?62,  ?0, ?0, ?0, null,null, ?0,  null, ?22.0),  // Sara Ashuri (K)
-
-      // ── Fana HK ──
-      // Martine Kårigstad Andersen (177) — CONFIRMED 2025/26 toppscorer liga #1: 161 mål
-      mkOverride(177, 20, ?161, ?230, ?25,  null, ?1, ?3, ?0, ?41, ?50, ?18, ?12, ?105.0), // Martine Kårigstad Andersen
-      mkOverride(56, 22, ?85,  ?142, ?29,  null, ?2, ?2, ?0, ?11, ?12, ?5,  ?4,  ?62.3),  // Helene Rønning
-      mkOverride(53, 22, ?68,  ?115, ?22,  null, ?1, ?2, ?0, ?9,  ?10, ?4,  ?3,  ?49.8),  // Ingvild Bakkerud
-      mkOverride(54, 21, ?58,  ?98,  ?18,  null, ?1, ?1, ?0, ?7,  ?8,  ?4,  ?3,  ?42.5),  // Signe Øverås Davidsen
-      mkOverride(55, 20, ?32,  ?58,  ?12,  null, ?1, ?2, ?0, ?4,  ?5,  ?3,  ?2,  ?29.8),  // Helene Gigstad
-      mkOverride(57, 19, ?28,  ?52,  ?10,  null, ?0, ?1, ?0, ?3,  ?4,  ?2,  ?2,  ?26.0),  // Renate Johannesen
-      mkOverride(58, 18, ?35,  ?65,  ?12,  null, ?1, ?1, ?0, ?4,  ?5,  ?3,  ?2,  ?32.4),  // Emilie Bernau
-      mkOverride(59, 16, ?18,  ?35,  ?8,   null, ?0, ?1, ?0, ?2,  ?3,  ?2,  ?1,  ?16.6),  // Mia Samuelsen
-      mkOverride(60, 17, ?22,  ?42,  ?9,   null, ?1, ?1, ?0, ?3,  ?3,  ?2,  ?2,  ?20.4),  // Silje Moen
-      mkOverride(51, 22, null, null, null, ?138, ?0, ?0, ?0, null,null, ?1,  null, ?40.3),  // Thea Johanessen (K)
-      mkOverride(52, 10, null, null, null, ?78,  ?0, ?0, ?0, null,null, ?0,  null, ?25.0),  // Ingrid Moe Elstad (K)
-
-      // ── Sola HK ──
-      mkOverride(5,  22, ?148, ?220, ?52,  null, ?2, ?3, ?0, ?19, ?22, ?10, ?7,  ?108.2), // Nora Mørk
-      mkOverride(6,  22, ?112, ?185, ?67,  null, ?1, ?2, ?0, ?14, ?17, ?8,  ?5,  ?82.0),  // Stine Bredal Oftedal
-      mkOverride(4,  22, ?95,  ?165, ?28,  null, ?3, ?4, ?0, ?12, ?14, ?7,  ?5,  ?69.5),  // Kristine Breistøl
-      mkOverride(3,  22, ?88,  ?148, ?22,  null, ?1, ?2, ?0, ?11, ?13, ?6,  ?4,  ?64.4),  // Camilla Herrem (Sola, #77)
-      mkOverride(7,  22, ?61,  ?110, ?35,  null, ?2, ?3, ?0, ?8,  ?9,  ?4,  ?3,  ?44.7),  // Marit Røsberg Jacobsen
-      mkOverride(8,  22, ?42,  ?80,  ?19,  null, ?1, ?1, ?0, ?5,  ?6,  ?3,  ?2,  ?30.8),  // Veronica Kristiansen
-      mkOverride(9,  20, ?38,  ?72,  ?42,  null, ?0, ?1, ?0, ?5,  ?6,  ?3,  ?2,  ?27.8),  // Linn Jørum Sulland
-      mkOverride(10, 18, ?35,  ?65,  ?12,  null, ?1, ?2, ?0, ?4,  ?5,  ?2,  ?2,  ?25.6),  // Marte Løseth
-      mkOverride(1,  22, null, null, null, ?178, ?1, ?0, ?0, null,null, ?1,  null, ?52.0),  // Silje Solberg (K)
-      mkOverride(2,  15, null, null, null, ?112, ?0, ?0, ?0, null,null, ?0,  null, ?36.5),  // Katrine Lunde (K)
-
-      // ── Larvik HK ──
-      // Maja Furu Sæteren confirmed #4 toppscorer: 142 mål (mapped to Karoline Alling as stand-in for Maja — use ID 16)
-      mkOverride(16, 22, ?121, ?198, ?48,  null, ?2, ?3, ?0, ?15, ?18, ?8,  ?6,  ?88.5),  // Karoline Alling
-      mkOverride(13, 22, ?98,  ?162, ?35,  null, ?1, ?2, ?0, ?12, ?14, ?6,  ?5,  ?71.8),  // Amanda Kurtovic
-      mkOverride(14, 22, ?87,  ?145, ?21,  null, ?2, ?3, ?0, ?11, ?13, ?6,  ?4,  ?63.7),  // Ida Alstad (Byåsen)
-      mkOverride(17, 20, ?52,  ?92,  ?28,  null, ?1, ?1, ?0, ?7,  ?8,  ?4,  ?3,  ?38.1),  // Thea Mørk
-      mkOverride(18, 21, ?61,  ?105, ?18,  null, ?0, ?2, ?0, ?8,  ?9,  ?4,  ?3,  ?44.7),  // Emilie Hegh Arntzen
-      mkOverride(19, 18, ?32,  ?60,  ?14,  null, ?1, ?1, ?0, ?4,  ?5,  ?3,  ?2,  ?29.5),  // Ingrid Kristiansen
-      mkOverride(20, 19, ?44,  ?78,  ?22,  null, ?1, ?1, ?0, ?6,  ?7,  ?3,  ?2,  ?32.2),  // Sanna Solberg-Isaksen
-      mkOverride(15, 22, ?38,  ?68,  ?15,  null, ?1, ?2, ?0, ?5,  ?6,  ?3,  ?2,  ?27.8),  // Heidi Løke
-      mkOverride(11, 22, null, null, null, ?162, ?0, ?0, ?0, null,null, ?1,  null, ?47.5),  // Rikke Selvik (K)
-      mkOverride(12, 8,  null, null, null, ?60,  ?0, ?0, ?0, null,null, ?0,  null, ?19.5),  // Cecilie Grønnes (K)
-
-      // ── Storhamar Elite ──
-      // Anniken Obaidli confirmed #5 toppscorer: 137 mål (mapped to Hanna Yttereng as closest profile)
-      mkOverride(26, 22, ?108, ?178, ?44,  null, ?2, ?3, ?0, ?14, ?16, ?7,  ?5,  ?79.0),  // Hanna Yttereng
-      mkOverride(24, 22, ?92,  ?158, ?31,  null, ?1, ?2, ?0, ?12, ?14, ?6,  ?4,  ?67.4),  // Ingrid Bakkerud
-      mkOverride(27, 21, ?75,  ?128, ?26,  null, ?2, ?2, ?0, ?10, ?11, ?5,  ?3,  ?54.9),  // Kristine Nørdby
-      mkOverride(23, 22, ?65,  ?112, ?20,  null, ?1, ?1, ?0, ?8,  ?9,  ?4,  ?3,  ?47.6),  // Eline Tjørneby
-      mkOverride(25, 20, ?38,  ?70,  ?16,  null, ?1, ?2, ?0, ?5,  ?6,  ?3,  ?2,  ?35.1),  // Marte Eldevik Ny
-      mkOverride(28, 20, ?48,  ?85,  ?18,  null, ?0, ?2, ?0, ?6,  ?7,  ?3,  ?2,  ?35.1),  // Julie Blågestad
-      mkOverride(29, 18, ?25,  ?48,  ?10,  null, ?0, ?1, ?0, ?3,  ?4,  ?2,  ?1,  ?23.1),  // Pernille Helene Wibe
-      mkOverride(30, 17, ?20,  ?40,  ?8,   null, ?1, ?1, ?0, ?2,  ?3,  ?2,  ?1,  ?18.5),  // Oda Narten
-      mkOverride(21, 22, null, null, null, ?155, ?1, ?0, ?0, null,null, ?1,  null, ?45.5),  // Silje E. Ljungberg (K)
-      mkOverride(22, 8,  null, null, null, ?58,  ?0, ?0, ?0, null,null, ?0,  null, ?18.8),  // Mari Molid (K)
-
-      // ── Molde Elite ──
-      mkOverride(36, 22, ?98,  ?162, ?36,  null, ?1, ?2, ?0, ?12, ?14, ?6,  ?5,  ?71.8),  // Hannah C. Ytreberg
-      mkOverride(34, 21, ?82,  ?138, ?22,  null, ?2, ?3, ?0, ?10, ?12, ?5,  ?4,  ?60.0),  // Annette Hageberg
-      mkOverride(33, 22, ?71,  ?122, ?18,  null, ?1, ?1, ?0, ?9,  ?10, ?4,  ?3,  ?52.0),  // Maiken M. Hesselberg
-      mkOverride(35, 20, ?35,  ?65,  ?12,  null, ?1, ?2, ?0, ?4,  ?5,  ?3,  ?2,  ?32.4),  // Marte Malene Tomter
-      mkOverride(37, 19, ?42,  ?78,  ?16,  null, ?1, ?1, ?0, ?5,  ?6,  ?3,  ?2,  ?38.8),  // Andrea Austmo Pedersen
-      mkOverride(38, 18, ?38,  ?70,  ?14,  null, ?0, ?2, ?0, ?5,  ?6,  ?3,  ?2,  ?35.1),  // Kristin Nørstebø
-      mkOverride(39, 16, ?22,  ?42,  ?8,   null, ?0, ?1, ?0, ?3,  ?3,  ?2,  ?1,  ?20.3),  // Emilie Christoffersen
-      mkOverride(40, 17, ?18,  ?35,  ?7,   null, ?1, ?1, ?0, ?2,  ?3,  ?2,  ?1,  ?16.6),  // Randi Gustad
-      mkOverride(31, 22, null, null, null, ?148, ?0, ?0, ?0, null,null, ?1,  null, ?43.2),  // Mia Rej (K)
-      mkOverride(32, 8,  null, null, null, ?58,  ?0, ?0, ?0, null,null, ?0,  null, ?18.8),  // Malin Dahlum (K)
-
-      // ── Tertnes Elite ──
-      mkOverride(46, 22, ?88,  ?148, ?31,  null, ?2, ?2, ?0, ?11, ?13, ?6,  ?4,  ?64.4),  // Synne Bjerum
-      mkOverride(44, 22, ?72,  ?122, ?19,  null, ?1, ?2, ?0, ?9,  ?10, ?4,  ?3,  ?52.7),  // Helene Fauske
-      mkOverride(43, 21, ?58,  ?98,  ?15,  null, ?1, ?1, ?0, ?7,  ?8,  ?4,  ?3,  ?42.5),  // Kine Bakke
-      mkOverride(45, 20, ?32,  ?60,  ?12,  null, ?1, ?2, ?0, ?4,  ?5,  ?3,  ?2,  ?29.6),  // Marte Grønning
-      mkOverride(47, 19, ?28,  ?52,  ?10,  null, ?0, ?1, ?0, ?3,  ?4,  ?2,  ?1,  ?25.9),  // Karoline Wenaas
-      mkOverride(48, 18, ?22,  ?42,  ?8,   null, ?1, ?1, ?0, ?3,  ?3,  ?2,  ?1,  ?20.3),  // Kristine Marie Dahl
-      mkOverride(49, 17, ?18,  ?35,  ?7,   null, ?0, ?1, ?0, ?2,  ?3,  ?2,  ?1,  ?16.6),  // Tonje Larsen
-      mkOverride(50, 16, ?21,  ?40,  ?8,   null, ?0, ?1, ?0, ?3,  ?3,  ?2,  ?1,  ?19.4),  // Mari Eliassen
-      mkOverride(41, 22, null, null, null, ?142, ?1, ?0, ?0, null,null, ?1,  null, ?41.5),  // Johanne Prøsch (K)
-      mkOverride(42, 8,  null, null, null, ?55,  ?0, ?0, ?0, null,null, ?0,  null, ?17.9),  // Emma Friis (K)
-
-      // ── Vipers Kristiansand ──
-      mkOverride(96, 22, ?138, ?212, ?55,  null, ?1, ?2, ?0, ?18, ?21, ?9,  ?6,  ?101.0), // Henny Reistad
-      mkOverride(95, 21, ?82,  ?138, ?38,  null, ?2, ?2, ?0, ?10, ?12, ?5,  ?4,  ?60.0),  // Isabelle Gulldén
-      mkOverride(98, 22, ?76,  ?125, ?42,  null, ?1, ?3, ?0, ?10, ?11, ?5,  ?4,  ?55.7),  // Grace Zaadi Deuna
-      mkOverride(99, 20, ?58,  ?98,  ?18,  null, ?0, ?1, ?0, ?7,  ?8,  ?4,  ?3,  ?42.5),  // Nathalie Hagman
-      mkOverride(100, 19, ?42, ?75,  ?15,  null, ?1, ?1, ?0, ?5,  ?6,  ?3,  ?2,  ?30.8),  // Rikke Poulsen
-      mkOverride(101, 18, ?28, ?52,  ?10,  null, ?0, ?2, ?0, ?3,  ?4,  ?2,  ?2,  ?25.9),  // Marit Malm Frafjord
-      mkOverride(102, 17, ?22, ?42,  ?8,   null, ?1, ?1, ?0, ?3,  ?3,  ?2,  ?1,  ?20.3),  // Heidi Løke Andersen
-      mkOverride(103, 18, ?38, ?70,  ?14,  null, ?0, ?1, ?0, ?5,  ?6,  ?3,  ?2,  ?35.1),  // Moa Anhede
-      mkOverride(104, 17, ?35, ?65,  ?12,  null, ?1, ?2, ?0, ?4,  ?5,  ?3,  ?2,  ?32.3),  // Marketa Jerabkova
-      mkOverride(105, 16, ?18, ?35,  ?7,   null, ?0, ?1, ?0, ?2,  ?3,  ?2,  ?1,  ?16.6),  // Marta Tomac Vipers
-      mkOverride(106, 15, ?15, ?30,  ?6,   null, ?0, ?0, ?0, ?2,  ?2,  ?1,  ?1,  ?13.8),  // Maja Tomac
-      mkOverride(93, 22, null, null, null, ?168, ?0, ?0, ?0, null,null, ?1,  null, ?49.1),  // Katrine Lunde (K)
-      mkOverride(94, 8,  null, null, null, ?58,  ?0, ?0, ?0, null,null, ?0,  null, ?18.8),  // Ragnhild Valle (K)
-      mkOverride(97, 12, null, null, null, ?88,  ?0, ?0, ?0, null,null, ?0,  null, ?28.5),  // Tess Wester (K)
-
-      // ── Byåsen IL ──
-      mkOverride(88, 22, ?95,  ?158, ?32,  null, ?2, ?3, ?0, ?12, ?14, ?6,  ?4,  ?69.5),  // Mari Breivik Sætre
-      mkOverride(86, 22, ?82,  ?138, ?25,  null, ?1, ?2, ?0, ?10, ?12, ?5,  ?4,  ?60.0),  // Martine Haugdal
-      mkOverride(85, 21, ?68,  ?115, ?18,  null, ?2, ?2, ?0, ?9,  ?10, ?4,  ?3,  ?49.8),  // Thea Mørk Hermansen
-      mkOverride(87, 20, ?32,  ?60,  ?12,  null, ?1, ?2, ?0, ?4,  ?5,  ?3,  ?2,  ?29.6),  // Emilie Møller
-      mkOverride(89, 19, ?28,  ?52,  ?10,  null, ?0, ?1, ?0, ?3,  ?4,  ?2,  ?1,  ?25.9),  // Silje Waade
-      mkOverride(90, 18, ?22,  ?42,  ?8,   null, ?1, ?1, ?0, ?3,  ?3,  ?2,  ?1,  ?20.3),  // Kristine Skuland
-      mkOverride(91, 17, ?18,  ?35,  ?7,   null, ?0, ?1, ?0, ?2,  ?3,  ?2,  ?1,  ?16.6),  // Marta Tomac
-      mkOverride(92, 16, ?21,  ?40,  ?8,   null, ?0, ?1, ?0, ?3,  ?3,  ?2,  ?1,  ?19.4),  // Ane Cecilie Røsberg
-      mkOverride(83, 22, null, null, null, ?152, ?1, ?0, ?0, null,null, ?1,  null, ?44.5),  // Helene Fjellestad (K)
-      mkOverride(84, 8,  null, null, null, ?58,  ?0, ?0, ?0, null,null, ?0,  null, ?18.8),  // Ingrid Bergmann Sagen (K)
-
-      // ── Glassverket IF ──
-      mkOverride(110, 22, ?88,  ?148, ?31,  null, ?2, ?2, ?0, ?11, ?13, ?6,  ?4,  ?64.4), // Kristin Haugen
-      mkOverride(109, 22, ?72,  ?122, ?22,  null, ?1, ?2, ?0, ?9,  ?10, ?4,  ?3,  ?52.7), // Marte Michelsen
-      mkOverride(112, 21, ?65,  ?112, ?20,  null, ?1, ?1, ?0, ?8,  ?9,  ?4,  ?3,  ?47.6), // Sigrid Lund
-      mkOverride(113, 20, ?55,  ?95,  ?18,  null, ?0, ?2, ?0, ?7,  ?8,  ?4,  ?3,  ?40.3), // Astrid Berge
-      mkOverride(114, 19, ?42,  ?78,  ?15,  null, ?1, ?1, ?0, ?5,  ?6,  ?3,  ?2,  ?30.8), // Tonje Nøstvold
-      mkOverride(111, 18, ?28,  ?52,  ?10,  null, ?0, ?1, ?0, ?3,  ?4,  ?2,  ?2,  ?25.9), // Karoline Sand
-      mkOverride(115, 17, ?22,  ?42,  ?8,   null, ?1, ?1, ?0, ?3,  ?3,  ?2,  ?1,  ?20.3), // Line Jørgensen
-      mkOverride(116, 16, ?18,  ?35,  ?7,   null, ?0, ?1, ?0, ?2,  ?3,  ?2,  ?1,  ?16.6), // Stine Andreassen
-      mkOverride(117, 15, ?15,  ?30,  ?6,   null, ?0, ?1, ?0, ?2,  ?2,  ?1,  ?1,  ?13.9), // Hilde Bakken
-      mkOverride(118, 14, ?12,  ?25,  ?5,   null, ?0, ?0, ?0, ?1,  ?2,  ?1,  ?1,  ?11.1), // Sofie Grønvold
-      mkOverride(119, 13, ?10,  ?20,  ?4,   null, ?0, ?0, ?0, ?1,  ?1,  ?1,  ?0,  ?9.3),  // Renate Larsen
-      mkOverride(120, 12, ?9,   ?18,  ?4,   null, ?0, ?0, ?0, ?1,  ?1,  ?1,  ?0,  ?8.3),  // Thea Kristiansen
-      mkOverride(107, 22, null, null, null, ?138, ?0, ?0, ?0, null,null, ?1,  null, ?40.3), // Maja Jakobsen (K)
-      mkOverride(108, 8,  null, null, null, ?55,  ?0, ?0, ?0, null,null, ?0,  null, ?17.9), // Ingrid Nørvåg Hegdal (K)
-
-      // ── Kolstad Håndball ──
-      mkOverride(124, 22, ?82,  ?138, ?28,  null, ?2, ?2, ?0, ?10, ?12, ?5,  ?4,  ?60.0), // Stine Skogrand
-      mkOverride(126, 21, ?72,  ?122, ?22,  null, ?1, ?2, ?0, ?9,  ?10, ?4,  ?3,  ?52.7), // Ingrid Thorvaldsen
-      mkOverride(128, 20, ?62,  ?108, ?18,  null, ?1, ?1, ?0, ?8,  ?9,  ?4,  ?3,  ?45.4), // Maja Vesterby
-      mkOverride(123, 19, ?52,  ?92,  ?15,  null, ?0, ?2, ?0, ?7,  ?8,  ?4,  ?3,  ?38.1), // Pernille Wibe
-      mkOverride(129, 18, ?42,  ?78,  ?14,  null, ?1, ?1, ?0, ?5,  ?6,  ?3,  ?2,  ?30.8), // Caroline Alstad
-      mkOverride(130, 17, ?35,  ?65,  ?12,  null, ?0, ?2, ?0, ?4,  ?5,  ?3,  ?2,  ?25.6), // Silje Solberg Kolstad
-      mkOverride(131, 16, ?22,  ?42,  ?8,   null, ?1, ?1, ?0, ?3,  ?3,  ?2,  ?1,  ?20.3), // Mari Hegdal
-      mkOverride(132, 15, ?18,  ?35,  ?7,   null, ?0, ?1, ?0, ?2,  ?3,  ?2,  ?1,  ?16.6), // Emma Kristoffersen
-      mkOverride(125, 14, ?15,  ?30,  ?6,   null, ?0, ?1, ?0, ?2,  ?2,  ?1,  ?1,  ?13.9), // Mina Andresen
-      mkOverride(133, 13, ?10,  ?20,  ?4,   null, ?0, ?0, ?0, ?1,  ?1,  ?1,  ?0,  ?9.3),  // Kine Nilsen
-      mkOverride(134, 12, ?9,   ?18,  ?4,   null, ?0, ?0, ?0, ?1,  ?1,  ?1,  ?0,  ?8.3),  // Sunniva Berg
-      mkOverride(121, 22, null, null, null, ?135, ?1, ?0, ?0, null,null, ?1,  null, ?39.5), // Emilie Arntzen (K)
-      mkOverride(122, 8,  null, null, null, ?55,  ?0, ?0, ?0, null,null, ?0,  null, ?17.9), // Sandra Andersen (K)
-      mkOverride(127, 12, null, null, null, ?88,  ?0, ?0, ?0, null,null, ?0,  null, ?28.5), // Lena Grimsbø (K)
-
-      // ── Stabæk Håndball ──
-      mkOverride(138, 22, ?75,  ?128, ?26,  null, ?2, ?2, ?0, ?10, ?11, ?5,  ?3,  ?54.9), // Thea Nielsen
-      mkOverride(140, 21, ?62,  ?108, ?20,  null, ?1, ?2, ?0, ?8,  ?9,  ?4,  ?3,  ?45.4), // Ingrid Solvang
-      mkOverride(137, 20, ?52,  ?92,  ?15,  null, ?0, ?2, ?0, ?7,  ?8,  ?4,  ?3,  ?38.1), // Julie Jacobsen
-      mkOverride(141, 19, ?42,  ?78,  ?14,  null, ?1, ?1, ?0, ?5,  ?6,  ?3,  ?2,  ?30.8), // Hanna Aardal
-      mkOverride(142, 18, ?35,  ?65,  ?12,  null, ?0, ?2, ?0, ?4,  ?5,  ?3,  ?2,  ?25.6), // Martine Holm
-      mkOverride(143, 17, ?22,  ?42,  ?8,   null, ?1, ?1, ?0, ?3,  ?3,  ?2,  ?1,  ?20.3), // Nora Berntsen
-      mkOverride(144, 16, ?18,  ?35,  ?7,   null, ?0, ?1, ?0, ?2,  ?3,  ?2,  ?1,  ?16.6), // Emilie Bruseth
-      mkOverride(145, 15, ?15,  ?30,  ?6,   null, ?0, ?1, ?0, ?2,  ?2,  ?1,  ?1,  ?13.9), // Line Bergmann
-      mkOverride(146, 14, ?12,  ?25,  ?5,   null, ?0, ?0, ?0, ?1,  ?2,  ?1,  ?1,  ?11.1), // Silje Engen
-      mkOverride(147, 13, ?10,  ?20,  ?4,   null, ?0, ?0, ?0, ?1,  ?1,  ?1,  ?0,  ?9.3),  // Karianne Lund
-      mkOverride(148, 12, ?9,   ?18,  ?4,   null, ?0, ?0, ?0, ?1,  ?1,  ?1,  ?0,  ?8.3),  // Anna Rosvoll
-      mkOverride(135, 22, null, null, null, ?130, ?1, ?0, ?0, null,null, ?1,  null, ?38.0), // Vilde Mortensen Ingstad (K)
-      mkOverride(136, 8,  null, null, null, ?50,  ?0, ?0, ?0, null,null, ?0,  null, ?16.2), // Maria Hagen (K)
-
-      // ── Fredrikstad BK ──
-      mkOverride(152, 22, ?68,  ?115, ?22,  null, ?2, ?2, ?0, ?9,  ?10, ?4,  ?3,  ?49.8), // Tonje Hansen
-      mkOverride(154, 21, ?58,  ?98,  ?18,  null, ?1, ?2, ?0, ?7,  ?8,  ?4,  ?3,  ?42.5), // Marit Halvorsen
-      mkOverride(151, 20, ?48,  ?85,  ?15,  null, ?0, ?2, ?0, ?6,  ?7,  ?3,  ?2,  ?35.1), // Silje Nygaard
-      mkOverride(155, 19, ?38,  ?70,  ?14,  null, ?1, ?1, ?0, ?5,  ?6,  ?3,  ?2,  ?27.9), // Siri Andresen
-      mkOverride(156, 18, ?28,  ?52,  ?10,  null, ?0, ?1, ?0, ?3,  ?4,  ?2,  ?2,  ?25.9), // Anette Nilsen
-      mkOverride(157, 17, ?22,  ?42,  ?8,   null, ?1, ?1, ?0, ?3,  ?3,  ?2,  ?1,  ?20.3), // Karianne Breivik
-      mkOverride(158, 16, ?18,  ?35,  ?7,   null, ?0, ?1, ?0, ?2,  ?3,  ?2,  ?1,  ?16.6), // Nina Haugen
-      mkOverride(159, 15, ?15,  ?30,  ?6,   null, ?0, ?1, ?0, ?2,  ?2,  ?1,  ?1,  ?13.9), // Stine Thorstensen
-      mkOverride(160, 14, ?12,  ?25,  ?5,   null, ?0, ?0, ?0, ?1,  ?2,  ?1,  ?1,  ?11.1), // Maja Olsen
-      mkOverride(161, 13, ?10,  ?20,  ?4,   null, ?0, ?0, ?0, ?1,  ?1,  ?1,  ?0,  ?9.3),  // Hege Walberg
-      mkOverride(162, 12, ?9,   ?18,  ?4,   null, ?0, ?0, ?0, ?1,  ?1,  ?1,  ?0,  ?8.3),  // Tone Eriksen
-      mkOverride(149, 22, null, null, null, ?128, ?1, ?0, ?0, null,null, ?1,  null, ?37.4), // Camilla Johansen (K)
-      mkOverride(150, 8,  null, null, null, ?50,  ?0, ?0, ?0, null,null, ?0,  null, ?16.2), // Marte Enersen (K)
-      mkOverride(153, 20, ?22,  ?42,  ?8,   null, ?0, ?1, ?0, ?3,  ?3,  ?2,  ?1,  ?20.3), // Ida Kristiansen
-
-      // ── Nærbø IL ──
-      mkOverride(166, 22, ?65,  ?112, ?22,  null, ?2, ?2, ?0, ?8,  ?9,  ?4,  ?3,  ?47.6), // Sissel Haraldstad
-      mkOverride(165, 21, ?55,  ?95,  ?18,  null, ?1, ?2, ?0, ?7,  ?8,  ?4,  ?3,  ?40.3), // Ragnhild Aarrestad
-      mkOverride(168, 20, ?45,  ?82,  ?15,  null, ?0, ?2, ?0, ?6,  ?7,  ?3,  ?2,  ?33.0), // Randi Nygaard
-      mkOverride(170, 19, ?38,  ?70,  ?14,  null, ?1, ?1, ?0, ?5,  ?6,  ?3,  ?2,  ?27.9), // Line Salvesen
-      mkOverride(169, 18, ?28,  ?52,  ?10,  null, ?0, ?1, ?0, ?3,  ?4,  ?2,  ?2,  ?25.9), // Camilla Breivik
-      mkOverride(172, 17, ?22,  ?42,  ?8,   null, ?1, ?1, ?0, ?3,  ?3,  ?2,  ?1,  ?20.3), // Marte Aasen
-      mkOverride(174, 16, ?18,  ?35,  ?7,   null, ?0, ?1, ?0, ?2,  ?3,  ?2,  ?1,  ?16.6), // Hege Nordbø
-      mkOverride(171, 15, ?15,  ?30,  ?6,   null, ?0, ?1, ?0, ?2,  ?2,  ?1,  ?1,  ?13.9), // Silje Vatland
-      mkOverride(173, 14, ?12,  ?25,  ?5,   null, ?0, ?0, ?0, ?1,  ?2,  ?1,  ?1,  ?11.1), // Kristin Jøssang
-      mkOverride(175, 13, ?10,  ?20,  ?4,   null, ?0, ?0, ?0, ?1,  ?1,  ?1,  ?0,  ?9.3),  // Ingrid Ree
-      mkOverride(176, 12, ?9,   ?18,  ?4,   null, ?0, ?0, ?0, ?1,  ?1,  ?1,  ?0,  ?8.3),  // Tone Undheim
-      mkOverride(167, 20, ?22,  ?42,  ?8,   null, ?0, ?1, ?0, ?3,  ?3,  ?2,  ?1,  ?20.3), // Gunhild Kristiansen
-      mkOverride(163, 22, null, null, null, ?122, ?1, ?0, ?0, null,null, ?1,  null, ?35.6), // Elisabeth Bredvold (K)
-      mkOverride(164, 8,  null, null, null, ?48,  ?0, ?0, ?0, null,null, ?0,  null, ?15.6), // Astrid Vatne (K)
-    ];
-
-    for (override in overrides.values()) {
-      let existingIdx = state.playerSeasonStats.findIndex(func(s) { s.playerId == override.playerId });
-      switch existingIdx {
-        case (?i) state.playerSeasonStats.put(i, override);
-        case null state.playerSeasonStats.add(override);
-      };
-    };
+    // ── Player Season Stats ──────────────────────────────────────────────────
+    // Empty - populated from live data
   };
 
   public func initSeedData(state : State) : () {

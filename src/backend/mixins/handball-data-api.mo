@@ -49,12 +49,12 @@ mixin (state : HandballLib.State) {
     HandballLib.getFollowedPlayers(state, caller);
   };
 
-  // Auto-follows demo players (IDs 3, 14, 68) for first-time users.
+  // Auto-follows demo players for first-time users.
   // Safe to call repeatedly — followPlayer is idempotent.
   public shared ({ caller }) func initUserFollows() : async () {
     let followed = HandballLib.getFollowedPlayers(state, caller);
     if (followed.size() == 0) {
-      for (pid in [3, 14, 68].values()) {
+      for (pid in [23, 241, 195].values()) {
         HandballLib.followPlayer(state, caller, pid);
       };
     };
