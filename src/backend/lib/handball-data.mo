@@ -6,6 +6,7 @@ import Nat "mo:core/Nat";
 import Int "mo:core/Int";
 import Time "mo:core/Time";
 import Principal "mo:core/Principal";
+import Text "mo:core/Text";
 
 module {
   public type State = {
@@ -22,11 +23,11 @@ module {
   // ─── ID generation ────────────────────────────────────────────────────────
 
   func nextIdFor(state : State, key : Text) : Nat {
-    let current = switch (state.nextId.get(key)) {
+    let current = switch (Map.get(state.nextId, Text.compare, key)) {
       case (?v) v;
       case null 0;
     };
-    state.nextId.add(key, current + 1);
+    Map.add(state.nextId, Text.compare, key, current + 1);
     current;
   };
 
@@ -77,15 +78,14 @@ module {
       m.startTime > now
     });
     // find earliest
-    switch (upcoming.values().foldLeft<Types.Match, ?(Types.Match)>(null, func(acc, m) {
-      switch acc {
-        case null ?m;
-        case (?best) if (m.startTime < best.startTime) ?m else ?best;
-      }
-    })) {
-      case (?m) ?m;
-      case null null;
+    var best : ?Types.Match = null;
+    for (m in upcoming.values()) {
+      switch best {
+        case null { best := ?m };
+        case (?b) { if (m.startTime < b.startTime) best := ?m };
+      };
     };
+    best;
   };
 
   public func getFollowedPlayers(state : State, userId : Principal) : [Types.Player] {

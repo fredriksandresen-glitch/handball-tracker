@@ -2,6 +2,8 @@ import ProfixioTypes "../types/profixio";
 import ProfixioLib "../lib/profixio";
 import HandballLib "../lib/handball-data";
 import Time "mo:core/Time";
+import List "mo:core/List";
+import Types "../types/handball-data";
 
 mixin (state : HandballLib.State, cache : ProfixioTypes.ProfixioCache) {
 
@@ -32,7 +34,7 @@ mixin (state : HandballLib.State, cache : ProfixioTypes.ProfixioCache) {
     statsSource : Text;
     playersWithStats : Nat;
   } {
-    let playersWithStats = state.playerSeasonStats.filter(func(s) {
+    let playersWithStats = List.filter<Types.PlayerSeasonStats>(state.playerSeasonStats, func(s) {
       s.totalGoals != null or s.totalAssists != null or
       s.totalSaves != null or s.matchesPlayed > 0
     }).size();

@@ -2,6 +2,8 @@ import Types "../types/handball-data";
 import HandballLib "../lib/handball-data";
 import List "mo:core/List";
 import Map "mo:core/Map";
+import Array "mo:core/Array";
+import Text "mo:core/Text";
 
 mixin (state : HandballLib.State) {
 
@@ -74,24 +76,30 @@ mixin (state : HandballLib.State) {
 
   public query ({ caller }) func isFollowing(playerId : Nat) : async Bool {
     let followed = HandballLib.getFollowedPlayers(state, caller);
-    switch (followed.find(func(p) { p.id == playerId })) {
+    switch (Array.find<Types.Player>(followed, func(p) { p.id == playerId })) {
       case (?_) true;
       case null false;
     };
   };
 
   public query func searchPlayers(term : Text) : async [Types.Player] {
-    let lower = term.toLower();
+    let lower = Text.toLower(term);
     if (lower.size() == 0) return [];
     HandballLib.getPlayers(state)
       .filter(func(p) {
-        if (p.name.toLower().contains(#text lower) or p.slug.toLower().contains(#text lower)) {
+        let nameLower = Text.toLower(p.name);
+        let slugLower = Text.toLower(p.slug);
+        if (Text.contains(nameLower, #text lower) or Text.contains(slugLower, #text lower)) {
           return true;
         };
         // Also match by team name so "fjellhammer" returns all Fjellhammer players
         switch (HandballLib.getTeam(state, p.teamId)) {
           case null false;
-          case (?t) t.name.toLower().contains(#text lower) or t.slug.toLower().contains(#text lower);
+          case (?t) {
+            let teamNameLower = Text.toLower(t.name);
+            let teamSlugLower = Text.toLower(t.slug);
+            Text.contains(teamNameLower, #text lower) or Text.contains(teamSlugLower, #text lower)
+          };
         };
       });
   };

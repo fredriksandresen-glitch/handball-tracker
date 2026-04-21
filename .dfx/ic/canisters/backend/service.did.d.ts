@@ -1,0 +1,152 @@
+import type { Principal } from '@icp-sdk/core/principal';
+import type { ActorMethod } from '@icp-sdk/core/agent';
+import type { IDL } from '@icp-sdk/core/candid';
+
+export interface FeedEvent {
+  'id' : bigint,
+  'title' : string,
+  'userId' : Principal,
+  'playerId' : bigint,
+  'createdAt' : bigint,
+  'description' : string,
+  'matchId' : [] | [bigint],
+  'statValue' : [] | [bigint],
+  'eventType' : FeedEventType,
+}
+export type FeedEventType = { 'NextMatch' : null } |
+  { 'GoalsScored' : null } |
+  { 'GamePlayed' : null } |
+  { 'MinutesPlayed' : null } |
+  { 'YellowCard' : null } |
+  { 'SeasonAvgUpdated' : null } |
+  { 'TwoMinSuspension' : null };
+export interface Match {
+  'id' : bigint,
+  'startTime' : bigint,
+  'status' : MatchStatus,
+  'venue' : [] | [string],
+  'awayTeamId' : bigint,
+  'homeTeamId' : bigint,
+  'competition' : string,
+}
+export type MatchStatus = { 'Live' : null } |
+  { 'Finished' : null } |
+  { 'Upcoming' : null };
+export interface Player {
+  'id' : bigint,
+  'name' : string,
+  'slug' : string,
+  'nationality' : [] | [string],
+  'isActive' : boolean,
+  'jerseyNumber' : [] | [bigint],
+  'imageUrl' : [] | [string],
+  'teamId' : bigint,
+  'position' : Position,
+}
+export interface PlayerMatchStats {
+  'id' : bigint,
+  'blueCards' : [] | [bigint],
+  'minutesPlayed' : [] | [bigint],
+  'assists' : [] | [bigint],
+  'twoMinSuspensions' : [] | [bigint],
+  'playerId' : bigint,
+  'sevenMeterGoals' : [] | [bigint],
+  'yellowCards' : [] | [bigint],
+  'turnovers' : [] | [bigint],
+  'sevenMeterAttempts' : [] | [bigint],
+  'saves' : [] | [bigint],
+  'shotPct' : [] | [number],
+  'shots' : [] | [bigint],
+  'matchId' : bigint,
+  'goals' : [] | [bigint],
+  'savePct' : [] | [number],
+  'redCards' : [] | [bigint],
+}
+export interface PlayerSeasonStats {
+  'id' : bigint,
+  'mepAvg' : [] | [number],
+  'goalsPerGame' : [] | [number],
+  'technicalFaults' : [] | [bigint],
+  'mepTotal' : [] | [number],
+  'goals7m' : [] | [bigint],
+  'playerId' : bigint,
+  'provoked7m' : [] | [bigint],
+  'fieldShots' : [] | [bigint],
+  'assistsPerGame' : [] | [number],
+  'season' : string,
+  'percent7m' : [] | [number],
+  'fieldGoals' : [] | [bigint],
+  'totalYellowCards' : [] | [bigint],
+  'shots7m' : [] | [bigint],
+  'totalSaves' : [] | [bigint],
+  'totalShots' : [] | [bigint],
+  'totalGoals' : [] | [bigint],
+  'awarded7m' : [] | [bigint],
+  'matchesPlayed' : bigint,
+  'fieldGoalPercent' : [] | [number],
+  'totalAssists' : [] | [bigint],
+  'totalRedCards' : [] | [bigint],
+  'shootingPercent' : [] | [number],
+  'totalTwoMin' : [] | [bigint],
+  'totalMinutes' : [] | [bigint],
+}
+export type Position = { 'Linje' : null } |
+  { 'VenstreKant' : null } |
+  { 'Keeper' : null } |
+  { 'Bakspiller' : null } |
+  { 'HoyreKant' : null };
+export interface ProfixioStatus {
+  'dataSource' : string,
+  'liveStatsCount' : bigint,
+  'isLive' : boolean,
+  'message' : string,
+  'lastSync' : [] | [bigint],
+}
+export interface Team {
+  'id' : bigint,
+  'goalDifference' : [] | [bigint],
+  'name' : string,
+  'slug' : string,
+  'logoUrl' : [] | [string],
+  'matchesPlayed' : [] | [bigint],
+  'standingsRank' : [] | [bigint],
+  'points' : [] | [bigint],
+}
+export interface _SERVICE {
+  'followPlayer' : ActorMethod<[bigint], undefined>,
+  'getAllPlayerSeasonStats' : ActorMethod<[], Array<PlayerSeasonStats>>,
+  'getDataStatus' : ActorMethod<
+    [],
+    {
+      'playersWithStats' : bigint,
+      'dataSource' : string,
+      'liveStatsCount' : bigint,
+      'playerCount' : bigint,
+      'teamCount' : bigint,
+      'statsSource' : string,
+    }
+  >,
+  'getFeedEvents' : ActorMethod<[], Array<FeedEvent>>,
+  'getFollowedPlayers' : ActorMethod<[], Array<Player>>,
+  'getMatches' : ActorMethod<[], Array<Match>>,
+  'getNextMatchForTeam' : ActorMethod<[bigint], [] | [Match]>,
+  'getPlayer' : ActorMethod<[bigint], [] | [Player]>,
+  'getPlayerCount' : ActorMethod<[], bigint>,
+  'getPlayerMatchStats' : ActorMethod<[bigint], Array<PlayerMatchStats>>,
+  'getPlayerSeasonStats' : ActorMethod<[bigint], [] | [PlayerSeasonStats]>,
+  'getPlayers' : ActorMethod<[], Array<Player>>,
+  'getPlayersByTeam' : ActorMethod<[bigint], Array<Player>>,
+  'getProfixioStatus' : ActorMethod<[], ProfixioStatus>,
+  'getTeam' : ActorMethod<[bigint], [] | [Team]>,
+  'getTeams' : ActorMethod<[], Array<Team>>,
+  'getUpcomingMatches' : ActorMethod<[], Array<Match>>,
+  'initUserFollows' : ActorMethod<[], undefined>,
+  'isFollowing' : ActorMethod<[bigint], boolean>,
+  'refreshFromProfixio' : ActorMethod<[], string>,
+  'refreshPlayerStats' : ActorMethod<[], string>,
+  'searchPlayers' : ActorMethod<[string], Array<Player>>,
+  'searchTeams' : ActorMethod<[string], Array<Team>>,
+  'unfollowPlayer' : ActorMethod<[bigint], undefined>,
+}
+export declare const idlFactory: IDL.InterfaceFactory;
+export declare const init: (args: { IDL: typeof IDL }) => IDL.Type[];

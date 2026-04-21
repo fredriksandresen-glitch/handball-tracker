@@ -1,6 +1,7 @@
 import Nat "mo:core/Nat";
 import Text "mo:core/Text";
 import List "mo:core/List";
+import Iter "mo:core/Iter";
 
 module {
 
@@ -205,11 +206,11 @@ module {
       case (?t) t;
     };
 
-    let rows = tableHtml.split(#text "<tr").toArray();
+    let rows = Iter.toArray(tableHtml.split(#text "<tr"));
     var rank = 0;
 
     for (row in rows.values()) {
-      let cells = row.split(#text "<td").toArray();
+      let cells = Iter.toArray(row.split(#text "<td"));
       if (cells.size() >= 3) {
         let cellValues = List.empty<Text>();
         var ci = 1; // skip part before first <td
@@ -281,10 +282,10 @@ module {
 
   func parseMatches(html : Text) : [ScrapedMatch] {
     let matches = List.empty<ScrapedMatch>();
-    let rows = html.split(#text "<tr").toArray();
+    let rows = Iter.toArray(html.split(#text "<tr"));
 
     for (row in rows.values()) {
-      let cells = row.split(#text "<td").toArray();
+      let cells = Iter.toArray(row.split(#text "<td"));
       if (cells.size() >= 3) {
         let cellValues = List.empty<Text>();
         var ci = 1;
@@ -394,11 +395,11 @@ module {
       case (?t) t;
     };
 
-    let rows = tableHtml.split(#text "<tr").toArray();
+    let rows = Iter.toArray(tableHtml.split(#text "<tr"));
     var rank = 0;
 
     for (row in rows.values()) {
-      let cells = row.split(#text "<td").toArray();
+      let cells = Iter.toArray(row.split(#text "<td"));
       if (cells.size() >= 3) {
         let cellValues = List.empty<Text>();
         var ci = 1;

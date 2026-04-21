@@ -1,0 +1,160 @@
+type Team = 
+ record {
+   goalDifference: opt int;
+   id: nat;
+   logoUrl: opt text;
+   matchesPlayed: opt nat;
+   name: text;
+   points: opt nat;
+   slug: text;
+   standingsRank: opt nat;
+ };
+type ProfixioStatus = 
+ record {
+   dataSource: text;
+   isLive: bool;
+   lastSync: opt int;
+   liveStatsCount: nat;
+   message: text;
+ };
+type Position = 
+ variant {
+   Bakspiller;
+   HoyreKant;
+   Keeper;
+   Linje;
+   VenstreKant;
+ };
+type PlayerSeasonStats = 
+ record {
+   assistsPerGame: opt float64;
+   awarded7m: opt nat;
+   fieldGoalPercent: opt float64;
+   fieldGoals: opt nat;
+   fieldShots: opt nat;
+   goals7m: opt nat;
+   goalsPerGame: opt float64;
+   id: nat;
+   matchesPlayed: nat;
+   mepAvg: opt float64;
+   mepTotal: opt float64;
+   percent7m: opt float64;
+   playerId: nat;
+   provoked7m: opt nat;
+   season: text;
+   shootingPercent: opt float64;
+   shots7m: opt nat;
+   technicalFaults: opt nat;
+   totalAssists: opt nat;
+   totalGoals: opt nat;
+   totalMinutes: opt nat;
+   totalRedCards: opt nat;
+   totalSaves: opt nat;
+   totalShots: opt nat;
+   totalTwoMin: opt nat;
+   totalYellowCards: opt nat;
+ };
+type PlayerMatchStats = 
+ record {
+   assists: opt nat;
+   blueCards: opt nat;
+   goals: opt nat;
+   id: nat;
+   matchId: nat;
+   minutesPlayed: opt nat;
+   playerId: nat;
+   redCards: opt nat;
+   savePct: opt float64;
+   saves: opt nat;
+   sevenMeterAttempts: opt nat;
+   sevenMeterGoals: opt nat;
+   shotPct: opt float64;
+   shots: opt nat;
+   turnovers: opt nat;
+   twoMinSuspensions: opt nat;
+   yellowCards: opt nat;
+ };
+type Player = 
+ record {
+   id: nat;
+   imageUrl: opt text;
+   isActive: bool;
+   jerseyNumber: opt nat;
+   name: text;
+   nationality: opt text;
+   position: Position;
+   slug: text;
+   teamId: nat;
+ };
+type MatchStatus = 
+ variant {
+   Finished;
+   Live;
+   Upcoming;
+ };
+type Match = 
+ record {
+   awayTeamId: nat;
+   competition: text;
+   homeTeamId: nat;
+   id: nat;
+   startTime: int;
+   status: MatchStatus;
+   venue: opt text;
+ };
+type FeedEventType = 
+ variant {
+   GamePlayed;
+   GoalsScored;
+   MinutesPlayed;
+   NextMatch;
+   SeasonAvgUpdated;
+   TwoMinSuspension;
+   YellowCard;
+ };
+type FeedEvent = 
+ record {
+   createdAt: int;
+   description: text;
+   eventType: FeedEventType;
+   id: nat;
+   matchId: opt nat;
+   playerId: nat;
+   statValue: opt int;
+   title: text;
+   userId: principal;
+ };
+service : {
+  followPlayer: (playerId: nat) -> ();
+  getAllPlayerSeasonStats: () -> (vec PlayerSeasonStats) query;
+  getDataStatus: () ->
+   (record {
+      dataSource: text;
+      liveStatsCount: nat;
+      playerCount: nat;
+      playersWithStats: nat;
+      statsSource: text;
+      teamCount: nat;
+    }) query;
+  getFeedEvents: () -> (vec FeedEvent) query;
+  getFollowedPlayers: () -> (vec Player) query;
+  getMatches: () -> (vec Match) query;
+  getNextMatchForTeam: (teamId: nat) -> (opt Match) query;
+  getPlayer: (id: nat) -> (opt Player) query;
+  getPlayerCount: () -> (nat) query;
+  getPlayerMatchStats: (playerId: nat) -> (vec PlayerMatchStats) query;
+  getPlayerSeasonStats: (playerId: nat) -> (opt PlayerSeasonStats) query;
+  getPlayers: () -> (vec Player) query;
+  getPlayersByTeam: (teamId: nat) -> (vec Player) query;
+  getProfixioStatus: () -> (ProfixioStatus) query;
+  getTeam: (id: nat) -> (opt Team) query;
+  getTeams: () -> (vec Team) query;
+  getUpcomingMatches: () -> (vec Match) query;
+  initUserFollows: () -> ();
+  isFollowing: (playerId: nat) -> (bool) query;
+  refreshFromProfixio: () -> (text);
+  refreshPlayerStats: () -> (text);
+  searchPlayers: (term: text) -> (vec Player) query;
+  searchTeams: (term: text) -> (vec Team) query;
+  unfollowPlayer: (playerId: nat) -> ();
+}
