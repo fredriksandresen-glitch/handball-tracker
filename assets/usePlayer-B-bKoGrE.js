@@ -1,4 +1,4 @@
-import { r as reactExports, b as useQuery, d as useMockActor } from "./index-BrTjiQrP.js";
+import { r as reactExports, b as useQuery, d as useMockActor } from "./index-B2X5ECyo.js";
 function usePlayer(id) {
   const { actor } = useMockActor();
   return useQuery({

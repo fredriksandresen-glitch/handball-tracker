@@ -1,4 +1,4 @@
-import { j as jsxRuntimeExports, a as cn, b as useQuery, l as useQueryClient, m as useMutation, d as useMockActor } from "./index-BrTjiQrP.js";
+import { j as jsxRuntimeExports, a as cn, b as useQuery, l as useQueryClient, m as useMutation, d as useMockActor } from "./index-B2X5ECyo.js";
 const POSITION_LABELS = {
   Keeper: "Keeper",
   Bakspiller: "Bakspiller",

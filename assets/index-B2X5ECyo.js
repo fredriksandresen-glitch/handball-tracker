@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/HomePage-BteNJZLW.js","assets/handballService-Dbax6PK1.js","assets/useFollowedPlayers-B96IBvp4.js","assets/proxy-DJ0N1V57.js","assets/usePlayer-C3a-quHL.js","assets/useTeams-DWX26GYj.js","assets/shield-Bu1_p0xX.js","assets/SearchPage-CjFJRJdh.js","assets/PlayerCard-C-uuHDfT.js","assets/button-CpNExvJA.js","assets/user-BnzOrMEL.js","assets/usePlayers-7fjKvlK1.js","assets/TeamsPage-CILhcyid.js","assets/trophy-BLR5dJLX.js","assets/FavoritesPage-mS0krStY.js","assets/PlayerPage-Br_sFbhv.js","assets/useTeam-tdwq3tr2.js","assets/TeamPage-CP8mF7Sp.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/HomePage-C06G3fmt.js","assets/handballService-CH0xnrRk.js","assets/useFollowedPlayers-DblfZw1i.js","assets/proxy-Ma0emwQn.js","assets/usePlayer-B-bKoGrE.js","assets/useTeams-YLryVOkW.js","assets/shield-PkYHw-Z_.js","assets/SearchPage-nD6RDBgA.js","assets/PlayerCard-BMjR5fN-.js","assets/button-CXsuziPg.js","assets/user-BifTdhaf.js","assets/usePlayers-CCrORHpA.js","assets/TeamsPage-CGN_Hedm.js","assets/trophy-B_F2AtK9.js","assets/FavoritesPage-yMmROmu3.js","assets/PlayerPage-Co6qH98N.js","assets/useTeam-CyyTM4Wv.js","assets/TeamPage-BkkvcRCq.js"])))=>i.map(i=>d[i]);
 var __typeError = (msg) => {
   throw TypeError(msg);
 };
@@ -26375,12 +26375,12 @@ function SkeletonCard({ variant = "player", className }) {
     }
   );
 }
-const HomePage = reactExports.lazy(() => __vitePreload(() => import("./HomePage-BteNJZLW.js"), true ? __vite__mapDeps([0,1,2,3,4,5,6]) : void 0));
-const SearchPage = reactExports.lazy(() => __vitePreload(() => import("./SearchPage-CjFJRJdh.js"), true ? __vite__mapDeps([7,8,9,2,10,11,5]) : void 0));
-const TeamsPage = reactExports.lazy(() => __vitePreload(() => import("./TeamsPage-CILhcyid.js"), true ? __vite__mapDeps([12,1,6,13,5,3]) : void 0));
-const FavoritesPage = reactExports.lazy(() => __vitePreload(() => import("./FavoritesPage-mS0krStY.js"), true ? __vite__mapDeps([14,8,9,2,10,11,5,3,6]) : void 0));
-const PlayerPage = reactExports.lazy(() => __vitePreload(() => import("./PlayerPage-Br_sFbhv.js"), true ? __vite__mapDeps([15,9,4,11,2,16,1,6]) : void 0));
-const TeamPage = reactExports.lazy(() => __vitePreload(() => import("./TeamPage-CP8mF7Sp.js"), true ? __vite__mapDeps([17,9,1,16,2,4,5,6,3,13,10]) : void 0));
+const HomePage = reactExports.lazy(() => __vitePreload(() => import("./HomePage-C06G3fmt.js"), true ? __vite__mapDeps([0,1,2,3,4,5,6]) : void 0));
+const SearchPage = reactExports.lazy(() => __vitePreload(() => import("./SearchPage-nD6RDBgA.js"), true ? __vite__mapDeps([7,8,9,2,10,11,5]) : void 0));
+const TeamsPage = reactExports.lazy(() => __vitePreload(() => import("./TeamsPage-CGN_Hedm.js"), true ? __vite__mapDeps([12,1,6,13,5,3]) : void 0));
+const FavoritesPage = reactExports.lazy(() => __vitePreload(() => import("./FavoritesPage-yMmROmu3.js"), true ? __vite__mapDeps([14,8,9,2,10,11,5,3,6]) : void 0));
+const PlayerPage = reactExports.lazy(() => __vitePreload(() => import("./PlayerPage-Co6qH98N.js"), true ? __vite__mapDeps([15,9,4,11,2,16,1,6]) : void 0));
+const TeamPage = reactExports.lazy(() => __vitePreload(() => import("./TeamPage-BkkvcRCq.js"), true ? __vite__mapDeps([17,9,1,16,2,4,5,6,3,13,10]) : void 0));
 function PageLoader() {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-3 pt-2", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(SkeletonCard, { variant: "player" }),
@@ -26429,7 +26429,7 @@ const routeTree = rootRoute.addChildren([
   playerRoute,
   teamRoute
 ]);
-const router = createRouter({ routeTree });
+const router = createRouter({ routeTree, basepath: "/handball-tracker" });
 function App() {
   return /* @__PURE__ */ jsxRuntimeExports.jsx(RouterProvider, { router });
 }

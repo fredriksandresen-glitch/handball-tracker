@@ -1,5 +1,5 @@
-import { b as useQuery, d as useMockActor } from "./index-BrTjiQrP.js";
-import { e as enrichPlayersWithImages } from "./useFollowedPlayers-B96IBvp4.js";
+import { b as useQuery, d as useMockActor } from "./index-B2X5ECyo.js";
+import { e as enrichPlayersWithImages } from "./useFollowedPlayers-DblfZw1i.js";
 function usePlayers() {
   const { actor } = useMockActor();
   return useQuery({

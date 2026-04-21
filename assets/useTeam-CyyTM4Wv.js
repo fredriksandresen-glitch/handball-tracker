@@ -1,4 +1,4 @@
-import { c as createLucideIcon, b as useQuery, d as useMockActor } from "./index-BrTjiQrP.js";
+import { c as createLucideIcon, b as useQuery, d as useMockActor } from "./index-B2X5ECyo.js";
 /**
  * @license lucide-react v0.511.0 - ISC
  *

@@ -1,11 +1,11 @@
-import { c as createLucideIcon, r as reactExports, j as jsxRuntimeExports, g as Skeleton, a as cn, h as useParams, i as useRouter, P as Position, L as Link, U as Users } from "./index-BrTjiQrP.js";
-import { B as Button } from "./button-CpNExvJA.js";
-import { a as usePlayerSeasonStats, b as usePlayer, c as usePlayerMatchStats } from "./usePlayer-C3a-quHL.js";
-import { a as usePlayers } from "./usePlayers-7fjKvlK1.js";
-import { b as POSITION_LABELS, P as PositionBadge, c as useIsFollowing, d as useFollowPlayer, a as useUnfollowPlayer } from "./useFollowedPlayers-B96IBvp4.js";
-import { u as useTeam, A as ArrowLeft, a as ArrowRight, b as useNextMatchForTeam, C as Clock, M as MapPin } from "./useTeam-tdwq3tr2.js";
-import { f as formatMatchDate, g as getCountdown } from "./handballService-Dbax6PK1.js";
-import { S as Shield } from "./shield-Bu1_p0xX.js";
+import { c as createLucideIcon, r as reactExports, j as jsxRuntimeExports, g as Skeleton, a as cn, h as useParams, i as useRouter, P as Position, L as Link, U as Users } from "./index-B2X5ECyo.js";
+import { B as Button } from "./button-CXsuziPg.js";
+import { a as usePlayerSeasonStats, b as usePlayer, c as usePlayerMatchStats } from "./usePlayer-B-bKoGrE.js";
+import { a as usePlayers } from "./usePlayers-CCrORHpA.js";
+import { b as POSITION_LABELS, P as PositionBadge, c as useIsFollowing, d as useFollowPlayer, a as useUnfollowPlayer } from "./useFollowedPlayers-DblfZw1i.js";
+import { u as useTeam, A as ArrowLeft, a as ArrowRight, b as useNextMatchForTeam, C as Clock, M as MapPin } from "./useTeam-CyyTM4Wv.js";
+import { f as formatMatchDate, g as getCountdown } from "./handballService-CH0xnrRk.js";
+import { S as Shield } from "./shield-PkYHw-Z_.js";
 /**
  * @license lucide-react v0.511.0 - ISC
  *

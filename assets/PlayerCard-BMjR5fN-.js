@@ -1,7 +1,7 @@
-import { u as useNavigate, j as jsxRuntimeExports, a as cn } from "./index-BrTjiQrP.js";
-import { B as Button } from "./button-CpNExvJA.js";
-import { P as PositionBadge } from "./useFollowedPlayers-B96IBvp4.js";
-import { U as User } from "./user-BnzOrMEL.js";
+import { u as useNavigate, j as jsxRuntimeExports, a as cn } from "./index-B2X5ECyo.js";
+import { B as Button } from "./button-CXsuziPg.js";
+import { P as PositionBadge } from "./useFollowedPlayers-DblfZw1i.js";
+import { U as User } from "./user-BifTdhaf.js";
 function Sparkline({ values }) {
   if (values.length < 2) return null;
   const max = Math.max(...values, 1);

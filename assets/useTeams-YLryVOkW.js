@@ -1,4 +1,4 @@
-import { b as useQuery, d as useMockActor } from "./index-BrTjiQrP.js";
+import { b as useQuery, d as useMockActor } from "./index-B2X5ECyo.js";
 function useTeams() {
   const { actor } = useMockActor();
   return useQuery({
