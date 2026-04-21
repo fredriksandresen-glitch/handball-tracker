@@ -3,24 +3,39 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Handball Tracker</title>
-  <meta name="description" content="Følg dine favorittspillere i REMA 1000-ligaen" />
-  <meta property="og:title" content="Handball Tracker" />
-  <meta property="og:description" content="Følg dine favorittspillere i REMA 1000-ligaen" />
-  <meta property="og:type" content="website" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-  <!-- PWA / iPhone home screen -->
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Handball" />
-  <meta name="theme-color" content="#1a1f3a" />
-    <script type="module" crossorigin src="/assets/index-BrTjiQrP.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DsNHWp86.css">
+    <title>Handball Tracker</title>
+    <meta name="description" content="Følg dine favorittspillere i REMA 1000-ligaen" />
+    <link rel="icon" type="image/x-icon" href="/handball-tracker/favicon.ico" />
+    <link rel="manifest" href="/handball-tracker/manifest.json" />
+    <meta name="theme-color" content="#1a1f3a" />
+    <style>
+      body { margin: 0; background: #1a1f3a; color: white; font-family: sans-serif; }
+      #root { min-height: 100vh; }
+      #fallback { padding: 40px; text-align: center; }
+      #error-log { color: #ff6b6b; margin-top: 20px; font-family: monospace; font-size: 12px; }
+    </style>
+    <script type="module" crossorigin src="/handball-tracker/assets/index-BrTjiQrP.js"></script>
+    <link rel="stylesheet" crossorigin href="/handball-tracker/assets/index-DsNHWp86.css">
   </head>
   <body>
-    <div id="root"><div style="padding:20px;background:#1a1f3a;color:white;text-align:center;"><h1>🏐 Handball Tracker</h1><p>Laster app...</p><p>Hvis dette forsvinner, starter React.</p></div></div>
+    <div id="root">
+      <div id="fallback">
+        <h1>🏐 Handball Tracker</h1>
+        <p>Laster app...</p>
+        <div id="error-log"></div>
+      </div>
+    </div>
+    <script>
+      window.onerror = function(msg, url, line) {
+        document.getElementById('error-log').innerHTML += 'FEIL: ' + msg + ' (linje ' + line + ')<br>';
+        return false;
+      };
+      setTimeout(function() {
+        var fb = document.getElementById('fallback');
+        if (fb && fb.parentElement) {
+          fb.innerHTML += '<p style="color:#888">React startet ikke etter 5 sekunder.</p>';
+        }
+      }, 5000);
+    </script>
   </body>
 </html>
