@@ -1,10 +1,10 @@
-import { useMockActor } from "./useMockActor";
+import { useActor } from "@caffeineai/core-infrastructure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createActor } from "../backend-mock";
+import { createActor } from "../backend";
 import type { ProfixioStatus } from "../backend.d";
 
 export function useProfixioStatus() {
-  const { actor, isFetching } = useMockActor();
+  const { actor, isFetching } = useActor(createActor);
   return useQuery<ProfixioStatus>({
     queryKey: ["profixioStatus"],
     queryFn: async () => {
@@ -33,7 +33,7 @@ export interface DataStatus {
 }
 
 export function useDataStatus() {
-  const { actor, isFetching } = useMockActor();
+  const { actor, isFetching } = useActor(createActor);
   return useQuery<DataStatus>({
     queryKey: ["dataStatus"],
     queryFn: async () => {
@@ -86,7 +86,7 @@ export function useDataStatus() {
 }
 
 export function useRefreshProfixio() {
-  const { actor } = useMockActor();
+  const { actor } = useActor(createActor);
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async () => {

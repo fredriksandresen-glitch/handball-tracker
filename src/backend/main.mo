@@ -11,18 +11,18 @@ import ProfixioApi "mixins/profixio-api";
 
 
 
-persistent actor Main {
+actor Main {
 
-  transient let teams            = List.empty<Types.Team>();
-  transient let players          = List.empty<Types.Player>();
-  transient let matches          = List.empty<Types.Match>();
-  transient let playerMatchStats = List.empty<Types.PlayerMatchStats>();
-  transient let playerSeasonStats = List.empty<Types.PlayerSeasonStats>();
-  transient let follows          = List.empty<Types.Follow>();
-  transient let feedEvents       = List.empty<Types.FeedEvent>();
-  transient let nextId           = Map.empty<Text, Nat>();
+  let teams            = List.empty<Types.Team>();
+  let players          = List.empty<Types.Player>();
+  let matches          = List.empty<Types.Match>();
+  let playerMatchStats = List.empty<Types.PlayerMatchStats>();
+  let playerSeasonStats = List.empty<Types.PlayerSeasonStats>();
+  let follows          = List.empty<Types.Follow>();
+  let feedEvents       = List.empty<Types.FeedEvent>();
+  let nextId           = Map.empty<Text, Nat>();
 
-  transient let state : HandballLib.State = {
+  let state : HandballLib.State = {
     teams;
     players;
     matches;
@@ -33,7 +33,7 @@ persistent actor Main {
     nextId;
   };
 
-  transient let profixioCache : ProfixioTypes.ProfixioCache = {
+  let profixioCache : ProfixioTypes.ProfixioCache = {
     var lastSync = null;
     var isLive = false;
     var lastMessage = "Ingen synkronisering utført ennå";

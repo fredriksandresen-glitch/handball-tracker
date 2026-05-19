@@ -8,9 +8,6 @@ import Text "mo:core/Text";
 import Nat "mo:core/Nat";
 import Int "mo:core/Int";
 import Time "mo:core/Time";
-import Iter "mo:core/Iter";
-import Char "mo:core/Char";
-import Array "mo:core/Array";
 
 module {
 
@@ -151,7 +148,7 @@ module {
       };
     };
     // Try float: split on "."
-    let parts = Iter.toArray(trimmed.split(#char '.'));
+    let parts = trimmed.split(#char '.').toArray();
     if (parts.size() == 2) {
       let intPart = parts[0];
       let fracPart = parts[1];
@@ -325,7 +322,7 @@ module {
   // Split `"data":[...]` array into individual object strings
   func jsonSplitDataArray(json : Text) : [Text] {
     // Find "data":[
-    let parts = Iter.toArray(json.split(#text "\"data\":["));
+    let parts = json.split(#text "\"data\":[").toArray();
     if (parts.size() < 2) return [];
     let afterOpen = parts[1];
     // collect until matching ]
@@ -354,7 +351,7 @@ module {
     let inner = acc.trim(#char ' ');
     if (inner.size() == 0) return [];
     // Split on "},{" boundaries
-    let chunks = Iter.toArray(inner.split(#text "},{"));
+    let chunks = inner.split(#text "},{").toArray();
     chunks.map<Text, Text>(func(chunk) {
       var s = chunk.trim(#char ' ');
       if (not s.startsWith(#char '{')) s := "{" # s;
@@ -373,14 +370,14 @@ module {
     if (a == b) return true;
 
     // Try: all parts of A appear in B
-    let partsA = Iter.toArray(a.split(#char ' '));
+    let partsA = a.split(#char ' ').toArray();
     let allAInB = partsA.all(func(part) {
       part.size() > 1 and b.contains(#text part)
     });
     if (allAInB and partsA.size() >= 2) return true;
 
     // Try: all parts of B appear in A
-    let partsB = Iter.toArray(b.split(#char ' '));
+    let partsB = b.split(#char ' ').toArray();
     let allBInA = partsB.all(func(part) {
       part.size() > 1 and a.contains(#text part)
     });
@@ -594,21 +591,21 @@ module {
   // ─── Slug helper ──────────────────────────────────────────────────────────
 
   func slugify(name : Text) : Text {
-    Text.toLower(name).map(func(c : Char) : Char {
-      if ((Char.greaterOrEqual(c, 'a') and Char.lessOrEqual(c, 'z')) or (Char.greaterOrEqual(c, '0') and Char.lessOrEqual(c, '9'))) c
-      else if (Char.toNat32(c) == 0xE6) 'a'  // æ
-      else if (Char.toNat32(c) == 0xF8) 'o'  // ø
-      else if (Char.toNat32(c) == 0xE5) 'a'  // å
+    name.toLower().map(func(c : Char) : Char {
+      if ((c >= 'a' and c <= 'z') or (c >= '0' and c <= '9')) c
+      else if (c.toNat32() == 0xE6) 'a'  // æ
+      else if (c.toNat32() == 0xF8) 'o'  // ø
+      else if (c.toNat32() == 0xE5) 'a'  // å
       else '-'
     })
   };
 
   // Parse a Profixio date string "YYYY-MM-DD HH:MM:SS" to nanoseconds Int
   func parseDateToNanos(dateStr : Text) : ?Int {
-    let spaceparts = Iter.toArray(dateStr.split(#char ' '));
+    let spaceparts = dateStr.split(#char ' ').toArray();
     if (spaceparts.size() == 0) return null;
     let datePart = spaceparts[0];
-    let datePieces = Iter.toArray(datePart.split(#char '-'));
+    let datePieces = datePart.split(#char '-').toArray();
     if (datePieces.size() < 3) return null;
     let yearOpt = Nat.fromText(datePieces[0]);
     let monthOpt = Nat.fromText(datePieces[1]);
@@ -639,7 +636,7 @@ module {
   func _splitJsonArray(json : Text) : [Text] {
     // find opening [
     let trimmed = json.trim(#char ' ');
-    let parts = Iter.toArray(trimmed.split(#char '['));
+    let parts = trimmed.split(#char '[').toArray();
     if (parts.size() < 2) return [];
     let afterOpen = parts[1];
     // collect until matching ]
@@ -662,7 +659,7 @@ module {
     };
     let inner = acc.trim(#char ' ');
     if (inner.size() == 0) return [];
-    let chunks = Iter.toArray(inner.split(#text "},{"));
+    let chunks = inner.split(#text "},{").toArray();
     chunks.map<Text, Text>(func(chunk) {
       var s = chunk.trim(#char ' ');
       if (not s.startsWith(#char '{')) s := "{" # s;
@@ -1131,7 +1128,7 @@ module {
         case (?name, ?pid) {
           let localId = teamIdCounter;
           teamIdCounter := teamIdCounter + 1;
-          Map.add(profixioTeamToLocal, Text.compare, pid, localId);
+          profixioTeamToLocal.add(pid, localId);
           newTeams.add({
             id = localId;
             name;
@@ -1146,7 +1143,7 @@ module {
           // Parse embedded player list from "players":[{...},...] field
           // We need to locate the "players" array within this team object
           let playersNeedle = "\"players\":[";
-          let teamParts = Iter.toArray(teamObj.split(#text playersNeedle));
+          let teamParts = teamObj.split(#text playersNeedle).toArray();
           if (teamParts.size() >= 2) {
             let afterPlayersOpen = teamParts[1];
             var depth = 1;
@@ -1168,7 +1165,7 @@ module {
             };
             let playersInner = pacc.trim(#char ' ');
             if (playersInner.size() > 0) {
-              let pChunks = Iter.toArray(playersInner.split(#text "},{"));
+              let pChunks = playersInner.split(#text "},{").toArray();
               let pObjects = pChunks.map(func(chunk) {
                 var s = chunk.trim(#char ' ');
                 if (not s.startsWith(#char '{')) s := "{" # s;
@@ -1249,8 +1246,8 @@ module {
 
       switch (homeIdOpt, awayIdOpt) {
         case (?homeId, ?awayId) {
-          let localHome = switch (Map.get(profixioTeamToLocal, Text.compare, homeId)) { case (?id) id; case null 0 };
-          let localAway = switch (Map.get(profixioTeamToLocal, Text.compare, awayId)) { case (?id) id; case null 0 };
+          let localHome = switch (profixioTeamToLocal.get(homeId)) { case (?id) id; case null 0 };
+          let localAway = switch (profixioTeamToLocal.get(awayId)) { case (?id) id; case null 0 };
           if (localHome > 0 and localAway > 0) {
             let startTime : Int = switch (jsonGetField(mObj, "match_date")) {
               case null Time.now();
@@ -1418,7 +1415,7 @@ module {
     for (scrapedTeam in data.teams.values()) {
       let localId = teamIdCounter;
       teamIdCounter := teamIdCounter + 1;
-      Map.add(teamNameToId, Text.compare, scrapedTeam.name, localId);
+      teamNameToId.add(scrapedTeam.name, localId);
       newTeams.add({
         id = localId;
         name = scrapedTeam.name;
@@ -1437,8 +1434,8 @@ module {
     // Build matches into temp list
     var matchIdCounter : Nat = 1;
     for (scrapedMatch in data.matches.values()) {
-      let homeIdOpt = Map.get(teamNameToId, Text.compare, scrapedMatch.homeTeam);
-      let awayIdOpt = Map.get(teamNameToId, Text.compare, scrapedMatch.awayTeam);
+      let homeIdOpt = teamNameToId.get(scrapedMatch.homeTeam);
+      let awayIdOpt = teamNameToId.get(scrapedMatch.awayTeam);
       switch (homeIdOpt, awayIdOpt) {
         case (?homeId, ?awayId) {
           newMatches.add({

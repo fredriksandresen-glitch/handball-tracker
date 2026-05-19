@@ -2,8 +2,6 @@ import Types "../types/handball-data";
 import HandballLib "../lib/handball-data";
 import List "mo:core/List";
 import Map "mo:core/Map";
-import Array "mo:core/Array";
-import Text "mo:core/Text";
 
 mixin (state : HandballLib.State) {
 
@@ -51,12 +49,12 @@ mixin (state : HandballLib.State) {
     HandballLib.getFollowedPlayers(state, caller);
   };
 
-  // Auto-follows demo players for first-time users.
+  // Auto-follows demo players (IDs 3, 14, 68) for first-time users.
   // Safe to call repeatedly — followPlayer is idempotent.
   public shared ({ caller }) func initUserFollows() : async () {
     let followed = HandballLib.getFollowedPlayers(state, caller);
     if (followed.size() == 0) {
-      for (pid in [23, 241, 195].values()) {
+      for (pid in [3, 14, 68].values()) {
         HandballLib.followPlayer(state, caller, pid);
       };
     };
@@ -76,30 +74,24 @@ mixin (state : HandballLib.State) {
 
   public query ({ caller }) func isFollowing(playerId : Nat) : async Bool {
     let followed = HandballLib.getFollowedPlayers(state, caller);
-    switch (Array.find<Types.Player>(followed, func(p) { p.id == playerId })) {
+    switch (followed.find(func(p) { p.id == playerId })) {
       case (?_) true;
       case null false;
     };
   };
 
   public query func searchPlayers(term : Text) : async [Types.Player] {
-    let lower = Text.toLower(term);
+    let lower = term.toLower();
     if (lower.size() == 0) return [];
     HandballLib.getPlayers(state)
       .filter(func(p) {
-        let nameLower = Text.toLower(p.name);
-        let slugLower = Text.toLower(p.slug);
-        if (Text.contains(nameLower, #text lower) or Text.contains(slugLower, #text lower)) {
+        if (p.name.toLower().contains(#text lower) or p.slug.toLower().contains(#text lower)) {
           return true;
         };
         // Also match by team name so "fjellhammer" returns all Fjellhammer players
         switch (HandballLib.getTeam(state, p.teamId)) {
           case null false;
-          case (?t) {
-            let teamNameLower = Text.toLower(t.name);
-            let teamSlugLower = Text.toLower(t.slug);
-            Text.contains(teamNameLower, #text lower) or Text.contains(teamSlugLower, #text lower)
-          };
+          case (?t) t.name.toLower().contains(#text lower) or t.slug.toLower().contains(#text lower);
         };
       });
   };

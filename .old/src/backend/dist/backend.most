@@ -1,0 +1,194 @@
+// Version: 1.0.0
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type FeedEventType__696867549 =
+  {
+    #GamePlayed;
+    #GoalsScored;
+    #MinutesPlayed;
+    #NextMatch;
+    #SeasonAvgUpdated;
+    #TwoMinSuspension;
+    #YellowCard
+  };
+type FeedEvent__214152838 =
+  {
+    createdAt : Int;
+    description : Text;
+    eventType : FeedEventType__696867549;
+    id : Nat;
+    matchId : ?Nat;
+    playerId : Nat;
+    statValue : ?Int;
+    title : Text;
+    userId : Principal
+  };
+type Follow__127524499 = {id : Nat; playerId : Nat; userId : Principal};
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type List__415060402<T> = List__790383201<T>;
+type List__790383201<T> =
+  {
+    var blockIndex : Nat__490723111;
+    var blocks : [var [var ?T]];
+    var elementIndex : Nat__490723111
+  };
+type Map__158565046<K, V> = Map__297112838<K, V>;
+type Map__297112838<K, V> =
+  {var root : Node__46230540<K, V>; var size : Nat__490723111};
+type Map__605269027<K, V> = Map__158565046<K, V>;
+type MatchStatus__796575733 = {#Finished; #Live; #Upcoming};
+type Match__720243418 =
+  {
+    awayTeamId : Nat;
+    competition : Text;
+    homeTeamId : Nat;
+    id : Nat;
+    startTime : Int;
+    status : MatchStatus__796575733;
+    venue : ?Text
+  };
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type PlayerMatchStats__261592097 =
+  {
+    assists : ?Nat;
+    blueCards : ?Nat;
+    goals : ?Nat;
+    id : Nat;
+    matchId : Nat;
+    minutesPlayed : ?Nat;
+    playerId : Nat;
+    redCards : ?Nat;
+    savePct : ?Float;
+    saves : ?Nat;
+    sevenMeterAttempts : ?Nat;
+    sevenMeterGoals : ?Nat;
+    shotPct : ?Float;
+    shots : ?Nat;
+    turnovers : ?Nat;
+    twoMinSuspensions : ?Nat;
+    yellowCards : ?Nat
+  };
+type PlayerSeasonStats__780067750 =
+  {
+    assistsPerGame : ?Float;
+    awarded7m : ?Nat;
+    fieldGoalPercent : ?Float;
+    fieldGoals : ?Nat;
+    fieldShots : ?Nat;
+    goals7m : ?Nat;
+    goalsPerGame : ?Float;
+    id : Nat;
+    matchesPlayed : Nat;
+    mepAvg : ?Float;
+    mepTotal : ?Float;
+    percent7m : ?Float;
+    playerId : Nat;
+    provoked7m : ?Nat;
+    season : Text;
+    shootingPercent : ?Float;
+    shots7m : ?Nat;
+    technicalFaults : ?Nat;
+    totalAssists : ?Nat;
+    totalGoals : ?Nat;
+    totalMinutes : ?Nat;
+    totalRedCards : ?Nat;
+    totalSaves : ?Nat;
+    totalShots : ?Nat;
+    totalTwoMin : ?Nat;
+    totalYellowCards : ?Nat
+  };
+type Player__546789466 =
+  {
+    id : Nat;
+    imageUrl : ?Text;
+    isActive : Bool;
+    jerseyNumber : ?Nat;
+    name : Text;
+    nationality : ?Text;
+    position : Position__363278747;
+    slug : Text;
+    teamId : Nat
+  };
+type Position__363278747 =
+  {#Bakspiller; #HoyreKant; #Keeper; #Linje; #VenstreKant};
+type Team__173907276 =
+  {
+    goalDifference : ?Int;
+    id : Nat;
+    logoUrl : ?Text;
+    matchesPlayed : ?Nat;
+    name : Text;
+    points : ?Nat;
+    slug : Text;
+    standingsRank : ?Nat
+  };
+actor {
+  stable feedEvents :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?FeedEvent__214152838]];
+      var elementIndex : Nat__490723111
+    };
+  stable follows :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Follow__127524499]];
+      var elementIndex : Nat__490723111
+    };
+  stable matches :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Match__720243418]];
+      var elementIndex : Nat__490723111
+    };
+  stable nextId :
+    {var root : Node__46230540<Text, Nat>; var size : Nat__490723111};
+  stable playerMatchStats :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?PlayerMatchStats__261592097]];
+      var elementIndex : Nat__490723111
+    };
+  stable playerSeasonStats :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?PlayerSeasonStats__780067750]];
+      var elementIndex : Nat__490723111
+    };
+  stable players :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Player__546789466]];
+      var elementIndex : Nat__490723111
+    };
+  stable profixioCache :
+    {
+      var dataSource : Text;
+      var isLive : Bool;
+      var lastMessage : Text;
+      var lastSync : ?Int;
+      var liveStatsCount : Nat
+    };
+  stable state :
+    {
+      feedEvents : List__415060402<FeedEvent__214152838>;
+      follows : List__415060402<Follow__127524499>;
+      matches : List__415060402<Match__720243418>;
+      nextId : Map__605269027<Text, Nat>;
+      playerMatchStats : List__415060402<PlayerMatchStats__261592097>;
+      playerSeasonStats : List__415060402<PlayerSeasonStats__780067750>;
+      players : List__415060402<Player__546789466>;
+      teams : List__415060402<Team__173907276>
+    };
+  stable teams :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Team__173907276]];
+      var elementIndex : Nat__490723111
+    }
+};

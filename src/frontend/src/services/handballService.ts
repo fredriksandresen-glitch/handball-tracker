@@ -1,4 +1,4 @@
-import { createActor } from "../backend-mock";
+import { createActor } from "../backend";
 import type { backendInterface } from "../backend";
 
 // Service layer wrapping all backend calls

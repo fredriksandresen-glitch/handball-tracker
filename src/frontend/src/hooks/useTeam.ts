@@ -1,10 +1,10 @@
-import { useMockActor } from "./useMockActor";
+import { useActor } from "@caffeineai/core-infrastructure";
 import { useQuery } from "@tanstack/react-query";
-import { createActor } from "../backend-mock";
+import { createActor } from "../backend";
 import type { Match, Player, Team } from "../types/handball";
 
 export function useTeam(id: bigint) {
-  const { actor, isFetching } = useMockActor();
+  const { actor, isFetching } = useActor(createActor);
   return useQuery<Team | null>({
     queryKey: ["team", id.toString()],
     queryFn: async () => {
@@ -17,7 +17,7 @@ export function useTeam(id: bigint) {
 }
 
 export function useNextMatchForTeam(teamId: bigint) {
-  const { actor, isFetching } = useMockActor();
+  const { actor, isFetching } = useActor(createActor);
   return useQuery<Match | null>({
     queryKey: ["nextMatch", teamId.toString()],
     queryFn: async () => {
@@ -30,7 +30,7 @@ export function useNextMatchForTeam(teamId: bigint) {
 }
 
 export function usePlayersByTeam(teamId: bigint) {
-  const { actor, isFetching } = useMockActor();
+  const { actor, isFetching } = useActor(createActor);
   return useQuery<Player[]>({
     queryKey: ["playersByTeam", teamId.toString()],
     queryFn: async () => {
