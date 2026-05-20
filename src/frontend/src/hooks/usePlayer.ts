@@ -2,6 +2,12 @@ import { useActor } from "@caffeineai/core-infrastructure";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { createActor } from "../backend";
+import {
+  fetchClawdbotPlayerProfile,
+  mapClawdbotMatchStats,
+  mapClawdbotPlayer,
+  mapClawdbotSeasonStats,
+} from "../services/clawdbotPlayerProfile";
 import type {
   Player,
   PlayerMatchStats,
@@ -13,10 +19,13 @@ export function usePlayer(id: bigint) {
   return useQuery<Player | null>({
     queryKey: ["player", id.toString()],
     queryFn: async () => {
+      const clawdbotProfile = await fetchClawdbotPlayerProfile(id).catch(() => null);
+      if (clawdbotProfile) return mapClawdbotPlayer(clawdbotProfile);
+
       if (!actor) return null;
       return actor.getPlayer(id);
     },
-    enabled: !!actor && !isFetching,
+    enabled: !isFetching,
     staleTime: 60_000,
   });
 }
@@ -26,10 +35,15 @@ export function usePlayerMatchStats(playerId: bigint) {
   return useQuery<PlayerMatchStats[]>({
     queryKey: ["playerMatchStats", playerId.toString()],
     queryFn: async () => {
+      const clawdbotProfile = await fetchClawdbotPlayerProfile(playerId).catch(
+        () => null,
+      );
+      if (clawdbotProfile) return mapClawdbotMatchStats(clawdbotProfile);
+
       if (!actor) return [];
       return actor.getPlayerMatchStats(playerId);
     },
-    enabled: !!actor && !isFetching,
+    enabled: !isFetching,
     staleTime: 60_000,
   });
 }
@@ -39,10 +53,15 @@ export function usePlayerSeasonStats(playerId: bigint) {
   return useQuery<PlayerSeasonStats | null>({
     queryKey: ["playerSeasonStats", playerId.toString()],
     queryFn: async () => {
+      const clawdbotProfile = await fetchClawdbotPlayerProfile(playerId).catch(
+        () => null,
+      );
+      if (clawdbotProfile) return mapClawdbotSeasonStats(clawdbotProfile);
+
       if (!actor) return null;
       return actor.getPlayerSeasonStats(playerId);
     },
-    enabled: !!actor && !isFetching,
+    enabled: !isFetching,
     staleTime: 60_000,
   });
 }
@@ -54,10 +73,13 @@ function useSingleMatchStats(id: bigint, enabled: boolean) {
   return useQuery<PlayerMatchStats[]>({
     queryKey: ["playerMatchStats", id.toString()],
     queryFn: async () => {
+      const clawdbotProfile = await fetchClawdbotPlayerProfile(id).catch(() => null);
+      if (clawdbotProfile) return mapClawdbotMatchStats(clawdbotProfile);
+
       if (!actor) return [];
       return actor.getPlayerMatchStats(id);
     },
-    enabled: enabled && !!actor && !isFetching,
+    enabled: enabled && !isFetching,
     staleTime: 60_000,
   });
 }
