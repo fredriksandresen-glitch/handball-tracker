@@ -3,6 +3,7 @@ import type {
   Player,
   PlayerMatchStats,
   PlayerSeasonStats,
+  Team,
 } from "../types/handball";
 
 const DEFAULT_CLAWDBOT_API_BASE =
@@ -287,4 +288,47 @@ export function mapClawdbotMatchStats(
       twoMinSuspensions: toOptionalBigInt(match.suspensions),
     };
   });
+}
+
+export function getStaticPlayers(): Player[] {
+  return Object.values(STATIC_PLAYER_PROFILES).map(mapClawdbotPlayer);
+}
+
+export function searchStaticPlayers(term: string): Player[] {
+  const normalized = term.trim().toLowerCase();
+  if (!normalized) return [];
+
+  return getStaticPlayers().filter((player) => {
+    const profile = getStaticProfile(player.id);
+    const team = profile?.player.team?.toLowerCase() ?? "";
+    const position = profile?.player.position?.toLowerCase() ?? "";
+
+    return (
+      player.name.toLowerCase().includes(normalized) ||
+      team.includes(normalized) ||
+      position.includes(normalized)
+    );
+  });
+}
+
+export function getStaticTeams(): Team[] {
+  const uniqueTeams = new Map<string, Team>();
+
+  for (const profile of Object.values(STATIC_PLAYER_PROFILES)) {
+    const name = profile.player.team;
+    if (!name) continue;
+
+    const id = stableTeamId(name);
+    uniqueTeams.set(id.toString(), {
+      id,
+      name,
+      slug: slugify(name),
+    });
+  }
+
+  return Array.from(uniqueTeams.values());
+}
+
+export function getStaticTeam(id: bigint): Team | null {
+  return getStaticTeams().find((team) => team.id === id) ?? null;
 }
