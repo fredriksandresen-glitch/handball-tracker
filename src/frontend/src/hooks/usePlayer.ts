@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { createActor } from "../backend";
 import {
   fetchClawdbotPlayerProfile,
+  getStaticProfile,
   mapClawdbotMatchStats,
   mapClawdbotPlayer,
   mapClawdbotSeasonStats,
@@ -16,25 +17,34 @@ import type {
 
 export function usePlayer(id: bigint) {
   const { actor, isFetching } = useActor(createActor);
+  const staticProfile = getStaticProfile(id);
+
   return useQuery<Player | null>({
     queryKey: ["player", id.toString()],
     queryFn: async () => {
+      if (staticProfile) return mapClawdbotPlayer(staticProfile);
+
       const clawdbotProfile = await fetchClawdbotPlayerProfile(id).catch(() => null);
       if (clawdbotProfile) return mapClawdbotPlayer(clawdbotProfile);
 
       if (!actor) return null;
       return actor.getPlayer(id);
     },
-    enabled: !isFetching,
+    enabled: !isFetching || !!staticProfile,
+    initialData: staticProfile ? mapClawdbotPlayer(staticProfile) : undefined,
     staleTime: 60_000,
   });
 }
 
 export function usePlayerMatchStats(playerId: bigint) {
   const { actor, isFetching } = useActor(createActor);
+  const staticProfile = getStaticProfile(playerId);
+
   return useQuery<PlayerMatchStats[]>({
     queryKey: ["playerMatchStats", playerId.toString()],
     queryFn: async () => {
+      if (staticProfile) return mapClawdbotMatchStats(staticProfile);
+
       const clawdbotProfile = await fetchClawdbotPlayerProfile(playerId).catch(
         () => null,
       );
@@ -43,16 +53,21 @@ export function usePlayerMatchStats(playerId: bigint) {
       if (!actor) return [];
       return actor.getPlayerMatchStats(playerId);
     },
-    enabled: !isFetching,
+    enabled: !isFetching || !!staticProfile,
+    initialData: staticProfile ? mapClawdbotMatchStats(staticProfile) : undefined,
     staleTime: 60_000,
   });
 }
 
 export function usePlayerSeasonStats(playerId: bigint) {
   const { actor, isFetching } = useActor(createActor);
+  const staticProfile = getStaticProfile(playerId);
+
   return useQuery<PlayerSeasonStats | null>({
     queryKey: ["playerSeasonStats", playerId.toString()],
     queryFn: async () => {
+      if (staticProfile) return mapClawdbotSeasonStats(staticProfile);
+
       const clawdbotProfile = await fetchClawdbotPlayerProfile(playerId).catch(
         () => null,
       );
@@ -61,7 +76,10 @@ export function usePlayerSeasonStats(playerId: bigint) {
       if (!actor) return null;
       return actor.getPlayerSeasonStats(playerId);
     },
-    enabled: !isFetching,
+    enabled: !isFetching || !!staticProfile,
+    initialData: staticProfile
+      ? mapClawdbotSeasonStats(staticProfile)
+      : undefined,
     staleTime: 60_000,
   });
 }
@@ -70,16 +88,21 @@ export function usePlayerSeasonStats(playerId: bigint) {
 // Uses individual usePlayerMatchStats calls to leverage query cache
 function useSingleMatchStats(id: bigint, enabled: boolean) {
   const { actor, isFetching } = useActor(createActor);
+  const staticProfile = getStaticProfile(id);
+
   return useQuery<PlayerMatchStats[]>({
     queryKey: ["playerMatchStats", id.toString()],
     queryFn: async () => {
+      if (staticProfile) return mapClawdbotMatchStats(staticProfile);
+
       const clawdbotProfile = await fetchClawdbotPlayerProfile(id).catch(() => null);
       if (clawdbotProfile) return mapClawdbotMatchStats(clawdbotProfile);
 
       if (!actor) return [];
       return actor.getPlayerMatchStats(id);
     },
-    enabled: enabled && !isFetching,
+    enabled: enabled && (!isFetching || !!staticProfile),
+    initialData: staticProfile ? mapClawdbotMatchStats(staticProfile) : undefined,
     staleTime: 60_000,
   });
 }
