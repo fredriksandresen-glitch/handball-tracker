@@ -57,10 +57,10 @@ const STATIC_PLAYER_PROFILES: Record<string, ClawdbotPlayerProfile> = {
       id: "2239828059504",
       name: "Sarah Deari Solheim",
       imageUrl:
-        "https://www.fjellhammer.no/wp-content/uploads/sites/19/2026/02/Sarah-signerer-ny-kontrakt.jpeg",
+        "https://nthapi.webcore.no/wp-content/uploads/2026/05/Sarah-Deari-Solheim-Fjellhammer.png?v=1773826257",
       team: "Fjellhammer",
       position: "Bakspiller høyre",
-      shirtNumber: 0,
+      shirtNumber: 14,
       season: "2526",
       tournament: "REMA 1000-ligaen kvinner",
     },
