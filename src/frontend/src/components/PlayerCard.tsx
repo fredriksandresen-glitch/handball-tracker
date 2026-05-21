@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "@tanstack/react-router";
-import { User } from "lucide-react";
+import type { MouseEvent } from "react";
 import type { Player } from "../types/handball";
 import { PositionBadge } from "./PositionBadge";
 
-// ── Sparkline ──────────────────────────────────────────────────────────────
+// ─── Sparkline ───────────────────────────────────────────────────────────────
 function Sparkline({ values }: { values: number[] }) {
   if (values.length < 2) return null;
   const max = Math.max(...values, 1);
@@ -41,7 +41,7 @@ function Sparkline({ values }: { values: number[] }) {
   );
 }
 
-// ── PlayerCard ─────────────────────────────────────────────────────────────
+// ─── PlayerCard ─────────────────────────────────────────────────────────────
 interface Props {
   player: Player;
   teamName?: string;
@@ -72,12 +72,18 @@ export function PlayerCard({
 
   const hasStats = goals !== undefined || minutes !== undefined;
   const hasSpark = sparkValues.length >= 2;
+  const initials = player.name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   function handleCardClick() {
     navigate({ to: "/player/$id", params: { id: player.id.toString() } });
   }
 
-  function handleFollowClick(e: React.MouseEvent) {
+  function handleFollowClick(e: MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
     if (isFollowing) {
       onUnfollow?.();
@@ -87,18 +93,20 @@ export function PlayerCard({
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleCardClick}
-      aria-label={`Vis profil for ${player.name}`}
+    <div
       className={cn(
-        "w-full text-left rounded-2xl overflow-hidden transition-smooth hover:shadow-elevated cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+        "w-full rounded-2xl overflow-hidden transition-smooth hover:shadow-elevated group",
         className,
       )}
       data-ocid="player-card"
     >
       {/* ── Poster image area ── */}
-      <div className="relative w-full aspect-[3/4] bg-muted">
+      <button
+        type="button"
+        onClick={handleCardClick}
+        aria-label={`Vis profil for ${player.name}`}
+        className="relative block w-full aspect-[3/4] bg-muted text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      >
         {player.imageUrl ? (
           <img
             src={player.imageUrl}
@@ -106,8 +114,10 @@ export function PlayerCard({
             className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-muted to-muted/60">
-            <User className="size-16 text-muted-foreground/40" />
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-emerald-950 via-slate-900 to-cyan-950">
+            <span className="font-display font-black text-7xl text-white/18">
+              {initials}
+            </span>
           </div>
         )}
 
@@ -115,7 +125,7 @@ export function PlayerCard({
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
         {/* Jersey number badge — top right */}
-        {player.jerseyNumber !== undefined && (
+        {player.jerseyNumber !== undefined && player.jerseyNumber > 0n && (
           <div className="absolute top-3 right-3 size-8 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 flex items-center justify-center">
             <span className="font-display font-black text-[13px] text-white leading-none">
               {player.jerseyNumber.toString()}
@@ -178,7 +188,7 @@ export function PlayerCard({
             </div>
           )}
         </div>
-      </div>
+      </button>
 
       {/* ── Follow button (below card) ── */}
       {(onFollow || onUnfollow) && (
@@ -207,6 +217,6 @@ export function PlayerCard({
           )}
         </div>
       )}
-    </button>
+    </div>
   );
 }
