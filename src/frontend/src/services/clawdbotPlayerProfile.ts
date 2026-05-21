@@ -50,6 +50,91 @@ export type ClawdbotPlayerProfile = {
   recentMatches: ClawdbotRecentMatch[];
 };
 
+const STATIC_PLAYER_PROFILES: Record<string, ClawdbotPlayerProfile> = {
+  "2239828059504": {
+    player: {
+      id: "2239828059504",
+      name: "Sarah Deari Solheim",
+      imageUrl: "",
+      team: "Fjellhammer",
+      position: "Bakspiller høyre",
+      shirtNumber: 0,
+      season: "2526",
+      tournament: "REMA 1000-ligaen kvinner",
+    },
+    seasonStats: {
+      matches: 26,
+      goals: 200,
+      shots: 315,
+      shotPercentage: 63.5,
+      assists: 119,
+      technicalErrors: 78,
+      suspensions: 4,
+    },
+    recentMatches: [
+      {
+        matchId: "8208557",
+        date: "2026-04-22",
+        opponent: "Fana",
+        homeAway: "away",
+        goals: 8,
+        shots: 16,
+        assists: 10,
+        technicalErrors: 6,
+        suspensions: 0,
+      },
+      {
+        matchId: "8208551",
+        date: "2026-04-16",
+        opponent: "Fredrikstad",
+        homeAway: "home",
+        goals: 3,
+        shots: 7,
+        assists: 4,
+        technicalErrors: 4,
+        suspensions: 0,
+      },
+      {
+        matchId: "8208543",
+        date: "2026-03-29",
+        opponent: "Oppsal",
+        homeAway: "home",
+        goals: 11,
+        shots: 19,
+        assists: 6,
+        technicalErrors: 3,
+        suspensions: 0,
+      },
+      {
+        matchId: "8208542",
+        date: "2026-03-22",
+        opponent: "Follo Damer",
+        homeAway: "away",
+        goals: 12,
+        shots: 15,
+        assists: 8,
+        technicalErrors: 1,
+        suspensions: 1,
+      },
+      {
+        matchId: "8208529",
+        date: "2026-03-18",
+        opponent: "Molde",
+        homeAway: "away",
+        goals: 8,
+        shots: 13,
+        assists: 10,
+        technicalErrors: 2,
+        suspensions: 0,
+      },
+    ],
+  },
+};
+
+function getStaticProfile(playerId: bigint): ClawdbotPlayerProfile | null {
+  return STATIC_PLAYER_PROFILES[playerId.toString()] ?? null;
+}
+
 function toBigInt(value: string | number | null | undefined, fallback = 0n) {
   if (value === null || value === undefined || value === "") return fallback;
   try {
@@ -119,18 +204,24 @@ function sanitizeProfile(profile: ClawdbotPlayerProfile): ClawdbotPlayerProfile 
 export async function fetchClawdbotPlayerProfile(
   playerId: bigint,
 ): Promise<ClawdbotPlayerProfile | null> {
-  if (!CLAWDBOT_API_BASE) return null;
+  const staticProfile = getStaticProfile(playerId);
 
-  const url = new URL("/player-profile", CLAWDBOT_API_BASE);
-  url.searchParams.set("playerId", playerId.toString());
+  if (!CLAWDBOT_API_BASE) return staticProfile;
 
-  const response = await fetch(url.toString());
-  if (!response.ok) return null;
+  try {
+    const url = new URL("/player-profile", CLAWDBOT_API_BASE);
+    url.searchParams.set("playerId", playerId.toString());
 
-  const data = (await response.json()) as ClawdbotPlayerProfile;
-  if (!data?.player?.id || !data?.player?.name) return null;
+    const response = await fetch(url.toString());
+    if (!response.ok) return staticProfile;
 
-  return sanitizeProfile(data);
+    const data = (await response.json()) as ClawdbotPlayerProfile;
+    if (!data?.player?.id || !data?.player?.name) return staticProfile;
+
+    return sanitizeProfile(data);
+  } catch {
+    return staticProfile;
+  }
 }
 
 export function mapClawdbotPlayer(profile: ClawdbotPlayerProfile): Player {
