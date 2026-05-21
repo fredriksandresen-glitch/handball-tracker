@@ -1,6 +1,10 @@
 import { useActor } from "@caffeineai/core-infrastructure";
 import { useQuery } from "@tanstack/react-query";
 import { createActor } from "../backend";
+import {
+  getStaticPlayers,
+  getStaticTeam,
+} from "../services/clawdbotPlayerProfile";
 import type { Match, Player, Team } from "../types/handball";
 
 export function useTeam(id: bigint) {
@@ -8,10 +12,10 @@ export function useTeam(id: bigint) {
   return useQuery<Team | null>({
     queryKey: ["team", id.toString()],
     queryFn: async () => {
-      if (!actor) return null;
-      return actor.getTeam(id);
+      if (!actor) return getStaticTeam(id);
+      return (await actor.getTeam(id)) ?? getStaticTeam(id);
     },
-    enabled: !!actor && !isFetching,
+    enabled: !isFetching,
     staleTime: 60_000,
   });
 }
@@ -24,7 +28,7 @@ export function useNextMatchForTeam(teamId: bigint) {
       if (!actor) return null;
       return actor.getNextMatchForTeam(teamId);
     },
-    enabled: !!actor && !isFetching,
+    enabled: !isFetching,
     staleTime: 60_000,
   });
 }
@@ -34,10 +38,15 @@ export function usePlayersByTeam(teamId: bigint) {
   return useQuery<Player[]>({
     queryKey: ["playersByTeam", teamId.toString()],
     queryFn: async () => {
-      if (!actor) return [];
-      return actor.getPlayersByTeam(teamId);
+      const staticPlayers = getStaticPlayers().filter(
+        (player) => player.teamId === teamId,
+      );
+      if (!actor) return staticPlayers;
+
+      const players = await actor.getPlayersByTeam(teamId);
+      return players.length > 0 ? players : staticPlayers;
     },
-    enabled: !!actor && !isFetching,
+    enabled: !isFetching,
     staleTime: 60_000,
   });
 }
