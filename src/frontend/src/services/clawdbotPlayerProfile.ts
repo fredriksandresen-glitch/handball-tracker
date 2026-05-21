@@ -132,7 +132,7 @@ const STATIC_PLAYER_PROFILES: Record<string, ClawdbotPlayerProfile> = {
   },
 };
 
-function getStaticProfile(playerId: bigint): ClawdbotPlayerProfile | null {
+export function getStaticProfile(playerId: bigint): ClawdbotPlayerProfile | null {
   return STATIC_PLAYER_PROFILES[playerId.toString()] ?? null;
 }
 
