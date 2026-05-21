@@ -1,6 +1,7 @@
 import { useActor } from "@caffeineai/core-infrastructure";
 import { useQuery } from "@tanstack/react-query";
 import { createActor } from "../backend";
+import { getStaticTeams } from "../services/clawdbotPlayerProfile";
 import type { Match, Team } from "../types/handball";
 
 export function useTeams() {
@@ -8,10 +9,11 @@ export function useTeams() {
   return useQuery<Team[]>({
     queryKey: ["teams"],
     queryFn: async () => {
-      if (!actor) return [];
-      return actor.getTeams();
+      if (!actor) return getStaticTeams();
+      const teams = await actor.getTeams();
+      return teams.length > 0 ? teams : getStaticTeams();
     },
-    enabled: !!actor && !isFetching,
+    enabled: !isFetching,
     staleTime: 120_000,
   });
 }
@@ -24,7 +26,7 @@ export function useUpcomingMatches() {
       if (!actor) return [];
       return actor.getUpcomingMatches();
     },
-    enabled: !!actor && !isFetching,
+    enabled: !isFetching,
     staleTime: 60_000,
   });
 }
