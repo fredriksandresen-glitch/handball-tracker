@@ -4,36 +4,36 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { createActor } from "../backend";
-import {
-  computeFormSparkline,
-  formatMatchDate,
-  getCountdown,
-} from "../services/handballService";
+import { formatMatchDate, getCountdown } from "../services/handballService";
+import type { EnrichedPlayerMatchStats } from "../services/clawdbotPlayerProfile";
 import type { FeedEvent, Player, PlayerMatchStats } from "../types/handball";
 import { FeedEventType } from "../types/handball";
 import { PositionBadge } from "./PositionBadge";
 
-// ── Sparkline (white for overlay) ─────────────────────────────────────────
 function Sparkline({ values }: { values: number[] }) {
   if (values.length < 2) return null;
+
+  const min = Math.min(...values, 0);
   const max = Math.max(...values, 1);
+  const range = Math.max(max - min, 1);
   const W = 48;
   const H = 20;
   const pts = values.map((v, i) => {
     const x = (i / (values.length - 1)) * W;
-    const y = H - (v / max) * (H - 3) - 2;
+    const y = H - ((v - min) / range) * (H - 4) - 2;
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   });
+
   return (
     <svg
       width={W}
       height={H}
       viewBox={`0 0 ${W} ${H}`}
       role="img"
-      aria-label="Formkurve"
-      className="flex-shrink-0 opacity-80"
+      aria-label="MEP-formkurve"
+      className="flex-shrink-0 opacity-85"
     >
-      <title>Formkurve siste kamper</title>
+      <title>MEP-form siste kamper</title>
       <polyline
         points={pts.join(" ")}
         fill="none"
@@ -46,7 +46,14 @@ function Sparkline({ values }: { values: number[] }) {
   );
 }
 
-// ── Next match pill inside card overlay ────────────────────────────────────
+function getMatchDate(match: EnrichedPlayerMatchStats) {
+  return match.date ?? match.matchId.toString();
+}
+
+function formatDecimal(value: number | undefined, digits = 1) {
+  return value === undefined ? "-" : value.toFixed(digits);
+}
+
 function NextMatchPill({ teamId }: { teamId: bigint }) {
   const { actor, isFetching } = useActor(createActor);
   const { data: nextMatch } = useQuery({
@@ -89,7 +96,7 @@ function NextMatchPill({ teamId }: { teamId: bigint }) {
         Neste
       </span>
       <span className="text-[10px] text-white/80 truncate min-w-0">
-        {isHome ? "vs" : "@"} {opponentName ?? "–"}
+        {isHome ? "vs" : "@"} {opponentName ?? "-"}
       </span>
       <span className="flex-shrink-0 text-[9px] font-display font-bold text-white bg-white/15 px-1.5 py-0.5 rounded-full border border-white/20">
         {countdown}
@@ -101,7 +108,6 @@ function NextMatchPill({ teamId }: { teamId: bigint }) {
   );
 }
 
-// ── Team-color placeholder backgrounds (by team name keyword) ─────────────
 const TEAM_BG_CLASSES: Record<string, string> = {
   vipers: "bg-gradient-to-br from-purple-900 to-purple-700",
   storhamar: "bg-gradient-to-br from-red-900 to-red-700",
@@ -125,7 +131,6 @@ function placeholderBg(teamName: string): string {
   return "bg-gradient-to-br from-muted to-muted/70";
 }
 
-// ── Main FeedPlayerCard ────────────────────────────────────────────────────
 interface Props {
   player: Player;
   teamName: string;
@@ -147,7 +152,6 @@ export function FeedPlayerCard({
 }: Props) {
   const navigate = useNavigate();
 
-  // Derive last match stats from events
   const lastGoalEvent = feedEvents
     .filter((e) => e.eventType === FeedEventType.GoalsScored)
     .at(-1);
@@ -155,9 +159,13 @@ export function FeedPlayerCard({
     .filter((e) => e.eventType === FeedEventType.MinutesPlayed)
     .at(-1);
 
-  const sparkValues = computeFormSparkline(
-    matchStats.map((s) => ({ goals: s.goals })),
-  );
+  const mepMatches = (matchStats as EnrichedPlayerMatchStats[])
+    .filter((match) => typeof match.mep === "number")
+    .sort((a, b) => getMatchDate(a).localeCompare(getMatchDate(b)))
+    .slice(-5);
+  const latestMatch = mepMatches.at(-1);
+  const sparkValues = mepMatches.map((match) => match.mep ?? 0);
+  const latestGoals = latestMatch?.goals ?? lastGoalEvent?.statValue;
 
   function handleCardClick() {
     navigate({ to: "/player/$id", params: { id: player.id.toString() } });
@@ -183,9 +191,7 @@ export function FeedPlayerCard({
       className="w-full text-left rounded-2xl overflow-hidden cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shadow-subtle hover:shadow-elevated transition-smooth"
       data-ocid="feed-player-card"
     >
-      {/* ── Poster area: aspect-[3/4] fill ── */}
       <div className={cn("relative w-full aspect-[3/4]", bgClass)}>
-        {/* Player photo */}
         {player.imageUrl ? (
           <img
             src={player.imageUrl}
@@ -200,10 +206,8 @@ export function FeedPlayerCard({
           </div>
         )}
 
-        {/* Gradient overlay: fully transparent at top → dark at bottom */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
 
-        {/* Jersey number badge — top left */}
         {player.jerseyNumber !== undefined && (
           <div className="absolute top-2.5 left-2.5 size-7 rounded-full bg-black/50 backdrop-blur-sm border border-white/25 flex items-center justify-center">
             <span className="font-display font-black text-[11px] text-white leading-none">
@@ -212,7 +216,6 @@ export function FeedPlayerCard({
           </div>
         )}
 
-        {/* Unfollow button — top right */}
         <button
           type="button"
           onClick={handleUnfollow}
@@ -224,33 +227,38 @@ export function FeedPlayerCard({
           <span className="text-sm leading-none font-bold">×</span>
         </button>
 
-        {/* ── Bottom overlay: name, team, stats ── */}
         <div className="absolute bottom-0 left-0 right-0 px-3 pb-3 pt-10">
-          {/* Position badge */}
           <div className="mb-1">
             <PositionBadge position={player.position} variant="overlay" />
           </div>
 
-          {/* Name */}
           <p className="font-display font-black text-white text-sm leading-tight truncate drop-shadow-sm">
             {player.name}
           </p>
 
-          {/* Team */}
           <p className="text-[10px] text-white/65 truncate mt-0.5 font-body">
             {teamName}
           </p>
 
-          {/* Stats row: goals + minutes + sparkline */}
           <div className="flex items-end justify-between mt-2 pt-2 border-t border-white/15">
             <div className="flex gap-3">
-              {lastGoalEvent?.statValue !== undefined && (
+              {latestMatch?.mep !== undefined && (
                 <div>
-                  <span className="block font-display font-black text-xl text-white leading-none">
-                    {lastGoalEvent.statValue.toString()}
+                  <span className="block font-display font-black text-xl text-white leading-none tabular-nums">
+                    {formatDecimal(latestMatch.mep)}
                   </span>
                   <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
-                    Mål sist
+                    MEP sist
+                  </span>
+                </div>
+              )}
+              {latestGoals !== undefined && (
+                <div>
+                  <span className="block font-display font-bold text-base text-white/85 leading-none tabular-nums">
+                    {latestGoals.toString()}
+                  </span>
+                  <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
+                    Mål
                   </span>
                 </div>
               )}
@@ -270,13 +278,12 @@ export function FeedPlayerCard({
               <div className="flex flex-col items-end gap-0.5">
                 <Sparkline values={sparkValues} />
                 <span className="text-[8px] uppercase tracking-wide text-white/45">
-                  Form
+                  MEP-form
                 </span>
               </div>
             )}
           </div>
 
-          {/* Next match pill */}
           <NextMatchPill teamId={player.teamId} />
         </div>
       </div>
