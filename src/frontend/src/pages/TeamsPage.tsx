@@ -1,4 +1,4 @@
-import { Shield, Trophy } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { motion } from "motion/react";
 import { SkeletonCard } from "../components/SkeletonCard";
 import { TeamCard } from "../components/TeamCard";
@@ -9,7 +9,6 @@ export default function TeamsPage() {
   const { data: teams, isLoading } = useTeams();
   const { data: upcomingMatches } = useUpcomingMatches();
 
-  // Map teamId -> next upcoming match
   const teamNextMatch = new Map<string, Match>();
   for (const m of upcomingMatches ?? []) {
     const hKey = m.homeTeamId.toString();
@@ -18,7 +17,6 @@ export default function TeamsPage() {
     if (!teamNextMatch.has(aKey)) teamNextMatch.set(aKey, m);
   }
 
-  // Build team name map for opponent display
   const teamNames = new Map<string, string>(
     (teams ?? []).map((t) => [t.id.toString(), t.name]),
   );
@@ -28,10 +26,10 @@ export default function TeamsPage() {
     const rankB = b.standingsRank !== undefined ? Number(b.standingsRank) : 999;
     return rankA - rankB;
   });
+  const firstLogo = sorted.find((team) => team.logoUrl)?.logoUrl;
 
   return (
     <div className="space-y-5" data-ocid="teams-page">
-      {/* Page header */}
       <div className="pt-1 space-y-1">
         <h1 className="font-display font-black text-2xl tracking-tight text-foreground">
           REMA 1000-ligaen
@@ -41,11 +39,14 @@ export default function TeamsPage() {
         </p>
       </div>
 
-      {/* Summary bar */}
       {!isLoading && sorted.length > 0 && (
         <div className="flex items-center gap-4 bg-card border border-border rounded-xl px-4 py-3">
           <div className="flex items-center gap-2">
-            <Shield className="size-4 text-primary" />
+            {firstLogo && (
+              <span className="size-6 rounded-md bg-white border border-primary/25 flex items-center justify-center shrink-0">
+                <img src={firstLogo} alt="" className="size-5 object-contain" />
+              </span>
+            )}
             <span className="text-sm font-display font-bold text-foreground">
               {sorted.length} lag
             </span>
@@ -60,7 +61,6 @@ export default function TeamsPage() {
         </div>
       )}
 
-      {/* Teams list */}
       {isLoading ? (
         <div className="space-y-3">
           {["a", "b", "c", "d", "e", "f"].map((k) => (
@@ -73,7 +73,7 @@ export default function TeamsPage() {
           data-ocid="teams-empty"
         >
           <div className="size-16 rounded-2xl bg-muted flex items-center justify-center">
-            <Shield className="size-8 text-muted-foreground" />
+            <Trophy className="size-8 text-muted-foreground" />
           </div>
           <p className="font-display font-bold text-lg text-foreground">
             Ingen lag funnet
