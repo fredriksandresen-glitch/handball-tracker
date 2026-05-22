@@ -28,6 +28,10 @@ const POSITION_FILTERS: { value: PositionFilter; label: string }[] = [
   { value: "Bakspiller", label: POSITION_LABELS.Bakspiller },
 ];
 
+function getPositionValue(player: Player) {
+  return String(player.position);
+}
+
 // ─── Single result row ────────────────────────────────────────────────────────
 
 function SearchResult({
@@ -73,11 +77,14 @@ export default function SearchPage() {
   const totalPlayers = allPlayers?.length ?? 0;
   const totalTeams = teams?.length ?? 0;
 
-  // Filter by position client-side
+  const hasQuery = debouncedQuery.trim() !== "";
+  const hasPositionFilter = positionFilter !== "all";
+  const sourcePlayers = hasQuery ? rawResults : allPlayers;
+
   const results =
     positionFilter === "all"
-      ? rawResults
-      : rawResults?.filter((p) => p.position.toString() === positionFilter);
+      ? sourcePlayers
+      : sourcePlayers?.filter((p) => getPositionValue(p) === positionFilter);
 
   // Debounce input → query
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,11 +109,14 @@ export default function SearchPage() {
     };
   }, []);
 
-  const hasQuery = debouncedQuery.trim() !== "";
   const showSkeletons = isLoading && hasQuery;
   const showNoResults =
-    !isLoading && results !== undefined && results.length === 0 && hasQuery;
-  const showResults = results && results.length > 0;
+    !isLoading &&
+    results !== undefined &&
+    results.length === 0 &&
+    (hasQuery || hasPositionFilter);
+  const showResults = results && results.length > 0 && (hasQuery || hasPositionFilter);
+  const showEmptyPrompt = !hasQuery && !hasPositionFilter;
 
   return (
     <div className="flex flex-col gap-4">
@@ -159,8 +169,8 @@ export default function SearchPage() {
         ))}
       </div>
 
-      {/* ── Empty prompt (no query typed yet) ────────────────────────── */}
-      {!hasQuery && (
+      {/* ── Empty prompt (no query typed yet) ─────────────────────────── */}
+      {showEmptyPrompt && (
         <div
           className="flex flex-col items-center justify-center py-16 gap-4 text-center"
           data-ocid="search-empty-prompt"
@@ -197,7 +207,7 @@ export default function SearchPage() {
         </div>
       )}
 
-      {/* ── No results ────────────────────────────────────────────────── */}
+      {/* ── No results ───────────────────────────────────────────────── */}
       {showNoResults && (
         <div
           className="flex flex-col items-center justify-center py-14 gap-3 text-center"
@@ -211,7 +221,9 @@ export default function SearchPage() {
               Ingen treff
             </p>
             <p className="text-sm text-muted-foreground mt-1">
-              Ingen spillere funnet for «{debouncedQuery}»
+              {hasQuery
+                ? `Ingen spillere funnet for «${debouncedQuery}»`
+                : `Ingen spillere funnet i ${POSITION_LABELS[positionFilter] ?? "filteret"}`}
             </p>
           </div>
         </div>
