@@ -1,5 +1,5 @@
+import playerStatsData from "../data/fjellhammerPlayerStats.json";
 import fjellhammerRosterData from "../data/fjellhammerRoster.json";
-import sarahStatsData from "../data/sarahDeariSolheimStats.json";
 import { Position } from "../types/handball";
 import type {
   Player,
@@ -72,10 +72,13 @@ type StaticPlayerStats = {
 };
 
 const FJELLHAMMER_ROSTER = fjellhammerRosterData as StaticRosterPlayer[];
-const SARAH_STATS = sarahStatsData as StaticPlayerStats;
+const PLAYER_STATS = playerStatsData as StaticPlayerStats[];
+const PLAYER_STATS_BY_ID = Object.fromEntries(
+  PLAYER_STATS.map((stats) => [stats.playerId, stats]),
+);
 
 function createStaticProfile(player: StaticRosterPlayer): ClawdbotPlayerProfile {
-  const playerStats = player.id === SARAH_STATS.playerId ? SARAH_STATS : null;
+  const playerStats = PLAYER_STATS_BY_ID[player.id];
 
   return {
     player: {
