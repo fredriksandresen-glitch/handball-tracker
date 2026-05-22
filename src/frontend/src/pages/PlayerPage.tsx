@@ -14,6 +14,11 @@ import {
 import { useMemo, useState } from "react";
 import { PositionBadge } from "../components/PositionBadge";
 import {
+  useFollowPlayer,
+  useIsFollowing,
+  useUnfollowPlayer,
+} from "../hooks/useFollowedPlayers";
+import {
   usePlayer,
   usePlayerMatchStats,
   usePlayerSeasonStats,
@@ -90,12 +95,27 @@ function PlayerHero({
   teamName?: string;
   teamId: bigint;
 }) {
+  const { data: isFollowing = false, isLoading: checkingFollow } =
+    useIsFollowing(player.id);
+  const followMutation = useFollowPlayer();
+  const unfollowMutation = useUnfollowPlayer();
+  const isFollowLoading =
+    checkingFollow || followMutation.isPending || unfollowMutation.isPending;
+
   const initials = player.name
     .split(" ")
     .map((part) => part[0])
     .join("")
     .slice(0, 2)
     .toUpperCase();
+
+  function handleFollowClick() {
+    if (isFollowing) {
+      unfollowMutation.mutate(player.id);
+    } else {
+      followMutation.mutate(player.id);
+    }
+  }
 
   return (
     <section className="bg-card border-b border-border px-4 py-5">
@@ -104,7 +124,7 @@ function PlayerHero({
           <img
             src={player.imageUrl}
             alt={player.name}
-            className="size-24 rounded-2xl object-cover border-2 border-primary/40"
+            className="size-24 rounded-2xl object-cover object-top border-2 border-primary/40"
           />
         ) : (
           <div className="size-24 rounded-2xl bg-gradient-to-br from-emerald-950 via-slate-900 to-cyan-950 border-2 border-primary/40 flex items-center justify-center">
@@ -142,8 +162,19 @@ function PlayerHero({
       </div>
 
       <div className="flex gap-2 mt-5">
-        <Button className="flex-1 h-12 rounded-full font-display font-black tracking-widest bg-primary text-primary-foreground hover:bg-primary/90">
-          + FØLG SPILLER
+        <Button
+          type="button"
+          onClick={handleFollowClick}
+          disabled={isFollowLoading}
+          variant={isFollowing ? "outline" : "default"}
+          className={cn(
+            "flex-1 h-12 rounded-full font-display font-black tracking-widest",
+            isFollowing
+              ? "border-primary/40 text-primary hover:bg-destructive/10 hover:text-destructive hover:border-destructive/40"
+              : "bg-primary text-primary-foreground hover:bg-primary/90",
+          )}
+        >
+          {isFollowing ? "✓ FØLGER" : "+ FØLG SPILLER"}
         </Button>
         {teamName && (
           <Link to="/team/$id" params={{ id: teamId.toString() }}>
