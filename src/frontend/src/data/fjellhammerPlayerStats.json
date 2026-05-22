@@ -8,9 +8,17 @@
       "shotPercentage": 63.2,
       "assists": 5,
       "technicalErrors": 4,
-      "suspensions": 0
+      "suspensions": 0,
+      "mepAvg": 1.3,
+      "mepTotal": 29.5
     },
-    "recentMatches": []
+    "recentMatches": [
+      { "matchId": "8208557", "date": "2026-04-22", "opponent": "Fana", "homeAway": "away", "goals": 4, "shots": 6, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 2.3 },
+      { "matchId": "8208551", "date": "2026-04-16", "opponent": "Fredrikstad", "homeAway": "home", "goals": 1, "shots": 3, "assists": 0, "technicalErrors": 1, "suspensions": 0, "mep": -0.2 },
+      { "matchId": "8208543", "date": "2026-03-29", "opponent": "Oppsal", "homeAway": "home", "goals": 3, "shots": 5, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 1.5 },
+      { "matchId": "8208542", "date": "2026-03-22", "opponent": "Follo Damer", "homeAway": "away", "goals": 0, "shots": 0, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 0 },
+      { "matchId": "8208529", "date": "2026-03-18", "opponent": "Molde", "homeAway": "away", "goals": 0, "shots": 2, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": -0.7 }
+    ]
   },
   {
     "playerId": "2239827978957",
@@ -21,9 +29,17 @@
       "shotPercentage": 53.9,
       "assists": 104,
       "technicalErrors": 86,
-      "suspensions": 7
+      "suspensions": 7,
+      "mepAvg": 1.7,
+      "mepTotal": 40.8
     },
-    "recentMatches": []
+    "recentMatches": [
+      { "matchId": "8208557", "date": "2026-04-22", "opponent": "Fana", "homeAway": "away", "goals": 2, "shots": 3, "assists": 9, "technicalErrors": 2, "suspensions": 0, "mep": 3.8 },
+      { "matchId": "8208551", "date": "2026-04-16", "opponent": "Fredrikstad", "homeAway": "home", "goals": 2, "shots": 5, "assists": 3, "technicalErrors": 2, "suspensions": 0, "mep": 1 },
+      { "matchId": "8208543", "date": "2026-03-29", "opponent": "Oppsal", "homeAway": "home", "goals": 1, "shots": 3, "assists": 5, "technicalErrors": 2, "suspensions": 0, "mep": 1.2 },
+      { "matchId": "8208542", "date": "2026-03-22", "opponent": "Follo Damer", "homeAway": "away", "goals": 1, "shots": 1, "assists": 3, "technicalErrors": 5, "suspensions": 0, "mep": 1.3 },
+      { "matchId": "8208529", "date": "2026-03-18", "opponent": "Molde", "homeAway": "away", "goals": 0, "shots": 1, "assists": 0, "technicalErrors": 2, "suspensions": 1, "mep": -1 }
+    ]
   },
   {
     "playerId": "2239829220488",
@@ -34,9 +50,13 @@
       "shotPercentage": null,
       "assists": 0,
       "technicalErrors": 0,
-      "suspensions": 0
+      "suspensions": 0,
+      "mepAvg": null,
+      "mepTotal": -0.7
     },
-    "recentMatches": []
+    "recentMatches": [
+      { "matchId": "8208551", "date": "2026-04-16", "opponent": "Fredrikstad", "homeAway": "home", "goals": 0, "shots": 1, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": -0.4 }
+    ]
   },
   {
     "playerId": "2239826718083",
@@ -47,9 +67,17 @@
       "shotPercentage": 69.1,
       "assists": 5,
       "technicalErrors": 29,
-      "suspensions": 6
+      "suspensions": 6,
+      "mepAvg": 1.7,
+      "mepTotal": 42.8
     },
-    "recentMatches": []
+    "recentMatches": [
+      { "matchId": "8208557", "date": "2026-04-22", "opponent": "Fana", "homeAway": "away", "goals": 4, "shots": 4, "assists": 0, "technicalErrors": 1, "suspensions": 0, "mep": 2.8 },
+      { "matchId": "8208551", "date": "2026-04-16", "opponent": "Fredrikstad", "homeAway": "home", "goals": 1, "shots": 3, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 0.1 },
+      { "matchId": "8208543", "date": "2026-03-29", "opponent": "Oppsal", "homeAway": "home", "goals": 2, "shots": 6, "assists": 0, "technicalErrors": 2, "suspensions": 0, "mep": -0.4 },
+      { "matchId": "8208542", "date": "2026-03-22", "opponent": "Follo Damer", "homeAway": "away", "goals": 2, "shots": 3, "assists": 0, "technicalErrors": 1, "suspensions": 0, "mep": 1.3 },
+      { "matchId": "8208529", "date": "2026-03-18", "opponent": "Molde", "homeAway": "away", "goals": 4, "shots": 6, "assists": 1, "technicalErrors": 2, "suspensions": 0, "mep": 2.2 }
+    ]
   },
   {
     "playerId": "2239828127509",
@@ -60,9 +88,14 @@
       "shotPercentage": 63.6,
       "assists": 3,
       "technicalErrors": 7,
-      "suspensions": 2
+      "suspensions": 2,
+      "mepAvg": 0.4,
+      "mepTotal": 7.7
     },
-    "recentMatches": []
+    "recentMatches": [
+      { "matchId": "8208551", "date": "2026-04-16", "opponent": "Fredrikstad", "homeAway": "home", "goals": 0, "shots": 1, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": -0.4 },
+      { "matchId": "8208542", "date": "2026-03-22", "opponent": "Follo Damer", "homeAway": "away", "goals": 0, "shots": 1, "assists": 1, "technicalErrors": 0, "suspensions": 0, "mep": 0 }
+    ]
   },
   {
     "playerId": "2239827803540",
@@ -73,9 +106,17 @@
       "shotPercentage": 57.9,
       "assists": 17,
       "technicalErrors": 13,
-      "suspensions": 0
+      "suspensions": 0,
+      "mepAvg": 0.8,
+      "mepTotal": 9.3
     },
-    "recentMatches": []
+    "recentMatches": [
+      { "matchId": "8208557", "date": "2026-04-22", "opponent": "Fana", "homeAway": "away", "goals": 2, "shots": 4, "assists": 2, "technicalErrors": 2, "suspensions": 0, "mep": 1 },
+      { "matchId": "8208551", "date": "2026-04-16", "opponent": "Fredrikstad", "homeAway": "home", "goals": 1, "shots": 3, "assists": 4, "technicalErrors": 3, "suspensions": 0, "mep": 1 },
+      { "matchId": "8208543", "date": "2026-03-29", "opponent": "Oppsal", "homeAway": "home", "goals": 2, "shots": 2, "assists": 1, "technicalErrors": 0, "suspensions": 0, "mep": 1.8 },
+      { "matchId": "8208542", "date": "2026-03-22", "opponent": "Follo Damer", "homeAway": "away", "goals": 0, "shots": 0, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 0 },
+      { "matchId": "8208529", "date": "2026-03-18", "opponent": "Molde", "homeAway": "away", "goals": 2, "shots": 2, "assists": 2, "technicalErrors": 1, "suspensions": 0, "mep": 1.8 }
+    ]
   },
   {
     "playerId": "2239829841766",
@@ -86,7 +127,9 @@
       "shotPercentage": 50,
       "assists": 0,
       "technicalErrors": 4,
-      "suspensions": 0
+      "suspensions": 0,
+      "mepAvg": 0.2,
+      "mepTotal": 1.3
     },
     "recentMatches": []
   },
@@ -99,9 +142,17 @@
       "shotPercentage": 73.2,
       "assists": 2,
       "technicalErrors": 5,
-      "suspensions": 0
+      "suspensions": 0,
+      "mepAvg": 1.3,
+      "mepTotal": 17.8
     },
-    "recentMatches": []
+    "recentMatches": [
+      { "matchId": "8208557", "date": "2026-04-22", "opponent": "Fana", "homeAway": "away", "goals": 2, "shots": 3, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 1.2 },
+      { "matchId": "8208551", "date": "2026-04-16", "opponent": "Fredrikstad", "homeAway": "home", "goals": 0, "shots": 0, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 0 },
+      { "matchId": "8208543", "date": "2026-03-29", "opponent": "Oppsal", "homeAway": "home", "goals": 4, "shots": 4, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 3 },
+      { "matchId": "8208542", "date": "2026-03-22", "opponent": "Follo Damer", "homeAway": "away", "goals": 6, "shots": 7, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 4.1 },
+      { "matchId": "8208529", "date": "2026-03-18", "opponent": "Molde", "homeAway": "away", "goals": 1, "shots": 1, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 0.8 }
+    ]
   },
   {
     "playerId": "2239826781527",
@@ -112,7 +163,9 @@
       "shotPercentage": null,
       "assists": 4,
       "technicalErrors": 7,
-      "suspensions": 0
+      "suspensions": 0,
+      "mepAvg": null,
+      "mepTotal": -12.4
     },
     "goalkeeperStats": {
       "saves": 193,
@@ -120,7 +173,13 @@
       "goalsConceded": 521,
       "shotsAgainst": 714
     },
-    "recentMatches": []
+    "recentMatches": [
+      { "matchId": "8208557", "date": "2026-04-22", "opponent": "Fana", "homeAway": "away", "goals": 0, "shots": 40, "assists": 0, "technicalErrors": 1, "suspensions": 0, "mep": 2.5 },
+      { "matchId": "8208551", "date": "2026-04-16", "opponent": "Fredrikstad", "homeAway": "home", "goals": 0, "shots": 22, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": -1.3 },
+      { "matchId": "8208543", "date": "2026-03-29", "opponent": "Oppsal", "homeAway": "home", "goals": 0, "shots": 14, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": -1 },
+      { "matchId": "8208542", "date": "2026-03-22", "opponent": "Follo Damer", "homeAway": "away", "goals": 0, "shots": 32, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": -0.1 },
+      { "matchId": "8208529", "date": "2026-03-18", "opponent": "Molde", "homeAway": "away", "goals": 0, "shots": 18, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": -2.3 }
+    ]
   },
   {
     "playerId": "2239828059504",
@@ -131,64 +190,16 @@
       "shotPercentage": 63.5,
       "assists": 119,
       "technicalErrors": 78,
-      "suspensions": 4
+      "suspensions": 4,
+      "mepAvg": 4.4,
+      "mepTotal": 113.8
     },
     "recentMatches": [
-      {
-        "matchId": "8208557",
-        "date": "2026-04-22",
-        "opponent": "Fana",
-        "homeAway": "away",
-        "goals": 8,
-        "shots": 16,
-        "assists": 10,
-        "technicalErrors": 6,
-        "suspensions": 0
-      },
-      {
-        "matchId": "8208551",
-        "date": "2026-04-16",
-        "opponent": "Fredrikstad",
-        "homeAway": "home",
-        "goals": 3,
-        "shots": 7,
-        "assists": 4,
-        "technicalErrors": 4,
-        "suspensions": 0
-      },
-      {
-        "matchId": "8208543",
-        "date": "2026-03-29",
-        "opponent": "Oppsal",
-        "homeAway": "home",
-        "goals": 11,
-        "shots": 19,
-        "assists": 6,
-        "technicalErrors": 3,
-        "suspensions": 0
-      },
-      {
-        "matchId": "8208542",
-        "date": "2026-03-22",
-        "opponent": "Follo Damer",
-        "homeAway": "away",
-        "goals": 12,
-        "shots": 15,
-        "assists": 8,
-        "technicalErrors": 1,
-        "suspensions": 1
-      },
-      {
-        "matchId": "8208529",
-        "date": "2026-03-18",
-        "opponent": "Molde",
-        "homeAway": "away",
-        "goals": 8,
-        "shots": 13,
-        "assists": 10,
-        "technicalErrors": 2,
-        "suspensions": 0
-      }
+      { "matchId": "8208557", "date": "2026-04-22", "opponent": "Fana", "homeAway": "away", "goals": 8, "shots": 16, "assists": 10, "technicalErrors": 6, "suspensions": 0, "mep": 4.9 },
+      { "matchId": "8208551", "date": "2026-04-16", "opponent": "Fredrikstad", "homeAway": "home", "goals": 3, "shots": 7, "assists": 4, "technicalErrors": 4, "suspensions": 0, "mep": 0.5 },
+      { "matchId": "8208543", "date": "2026-03-29", "opponent": "Oppsal", "homeAway": "home", "goals": 11, "shots": 19, "assists": 6, "technicalErrors": 3, "suspensions": 0, "mep": 7.1 },
+      { "matchId": "8208542", "date": "2026-03-22", "opponent": "Follo Damer", "homeAway": "away", "goals": 12, "shots": 15, "assists": 8, "technicalErrors": 1, "suspensions": 1, "mep": 9.4 },
+      { "matchId": "8208529", "date": "2026-03-18", "opponent": "Molde", "homeAway": "away", "goals": 8, "shots": 13, "assists": 10, "technicalErrors": 2, "suspensions": 0, "mep": 6.8 }
     ]
   },
   {
@@ -200,7 +211,9 @@
       "shotPercentage": 33.3,
       "assists": 1,
       "technicalErrors": 3,
-      "suspensions": 1
+      "suspensions": 1,
+      "mepAvg": 0,
+      "mepTotal": 0.3
     },
     "recentMatches": []
   },
@@ -213,9 +226,17 @@
       "shotPercentage": 64.7,
       "assists": 1,
       "technicalErrors": 9,
-      "suspensions": 3
+      "suspensions": 3,
+      "mepAvg": 1.1,
+      "mepTotal": 28.3
     },
-    "recentMatches": []
+    "recentMatches": [
+      { "matchId": "8208557", "date": "2026-04-22", "opponent": "Fana", "homeAway": "away", "goals": 1, "shots": 2, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 0.4 },
+      { "matchId": "8208551", "date": "2026-04-16", "opponent": "Fredrikstad", "homeAway": "home", "goals": 0, "shots": 1, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": -0.4 },
+      { "matchId": "8208543", "date": "2026-03-29", "opponent": "Oppsal", "homeAway": "home", "goals": 0, "shots": 0, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 0 },
+      { "matchId": "8208542", "date": "2026-03-22", "opponent": "Follo Damer", "homeAway": "away", "goals": 5, "shots": 5, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 3.8 },
+      { "matchId": "8208529", "date": "2026-03-18", "opponent": "Molde", "homeAway": "away", "goals": 2, "shots": 3, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 1.2 }
+    ]
   },
   {
     "playerId": "2239827369397",
@@ -226,9 +247,17 @@
       "shotPercentage": 58.3,
       "assists": 3,
       "technicalErrors": 5,
-      "suspensions": 10
+      "suspensions": 10,
+      "mepAvg": 0.3,
+      "mepTotal": 6.3
     },
-    "recentMatches": []
+    "recentMatches": [
+      { "matchId": "8208557", "date": "2026-04-22", "opponent": "Fana", "homeAway": "away", "goals": 1, "shots": 1, "assists": 0, "technicalErrors": 0, "suspensions": 1, "mep": 0.6 },
+      { "matchId": "8208551", "date": "2026-04-16", "opponent": "Fredrikstad", "homeAway": "home", "goals": 1, "shots": 6, "assists": 0, "technicalErrors": 0, "suspensions": 1, "mep": -0.6 },
+      { "matchId": "8208543", "date": "2026-03-29", "opponent": "Oppsal", "homeAway": "home", "goals": 0, "shots": 0, "assists": 0, "technicalErrors": 0, "suspensions": 2, "mep": -0.4 },
+      { "matchId": "8208542", "date": "2026-03-22", "opponent": "Follo Damer", "homeAway": "away", "goals": 0, "shots": 0, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 0 },
+      { "matchId": "8208529", "date": "2026-03-18", "opponent": "Molde", "homeAway": "away", "goals": 2, "shots": 3, "assists": 2, "technicalErrors": 1, "suspensions": 1, "mep": 1.4 }
+    ]
   },
   {
     "playerId": "2239822885266",
@@ -239,9 +268,17 @@
       "shotPercentage": 47.5,
       "assists": 20,
       "technicalErrors": 20,
-      "suspensions": 10
+      "suspensions": 10,
+      "mepAvg": 0.5,
+      "mepTotal": 13.4
     },
-    "recentMatches": []
+    "recentMatches": [
+      { "matchId": "8208557", "date": "2026-04-22", "opponent": "Fana", "homeAway": "away", "goals": 1, "shots": 3, "assists": 1, "technicalErrors": 0, "suspensions": 1, "mep": 0.2 },
+      { "matchId": "8208551", "date": "2026-04-16", "opponent": "Fredrikstad", "homeAway": "home", "goals": 2, "shots": 4, "assists": 0, "technicalErrors": 2, "suspensions": 1, "mep": 0.2 },
+      { "matchId": "8208543", "date": "2026-03-29", "opponent": "Oppsal", "homeAway": "home", "goals": 0, "shots": 0, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 0 },
+      { "matchId": "8208542", "date": "2026-03-22", "opponent": "Follo Damer", "homeAway": "away", "goals": 2, "shots": 2, "assists": 0, "technicalErrors": 0, "suspensions": 1, "mep": 1.2 },
+      { "matchId": "8208529", "date": "2026-03-18", "opponent": "Molde", "homeAway": "away", "goals": 1, "shots": 2, "assists": 1, "technicalErrors": 1, "suspensions": 1, "mep": 0.3 }
+    ]
   },
   {
     "playerId": "2239827495091",
@@ -252,9 +289,16 @@
       "shotPercentage": 64.4,
       "assists": 41,
       "technicalErrors": 62,
-      "suspensions": 12
+      "suspensions": 12,
+      "mepAvg": 1.5,
+      "mepTotal": 36.9
     },
-    "recentMatches": []
+    "recentMatches": [
+      { "matchId": "8208551", "date": "2026-04-16", "opponent": "Fredrikstad", "homeAway": "home", "goals": 2, "shots": 2, "assists": 0, "technicalErrors": 2, "suspensions": 1, "mep": 0.9 },
+      { "matchId": "8208543", "date": "2026-03-29", "opponent": "Oppsal", "homeAway": "home", "goals": 2, "shots": 5, "assists": 5, "technicalErrors": 4, "suspensions": 0, "mep": 1.1 },
+      { "matchId": "8208542", "date": "2026-03-22", "opponent": "Follo Damer", "homeAway": "away", "goals": 3, "shots": 4, "assists": 3, "technicalErrors": 0, "suspensions": 0, "mep": 3.1 },
+      { "matchId": "8208529", "date": "2026-03-18", "opponent": "Molde", "homeAway": "away", "goals": 0, "shots": 0, "assists": 1, "technicalErrors": 4, "suspensions": 1, "mep": -0.7 }
+    ]
   },
   {
     "playerId": "2239829571781",
@@ -265,9 +309,14 @@
       "shotPercentage": 45,
       "assists": 11,
       "technicalErrors": 25,
-      "suspensions": 2
+      "suspensions": 2,
+      "mepAvg": 0.7,
+      "mepTotal": 14.4
     },
-    "recentMatches": []
+    "recentMatches": [
+      { "matchId": "8208542", "date": "2026-03-22", "opponent": "Follo Damer", "homeAway": "away", "goals": 0, "shots": 2, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": -0.8 },
+      { "matchId": "8208529", "date": "2026-03-18", "opponent": "Molde", "homeAway": "away", "goals": 6, "shots": 10, "assists": 5, "technicalErrors": 1, "suspensions": 0, "mep": 4.4 }
+    ]
   },
   {
     "playerId": "2239825215136",
@@ -278,7 +327,9 @@
       "shotPercentage": null,
       "assists": 3,
       "technicalErrors": 0,
-      "suspensions": 0
+      "suspensions": 0,
+      "mepAvg": null,
+      "mepTotal": -12.4
     },
     "goalkeeperStats": {
       "saves": 71,
@@ -286,7 +337,12 @@
       "goalsConceded": 222,
       "shotsAgainst": 293
     },
-    "recentMatches": []
+    "recentMatches": [
+      { "matchId": "8208551", "date": "2026-04-16", "opponent": "Fredrikstad", "homeAway": "home", "goals": 0, "shots": 20, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": -0.8 },
+      { "matchId": "8208543", "date": "2026-03-29", "opponent": "Oppsal", "homeAway": "home", "goals": 0, "shots": 27, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 0.3 },
+      { "matchId": "8208542", "date": "2026-03-22", "opponent": "Follo Damer", "homeAway": "away", "goals": 0, "shots": 2, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": 1.5 },
+      { "matchId": "8208529", "date": "2026-03-18", "opponent": "Molde", "homeAway": "away", "goals": 0, "shots": 20, "assists": 0, "technicalErrors": 0, "suspensions": 0, "mep": -3.9 }
+    ]
   },
   {
     "playerId": "2239829957836",
@@ -297,8 +353,16 @@
       "shotPercentage": 50,
       "assists": 21,
       "technicalErrors": 19,
-      "suspensions": 1
+      "suspensions": 1,
+      "mepAvg": 0.7,
+      "mepTotal": 10
     },
-    "recentMatches": []
+    "recentMatches": [
+      { "matchId": "8208557", "date": "2026-04-22", "opponent": "Fana", "homeAway": "away", "goals": 3, "shots": 6, "assists": 4, "technicalErrors": 1, "suspensions": 0, "mep": 2.6 },
+      { "matchId": "8208551", "date": "2026-04-16", "opponent": "Fredrikstad", "homeAway": "home", "goals": 3, "shots": 5, "assists": 0, "technicalErrors": 2, "suspensions": 0, "mep": 1.2 },
+      { "matchId": "8208543", "date": "2026-03-29", "opponent": "Oppsal", "homeAway": "home", "goals": 1, "shots": 1, "assists": 1, "technicalErrors": 0, "suspensions": 0, "mep": 1.1 },
+      { "matchId": "8208542", "date": "2026-03-22", "opponent": "Follo Damer", "homeAway": "away", "goals": 1, "shots": 1, "assists": 0, "technicalErrors": 1, "suspensions": 0, "mep": 0.6 },
+      { "matchId": "8208529", "date": "2026-03-18", "opponent": "Molde", "homeAway": "away", "goals": 1, "shots": 2, "assists": 0, "technicalErrors": 1, "suspensions": 0, "mep": 0.2 }
+    ]
   }
 ]
