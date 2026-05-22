@@ -36,6 +36,16 @@ import { Position } from "../types/handball";
 
 type Tab = "season" | "matches" | "form";
 
+const CLUB_LOGOS: Record<string, string> = {
+  fjellhammer:
+    "https://www.fjellhammer.no/wp-content/uploads/sites/19/2020/01/fjellhammer.svg",
+};
+
+function getClubLogo(teamName?: string) {
+  const normalized = teamName?.toLowerCase() ?? "";
+  return Object.entries(CLUB_LOGOS).find(([key]) => normalized.includes(key))?.[1];
+}
+
 function isGK(position: Position) {
   return position === Position.Keeper;
 }
@@ -64,6 +74,27 @@ function formatSigned(value: number | undefined, digits = 1) {
 
 function getMatchDate(match: EnrichedPlayerMatchStats) {
   return match.date ?? match.matchId.toString();
+}
+
+function TeamLogo({ teamName, size = "sm" }: { teamName?: string; size?: "sm" | "md" }) {
+  const logoUrl = getClubLogo(teamName);
+  const boxClass = size === "md" ? "size-10 rounded-xl" : "size-5 rounded-md";
+  const imgClass = size === "md" ? "size-8" : "size-4";
+
+  if (!logoUrl) {
+    return <Shield className={size === "md" ? "size-5 text-primary" : "size-4"} />;
+  }
+
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center justify-center bg-white border border-primary/25 shrink-0",
+        boxClass,
+      )}
+    >
+      <img src={logoUrl} alt="" className={cn("object-contain", imgClass)} />
+    </span>
+  );
 }
 
 function StatCard({
@@ -126,11 +157,8 @@ function PlayerHero({
     .toUpperCase();
 
   function handleFollowClick() {
-    if (isFollowing) {
-      unfollowMutation.mutate(player.id);
-    } else {
-      followMutation.mutate(player.id);
-    }
+    if (isFollowing) unfollowMutation.mutate(player.id);
+    else followMutation.mutate(player.id);
   }
 
   return (
@@ -167,9 +195,9 @@ function PlayerHero({
             <Link
               to="/team/$id"
               params={{ id: teamId.toString() }}
-              className="inline-flex items-center gap-1.5 mt-3 text-sm font-display font-bold text-primary hover:text-primary/80 transition-colors"
+              className="inline-flex items-center gap-2 mt-3 text-sm font-display font-bold text-primary hover:text-primary/80 transition-colors"
             >
-              <Shield className="size-4" />
+              <TeamLogo teamName={teamName} />
               {teamName}
               <ArrowRight className="size-4" />
             </Link>
@@ -546,10 +574,10 @@ function MatchHistory({ stats }: { stats: PlayerMatchStats[] }) {
 }
 
 function Tabs({ active, onChange }: { active: Tab; onChange: (tab: Tab) => void }) {
-  const tabs: { id: Tab; label: string; icon: typeof BarChart3 }[] = [
-    { id: "season", label: "Sesong", icon: BarChart3 },
-    { id: "matches", label: "Kamper", icon: CalendarDays },
-    { id: "form", label: "Form", icon: TrendingUp },
+  const tabs = [
+    { id: "season" as const, label: "Sesong", icon: BarChart3 },
+    { id: "matches" as const, label: "Kamper", icon: CalendarDays },
+    { id: "form" as const, label: "Form", icon: TrendingUp },
   ];
 
   return (
@@ -638,9 +666,7 @@ export default function PlayerPage() {
             className="mx-4 flex items-center justify-between bg-card border border-border rounded-2xl px-4 py-4 hover:border-primary/40 hover:bg-card/80 transition-colors"
           >
             <div className="flex items-center gap-3">
-              <div className="size-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                <Users className="size-5 text-primary" />
-              </div>
+              <TeamLogo teamName={team.name} size="md" />
               <div>
                 <p className="text-xs text-muted-foreground">Se hele lagstallen</p>
                 <p className="font-display font-black text-foreground text-sm">
