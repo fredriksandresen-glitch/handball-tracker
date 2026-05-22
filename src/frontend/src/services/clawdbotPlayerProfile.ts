@@ -43,6 +43,13 @@ type ClawdbotSeasonStats = {
   mepTotal?: number | null;
 };
 
+type ClawdbotGoalkeeperStats = {
+  saves?: number | null;
+  savePercentage?: number | null;
+  goalsConceded?: number | null;
+  shotsAgainst?: number | null;
+};
+
 type ClawdbotRecentMatch = {
   matchId: string;
   date?: string | null;
@@ -54,11 +61,16 @@ type ClawdbotRecentMatch = {
   technicalErrors?: number | null;
   suspensions?: number | null;
   mep?: number | null;
+  saves?: number | null;
+  savePercentage?: number | null;
+  goalsConceded?: number | null;
+  shotsAgainst?: number | null;
 };
 
 export type ClawdbotPlayerProfile = {
   player: ClawdbotPlayer;
   seasonStats: ClawdbotSeasonStats;
+  goalkeeperStats?: ClawdbotGoalkeeperStats;
   recentMatches: ClawdbotRecentMatch[];
 };
 
@@ -73,6 +85,7 @@ type StaticRosterPlayer = {
 type StaticPlayerStats = {
   playerId: string;
   seasonStats: ClawdbotSeasonStats;
+  goalkeeperStats?: ClawdbotGoalkeeperStats;
   recentMatches: ClawdbotRecentMatch[];
 };
 
@@ -81,6 +94,8 @@ export type EnrichedPlayerMatchStats = PlayerMatchStats & {
   opponent?: string;
   homeAway?: string;
   mep?: number;
+  goalsConceded?: bigint;
+  shotsAgainst?: bigint;
 };
 
 const FJELLHAMMER_ROSTER = fjellhammerRosterData as StaticRosterPlayer[];
@@ -104,6 +119,7 @@ function createStaticProfile(player: StaticRosterPlayer): ClawdbotPlayerProfile 
       tournament: DEFAULT_TOURNAMENT,
     },
     seasonStats: playerStats?.seasonStats ?? {},
+    goalkeeperStats: playerStats?.goalkeeperStats,
     recentMatches: playerStats?.recentMatches ?? [],
   };
 }
@@ -183,6 +199,7 @@ function sanitizeProfile(profile: ClawdbotPlayerProfile): ClawdbotPlayerProfile 
   return {
     player: profile.player,
     seasonStats: profile.seasonStats ?? {},
+    goalkeeperStats: profile.goalkeeperStats,
     recentMatches: (profile.recentMatches ?? []).filter(
       (match) => match.matchId && match.date,
     ),
@@ -234,6 +251,7 @@ export function mapClawdbotSeasonStats(
   const matches = profile.seasonStats.matches ?? 0;
   const goals = profile.seasonStats.goals ?? 0;
   const assists = profile.seasonStats.assists ?? 0;
+  const goalkeeper = profile.goalkeeperStats;
 
   return {
     id: playerId,
@@ -241,11 +259,14 @@ export function mapClawdbotSeasonStats(
     season: profile.player.season ?? DEFAULT_SEASON,
     matchesPlayed: BigInt(matches),
     totalGoals: toOptionalBigInt(profile.seasonStats.goals),
-    totalShots: toOptionalBigInt(profile.seasonStats.shots),
-    shootingPercent: profile.seasonStats.shotPercentage ?? undefined,
+    totalShots: toOptionalBigInt(
+      goalkeeper?.shotsAgainst ?? profile.seasonStats.shots,
+    ),
+    shootingPercent: goalkeeper?.savePercentage ?? profile.seasonStats.shotPercentage ?? undefined,
     totalAssists: toOptionalBigInt(profile.seasonStats.assists),
     technicalFaults: toOptionalBigInt(profile.seasonStats.technicalErrors),
     totalTwoMin: toOptionalBigInt(profile.seasonStats.suspensions),
+    totalSaves: toOptionalBigInt(goalkeeper?.saves),
     mepAvg: profile.seasonStats.mepAvg ?? undefined,
     mepTotal: profile.seasonStats.mepTotal ?? undefined,
     goalsPerGame: matches > 0 ? goals / matches : undefined,
@@ -260,14 +281,14 @@ export function mapClawdbotMatchStats(
 
   return profile.recentMatches.map((match, index) => {
     const goals = match.goals ?? undefined;
-    const shots = match.shots ?? undefined;
+    const shots = match.shots ?? match.shotsAgainst ?? undefined;
 
     return {
       id: toBigInt(match.matchId, BigInt(index + 1)),
       playerId,
       matchId: toBigInt(match.matchId, BigInt(index + 1)),
       goals: toOptionalBigInt(match.goals),
-      shots: toOptionalBigInt(match.shots),
+      shots: toOptionalBigInt(match.shots ?? match.shotsAgainst),
       shotPct:
         goals !== undefined && shots !== undefined && shots > 0
           ? (goals / shots) * 100
@@ -275,6 +296,10 @@ export function mapClawdbotMatchStats(
       assists: toOptionalBigInt(match.assists),
       turnovers: toOptionalBigInt(match.technicalErrors),
       twoMinSuspensions: toOptionalBigInt(match.suspensions),
+      saves: toOptionalBigInt(match.saves),
+      savePct: match.savePercentage ?? undefined,
+      goalsConceded: toOptionalBigInt(match.goalsConceded),
+      shotsAgainst: toOptionalBigInt(match.shotsAgainst ?? match.shots),
       date: match.date ?? undefined,
       opponent: match.opponent ?? undefined,
       homeAway: match.homeAway ?? undefined,
