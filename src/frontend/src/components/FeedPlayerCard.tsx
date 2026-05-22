@@ -7,7 +7,7 @@ import { createActor } from "../backend";
 import { formatMatchDate, getCountdown } from "../services/handballService";
 import type { EnrichedPlayerMatchStats } from "../services/clawdbotPlayerProfile";
 import type { FeedEvent, Player, PlayerMatchStats } from "../types/handball";
-import { FeedEventType } from "../types/handball";
+import { FeedEventType, Position } from "../types/handball";
 import { PositionBadge } from "./PositionBadge";
 
 function Sparkline({ values }: { values: number[] }) {
@@ -165,7 +165,10 @@ export function FeedPlayerCard({
     .slice(-5);
   const latestMatch = mepMatches.at(-1);
   const sparkValues = mepMatches.map((match) => match.mep ?? 0);
-  const latestGoals = latestMatch?.goals ?? lastGoalEvent?.statValue;
+  const keeper = player.position === Position.Keeper;
+  const latestGoals = keeper ? undefined : latestMatch?.goals ?? lastGoalEvent?.statValue;
+  const latestSaves = keeper ? latestMatch?.saves : undefined;
+  const latestSavePct = keeper ? latestMatch?.savePct : undefined;
 
   function handleCardClick() {
     navigate({ to: "/player/$id", params: { id: player.id.toString() } });
@@ -249,6 +252,26 @@ export function FeedPlayerCard({
                   </span>
                   <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
                     MEP sist
+                  </span>
+                </div>
+              )}
+              {latestSaves !== undefined && (
+                <div>
+                  <span className="block font-display font-bold text-base text-white/85 leading-none tabular-nums">
+                    {latestSaves.toString()}
+                  </span>
+                  <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
+                    Redn.
+                  </span>
+                </div>
+              )}
+              {latestSavePct !== undefined && (
+                <div>
+                  <span className="block font-display font-bold text-base text-white/85 leading-none tabular-nums">
+                    {latestSavePct.toFixed(1)}%
+                  </span>
+                  <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
+                    Red%
                   </span>
                 </div>
               )}

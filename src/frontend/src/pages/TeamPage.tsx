@@ -55,7 +55,10 @@ function RosterPlayerCard({
     return [...matchStats].sort((a, b) => Number(b.matchId - a.matchId))[0];
   }, [matchStats]);
 
-  const lastGoals = lastStat ? Number(lastStat?.goals ?? 0) : null;
+  const keeper = player.position === Position.Keeper;
+  const lastGoals = !keeper && lastStat ? Number(lastStat?.goals ?? 0) : null;
+  const lastSaves = keeper && lastStat ? Number(lastStat?.saves ?? 0) : null;
+  const lastSavePct = keeper && lastStat ? lastStat.savePct : undefined;
   const lastMins = lastStat ? Number(lastStat?.minutesPlayed ?? 0) : null;
 
   function handleFollow(e: React.MouseEvent) {
@@ -146,31 +149,30 @@ function RosterPlayerCard({
           )}
 
           {/* Last match stats */}
-          {(lastGoals !== null || (lastMins !== null && lastMins > 0)) && (
+          {(lastGoals !== null || lastSaves !== null || (lastMins !== null && lastMins > 0)) && (
             <div className="flex items-center gap-3 mt-2 pt-2 border-t border-white/15">
-              {lastGoals !== null && (
+              {keeper && lastSaves !== null && (
                 <div>
-                  <span
-                    className={cn(
-                      "font-display font-black text-base leading-none",
-                      lastGoals > 0 ? "text-primary" : "text-white/50",
-                    )}
-                  >
-                    {lastGoals}
-                  </span>
-                  <p className="text-[9px] text-white/50 uppercase tracking-wide mt-0.5">
-                    Mål
-                  </p>
+                  <span className={cn("font-display font-black text-base leading-none", lastSaves > 0 ? "text-primary" : "text-white/50")}>{lastSaves}</span>
+                  <p className="text-[9px] text-white/50 uppercase tracking-wide mt-0.5">Redn.</p>
                 </div>
               )}
-              {lastMins !== null && lastMins > 0 && (
+              {keeper && lastSavePct !== undefined && (
                 <div>
-                  <span className="font-display font-bold text-sm leading-none text-white/80">
-                    {lastMins}
-                  </span>
-                  <p className="text-[9px] text-white/50 uppercase tracking-wide mt-0.5">
-                    Min
-                  </p>
+                  <span className="font-display font-bold text-sm leading-none text-white/80">{lastSavePct.toFixed(1)}%</span>
+                  <p className="text-[9px] text-white/50 uppercase tracking-wide mt-0.5">Red%</p>
+                </div>
+              )}
+              {!keeper && lastGoals !== null && (
+                <div>
+                  <span className={cn("font-display font-black text-base leading-none", lastGoals > 0 ? "text-primary" : "text-white/50")}>{lastGoals}</span>
+                  <p className="text-[9px] text-white/50 uppercase tracking-wide mt-0.5">Mål</p>
+                </div>
+              )}
+              {!keeper && lastMins !== null && lastMins > 0 && (
+                <div>
+                  <span className="font-display font-bold text-sm leading-none text-white/80">{lastMins}</span>
+                  <p className="text-[9px] text-white/50 uppercase tracking-wide mt-0.5">Min</p>
                 </div>
               )}
             </div>
