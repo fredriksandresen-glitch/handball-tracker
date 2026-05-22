@@ -2,8 +2,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Link, useParams, useRouter } from "@tanstack/react-router";
 import {
+  Activity,
   ArrowLeft,
   ArrowRight,
+  Award,
   BarChart3,
   CalendarDays,
   Shield,
@@ -24,6 +26,7 @@ import {
   usePlayerSeasonStats,
 } from "../hooks/usePlayer";
 import { useTeam } from "../hooks/useTeam";
+import type { EnrichedPlayerMatchStats } from "../services/clawdbotPlayerProfile";
 import type {
   Player,
   PlayerMatchStats,
@@ -46,8 +49,21 @@ function formatNumber(value: number | bigint | undefined) {
   return typeof value === "bigint" ? value.toString() : value.toString();
 }
 
+function formatDecimal(value: number | undefined, digits = 1) {
+  return value === undefined ? "-" : value.toFixed(digits);
+}
+
 function formatPct(value: number | undefined) {
   return value === undefined ? "-" : `${value.toFixed(1)}%`;
+}
+
+function formatSigned(value: number | undefined, digits = 1) {
+  if (value === undefined) return "-";
+  return `${value > 0 ? "+" : ""}${value.toFixed(digits)}`;
+}
+
+function getMatchDate(match: EnrichedPlayerMatchStats) {
+  return match.date ?? match.matchId.toString();
 }
 
 function StatCard({
@@ -64,9 +80,9 @@ function StatCard({
   return (
     <div
       className={cn(
-        "rounded-xl border px-4 py-3 min-h-[78px] flex flex-col justify-center",
+        "rounded-xl border px-4 py-3 min-h-[82px] flex flex-col justify-center overflow-hidden",
         highlight
-          ? "bg-primary/12 border-primary/40"
+          ? "bg-primary/12 border-primary/45 shadow-[inset_0_0_0_1px_rgba(18,224,214,0.12)]"
           : "bg-card border-border",
       )}
     >
@@ -124,10 +140,10 @@ function PlayerHero({
           <img
             src={player.imageUrl}
             alt={player.name}
-            className="size-24 rounded-2xl object-cover object-top border-2 border-primary/40"
+            className="size-28 rounded-2xl object-cover object-top border-2 border-primary/40 bg-muted"
           />
         ) : (
-          <div className="size-24 rounded-2xl bg-gradient-to-br from-emerald-950 via-slate-900 to-cyan-950 border-2 border-primary/40 flex items-center justify-center">
+          <div className="size-28 rounded-2xl bg-gradient-to-br from-emerald-950 via-slate-900 to-cyan-950 border-2 border-primary/40 flex items-center justify-center">
             <span className="font-display font-black text-3xl text-primary">
               {initials}
             </span>
@@ -211,15 +227,20 @@ function KeyStats({
     <section className="px-4" data-ocid="key-stats">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard
-          label={primaryLabel}
-          value={formatNumber(primaryValue)}
-          detail="totalt denne sesongen"
+          label="Snitt MEP"
+          value={formatDecimal(stats.mepAvg)}
+          detail={`${matches} kamper`}
           highlight
         />
         <StatCard
-          label={`${primaryLabel}/kamp`}
-          value={perMatch === undefined ? "-" : perMatch.toFixed(2)}
-          detail={`${matches} kamper`}
+          label="Total MEP"
+          value={formatDecimal(stats.mepTotal)}
+          detail="sesongscore"
+        />
+        <StatCard
+          label={primaryLabel}
+          value={formatNumber(primaryValue)}
+          detail={perMatch === undefined ? undefined : `${perMatch.toFixed(2)} per kamp`}
         />
         <StatCard
           label="Assists"
@@ -230,42 +251,28 @@ function KeyStats({
               : `${stats.assistsPerGame.toFixed(1)} per kamp`
           }
         />
-        <StatCard
-          label="Uttelling"
-          value={formatPct(stats.shootingPercent)}
-          detail={
-            stats.totalShots === undefined
-              ? undefined
-              : `${stats.totalShots.toString()} skudd`
-          }
-        />
       </div>
     </section>
   );
 }
 
-function FormOverview({
-  stats,
-  gk,
-}: {
-  stats: PlayerMatchStats[];
-  gk: boolean;
-}) {
-  const recent = useMemo(
-    () => [...stats].sort((a, b) => Number(a.matchId - b.matchId)).slice(-5),
-    [stats],
-  );
+function FormOverview({ stats }: { stats: PlayerMatchStats[] }) {
+  const recent = useMemo(() => {
+    return (stats as EnrichedPlayerMatchStats[])
+      .filter((match) => typeof match.mep === "number")
+      .sort((a, b) => getMatchDate(a).localeCompare(getMatchDate(b)))
+      .slice(-5);
+  }, [stats]);
 
-  const values = recent.map((match) =>
-    gk ? Number(match.saves ?? 0n) : Number(match.goals ?? 0n),
-  );
+  const values = recent.map((match) => match.mep ?? 0);
+  const min = Math.min(...values, 0);
   const max = Math.max(...values, 1);
+  const range = Math.max(max - min, 1);
   const avg = values.length
     ? values.reduce((sum, value) => sum + value, 0) / values.length
     : 0;
-  const last = values.at(-1) ?? 0;
-  const best = Math.max(...values, 0);
-  const label = gk ? "Redninger" : "Mål";
+  const last = values.at(-1);
+  const best = values.length ? Math.max(...values) : undefined;
 
   if (recent.length === 0) return null;
 
@@ -274,13 +281,13 @@ function FormOverview({
       <div className="flex items-center justify-between">
         <div>
           <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold">
-            Form siste {recent.length} kamper
+            MEP siste {recent.length} kamper
           </p>
           <h2 className="font-display font-black text-lg text-foreground">
-            Siste kamp: {last} {label.toLowerCase()}
+            Formkurve basert på prestasjonsscore
           </h2>
         </div>
-        <TrendingUp className="size-5 text-primary" />
+        <Activity className="size-5 text-primary" />
       </div>
 
       <div className="rounded-2xl border border-border bg-card p-4 space-y-4">
@@ -289,15 +296,15 @@ function FormOverview({
             <p className="text-[9px] uppercase tracking-widest text-muted-foreground">
               Siste
             </p>
-            <p className="font-display font-black text-2xl text-primary leading-none">
-              {last}
+            <p className="font-display font-black text-2xl text-primary leading-none tabular-nums">
+              {formatDecimal(last)}
             </p>
           </div>
           <div className="rounded-xl bg-muted/35 border border-border px-3 py-2">
             <p className="text-[9px] uppercase tracking-widest text-muted-foreground">
               Snitt
             </p>
-            <p className="font-display font-black text-2xl text-foreground leading-none">
+            <p className="font-display font-black text-2xl text-foreground leading-none tabular-nums">
               {avg.toFixed(1)}
             </p>
           </div>
@@ -305,64 +312,83 @@ function FormOverview({
             <p className="text-[9px] uppercase tracking-widest text-muted-foreground">
               Beste
             </p>
-            <p className="font-display font-black text-2xl text-foreground leading-none">
-              {best}
+            <p className="font-display font-black text-2xl text-foreground leading-none tabular-nums">
+              {formatDecimal(best)}
             </p>
           </div>
         </div>
 
-        <div className="space-y-2">
-          {recent.map((match, index) => {
-            const value = values[index];
-            const shots = Number(match.shots ?? 0n);
-            const shotPct =
-              match.shotPct ?? (shots > 0 && !gk ? (value / shots) * 100 : undefined);
-            const isLast = index === recent.length - 1;
-            const width = `${Math.max((value / max) * 100, 5)}%`;
+        <div className="h-28 rounded-xl bg-background/45 border border-border/60 px-3 pt-3 pb-2 flex items-end gap-2">
+          {recent.map((match) => {
+            const value = match.mep ?? 0;
+            const height = 18 + ((value - min) / range) * 70;
+            const isLast = match === recent.at(-1);
+            return (
+              <div key={match.id.toString()} className="flex-1 h-full flex flex-col justify-end gap-1 min-w-0">
+                <div className="flex-1 flex items-end justify-center">
+                  <div
+                    className={cn(
+                      "w-full max-w-12 rounded-t-lg transition-all duration-500",
+                      value < 0
+                        ? "bg-destructive/70"
+                        : isLast
+                          ? "bg-primary"
+                          : "bg-primary/45",
+                    )}
+                    style={{ height: `${height}%` }}
+                  />
+                </div>
+                <p
+                  className={cn(
+                    "text-center text-[11px] font-mono font-bold tabular-nums truncate",
+                    isLast ? "text-primary" : "text-muted-foreground",
+                  )}
+                >
+                  {formatDecimal(value)}
+                </p>
+              </div>
+            );
+          })}
+        </div>
 
+        <div className="space-y-2">
+          {recent.map((match) => {
+            const value = match.mep ?? 0;
+            const isLast = match === recent.at(-1);
             return (
               <div
-                key={match.id.toString()}
+                key={`${match.id.toString()}-row`}
                 className={cn(
-                  "rounded-xl border px-3 py-2",
+                  "rounded-xl border px-3 py-2 flex items-center justify-between gap-3",
                   isLast
                     ? "border-primary/45 bg-primary/8"
                     : "border-border bg-background/35",
                 )}
               >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="font-display font-bold text-sm text-foreground">
-                      {isLast ? "Siste kamp" : `Kamp ${index + 1}`}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {shots > 0 && !gk
-                        ? `${shots} skudd · ${shotPct?.toFixed(0)}% uttelling`
-                        : "Kampstatistikk"}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p
-                      className={cn(
-                        "font-display font-black text-2xl leading-none tabular-nums",
-                        isLast ? "text-primary" : "text-foreground",
-                      )}
-                    >
-                      {value}
-                    </p>
-                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground">
-                      {label}
-                    </p>
-                  </div>
+                <div className="min-w-0">
+                  <p className="font-display font-bold text-sm text-foreground truncate">
+                    {match.opponent ? `mot ${match.opponent}` : "Kamp"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {match.date ?? "Siste kamp"} · {formatNumber(match.goals)} mål · {formatNumber(match.assists)} assist
+                  </p>
                 </div>
-                <div className="mt-2 h-1.5 rounded-full bg-muted overflow-hidden">
-                  <div
+                <div className="text-right shrink-0">
+                  <p
                     className={cn(
-                      "h-full rounded-full transition-all duration-500",
-                      isLast ? "bg-primary" : "bg-primary/45",
+                      "font-display font-black text-2xl leading-none tabular-nums",
+                      value < 0
+                        ? "text-destructive"
+                        : isLast
+                          ? "text-primary"
+                          : "text-foreground",
                     )}
-                    style={{ width }}
-                  />
+                  >
+                    {formatSigned(value)}
+                  </p>
+                  <p className="text-[9px] uppercase tracking-widest text-muted-foreground">
+                    MEP
+                  </p>
                 </div>
               </div>
             );
@@ -383,38 +409,39 @@ function InsightCards({
   if (!stats) return null;
 
   const matches = Math.max(Number(stats.matchesPlayed), 1);
-  const primaryTotal = isGK(player.position)
-    ? Number(stats.totalSaves ?? 0n)
-    : Number(stats.totalGoals ?? 0n);
-  const primaryPerMatch = primaryTotal / matches;
-  const positionAverage = isGK(player.position) ? 7.8 : 3.5;
-  const diff = primaryPerMatch - positionAverage;
+  const totalGoals = asNumber(stats.totalGoals) ?? 0;
+  const totalAssists = asNumber(stats.totalAssists) ?? 0;
+  const directContributions = totalGoals + totalAssists;
+  const contributionPerMatch = directContributions / matches;
+  const technicalFaults = asNumber(stats.technicalFaults) ?? 0;
+  const assistFaultBalance = totalAssists - technicalFaults;
+  const primaryLabel = isGK(player.position) ? "Keeperprofil" : "Angrepsbidrag";
 
   return (
-    <section className="mx-4 space-y-2">
-      <div className="rounded-2xl border border-chart-2/30 bg-chart-2/10 px-4 py-3 flex items-center gap-3">
-        <div className="size-9 rounded-full bg-chart-2/15 flex items-center justify-center">
-          <TrendingUp className="size-5 text-chart-2" />
+    <section className="mx-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="rounded-2xl border border-primary/30 bg-primary/10 px-4 py-4 flex items-center gap-3">
+        <div className="size-11 rounded-xl bg-primary/15 flex items-center justify-center">
+          <Award className="size-5 text-primary" />
         </div>
         <div>
-          <p className="font-display font-black text-chart-2 text-sm">
-            Over snittet for posisjonen
+          <p className="font-display font-black text-primary text-sm">
+            {primaryLabel}: {formatDecimal(stats.mepAvg)} i snitt MEP
           </p>
           <p className="text-xs text-muted-foreground">
-            {primaryPerMatch.toFixed(1)} mål/kamp · snitt {positionAverage.toFixed(1)} · +{diff.toFixed(1)}
+            Total MEP {formatDecimal(stats.mepTotal)} gjennom {matches} kamper.
           </p>
         </div>
       </div>
-      <div className="rounded-2xl border border-border bg-card px-4 py-3 flex items-center gap-3">
-        <div className="size-9 rounded-full bg-yellow-400/10 border border-yellow-400/35 flex items-center justify-center">
-          <Target className="size-5 text-yellow-400" />
+      <div className="rounded-2xl border border-border bg-card px-4 py-4 flex items-center gap-3">
+        <div className="size-11 rounded-xl bg-chart-2/10 border border-chart-2/25 flex items-center justify-center">
+          <Target className="size-5 text-chart-2" />
         </div>
         <div>
           <p className="font-display font-black text-foreground text-sm">
-            Toppnivå i rollen
+            {directContributions} målpoeng · {contributionPerMatch.toFixed(1)} per kamp
           </p>
           <p className="text-xs text-muted-foreground">
-            Scorer høyt, skaper mye og holder {formatPct(stats.shootingPercent)} uttelling.
+            Assist/teknisk-feil balanse: {formatSigned(assistFaultBalance, 0)} · uttelling {formatPct(stats.shootingPercent)}
           </p>
         </div>
       </div>
@@ -424,6 +451,8 @@ function InsightCards({
 
 function SeasonDetails({ stats }: { stats: PlayerSeasonStats }) {
   const rows = [
+    ["Snitt MEP", formatDecimal(stats.mepAvg)],
+    ["Total MEP", formatDecimal(stats.mepTotal)],
     ["Total mål", formatNumber(stats.totalGoals)],
     ["Skudd", formatNumber(stats.totalShots)],
     ["Uttelling", formatPct(stats.shootingPercent)],
@@ -437,19 +466,27 @@ function SeasonDetails({ stats }: { stats: PlayerSeasonStats }) {
 
   return (
     <div className="rounded-2xl border border-border bg-card overflow-hidden">
-      <div className="px-4 py-3 border-b border-border bg-muted/35">
+      <div className="px-4 py-3 border-b border-border bg-muted/35 flex items-center justify-between">
         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold">
           Sesong {stats.season}
         </p>
+        <span className="text-[10px] uppercase tracking-widest text-primary font-display font-bold">
+          MEP først
+        </span>
       </div>
       <div className="px-4">
-        {rows.map(([label, value]) => (
+        {rows.map(([label, value], index) => (
           <div
             key={label}
             className="flex items-center justify-between py-3 border-b border-border/45 last:border-0"
           >
             <span className="text-sm text-muted-foreground">{label}</span>
-            <span className="font-mono font-bold text-sm text-foreground tabular-nums">
+            <span
+              className={cn(
+                "font-mono font-bold text-sm tabular-nums",
+                index < 2 ? "text-primary" : "text-foreground",
+              )}
+            >
               {value}
             </span>
           </div>
@@ -460,7 +497,9 @@ function SeasonDetails({ stats }: { stats: PlayerSeasonStats }) {
 }
 
 function MatchHistory({ stats }: { stats: PlayerMatchStats[] }) {
-  const matches = [...stats].sort((a, b) => Number(b.matchId - a.matchId));
+  const matches = [...(stats as EnrichedPlayerMatchStats[])].sort((a, b) =>
+    getMatchDate(b).localeCompare(getMatchDate(a)),
+  );
 
   if (matches.length === 0) {
     return (
@@ -472,27 +511,32 @@ function MatchHistory({ stats }: { stats: PlayerMatchStats[] }) {
 
   return (
     <div className="rounded-2xl border border-border bg-card overflow-hidden">
-      <div className="grid grid-cols-[1fr_56px_56px_56px] gap-2 px-4 py-2 border-b border-border text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold">
+      <div className="grid grid-cols-[1fr_52px_52px_52px] gap-2 px-4 py-2 border-b border-border text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold">
         <span>Kamp</span>
+        <span className="text-right">MEP</span>
         <span className="text-right">Mål</span>
-        <span className="text-right">Skudd</span>
         <span className="text-right">Ass</span>
       </div>
-      {matches.map((match, index) => (
+      {matches.map((match) => (
         <div
           key={match.id.toString()}
-          className="grid grid-cols-[1fr_56px_56px_56px] gap-2 px-4 py-3 border-b border-border/45 last:border-0 text-sm"
+          className="grid grid-cols-[1fr_52px_52px_52px] gap-2 px-4 py-3 border-b border-border/45 last:border-0 text-sm"
         >
-          <span className="text-muted-foreground">
-            {index === 0 ? "Siste kamp" : `Kamp ${index + 1}`}
+          <span className="min-w-0">
+            <span className="block font-display font-bold text-foreground truncate">
+              {match.opponent ? `mot ${match.opponent}` : "Kamp"}
+            </span>
+            <span className="block text-xs text-muted-foreground truncate">
+              {match.date ?? `Kamp ${match.matchId.toString()}`}
+            </span>
           </span>
-          <span className="text-right font-bold text-primary">
+          <span className="text-right font-bold text-primary tabular-nums">
+            {formatDecimal(match.mep)}
+          </span>
+          <span className="text-right text-foreground tabular-nums">
             {formatNumber(match.goals)}
           </span>
-          <span className="text-right text-foreground">
-            {formatNumber(match.shots)}
-          </span>
-          <span className="text-right text-foreground">
+          <span className="text-right text-foreground tabular-nums">
             {formatNumber(match.assists)}
           </span>
         </div>
@@ -567,8 +611,6 @@ export default function PlayerPage() {
     );
   }
 
-  const gk = isGK(player.position);
-
   return (
     <div className="flex flex-col min-h-full pb-8">
       <div className="px-4 pt-3 pb-1">
@@ -587,7 +629,7 @@ export default function PlayerPage() {
       <div className="flex flex-col gap-5 pt-5">
         <KeyStats player={player} stats={seasonStats} />
         <InsightCards player={player} stats={seasonStats} />
-        <FormOverview stats={matchStats} gk={gk} />
+        <FormOverview stats={matchStats} />
 
         {team?.name && (
           <Link
@@ -622,7 +664,7 @@ export default function PlayerPage() {
               </div>
             ))}
           {activeTab === "matches" && <MatchHistory stats={matchStats} />}
-          {activeTab === "form" && <FormOverview stats={matchStats} gk={gk} />}
+          {activeTab === "form" && <FormOverview stats={matchStats} />}
         </div>
       </div>
     </div>
