@@ -49,49 +49,28 @@ function removeLocalFollowedPlayer(playerId: bigint) {
 }
 
 function getLocalFollowedPlayers(): Player[] {
-  return readLocalFollowedIds()
-    .map((id) => getStaticProfile(BigInt(id)))
-    .filter((profile): profile is NonNullable<typeof profile> => profile !== null)
-    .map(mapClawdbotPlayer);
+  return readLocalFollowedIds().flatMap((id) => {
+    try {
+      const profile = getStaticProfile(BigInt(id));
+      return profile ? [mapClawdbotPlayer(profile)] : [];
+    } catch {
+      return [];
+    }
+  });
 }
 
 export function useFollowedPlayers() {
-  const { actor, isFetching } = useActor(createActor);
   return useQuery<Player[]>({
     queryKey: ["followedPlayers"],
-    queryFn: async () => {
-      const localFollowed = getLocalFollowedPlayers();
-      if (localFollowed.length > 0 || !actor) {
-        return enrichPlayersWithImages(localFollowed);
-      }
-
-      try {
-        const followed = await actor.getFollowedPlayers();
-        return enrichPlayersWithImages(followed);
-      } catch {
-        return enrichPlayersWithImages(localFollowed);
-      }
-    },
-    enabled: !isFetching,
+    queryFn: async () => enrichPlayersWithImages(getLocalFollowedPlayers()),
     staleTime: 30_000,
   });
 }
 
 export function useIsFollowing(playerId: bigint) {
-  const { actor, isFetching } = useActor(createActor);
   return useQuery<boolean>({
     queryKey: ["isFollowing", playerId.toString()],
-    queryFn: async () => {
-      if (readLocalFollowedIds().includes(playerId.toString())) return true;
-      if (!actor) return false;
-
-      try {
-        return actor.isFollowing(playerId);
-      } catch {
-        return false;
-      }
-    },
-    enabled: !isFetching,
+    queryFn: async () => readLocalFollowedIds().includes(playerId.toString()),
     staleTime: 30_000,
   });
 }
