@@ -1,0 +1,36 @@
+name: Apply keeper UI fix
+
+on:
+  push:
+    branches:
+      - codex/static-sarah-profile
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/static-sarah-profile
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Apply keeper UI changes
+        run: node scripts/apply-keeper-ui-fix.cjs
+      - name: Commit keeper UI changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Make keeper statistics position-aware"
+            git push origin HEAD:codex/static-sarah-profile
+          fi
