@@ -1,5 +1,7 @@
-import playerStatsData from "../data/fjellhammerPlayerStats.json";
+import fjellhammerPlayerStatsData from "../data/fjellhammerPlayerStats.json";
 import fjellhammerRosterData from "../data/fjellhammerRoster.json";
+import larvikPlayerStatsData from "../data/larvikPlayerStats.json";
+import larvikRosterData from "../data/larvikRoster.json";
 import { Position } from "../types/handball";
 import type {
   Player,
@@ -15,9 +17,10 @@ const CLAWDBOT_API_BASE =
   import.meta.env.VITE_CLAWDBOT_API_BASE ?? DEFAULT_CLAWDBOT_API_BASE;
 
 const DEFAULT_SEASON = "2526";
-const DEFAULT_TEAM = "Fjellhammer";
-const DEFAULT_TEAM_LOGO_URL =
+const FJELLHAMMER_LOGO_URL =
   "https://www.fjellhammer.no/wp-content/uploads/sites/19/2020/01/fjellhammer.svg";
+const LARVIK_LOGO_URL =
+  "https://www.larvikhk.no/wp-content/uploads/sites/7/2019/08/larvikhk.svg";
 const DEFAULT_TOURNAMENT = "REMA 1000-ligaen kvinner";
 
 type ClawdbotPlayer = {
@@ -98,21 +101,48 @@ export type EnrichedPlayerMatchStats = PlayerMatchStats & {
   shotsAgainst?: bigint;
 };
 
-const FJELLHAMMER_ROSTER = fjellhammerRosterData as StaticRosterPlayer[];
-const PLAYER_STATS = playerStatsData as StaticPlayerStats[];
-const PLAYER_STATS_BY_ID = Object.fromEntries(
-  PLAYER_STATS.map((stats) => [stats.playerId, stats]),
+type StaticTeamConfig = {
+  name: string;
+  logoUrl: string;
+  roster: StaticRosterPlayer[];
+  statsById: Record<string, StaticPlayerStats>;
+};
+
+function statsById(stats: StaticPlayerStats[]) {
+  return Object.fromEntries(stats.map((item) => [item.playerId, item]));
+}
+
+const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
+  {
+    name: "Fjellhammer",
+    logoUrl: FJELLHAMMER_LOGO_URL,
+    roster: fjellhammerRosterData as StaticRosterPlayer[],
+    statsById: statsById(fjellhammerPlayerStatsData as StaticPlayerStats[]),
+  },
+  {
+    name: "Larvik",
+    logoUrl: LARVIK_LOGO_URL,
+    roster: larvikRosterData as StaticRosterPlayer[],
+    statsById: statsById(larvikPlayerStatsData as StaticPlayerStats[]),
+  },
+];
+
+const STATIC_TEAM_LOGOS = Object.fromEntries(
+  STATIC_TEAM_CONFIGS.map((team) => [team.name.toLowerCase(), team.logoUrl]),
 );
 
-function createStaticProfile(player: StaticRosterPlayer): ClawdbotPlayerProfile {
-  const playerStats = PLAYER_STATS_BY_ID[player.id];
+function createStaticProfile(
+  player: StaticRosterPlayer,
+  team: StaticTeamConfig,
+): ClawdbotPlayerProfile {
+  const playerStats = team.statsById[player.id];
 
   return {
     player: {
       id: player.id,
       name: player.name,
       imageUrl: player.imageUrl,
-      team: DEFAULT_TEAM,
+      team: team.name,
       position: player.position,
       shirtNumber: player.shirtNumber,
       season: DEFAULT_SEASON,
@@ -126,7 +156,9 @@ function createStaticProfile(player: StaticRosterPlayer): ClawdbotPlayerProfile 
 
 const STATIC_PLAYER_PROFILES: Record<string, ClawdbotPlayerProfile> =
   Object.fromEntries(
-    FJELLHAMMER_ROSTER.map((player) => [player.id, createStaticProfile(player)]),
+    STATIC_TEAM_CONFIGS.flatMap((team) =>
+      team.roster.map((player) => [player.id, createStaticProfile(player, team)]),
+    ),
   );
 
 export function getStaticProfile(playerId: bigint): ClawdbotPlayerProfile | null {
@@ -190,9 +222,10 @@ function stableTeamId(team?: string | null) {
 }
 
 function teamLogoUrl(team?: string | null) {
-  return (team ?? "").toLowerCase().includes("fjellhammer")
-    ? DEFAULT_TEAM_LOGO_URL
-    : undefined;
+  const normalized = (team ?? "").toLowerCase();
+  return Object.entries(STATIC_TEAM_LOGOS).find(([key]) =>
+    normalized.includes(key),
+  )?.[1];
 }
 
 function sanitizeProfile(profile: ClawdbotPlayerProfile): ClawdbotPlayerProfile {

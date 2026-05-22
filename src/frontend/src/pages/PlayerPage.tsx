@@ -39,6 +39,7 @@ type Tab = "season" | "matches" | "form";
 const CLUB_LOGOS: Record<string, string> = {
   fjellhammer:
     "https://www.fjellhammer.no/wp-content/uploads/sites/19/2020/01/fjellhammer.svg",
+  larvik: "https://www.larvikhk.no/wp-content/uploads/sites/7/2019/08/larvikhk.svg",
 };
 
 function getClubLogo(teamName?: string) {
