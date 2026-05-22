@@ -37,6 +37,8 @@ type ClawdbotSeasonStats = {
   assists?: number | null;
   technicalErrors?: number | null;
   suspensions?: number | null;
+  mepAvg?: number | null;
+  mepTotal?: number | null;
 };
 
 type ClawdbotRecentMatch = {
@@ -49,6 +51,7 @@ type ClawdbotRecentMatch = {
   assists?: number | null;
   technicalErrors?: number | null;
   suspensions?: number | null;
+  mep?: number | null;
 };
 
 export type ClawdbotPlayerProfile = {
@@ -69,6 +72,13 @@ type StaticPlayerStats = {
   playerId: string;
   seasonStats: ClawdbotSeasonStats;
   recentMatches: ClawdbotRecentMatch[];
+};
+
+export type EnrichedPlayerMatchStats = PlayerMatchStats & {
+  date?: string;
+  opponent?: string;
+  homeAway?: string;
+  mep?: number;
 };
 
 const FJELLHAMMER_ROSTER = fjellhammerRosterData as StaticRosterPlayer[];
@@ -228,6 +238,8 @@ export function mapClawdbotSeasonStats(
     totalAssists: toOptionalBigInt(profile.seasonStats.assists),
     technicalFaults: toOptionalBigInt(profile.seasonStats.technicalErrors),
     totalTwoMin: toOptionalBigInt(profile.seasonStats.suspensions),
+    mepAvg: profile.seasonStats.mepAvg ?? undefined,
+    mepTotal: profile.seasonStats.mepTotal ?? undefined,
     goalsPerGame: matches > 0 ? goals / matches : undefined,
     assistsPerGame: matches > 0 ? assists / matches : undefined,
   };
@@ -235,7 +247,7 @@ export function mapClawdbotSeasonStats(
 
 export function mapClawdbotMatchStats(
   profile: ClawdbotPlayerProfile,
-): PlayerMatchStats[] {
+): EnrichedPlayerMatchStats[] {
   const playerId = toBigInt(profile.player.id);
 
   return profile.recentMatches.map((match, index) => {
@@ -255,6 +267,10 @@ export function mapClawdbotMatchStats(
       assists: toOptionalBigInt(match.assists),
       turnovers: toOptionalBigInt(match.technicalErrors),
       twoMinSuspensions: toOptionalBigInt(match.suspensions),
+      date: match.date ?? undefined,
+      opponent: match.opponent ?? undefined,
+      homeAway: match.homeAway ?? undefined,
+      mep: match.mep ?? undefined,
     };
   });
 }
