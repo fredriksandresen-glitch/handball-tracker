@@ -78,7 +78,6 @@ export default function SearchPage() {
   const totalTeams = teams?.length ?? 0;
 
   const hasQuery = debouncedQuery.trim() !== "";
-  const hasPositionFilter = positionFilter !== "all";
   const sourcePlayers = hasQuery ? rawResults : allPlayers;
 
   const results =
@@ -110,13 +109,9 @@ export default function SearchPage() {
   }, []);
 
   const showSkeletons = isLoading && hasQuery;
-  const showNoResults =
-    !isLoading &&
-    results !== undefined &&
-    results.length === 0 &&
-    (hasQuery || hasPositionFilter);
-  const showResults = results && results.length > 0 && (hasQuery || hasPositionFilter);
-  const showEmptyPrompt = !hasQuery && !hasPositionFilter;
+  const showNoResults = !isLoading && results !== undefined && results.length === 0;
+  const showResults = results !== undefined && results.length > 0;
+  const showEmptyPrompt = !showResults && !showNoResults && !showSkeletons;
 
   return (
     <div className="flex flex-col gap-4">
@@ -169,7 +164,7 @@ export default function SearchPage() {
         ))}
       </div>
 
-      {/* ── Empty prompt (no query typed yet) ─────────────────────────── */}
+      {/* ── Empty prompt ──────────────────────────────────────────────── */}
       {showEmptyPrompt && (
         <div
           className="flex flex-col items-center justify-center py-16 gap-4 text-center"
