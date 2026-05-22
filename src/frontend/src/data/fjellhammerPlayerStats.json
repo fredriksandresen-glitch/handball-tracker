@@ -1,0 +1,304 @@
+[
+  {
+    "playerId": "2239826783348",
+    "seasonStats": {
+      "matches": 23,
+      "goals": 55,
+      "shots": 87,
+      "shotPercentage": 63.2,
+      "assists": 5,
+      "technicalErrors": 4,
+      "suspensions": 0
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239827978957",
+    "seasonStats": {
+      "matches": 24,
+      "goals": 48,
+      "shots": 89,
+      "shotPercentage": 53.9,
+      "assists": 104,
+      "technicalErrors": 86,
+      "suspensions": 7
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239829220488",
+    "seasonStats": {
+      "matches": 3,
+      "goals": 0,
+      "shots": 2,
+      "shotPercentage": null,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239826718083",
+    "seasonStats": {
+      "matches": 25,
+      "goals": 76,
+      "shots": 110,
+      "shotPercentage": 69.1,
+      "assists": 5,
+      "technicalErrors": 29,
+      "suspensions": 6
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239828127509",
+    "seasonStats": {
+      "matches": 18,
+      "goals": 14,
+      "shots": 22,
+      "shotPercentage": 63.6,
+      "assists": 3,
+      "technicalErrors": 7,
+      "suspensions": 2
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239827803540",
+    "seasonStats": {
+      "matches": 11,
+      "goals": 11,
+      "shots": 19,
+      "shotPercentage": 57.9,
+      "assists": 17,
+      "technicalErrors": 13,
+      "suspensions": 0
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239829841766",
+    "seasonStats": {
+      "matches": 7,
+      "goals": 3,
+      "shots": 6,
+      "shotPercentage": 50,
+      "assists": 0,
+      "technicalErrors": 4,
+      "suspensions": 0
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239826764122",
+    "seasonStats": {
+      "matches": 14,
+      "goals": 30,
+      "shots": 41,
+      "shotPercentage": 73.2,
+      "assists": 2,
+      "technicalErrors": 5,
+      "suspensions": 0
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239826781527",
+    "seasonStats": {
+      "matches": 25,
+      "goals": 0,
+      "shots": 714,
+      "shotPercentage": null,
+      "assists": 4,
+      "technicalErrors": 7,
+      "suspensions": 0
+    },
+    "goalkeeperStats": {
+      "saves": 193,
+      "savePercentage": 27,
+      "goalsConceded": 521,
+      "shotsAgainst": 714
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239828059504",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 200,
+      "shots": 315,
+      "shotPercentage": 63.5,
+      "assists": 119,
+      "technicalErrors": 78,
+      "suspensions": 4
+    },
+    "recentMatches": [
+      {
+        "matchId": "8208557",
+        "date": "2026-04-22",
+        "opponent": "Fana",
+        "homeAway": "away",
+        "goals": 8,
+        "shots": 16,
+        "assists": 10,
+        "technicalErrors": 6,
+        "suspensions": 0
+      },
+      {
+        "matchId": "8208551",
+        "date": "2026-04-16",
+        "opponent": "Fredrikstad",
+        "homeAway": "home",
+        "goals": 3,
+        "shots": 7,
+        "assists": 4,
+        "technicalErrors": 4,
+        "suspensions": 0
+      },
+      {
+        "matchId": "8208543",
+        "date": "2026-03-29",
+        "opponent": "Oppsal",
+        "homeAway": "home",
+        "goals": 11,
+        "shots": 19,
+        "assists": 6,
+        "technicalErrors": 3,
+        "suspensions": 0
+      },
+      {
+        "matchId": "8208542",
+        "date": "2026-03-22",
+        "opponent": "Follo Damer",
+        "homeAway": "away",
+        "goals": 12,
+        "shots": 15,
+        "assists": 8,
+        "technicalErrors": 1,
+        "suspensions": 1
+      },
+      {
+        "matchId": "8208529",
+        "date": "2026-03-18",
+        "opponent": "Molde",
+        "homeAway": "away",
+        "goals": 8,
+        "shots": 13,
+        "assists": 10,
+        "technicalErrors": 2,
+        "suspensions": 0
+      }
+    ]
+  },
+  {
+    "playerId": "22398210032285",
+    "seasonStats": {
+      "matches": 8,
+      "goals": 2,
+      "shots": 6,
+      "shotPercentage": 33.3,
+      "assists": 1,
+      "technicalErrors": 3,
+      "suspensions": 1
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239826890365",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 55,
+      "shots": 85,
+      "shotPercentage": 64.7,
+      "assists": 1,
+      "technicalErrors": 9,
+      "suspensions": 3
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239827369397",
+    "seasonStats": {
+      "matches": 21,
+      "goals": 14,
+      "shots": 24,
+      "shotPercentage": 58.3,
+      "assists": 3,
+      "technicalErrors": 5,
+      "suspensions": 10
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239822885266",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 38,
+      "shots": 80,
+      "shotPercentage": 47.5,
+      "assists": 20,
+      "technicalErrors": 20,
+      "suspensions": 10
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239827495091",
+    "seasonStats": {
+      "matches": 25,
+      "goals": 58,
+      "shots": 90,
+      "shotPercentage": 64.4,
+      "assists": 41,
+      "technicalErrors": 62,
+      "suspensions": 12
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239829571781",
+    "seasonStats": {
+      "matches": 22,
+      "goals": 49,
+      "shots": 109,
+      "shotPercentage": 45,
+      "assists": 11,
+      "technicalErrors": 25,
+      "suspensions": 2
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239825215136",
+    "seasonStats": {
+      "matches": 23,
+      "goals": 0,
+      "shots": 293,
+      "shotPercentage": null,
+      "assists": 3,
+      "technicalErrors": 0,
+      "suspensions": 0
+    },
+    "goalkeeperStats": {
+      "saves": 71,
+      "savePercentage": 24.2,
+      "goalsConceded": 222,
+      "shotsAgainst": 293
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239829957836",
+    "seasonStats": {
+      "matches": 14,
+      "goals": 18,
+      "shots": 36,
+      "shotPercentage": 50,
+      "assists": 21,
+      "technicalErrors": 19,
+      "suspensions": 1
+    },
+    "recentMatches": []
+  }
+]
