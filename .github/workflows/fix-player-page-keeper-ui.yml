@@ -1,0 +1,37 @@
+name: Fix player page keeper UI
+
+on:
+  push:
+    branches:
+      - codex/static-sarah-profile
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/static-sarah-profile
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Restore and patch PlayerPage
+        run: node scripts/fix-player-page-keeper-ui.cjs
+      - name: Commit PlayerPage fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Fix keeper player profile UI"
+            git push origin HEAD:codex/static-sarah-profile
+          fi
