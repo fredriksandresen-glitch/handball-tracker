@@ -1,3 +1,5 @@
+import fjellhammerRosterData from "../data/fjellhammerRoster.json";
+import sarahStatsData from "../data/sarahDeariSolheimStats.json";
 import { Position } from "../types/handball";
 import type {
   Player,
@@ -63,239 +65,17 @@ type StaticRosterPlayer = {
   shirtNumber: number;
 };
 
-const FJELLHAMMER_ROSTER: StaticRosterPlayer[] = [
-  {
-    id: "2239826783348",
-    name: "My Lervold",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/My-Lervold-Fjellhammer.png?v=1773826257",
-    position: "Kantspiller venstre",
-    shirtNumber: 2,
-  },
-  {
-    id: "2239827978957",
-    name: "Martine Tveter",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Martine-Tveter-Fjellhammer.png?v=1773826257",
-    position: "Bakspiller midt",
-    shirtNumber: 4,
-  },
-  {
-    id: "2239829220488",
-    name: "Julie Rensmoen Benterud",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Julie-Rensmoen-Benterud-Fjellhammer.png?v=1773826257",
-    position: "Kantspiller høyre",
-    shirtNumber: 5,
-  },
-  {
-    id: "2239826718083",
-    name: "Tuva Knai",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Tuva-Knai-Fjellhammer.png?v=1773826257",
-    position: "Linjespiller",
-    shirtNumber: 6,
-  },
-  {
-    id: "2239828127509",
-    name: "Inga Sandvold",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Inga-Sandvold-Fjellhammer.png?v=1773826257",
-    position: "Linjespiller",
-    shirtNumber: 7,
-  },
-  {
-    id: "2239827803540",
-    name: "Hannah Deari Solheim",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Hannah-Deari-Solheim-Fjellhammer.png?v=1773826257",
-    position: "Bakspiller midt",
-    shirtNumber: 9,
-  },
-  {
-    id: "2239829841766",
-    name: "Mia Lundberg Lersbryggen",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mia-Lundberg-Lersbryggen-Fjellhammer.png?v=1773826257",
-    position: "Bakspiller venstre",
-    shirtNumber: 10,
-  },
-  {
-    id: "2239826764122",
-    name: "Sara Ashuri",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Sara-Ashuri-Fjellhammer.png?v=1773826257",
-    position: "Kantspiller venstre",
-    shirtNumber: 11,
-  },
-  {
-    id: "2239826781527",
-    name: "Zaynab Elmrani",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Zaynab-Elmrani-Fjellhammer.png?v=1773826257",
-    position: "Målvakt",
-    shirtNumber: 12,
-  },
-  {
-    id: "2239828059504",
-    name: "Sarah Deari Solheim",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Sarah-Deari-Solheim-Fjellhammer.png?v=1773826257",
-    position: "Bakspiller høyre",
-    shirtNumber: 14,
-  },
-  {
-    id: "2239829175115",
-    name: "Christina Midtdal Nummestad",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Christina-Midtdal-Nummestad-Fjellhammer.png?v=1773826257",
-    position: "Bakspiller venstre",
-    shirtNumber: 15,
-  },
-  {
-    id: "2239828158679",
-    name: "Marie Elstrand Munthe",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Marie-Elstrand-Munthe-Fjellhammer.png?v=1773826257",
-    position: "Bakspiller høyre",
-    shirtNumber: 17,
-  },
-  {
-    id: "22398210032285",
-    name: "Linnea Isabel Ingeborg Aula",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Linnea-Isabel-Ingeborg-Aula-Fjellhammer.png?v=1773826257",
-    position: "Kantspiller venstre",
-    shirtNumber: 18,
-  },
-  {
-    id: "2239826890365",
-    name: "Hedda Klippen Nilsen",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Hedda-Klippen-Nilsen-Fjellhammer.png?v=1773826257",
-    position: "Kantspiller høyre",
-    shirtNumber: 20,
-  },
-  {
-    id: "2239827369397",
-    name: "Sunniva Sogn-Johansen",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Sunniva-Sogn-Johansen-Fjellhammer.png?v=1773826257",
-    position: "Linjespiller",
-    shirtNumber: 22,
-  },
-  {
-    id: "2239822885266",
-    name: "Emma Egge Edner",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Emma-Egge-Edner-Fjellhammer.png?v=1773826257",
-    position: "Bakspiller høyre",
-    shirtNumber: 25,
-  },
-  {
-    id: "2239827495091",
-    name: "Marthe Bjørnson Ulvåknippa",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Marthe-Bjornson-Ulvaknippa-Fjellhammer.png?v=1773826257",
-    position: "Bakspiller venstre",
-    shirtNumber: 27,
-  },
-  {
-    id: "2239829571781",
-    name: "Mathilde Aas Fjelddalen",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mathilde-Aas-Fjelddalen-Fjellhammer.png?v=1773826257",
-    position: "Bakspiller venstre",
-    shirtNumber: 33,
-  },
-  {
-    id: "2239825215136",
-    name: "Ida Wall Bakken",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ida-Wall-Bakken-Fjellhammer.png?v=1773826257",
-    position: "Målvakt",
-    shirtNumber: 37,
-  },
-  {
-    id: "2239829957836",
-    name: "Stine Mellemstrand Bore",
-    imageUrl:
-      "https://nthapi.webcore.no/wp-content/uploads/2026/05/Stine-Mellemstrand-Bore-Fjellhammer.png?v=1773826257",
-    position: "Bakspiller midt",
-    shirtNumber: 72,
-  },
-];
-
-const SARAH_SEASON_STATS: ClawdbotSeasonStats = {
-  matches: 26,
-  goals: 200,
-  shots: 315,
-  shotPercentage: 63.5,
-  assists: 119,
-  technicalErrors: 78,
-  suspensions: 4,
+type StaticPlayerStats = {
+  playerId: string;
+  seasonStats: ClawdbotSeasonStats;
+  recentMatches: ClawdbotRecentMatch[];
 };
 
-const SARAH_RECENT_MATCHES: ClawdbotRecentMatch[] = [
-  {
-    matchId: "8208557",
-    date: "2026-04-22",
-    opponent: "Fana",
-    homeAway: "away",
-    goals: 8,
-    shots: 16,
-    assists: 10,
-    technicalErrors: 6,
-    suspensions: 0,
-  },
-  {
-    matchId: "8208551",
-    date: "2026-04-16",
-    opponent: "Fredrikstad",
-    homeAway: "home",
-    goals: 3,
-    shots: 7,
-    assists: 4,
-    technicalErrors: 4,
-    suspensions: 0,
-  },
-  {
-    matchId: "8208543",
-    date: "2026-03-29",
-    opponent: "Oppsal",
-    homeAway: "home",
-    goals: 11,
-    shots: 19,
-    assists: 6,
-    technicalErrors: 3,
-    suspensions: 0,
-  },
-  {
-    matchId: "8208542",
-    date: "2026-03-22",
-    opponent: "Follo Damer",
-    homeAway: "away",
-    goals: 12,
-    shots: 15,
-    assists: 8,
-    technicalErrors: 1,
-    suspensions: 1,
-  },
-  {
-    matchId: "8208529",
-    date: "2026-03-18",
-    opponent: "Molde",
-    homeAway: "away",
-    goals: 8,
-    shots: 13,
-    assists: 10,
-    technicalErrors: 2,
-    suspensions: 0,
-  },
-];
+const FJELLHAMMER_ROSTER = fjellhammerRosterData as StaticRosterPlayer[];
+const SARAH_STATS = sarahStatsData as StaticPlayerStats;
 
 function createStaticProfile(player: StaticRosterPlayer): ClawdbotPlayerProfile {
-  const isSarah = player.id === "2239828059504";
+  const playerStats = player.id === SARAH_STATS.playerId ? SARAH_STATS : null;
 
   return {
     player: {
@@ -308,8 +88,8 @@ function createStaticProfile(player: StaticRosterPlayer): ClawdbotPlayerProfile 
       season: DEFAULT_SEASON,
       tournament: DEFAULT_TOURNAMENT,
     },
-    seasonStats: isSarah ? SARAH_SEASON_STATS : {},
-    recentMatches: isSarah ? SARAH_RECENT_MATCHES : [],
+    seasonStats: playerStats?.seasonStats ?? {},
+    recentMatches: playerStats?.recentMatches ?? [],
   };
 }
 
