@@ -16,6 +16,8 @@ const CLAWDBOT_API_BASE =
 
 const DEFAULT_SEASON = "2526";
 const DEFAULT_TEAM = "Fjellhammer";
+const DEFAULT_TEAM_LOGO_URL =
+  "https://www.fjellhammer.no/wp-content/uploads/sites/19/2020/01/fjellhammer.svg";
 const DEFAULT_TOURNAMENT = "REMA 1000-ligaen kvinner";
 
 type ClawdbotPlayer = {
@@ -171,6 +173,12 @@ function stableTeamId(team?: string | null) {
   return BigInt(hash || 1);
 }
 
+function teamLogoUrl(team?: string | null) {
+  return (team ?? "").toLowerCase().includes("fjellhammer")
+    ? DEFAULT_TEAM_LOGO_URL
+    : undefined;
+}
+
 function sanitizeProfile(profile: ClawdbotPlayerProfile): ClawdbotPlayerProfile {
   return {
     player: profile.player,
@@ -308,6 +316,7 @@ export function getStaticTeams(): Team[] {
       id,
       name,
       slug: slugify(name),
+      logoUrl: teamLogoUrl(name),
     });
   }
 
