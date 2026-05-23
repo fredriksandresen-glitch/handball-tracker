@@ -5,7 +5,6 @@ import type { MouseEvent } from "react";
 import type { Player } from "../types/handball";
 import { PositionBadge } from "./PositionBadge";
 
-// ─── Sparkline ───────────────────────────────────────────────────────────────
 function Sparkline({ values }: { values: number[] }) {
   if (values.length < 2) return null;
   const max = Math.max(...values, 1);
@@ -41,7 +40,12 @@ function Sparkline({ values }: { values: number[] }) {
   );
 }
 
-// ─── PlayerCard ─────────────────────────────────────────────────────────────
+type CardStat = {
+  value: string;
+  label: string;
+  emphasis?: boolean;
+};
+
 interface Props {
   player: Player;
   teamName?: string;
@@ -57,7 +61,9 @@ interface Props {
   latestGoals?: number;
   latestSaves?: number;
   latestSavePct?: number;
+  statItems?: CardStat[];
   sparkValues?: number[];
+  sparkLabel?: string;
 }
 
 export function PlayerCard({
@@ -74,12 +80,17 @@ export function PlayerCard({
   latestGoals,
   latestSaves,
   latestSavePct,
+  statItems,
   sparkValues = [],
+  sparkLabel = "Form",
 }: Props) {
   const navigate = useNavigate();
 
   const displayGoals = latestGoals ?? goals;
+  const genericStats = statItems?.filter((item) => item.value !== "") ?? [];
+  const hasGenericStats = genericStats.length > 0;
   const hasStats =
+    hasGenericStats ||
     latestMep !== undefined ||
     latestSaves !== undefined ||
     latestSavePct !== undefined ||
@@ -114,7 +125,6 @@ export function PlayerCard({
       )}
       data-ocid="player-card"
     >
-      {/* ── Poster image area ── */}
       <button
         type="button"
         onClick={handleCardClick}
@@ -135,10 +145,8 @@ export function PlayerCard({
           </div>
         )}
 
-        {/* Gradient overlay — bottom 60% fades to dark */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-        {/* Jersey number badge — top right */}
         {player.jerseyNumber !== undefined && player.jerseyNumber > 0n && (
           <div className="absolute top-3 right-3 size-8 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 flex items-center justify-center">
             <span className="font-display font-black text-[13px] text-white leading-none">
@@ -147,85 +155,102 @@ export function PlayerCard({
           </div>
         )}
 
-        {/* Content overlaid on gradient */}
         <div className="absolute bottom-0 left-0 right-0 px-3.5 pb-3.5 pt-12">
-          {/* Position badge */}
           <div className="mb-1.5">
             <PositionBadge position={player.position} variant="overlay" />
           </div>
 
-          {/* Name */}
           <p className="font-display font-black text-white leading-tight text-base truncate drop-shadow-sm">
             {player.name}
           </p>
 
-          {/* Team */}
           {teamName && (
             <p className="text-[11px] text-white/70 truncate mt-0.5 font-body">
               {teamName}
             </p>
           )}
 
-          {/* Stats row */}
           {hasStats && (
-            <div className="flex items-end justify-between mt-2 pt-2 border-t border-white/15">
-              <div className="flex gap-3">
-                {latestMep !== undefined && (
-                  <div>
-                    <span className="block font-display font-black text-xl text-white leading-none tabular-nums">
-                      {latestMep.toFixed(1)}
-                    </span>
-                    <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5">
-                      MEP sist
-                    </span>
-                  </div>
-                )}
-                {latestSaves !== undefined && (
-                  <div>
-                    <span className="block font-display font-bold text-lg text-white/90 leading-none tabular-nums">
-                      {latestSaves}
-                    </span>
-                    <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5">
-                      Redn.
-                    </span>
-                  </div>
-                )}
-                {latestSavePct !== undefined && (
-                  <div>
-                    <span className="block font-display font-bold text-lg text-white/90 leading-none tabular-nums">
-                      {latestSavePct.toFixed(1)}%
-                    </span>
-                    <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5">
-                      Red%
-                    </span>
-                  </div>
-                )}
-                {displayGoals !== undefined && latestSaves === undefined && (
-                  <div>
-                    <span className="block font-display font-black text-xl text-white leading-none">
-                      {displayGoals}
-                    </span>
-                    <span className="block text-[9px] uppercase tracking-wide text-white/60 mt-0.5">
-                      Mål
-                    </span>
-                  </div>
-                )}
-                {minutes !== undefined && (
-                  <div>
-                    <span className="block font-display font-bold text-lg text-white/90 leading-none">
-                      {minutes}
-                    </span>
-                    <span className="block text-[9px] uppercase tracking-wide text-white/60 mt-0.5">
-                      Min
-                    </span>
-                  </div>
+            <div className="flex items-end justify-between mt-2 pt-2 border-t border-white/15 gap-2">
+              <div className="flex gap-3 min-w-0">
+                {hasGenericStats ? (
+                  genericStats.slice(0, 3).map((item) => (
+                    <div key={`${item.label}-${item.value}`} className="min-w-0">
+                      <span
+                        className={cn(
+                          "block leading-none tabular-nums truncate",
+                          item.emphasis
+                            ? "font-display font-black text-xl text-white"
+                            : "font-display font-bold text-lg text-white/90",
+                        )}
+                      >
+                        {item.value}
+                      </span>
+                      <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5 truncate">
+                        {item.label}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <>
+                    {latestMep !== undefined && (
+                      <div>
+                        <span className="block font-display font-black text-xl text-white leading-none tabular-nums">
+                          {latestMep.toFixed(1)}
+                        </span>
+                        <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5">
+                          MEP sist
+                        </span>
+                      </div>
+                    )}
+                    {latestSaves !== undefined && (
+                      <div>
+                        <span className="block font-display font-bold text-lg text-white/90 leading-none tabular-nums">
+                          {latestSaves}
+                        </span>
+                        <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5">
+                          Redn.
+                        </span>
+                      </div>
+                    )}
+                    {latestSavePct !== undefined && (
+                      <div>
+                        <span className="block font-display font-bold text-lg text-white/90 leading-none tabular-nums">
+                          {latestSavePct.toFixed(1)}%
+                        </span>
+                        <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5">
+                          Red%
+                        </span>
+                      </div>
+                    )}
+                    {displayGoals !== undefined && latestSaves === undefined && (
+                      <div>
+                        <span className="block font-display font-black text-xl text-white leading-none">
+                          {displayGoals}
+                        </span>
+                        <span className="block text-[9px] uppercase tracking-wide text-white/60 mt-0.5">
+                          Mål
+                        </span>
+                      </div>
+                    )}
+                    {minutes !== undefined && (
+                      <div>
+                        <span className="block font-display font-bold text-lg text-white/90 leading-none">
+                          {minutes}
+                        </span>
+                        <span className="block text-[9px] uppercase tracking-wide text-white/60 mt-0.5">
+                          Min
+                        </span>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
               {hasSpark && (
-                <div className="flex flex-col items-end gap-0.5">
+                <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
                   <Sparkline values={sparkValues} />
                   <span className="text-[9px] uppercase tracking-wide text-white/50">
-                    Form
+                    {sparkLabel}
                   </span>
                 </div>
               )}
@@ -234,7 +259,6 @@ export function PlayerCard({
         </div>
       </button>
 
-      {/* ── Follow button (below card) ── */}
       {(onFollow || onUnfollow) && (
         <div className="px-1 pt-2 pb-1">
           {isFollowing ? (
