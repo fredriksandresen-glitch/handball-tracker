@@ -1,0 +1,43 @@
+name: Refine player comparison
+
+on:
+  push:
+    branches:
+      - codex/static-sarah-profile
+    paths:
+      - scripts/.refine-player-comparison-trigger
+      - scripts/refine-player-comparison.cjs
+      - .github/workflows/refine-player-comparison.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-player-comparison:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/static-sarah-profile
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Patch refined comparison UI
+        run: node scripts/refine-player-comparison.cjs
+
+      - name: Clean up temporary workflow files
+        run: |
+          rm -f scripts/refine-player-comparison.cjs
+          rm -f scripts/.refine-player-comparison-trigger
+          rm -f .github/workflows/refine-player-comparison.yml
+
+      - name: Commit refined comparison UI
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/frontend/src/pages/PlayerPage.tsx scripts/refine-player-comparison.cjs scripts/.refine-player-comparison-trigger .github/workflows/refine-player-comparison.yml
+          git commit -m "Make player comparison search-driven" || exit 0
+          git push
