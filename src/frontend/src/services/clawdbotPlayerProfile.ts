@@ -1,3 +1,5 @@
+import byaasenPlayerStatsData from "../data/byaasenPlayerStats.json";
+import byaasenRosterData from "../data/byaasenRoster.json";
 import fjellhammerPlayerStatsData from "../data/fjellhammerPlayerStats.json";
 import fjellhammerRosterData from "../data/fjellhammerRoster.json";
 import larvikPlayerStatsData from "../data/larvikPlayerStats.json";
@@ -17,6 +19,8 @@ const CLAWDBOT_API_BASE =
   import.meta.env.VITE_CLAWDBOT_API_BASE ?? DEFAULT_CLAWDBOT_API_BASE;
 
 const DEFAULT_SEASON = "2526";
+const BYAASEN_LOGO_URL =
+  "https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg";
 const FJELLHAMMER_LOGO_URL =
   "https://www.fjellhammer.no/wp-content/uploads/sites/19/2020/01/fjellhammer.svg";
 const LARVIK_LOGO_URL =
@@ -124,6 +128,12 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     logoUrl: LARVIK_LOGO_URL,
     roster: larvikRosterData as StaticRosterPlayer[],
     statsById: statsById(larvikPlayerStatsData as StaticPlayerStats[]),
+  },
+  {
+    name: "Byåsen",
+    logoUrl: BYAASEN_LOGO_URL,
+    roster: byaasenRosterData as StaticRosterPlayer[],
+    statsById: statsById(byaasenPlayerStatsData as StaticPlayerStats[]),
   },
 ];
 
