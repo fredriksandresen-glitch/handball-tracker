@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, RefreshCw, Search, Star, Users } from "lucide-react";
+import { Flame, Home, RefreshCw, Search, Users } from "lucide-react";
 import type { ProfixioStatus } from "../backend.d";
 import {
   useDataStatus,
@@ -12,10 +12,10 @@ const NAV_ITEMS = [
   { to: "/", label: "Hjem", icon: Home, ocid: "nav-hjem" },
   { to: "/search", label: "Søk", icon: Search, ocid: "nav-sok" },
   { to: "/teams", label: "Lag", icon: Users, ocid: "nav-lag" },
-  { to: "/favorites", label: "Favoritter", icon: Star, ocid: "nav-favoritter" },
+  { to: "/favorites", label: "Hotlist", icon: Flame, ocid: "nav-hotlist" },
 ] as const;
 
-// ── DataSourceBadge ────────────────────────────────────────────────────────
+// ─── DataSourceBadge ─────────────────────────────────────────────────────────
 const DATA_SOURCE_CONFIG = {
   live: {
     dot: "bg-green-400",
@@ -98,7 +98,7 @@ function DataSourceBadge() {
   );
 }
 
-// ── DataStatusBanner ───────────────────────────────────────────────────────
+// ─── DataStatusBanner ────────────────────────────────────────────────────────
 function DataStatusBanner() {
   const { data, isLoading } = useDataStatus();
 
@@ -142,7 +142,7 @@ function DataStatusBanner() {
   );
 }
 
-// ── Layout ─────────────────────────────────────────────────────────────────
+// ─── Layout ─────────────────────────────────────────────────────────────────
 interface Props {
   children: React.ReactNode;
   title?: string;
