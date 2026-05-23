@@ -891,25 +891,6 @@ export default function PlayerPage() {
         <PlayerComparison player={player} seasonStats={seasonStats} />
         <FormOverview player={player} stats={matchStats} />
 
-        {team?.name && (
-          <Link
-            to="/team/$id"
-            params={{ id: player.teamId.toString() }}
-            className="mx-4 flex items-center justify-between bg-card border border-border rounded-2xl px-4 py-4 hover:border-primary/40 hover:bg-card/80 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <TeamLogo teamName={team.name} size="md" />
-              <div>
-                <p className="text-xs text-muted-foreground">Se hele lagstallen</p>
-                <p className="font-display font-black text-foreground text-sm">
-                  {team.name}
-                </p>
-              </div>
-            </div>
-            <ArrowRight className="size-5 text-muted-foreground" />
-          </Link>
-        )}
-
         <Tabs active={activeTab} onChange={setActiveTab} />
 
         <div className="px-4">
