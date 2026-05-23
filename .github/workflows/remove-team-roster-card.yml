@@ -1,0 +1,43 @@
+name: Remove team roster card
+
+on:
+  push:
+    branches:
+      - codex/static-sarah-profile
+    paths:
+      - scripts/.remove-team-roster-card-trigger
+      - scripts/remove-team-roster-card.cjs
+      - .github/workflows/remove-team-roster-card.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  remove-team-roster-card:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/static-sarah-profile
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Remove redundant team roster card
+        run: node scripts/remove-team-roster-card.cjs
+
+      - name: Clean up temporary workflow files
+        run: |
+          rm -f scripts/remove-team-roster-card.cjs
+          rm -f scripts/.remove-team-roster-card-trigger
+          rm -f .github/workflows/remove-team-roster-card.yml
+
+      - name: Commit player page cleanup
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/frontend/src/pages/PlayerPage.tsx scripts/remove-team-roster-card.cjs scripts/.remove-team-roster-card-trigger .github/workflows/remove-team-roster-card.yml
+          git commit -m "Remove redundant team roster card from player profile" || exit 0
+          git push
