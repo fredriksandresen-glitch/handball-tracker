@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import {
   Flame,
+  Handshake,
   Search,
   Shield,
   Target,
@@ -30,28 +31,61 @@ import {
   type PlayerSeasonStats,
 } from "../types/handball";
 
-type HotlistMode = "hot" | "form" | "mep" | "goals" | "keepers";
+type HotlistMode = "form" | "goals" | "assists" | "keepers" | "mep";
+
+type CardStat = {
+  value: string;
+  label: string;
+  emphasis?: boolean;
+};
 
 type HotInsight = {
   seasonStats?: PlayerSeasonStats;
   sparkValues: number[];
   formAvg?: number;
   latestMep?: number;
-  latestGoals?: number;
   latestSaves?: number;
   latestSavePct?: number;
   totalGoals?: number;
+  shootingPercent?: number;
+  goalsPerGame?: number;
+  totalAssists?: number;
+  assistsPerGame?: number;
+  technicalFaults?: number;
   mepAvg?: number;
-  hotScore: number;
+  mepTotal?: number;
 };
 
 const HOTLIST_MODES: { value: HotlistMode; label: string }[] = [
-  { value: "hot", label: "Heitest" },
-  { value: "form", label: "Beste form" },
-  { value: "mep", label: "Snitt MEP" },
-  { value: "goals", label: "Mål" },
-  { value: "keepers", label: "Keepere" },
+  { value: "form", label: "Best form" },
+  { value: "goals", label: "Måldronning" },
+  { value: "assists", label: "Tilrettelegger" },
+  { value: "keepers", label: "Keeperform" },
+  { value: "mep", label: "Sesong MEP" },
 ];
+
+const MODE_COPY: Record<HotlistMode, { title: string; text: string }> = {
+  form: {
+    title: "Best form",
+    text: "Rangert på snitt MEP siste 5 kamper.",
+  },
+  goals: {
+    title: "Måldronning",
+    text: "Flest mål totalt, med uttelling og mål per kamp.",
+  },
+  assists: {
+    title: "Tilretteleggeren",
+    text: "Flest assist totalt, med assist per kamp.",
+  },
+  keepers: {
+    title: "Keeperform",
+    text: "Keepere rangert på MEP, redninger og redningsprosent.",
+  },
+  mep: {
+    title: "Sesong MEP",
+    text: "Beste totalbidrag gjennom sesongen.",
+  },
+};
 
 function getMatchDate(match: EnrichedPlayerMatchStats) {
   return match.date ?? match.matchId.toString();
@@ -61,9 +95,19 @@ function asNumber(value: bigint | undefined) {
   return value === undefined ? undefined : Number(value);
 }
 
+function formatNumber(value: number | undefined, digits = 0) {
+  if (value === undefined || Number.isNaN(value)) return "-";
+  return value.toFixed(digits);
+}
+
+function formatPercent(value: number | undefined) {
+  if (value === undefined || Number.isNaN(value)) return "-";
+  return `${value.toFixed(1)}%`;
+}
+
 function getHotInsight(player: Player): HotInsight {
   const profile = getStaticProfile(player.id);
-  if (!profile) return { sparkValues: [], hotScore: 0 };
+  if (!profile) return { sparkValues: [] };
 
   const seasonStats = mapClawdbotSeasonStats(profile);
   const mepMatches = (mapClawdbotMatchStats(profile) as EnrichedPlayerMatchStats[])
@@ -72,35 +116,25 @@ function getHotInsight(player: Player): HotInsight {
     .slice(-5);
   const latestMatch = mepMatches.at(-1);
   const sparkValues = mepMatches.map((match) => match.mep ?? 0);
-  const latestMep = sparkValues.at(-1);
   const formAvg = sparkValues.length
     ? sparkValues.reduce((sum, value) => sum + value, 0) / sparkValues.length
     : seasonStats.mepAvg;
-  const goalsPerGame = seasonStats.goalsPerGame ?? 0;
-  const keeperLift =
-    player.position === Position.Keeper
-      ? (latestMatch?.savePct ?? 0) / 10 + Number(latestMatch?.saves ?? 0n) / 3
-      : 0;
-  const hotScore =
-    (formAvg ?? 0) * 12 +
-    (seasonStats.mepAvg ?? 0) * 5 +
-    goalsPerGame * 4 +
-    keeperLift +
-    Math.min(Number(seasonStats.matchesPlayed), 26) / 10;
 
   return {
     seasonStats,
     sparkValues,
     formAvg,
-    latestMep,
-    latestGoals:
-      latestMatch?.goals === undefined ? undefined : Number(latestMatch.goals),
-    latestSaves:
-      latestMatch?.saves === undefined ? undefined : Number(latestMatch.saves),
+    latestMep: sparkValues.at(-1),
+    latestSaves: latestMatch?.saves === undefined ? undefined : Number(latestMatch.saves),
     latestSavePct: latestMatch?.savePct,
     totalGoals: asNumber(seasonStats.totalGoals),
+    shootingPercent: seasonStats.shootingPercent,
+    goalsPerGame: seasonStats.goalsPerGame,
+    totalAssists: asNumber(seasonStats.totalAssists),
+    assistsPerGame: seasonStats.assistsPerGame,
+    technicalFaults: asNumber(seasonStats.technicalFaults),
     mepAvg: seasonStats.mepAvg,
-    hotScore,
+    mepTotal: seasonStats.mepTotal,
   };
 }
 
@@ -117,37 +151,77 @@ function sortHotPlayers(
         const ai = insights.get(a.id.toString()) ?? getHotInsight(a);
         const bi = insights.get(b.id.toString()) ?? getHotInsight(b);
         return (
-          (bi.latestMep ?? 0) - (ai.latestMep ?? 0) ||
+          (bi.formAvg ?? 0) - (ai.formAvg ?? 0) ||
           (bi.latestSavePct ?? 0) - (ai.latestSavePct ?? 0) ||
           (bi.latestSaves ?? 0) - (ai.latestSaves ?? 0)
         );
       });
   }
 
-  return sorted.sort((a, b) => {
+  const fieldPlayers = sorted.filter((player) => player.position !== Position.Keeper);
+  return fieldPlayers.sort((a, b) => {
     const ai = insights.get(a.id.toString()) ?? getHotInsight(a);
     const bi = insights.get(b.id.toString()) ?? getHotInsight(b);
-    if (mode === "form") return (bi.formAvg ?? 0) - (ai.formAvg ?? 0);
-    if (mode === "mep") return (bi.mepAvg ?? 0) - (ai.mepAvg ?? 0);
     if (mode === "goals") return (bi.totalGoals ?? 0) - (ai.totalGoals ?? 0);
-    return bi.hotScore - ai.hotScore;
+    if (mode === "assists") return (bi.totalAssists ?? 0) - (ai.totalAssists ?? 0);
+    if (mode === "mep") return (bi.mepTotal ?? 0) - (ai.mepTotal ?? 0);
+    return (bi.formAvg ?? 0) - (ai.formAvg ?? 0);
   });
+}
+
+function getCardStats(mode: HotlistMode, insight: HotInsight): CardStat[] {
+  if (mode === "goals") {
+    return [
+      { value: formatNumber(insight.totalGoals), label: "Mål", emphasis: true },
+      { value: formatPercent(insight.shootingPercent), label: "Treff%" },
+      { value: formatNumber(insight.goalsPerGame, 1), label: "Mål/k" },
+    ];
+  }
+
+  if (mode === "assists") {
+    return [
+      { value: formatNumber(insight.totalAssists), label: "Assist", emphasis: true },
+      { value: formatNumber(insight.assistsPerGame, 1), label: "Assist/k" },
+      { value: formatNumber(insight.technicalFaults), label: "Tek.feil" },
+    ];
+  }
+
+  if (mode === "keepers") {
+    return [
+      { value: formatNumber(insight.formAvg, 1), label: "MEP 5", emphasis: true },
+      { value: formatNumber(insight.latestSaves), label: "Redn." },
+      { value: formatPercent(insight.latestSavePct), label: "Red%" },
+    ];
+  }
+
+  if (mode === "mep") {
+    return [
+      { value: formatNumber(insight.mepTotal, 1), label: "Total MEP", emphasis: true },
+      { value: formatNumber(insight.mepAvg, 1), label: "Snitt" },
+      { value: formatNumber(insight.seasonStats ? Number(insight.seasonStats.matchesPlayed) : undefined), label: "Kamper" },
+    ];
+  }
+
+  return [
+    { value: formatNumber(insight.formAvg, 1), label: "Snitt MEP 5", emphasis: true },
+    { value: formatNumber(insight.mepTotal, 1), label: "Total MEP" },
+  ];
 }
 
 function HotlistCard({
   player,
   teamName,
   insight,
+  mode,
   index,
 }: {
   player: Player;
   teamName?: string;
   insight: HotInsight;
+  mode: HotlistMode;
   index: number;
 }) {
-  const { data: following, isLoading: checkingFollow } = useIsFollowing(
-    player.id,
-  );
+  const { data: following, isLoading: checkingFollow } = useIsFollowing(player.id);
   const followMutation = useFollowPlayer();
   const unfollowMutation = useUnfollowPlayer();
 
@@ -166,11 +240,9 @@ function HotlistCard({
         isLoading={
           checkingFollow || followMutation.isPending || unfollowMutation.isPending
         }
-        latestMep={insight.latestMep}
-        latestGoals={insight.latestGoals}
-        latestSaves={insight.latestSaves}
-        latestSavePct={insight.latestSavePct}
+        statItems={getCardStats(mode, insight)}
         sparkValues={insight.sparkValues}
+        sparkLabel="MEP-form"
       />
     </motion.div>
   );
@@ -200,8 +272,44 @@ function HotStat({
   );
 }
 
+function getHeroStats(mode: HotlistMode, count: number, topInsight?: HotInsight) {
+  if (mode === "goals") {
+    return [
+      { icon: Trophy, label: "Mål", value: formatNumber(topInsight?.totalGoals) },
+      { icon: Target, label: "Treff%", value: formatPercent(topInsight?.shootingPercent) },
+      { icon: Shield, label: "Spillere", value: count.toString() },
+    ];
+  }
+  if (mode === "assists") {
+    return [
+      { icon: Handshake, label: "Assist", value: formatNumber(topInsight?.totalAssists) },
+      { icon: Target, label: "Assist/k", value: formatNumber(topInsight?.assistsPerGame, 1) },
+      { icon: Shield, label: "Spillere", value: count.toString() },
+    ];
+  }
+  if (mode === "keepers") {
+    return [
+      { icon: Trophy, label: "MEP 5", value: formatNumber(topInsight?.formAvg, 1) },
+      { icon: Target, label: "Red%", value: formatPercent(topInsight?.latestSavePct) },
+      { icon: Shield, label: "Keepere", value: count.toString() },
+    ];
+  }
+  if (mode === "mep") {
+    return [
+      { icon: Trophy, label: "Total MEP", value: formatNumber(topInsight?.mepTotal, 1) },
+      { icon: Target, label: "Snitt", value: formatNumber(topInsight?.mepAvg, 1) },
+      { icon: Shield, label: "Spillere", value: count.toString() },
+    ];
+  }
+  return [
+    { icon: Trophy, label: "MEP 5", value: formatNumber(topInsight?.formAvg, 1) },
+    { icon: Target, label: "Total MEP", value: formatNumber(topInsight?.mepTotal, 1) },
+    { icon: Shield, label: "Spillere", value: count.toString() },
+  ];
+}
+
 export default function FavoritesPage() {
-  const [mode, setMode] = useState<HotlistMode>("hot");
+  const [mode, setMode] = useState<HotlistMode>("form");
   const { data: players = [], isLoading } = usePlayers();
   const { data: teams = [] } = useTeams();
 
@@ -211,10 +319,7 @@ export default function FavoritesPage() {
   );
 
   const insights = useMemo(
-    () =>
-      new Map(
-        players.map((player) => [player.id.toString(), getHotInsight(player)]),
-      ),
+    () => new Map(players.map((player) => [player.id.toString(), getHotInsight(player)])),
     [players],
   );
 
@@ -227,6 +332,8 @@ export default function FavoritesPage() {
   const topInsight = topPlayer
     ? insights.get(topPlayer.id.toString()) ?? getHotInsight(topPlayer)
     : undefined;
+  const heroStats = getHeroStats(mode, hotPlayers.length, topInsight);
+  const copy = MODE_COPY[mode];
 
   if (isLoading) {
     return (
@@ -247,10 +354,10 @@ export default function FavoritesPage() {
               Hotlist
             </p>
             <h1 className="font-display font-black text-2xl text-foreground leading-tight">
-              Spillere i flyt
+              {copy.title}
             </h1>
             <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-              Rangert på MEP-form, siste kamp og sesongnivå.
+              {copy.text}
             </p>
           </div>
           <div className="size-11 rounded-full bg-primary/12 border border-primary/30 flex items-center justify-center text-primary flex-shrink-0">
@@ -259,17 +366,14 @@ export default function FavoritesPage() {
         </div>
 
         <div className="grid grid-cols-3 gap-2">
-          <HotStat
-            icon={Trophy}
-            label="Topp"
-            value={topPlayer ? (topPlayer.name.split(" ").at(-1) ?? "-") : "-"}
-          />
-          <HotStat
-            icon={Target}
-            label="MEP sist"
-            value={topInsight?.latestMep?.toFixed(1) ?? "-"}
-          />
-          <HotStat icon={Shield} label="Spillere" value={players.length.toString()} />
+          {heroStats.map((stat) => (
+            <HotStat
+              key={stat.label}
+              icon={stat.icon}
+              label={stat.label}
+              value={stat.value}
+            />
+          ))}
         </div>
       </section>
 
@@ -322,6 +426,7 @@ export default function FavoritesPage() {
                 player={player}
                 teamName={teamMap.get(player.teamId.toString())}
                 insight={insights.get(player.id.toString()) ?? getHotInsight(player)}
+                mode={mode}
                 index={index}
               />
             ))}
