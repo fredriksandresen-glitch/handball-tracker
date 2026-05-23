@@ -79,7 +79,7 @@ const MODE_COPY: Record<HotlistMode, { title: string; text: string }> = {
   },
   keepers: {
     title: "Keeperform",
-    text: "Keepere rangert på MEP, redninger og redningsprosent.",
+    text: "Keepere rangert på redningsprosent siste kamp.",
   },
   mep: {
     title: "Sesong MEP",
@@ -151,9 +151,9 @@ function sortHotPlayers(
         const ai = insights.get(a.id.toString()) ?? getHotInsight(a);
         const bi = insights.get(b.id.toString()) ?? getHotInsight(b);
         return (
-          (bi.formAvg ?? 0) - (ai.formAvg ?? 0) ||
           (bi.latestSavePct ?? 0) - (ai.latestSavePct ?? 0) ||
-          (bi.latestSaves ?? 0) - (ai.latestSaves ?? 0)
+          (bi.latestSaves ?? 0) - (ai.latestSaves ?? 0) ||
+          (bi.formAvg ?? 0) - (ai.formAvg ?? 0)
         );
       });
   }
@@ -188,9 +188,9 @@ function getCardStats(mode: HotlistMode, insight: HotInsight): CardStat[] {
 
   if (mode === "keepers") {
     return [
-      { value: formatNumber(insight.formAvg, 1), label: "MEP 5", emphasis: true },
+      { value: formatPercent(insight.latestSavePct), label: "Red%", emphasis: true },
       { value: formatNumber(insight.latestSaves), label: "Redn." },
-      { value: formatPercent(insight.latestSavePct), label: "Red%" },
+      { value: formatNumber(insight.formAvg, 1), label: "MEP 5" },
     ];
   }
 
@@ -289,8 +289,8 @@ function getHeroStats(mode: HotlistMode, count: number, topInsight?: HotInsight)
   }
   if (mode === "keepers") {
     return [
-      { icon: Trophy, label: "MEP 5", value: formatNumber(topInsight?.formAvg, 1) },
-      { icon: Target, label: "Red%", value: formatPercent(topInsight?.latestSavePct) },
+      { icon: Trophy, label: "Red%", value: formatPercent(topInsight?.latestSavePct) },
+      { icon: Target, label: "Redn.", value: formatNumber(topInsight?.latestSaves) },
       { icon: Shield, label: "Keepere", value: count.toString() },
     ];
   }
