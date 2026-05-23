@@ -56,6 +56,9 @@ type PlayerSearchInsight = {
   latestMep?: number;
   hotScore: number;
   totalGoals?: number;
+  latestGoals?: number;
+  latestSaves?: number;
+  latestSavePct?: number;
 };
 
 function getMatchDate(match: EnrichedPlayerMatchStats) {
@@ -76,6 +79,7 @@ function getPlayerSearchInsight(player: Player): PlayerSearchInsight {
     .sort((a, b) => getMatchDate(a).localeCompare(getMatchDate(b)))
     .slice(-5);
   const sparkValues = mepMatches.map((match) => match.mep ?? 0);
+  const latestMatch = mepMatches.at(-1);
   const latestMep = sparkValues.at(-1);
   const formAvg = sparkValues.length
     ? sparkValues.reduce((sum, value) => sum + value, 0) / sparkValues.length
@@ -95,6 +99,9 @@ function getPlayerSearchInsight(player: Player): PlayerSearchInsight {
     latestMep,
     hotScore,
     totalGoals: asNumber(seasonStats.totalGoals),
+    latestGoals: latestMatch?.goals === undefined ? undefined : Number(latestMatch.goals),
+    latestSaves: latestMatch?.saves === undefined ? undefined : Number(latestMatch.saves),
+    latestSavePct: latestMatch?.savePct,
   };
 }
 
@@ -143,7 +150,10 @@ function SearchResult({
       isLoading={
         checkingFollow || followMutation.isPending || unfollowMutation.isPending
       }
-      goals={insight.totalGoals}
+      latestMep={insight.latestMep}
+      latestGoals={insight.latestGoals}
+      latestSaves={insight.latestSaves}
+      latestSavePct={insight.latestSavePct}
       sparkValues={insight.sparkValues}
     />
   );

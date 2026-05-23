@@ -53,6 +53,10 @@ interface Props {
   className?: string;
   goals?: number;
   minutes?: number;
+  latestMep?: number;
+  latestGoals?: number;
+  latestSaves?: number;
+  latestSavePct?: number;
   sparkValues?: number[];
 }
 
@@ -66,11 +70,21 @@ export function PlayerCard({
   className,
   goals,
   minutes,
+  latestMep,
+  latestGoals,
+  latestSaves,
+  latestSavePct,
   sparkValues = [],
 }: Props) {
   const navigate = useNavigate();
 
-  const hasStats = goals !== undefined || minutes !== undefined;
+  const displayGoals = latestGoals ?? goals;
+  const hasStats =
+    latestMep !== undefined ||
+    latestSaves !== undefined ||
+    latestSavePct !== undefined ||
+    displayGoals !== undefined ||
+    minutes !== undefined;
   const hasSpark = sparkValues.length >= 2;
   const initials = player.name
     .split(" ")
@@ -156,10 +170,40 @@ export function PlayerCard({
           {hasStats && (
             <div className="flex items-end justify-between mt-2 pt-2 border-t border-white/15">
               <div className="flex gap-3">
-                {goals !== undefined && (
+                {latestMep !== undefined && (
+                  <div>
+                    <span className="block font-display font-black text-xl text-white leading-none tabular-nums">
+                      {latestMep.toFixed(1)}
+                    </span>
+                    <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5">
+                      MEP sist
+                    </span>
+                  </div>
+                )}
+                {latestSaves !== undefined && (
+                  <div>
+                    <span className="block font-display font-bold text-lg text-white/90 leading-none tabular-nums">
+                      {latestSaves}
+                    </span>
+                    <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5">
+                      Redn.
+                    </span>
+                  </div>
+                )}
+                {latestSavePct !== undefined && (
+                  <div>
+                    <span className="block font-display font-bold text-lg text-white/90 leading-none tabular-nums">
+                      {latestSavePct.toFixed(1)}%
+                    </span>
+                    <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5">
+                      Red%
+                    </span>
+                  </div>
+                )}
+                {displayGoals !== undefined && latestSaves === undefined && (
                   <div>
                     <span className="block font-display font-black text-xl text-white leading-none">
-                      {goals}
+                      {displayGoals}
                     </span>
                     <span className="block text-[9px] uppercase tracking-wide text-white/60 mt-0.5">
                       Mål
