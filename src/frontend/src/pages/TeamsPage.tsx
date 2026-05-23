@@ -43,8 +43,8 @@ export default function TeamsPage() {
         <div className="flex items-center gap-4 bg-card border border-border rounded-xl px-4 py-3">
           <div className="flex items-center gap-2">
             {firstLogo && (
-              <span className="size-6 rounded-md bg-white border border-primary/25 flex items-center justify-center shrink-0">
-                <img src={firstLogo} alt="" className="size-5 object-contain" />
+              <span className="size-6 flex items-center justify-center shrink-0">
+                <img src={firstLogo} alt="" className="size-6 object-contain" />
               </span>
             )}
             <span className="text-sm font-display font-bold text-foreground">

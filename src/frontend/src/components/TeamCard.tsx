@@ -28,7 +28,7 @@ export function TeamCard({ team, nextMatch, opponentName, className }: Props) {
           <img
             src={team.logoUrl}
             alt={team.name}
-            className="size-10 rounded-lg object-contain flex-shrink-0"
+            className="size-10 object-contain flex-shrink-0"
           />
         ) : (
           <div className="size-10 rounded-lg bg-muted flex items-center justify-center flex-shrink-0 border border-border">

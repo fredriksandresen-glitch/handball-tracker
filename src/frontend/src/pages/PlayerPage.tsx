@@ -106,8 +106,8 @@ function compareDelta(
 
 function TeamLogo({ teamName, size = "sm" }: { teamName?: string; size?: "sm" | "md" }) {
   const logoUrl = getClubLogo(teamName);
-  const boxClass = size === "md" ? "size-10 rounded-xl" : "size-5 rounded-md";
-  const imgClass = size === "md" ? "size-8" : "size-4";
+  const boxClass = size === "md" ? "size-10" : "size-5";
+  const imgClass = size === "md" ? "size-10" : "size-5";
 
   if (!logoUrl) {
     return <Shield className={size === "md" ? "size-5 text-primary" : "size-4"} />;
@@ -116,7 +116,7 @@ function TeamLogo({ teamName, size = "sm" }: { teamName?: string; size?: "sm" | 
   return (
     <span
       className={cn(
-        "inline-flex items-center justify-center bg-white border border-primary/25 shrink-0",
+        "inline-flex items-center justify-center shrink-0",
         boxClass,
       )}
     >
