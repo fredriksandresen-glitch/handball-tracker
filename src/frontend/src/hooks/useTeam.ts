@@ -12,10 +12,13 @@ export function useTeam(id: bigint) {
   return useQuery<Team | null>({
     queryKey: ["team", id.toString()],
     queryFn: async () => {
-      if (!actor) return getStaticTeam(id);
-      return (await actor.getTeam(id)) ?? getStaticTeam(id);
+      const staticTeam = getStaticTeam(id);
+      if (staticTeam) return staticTeam;
+
+      if (!actor) return null;
+      return actor.getTeam(id);
     },
-    enabled: !isFetching,
+    enabled: !isFetching || !!getStaticTeam(id),
     staleTime: 60_000,
   });
 }
@@ -41,12 +44,12 @@ export function usePlayersByTeam(teamId: bigint) {
       const staticPlayers = getStaticPlayers().filter(
         (player) => player.teamId === teamId,
       );
-      if (!actor) return staticPlayers;
+      if (staticPlayers.length > 0) return staticPlayers;
 
-      const players = await actor.getPlayersByTeam(teamId);
-      return players.length > 0 ? players : staticPlayers;
+      if (!actor) return [];
+      return actor.getPlayersByTeam(teamId);
     },
-    enabled: !isFetching,
+    enabled: !isFetching || getStaticPlayers().length > 0,
     staleTime: 60_000,
   });
 }
