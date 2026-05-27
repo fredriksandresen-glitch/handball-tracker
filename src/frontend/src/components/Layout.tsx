@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Flame, Home, RefreshCw, Search, Users } from "lucide-react";
+import { Home, RefreshCw, Search, Trophy, Users } from "lucide-react";
 import type { ProfixioStatus } from "../backend.d";
 import {
   useDataStatus,
@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   { to: "/", label: "Hjem", icon: Home, ocid: "nav-hjem" },
   { to: "/search", label: "Søk", icon: Search, ocid: "nav-sok" },
   { to: "/teams", label: "Lag", icon: Users, ocid: "nav-lag" },
-  { to: "/favorites", label: "Hotlist", icon: Flame, ocid: "nav-hotlist" },
+  { to: "/favorites", label: "Toppliste", icon: Trophy, ocid: "nav-toppliste" },
 ] as const;
 
 // ─── DataSourceBadge ─────────────────────────────────────────────────────────
@@ -27,15 +27,15 @@ const DATA_SOURCE_CONFIG = {
   scraped: {
     dot: "bg-amber-400",
     ping: "bg-amber-400",
-    label: "Scraped",
+    label: "handball.no",
     textColor: "text-amber-400",
     showPing: false,
   },
   mock: {
-    dot: "bg-muted-foreground",
-    ping: "bg-muted-foreground",
-    label: "Demo",
-    textColor: "text-muted-foreground",
+    dot: "bg-cyan-500",
+    ping: "bg-cyan-500",
+    label: "MVP-data",
+    textColor: "text-cyan-400",
     showPing: false,
   },
   topphandball: {
@@ -113,7 +113,7 @@ function DataStatusBanner() {
         ? "handball.no"
         : dataSource === "topphandball"
           ? "topphandball.no"
-          : "mock-data";
+          : "MVP-data";
 
   let bannerClass: string;
   let message: string;
