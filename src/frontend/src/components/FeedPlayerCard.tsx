@@ -211,14 +211,6 @@ export function FeedPlayerCard({
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
 
-        {player.jerseyNumber !== undefined && (
-          <div className="absolute top-2.5 left-2.5 size-7 rounded-full bg-black/50 backdrop-blur-sm border border-white/25 flex items-center justify-center">
-            <span className="font-display font-black text-[11px] text-white leading-none">
-              {player.jerseyNumber.toString()}
-            </span>
-          </div>
-        )}
-
         <button
           type="button"
           onClick={handleUnfollow}
