@@ -147,14 +147,6 @@ export function PlayerCard({
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-        {player.jerseyNumber !== undefined && player.jerseyNumber > 0n && (
-          <div className="absolute top-3 right-3 size-8 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 flex items-center justify-center">
-            <span className="font-display font-black text-[13px] text-white leading-none">
-              {player.jerseyNumber.toString()}
-            </span>
-          </div>
-        )}
-
         <div className="absolute bottom-0 left-0 right-0 px-3.5 pb-3.5 pt-12">
           <div className="mb-1.5">
             <PositionBadge position={player.position} variant="overlay" />
