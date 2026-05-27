@@ -9,11 +9,13 @@ export function useTeams() {
   return useQuery<Team[]>({
     queryKey: ["teams"],
     queryFn: async () => {
-      if (!actor) return getStaticTeams();
-      const teams = await actor.getTeams();
-      return teams.length > 0 ? teams : getStaticTeams();
+      const staticTeams = getStaticTeams();
+      if (staticTeams.length > 0) return staticTeams;
+
+      if (!actor) return [];
+      return actor.getTeams();
     },
-    enabled: !isFetching,
+    enabled: !isFetching || getStaticTeams().length > 0,
     staleTime: 120_000,
   });
 }
