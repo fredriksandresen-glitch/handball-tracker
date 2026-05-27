@@ -161,6 +161,10 @@
     display: none;
   }
 
+  img.size-28.object-top[alt] {
+    cursor: zoom-in;
+  }
+
   a[href="/team/205902"] > svg:first-child {
     display: none;
   }
