@@ -13,11 +13,15 @@ export function usePlayers() {
   return useQuery<Player[]>({
     queryKey: ["players"],
     queryFn: async () => {
-      if (!actor) return getStaticPlayers();
-      const players = await actor.getPlayers();
-      return enrichPlayersWithImages(players.length > 0 ? players : getStaticPlayers());
+      const staticPlayers = getStaticPlayers();
+      if (staticPlayers.length > 0) {
+        return enrichPlayersWithImages(staticPlayers);
+      }
+
+      if (!actor) return [];
+      return enrichPlayersWithImages(await actor.getPlayers());
     },
-    enabled: !isFetching,
+    enabled: !isFetching || getStaticPlayers().length > 0,
     staleTime: 120_000,
   });
 }
@@ -28,12 +32,14 @@ export function useSearchPlayers(term: string) {
     queryKey: ["searchPlayers", term],
     queryFn: async () => {
       if (!term.trim()) return [];
-      if (!actor) return searchStaticPlayers(term);
 
-      const players = await actor.searchPlayers(term.trim());
-      return enrichPlayersWithImages(
-        players.length > 0 ? players : searchStaticPlayers(term),
-      );
+      const staticPlayers = searchStaticPlayers(term);
+      if (staticPlayers.length > 0) {
+        return enrichPlayersWithImages(staticPlayers);
+      }
+
+      if (!actor) return [];
+      return enrichPlayersWithImages(await actor.searchPlayers(term.trim()));
     },
     enabled: !isFetching && term.trim().length > 0,
     staleTime: 30_000,
