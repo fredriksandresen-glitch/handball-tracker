@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import {
-  Flame,
   Handshake,
   Search,
   Shield,
@@ -31,7 +30,7 @@ import {
   type PlayerSeasonStats,
 } from "../types/handball";
 
-type HotlistMode = "form" | "goals" | "assists" | "keepers" | "mep";
+type ToplistMode = "form" | "goals" | "assists" | "keepers" | "mep";
 
 type CardStat = {
   value: string;
@@ -39,7 +38,7 @@ type CardStat = {
   emphasis?: boolean;
 };
 
-type HotInsight = {
+type TopInsight = {
   seasonStats?: PlayerSeasonStats;
   sparkValues: number[];
   formAvg?: number;
@@ -56,7 +55,7 @@ type HotInsight = {
   mepTotal?: number;
 };
 
-const HOTLIST_MODES: { value: HotlistMode; label: string }[] = [
+const TOPLIST_MODES: { value: ToplistMode; label: string }[] = [
   { value: "form", label: "Best form" },
   { value: "goals", label: "Måldronning" },
   { value: "assists", label: "Tilrettelegger" },
@@ -64,7 +63,7 @@ const HOTLIST_MODES: { value: HotlistMode; label: string }[] = [
   { value: "mep", label: "Sesong MEP" },
 ];
 
-const MODE_COPY: Record<HotlistMode, { title: string; text: string }> = {
+const MODE_COPY: Record<ToplistMode, { title: string; text: string }> = {
   form: {
     title: "Best form",
     text: "Rangert på snitt MEP siste 5 kamper.",
@@ -105,7 +104,7 @@ function formatPercent(value: number | undefined) {
   return `${value.toFixed(1)}%`;
 }
 
-function getHotInsight(player: Player): HotInsight {
+function getTopInsight(player: Player): TopInsight {
   const profile = getStaticProfile(player.id);
   if (!profile) return { sparkValues: [] };
 
@@ -138,18 +137,18 @@ function getHotInsight(player: Player): HotInsight {
   };
 }
 
-function sortHotPlayers(
+function sortTopPlayers(
   players: Player[],
-  mode: HotlistMode,
-  insights: Map<string, HotInsight>,
+  mode: ToplistMode,
+  insights: Map<string, TopInsight>,
 ) {
   const sorted = [...players];
   if (mode === "keepers") {
     return sorted
       .filter((player) => player.position === Position.Keeper)
       .sort((a, b) => {
-        const ai = insights.get(a.id.toString()) ?? getHotInsight(a);
-        const bi = insights.get(b.id.toString()) ?? getHotInsight(b);
+        const ai = insights.get(a.id.toString()) ?? getTopInsight(a);
+        const bi = insights.get(b.id.toString()) ?? getTopInsight(b);
         return (
           (bi.latestSavePct ?? 0) - (ai.latestSavePct ?? 0) ||
           (bi.latestSaves ?? 0) - (ai.latestSaves ?? 0) ||
@@ -160,8 +159,8 @@ function sortHotPlayers(
 
   const fieldPlayers = sorted.filter((player) => player.position !== Position.Keeper);
   return fieldPlayers.sort((a, b) => {
-    const ai = insights.get(a.id.toString()) ?? getHotInsight(a);
-    const bi = insights.get(b.id.toString()) ?? getHotInsight(b);
+    const ai = insights.get(a.id.toString()) ?? getTopInsight(a);
+    const bi = insights.get(b.id.toString()) ?? getTopInsight(b);
     if (mode === "goals") return (bi.totalGoals ?? 0) - (ai.totalGoals ?? 0);
     if (mode === "assists") return (bi.totalAssists ?? 0) - (ai.totalAssists ?? 0);
     if (mode === "mep") return (bi.mepTotal ?? 0) - (ai.mepTotal ?? 0);
@@ -169,7 +168,7 @@ function sortHotPlayers(
   });
 }
 
-function getCardStats(mode: HotlistMode, insight: HotInsight): CardStat[] {
+function getCardStats(mode: ToplistMode, insight: TopInsight): CardStat[] {
   if (mode === "goals") {
     return [
       { value: formatNumber(insight.totalGoals), label: "Mål", emphasis: true },
@@ -208,7 +207,7 @@ function getCardStats(mode: HotlistMode, insight: HotInsight): CardStat[] {
   ];
 }
 
-function HotlistCard({
+function ToplistCard({
   player,
   teamName,
   insight,
@@ -217,8 +216,8 @@ function HotlistCard({
 }: {
   player: Player;
   teamName?: string;
-  insight: HotInsight;
-  mode: HotlistMode;
+  insight: TopInsight;
+  mode: ToplistMode;
   index: number;
 }) {
   const { data: following, isLoading: checkingFollow } = useIsFollowing(player.id);
@@ -248,7 +247,7 @@ function HotlistCard({
   );
 }
 
-function HotStat({
+function TopStat({
   icon: Icon,
   label,
   value,
@@ -272,7 +271,7 @@ function HotStat({
   );
 }
 
-function getHeroStats(mode: HotlistMode, count: number, topInsight?: HotInsight) {
+function getHeroStats(mode: ToplistMode, count: number, topInsight?: TopInsight) {
   if (mode === "goals") {
     return [
       { icon: Trophy, label: "Mål", value: formatNumber(topInsight?.totalGoals) },
@@ -309,7 +308,7 @@ function getHeroStats(mode: HotlistMode, count: number, topInsight?: HotInsight)
 }
 
 export default function FavoritesPage() {
-  const [mode, setMode] = useState<HotlistMode>("form");
+  const [mode, setMode] = useState<ToplistMode>("form");
   const { data: players = [], isLoading } = usePlayers();
   const { data: teams = [] } = useTeams();
 
@@ -319,25 +318,25 @@ export default function FavoritesPage() {
   );
 
   const insights = useMemo(
-    () => new Map(players.map((player) => [player.id.toString(), getHotInsight(player)])),
+    () => new Map(players.map((player) => [player.id.toString(), getTopInsight(player)])),
     [players],
   );
 
-  const hotPlayers = useMemo(
-    () => sortHotPlayers(players, mode, insights).slice(0, 20),
+  const topPlayers = useMemo(
+    () => sortTopPlayers(players, mode, insights).slice(0, 20),
     [players, mode, insights],
   );
 
-  const topPlayer = hotPlayers[0];
+  const topPlayer = topPlayers[0];
   const topInsight = topPlayer
-    ? insights.get(topPlayer.id.toString()) ?? getHotInsight(topPlayer)
+    ? insights.get(topPlayer.id.toString()) ?? getTopInsight(topPlayer)
     : undefined;
-  const heroStats = getHeroStats(mode, hotPlayers.length, topInsight);
+  const heroStats = getHeroStats(mode, topPlayers.length, topInsight);
   const copy = MODE_COPY[mode];
 
   if (isLoading) {
     return (
-      <div className="space-y-3" data-ocid="hotlist-loading">
+      <div className="space-y-3" data-ocid="toplist-loading">
         <SkeletonCard variant="player" />
         <SkeletonCard variant="player" />
         <SkeletonCard variant="player" />
@@ -346,12 +345,12 @@ export default function FavoritesPage() {
   }
 
   return (
-    <div className="space-y-5" data-ocid="hotlist-page">
+    <div className="space-y-5" data-ocid="toplist-page">
       <section className="rounded-2xl bg-card border border-border p-4 space-y-4">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-[10px] uppercase tracking-widest text-primary font-display font-bold mb-1">
-              Hotlist
+              Toppliste
             </p>
             <h1 className="font-display font-black text-2xl text-foreground leading-tight">
               {copy.title}
@@ -361,13 +360,13 @@ export default function FavoritesPage() {
             </p>
           </div>
           <div className="size-11 rounded-full bg-primary/12 border border-primary/30 flex items-center justify-center text-primary flex-shrink-0">
-            <Flame className="size-5" />
+            <Trophy className="size-5" />
           </div>
         </div>
 
         <div className="grid grid-cols-3 gap-2">
           {heroStats.map((stat) => (
-            <HotStat
+            <TopStat
               key={stat.label}
               icon={stat.icon}
               label={stat.label}
@@ -379,9 +378,9 @@ export default function FavoritesPage() {
 
       <div
         className="flex items-center gap-2 overflow-x-auto scrollbar-none"
-        data-ocid="hotlist-filter-pills"
+        data-ocid="toplist-filter-pills"
       >
-        {HOTLIST_MODES.map((item) => (
+        {TOPLIST_MODES.map((item) => (
           <button
             key={item.value}
             type="button"
@@ -392,14 +391,14 @@ export default function FavoritesPage() {
                 ? "bg-primary text-primary-foreground border-primary"
                 : "bg-card text-muted-foreground border-border hover:text-foreground hover:border-primary/40",
             )}
-            data-ocid={`hotlist-mode-${item.value}`}
+            data-ocid={`toplist-mode-${item.value}`}
           >
             {item.label}
           </button>
         ))}
       </div>
 
-      {hotPlayers.length === 0 ? (
+      {topPlayers.length === 0 ? (
         <div className="min-h-[45vh] flex flex-col items-center justify-center text-center px-6 rounded-2xl bg-card border border-border">
           <Search className="size-10 text-muted-foreground mb-4" />
           <h2 className="font-display font-bold text-lg text-foreground">
@@ -413,19 +412,19 @@ export default function FavoritesPage() {
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <p className="text-[10px] font-display font-bold uppercase tracking-widest text-muted-foreground">
-              Topp {hotPlayers.length} {mode === "keepers" ? "keepere" : "spillere"}
+              Topp {topPlayers.length} {mode === "keepers" ? "keepere" : "spillere"}
             </p>
             <span className="text-[10px] uppercase tracking-widest font-display font-bold text-primary">
-              {HOTLIST_MODES.find((item) => item.value === mode)?.label}
+              {TOPLIST_MODES.find((item) => item.value === mode)?.label}
             </span>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {hotPlayers.map((player, index) => (
-              <HotlistCard
+            {topPlayers.map((player, index) => (
+              <ToplistCard
                 key={player.id.toString()}
                 player={player}
                 teamName={teamMap.get(player.teamId.toString())}
-                insight={insights.get(player.id.toString()) ?? getHotInsight(player)}
+                insight={insights.get(player.id.toString()) ?? getTopInsight(player)}
                 mode={mode}
                 index={index}
               />
