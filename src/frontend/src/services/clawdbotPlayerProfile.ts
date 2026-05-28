@@ -68,9 +68,21 @@ type ClawdbotRecentMatch = {
   homeAway?: "home" | "away" | string | null;
   goals?: number | null;
   shots?: number | null;
+  shotPercentage?: number | null;
+  fieldGoals?: number | null;
+  fieldShots?: number | null;
+  fieldShotPercentage?: number | null;
+  sevenMeterGoals?: number | null;
+  sevenMeterShots?: number | null;
+  sevenMeterShotPercentage?: number | null;
   assists?: number | null;
   technicalErrors?: number | null;
+  causedSevenMeters?: number | null;
+  awardedSevenMeters?: number | null;
+  warnings?: number | null;
   suspensions?: number | null;
+  redCards?: number | null;
+  playTime?: string | null;
   mep?: number | null;
   saves?: number | null;
   savePercentage?: number | null;
@@ -107,6 +119,18 @@ export type EnrichedPlayerMatchStats = PlayerMatchStats & {
   mep?: number;
   goalsConceded?: bigint;
   shotsAgainst?: bigint;
+  shotPercentage?: number;
+  fieldGoals?: bigint;
+  fieldShots?: bigint;
+  fieldShotPercentage?: number;
+  sevenMeterGoals?: bigint;
+  sevenMeterShots?: bigint;
+  sevenMeterShotPercentage?: number;
+  causedSevenMeters?: bigint;
+  awardedSevenMeters?: bigint;
+  warnings?: bigint;
+  redCards?: bigint;
+  playTime?: string;
 };
 
 type StaticTeamConfig = {
@@ -343,9 +367,10 @@ export function mapClawdbotMatchStats(
       goals: toOptionalBigInt(match.goals),
       shots: toOptionalBigInt(match.shots ?? match.shotsAgainst),
       shotPct:
-        goals !== undefined && shots !== undefined && shots > 0
+        match.shotPercentage ??
+        (goals !== undefined && shots !== undefined && shots > 0
           ? (goals / shots) * 100
-          : undefined,
+          : undefined),
       assists: toOptionalBigInt(match.assists),
       turnovers: toOptionalBigInt(match.technicalErrors),
       twoMinSuspensions: toOptionalBigInt(match.suspensions),
@@ -353,6 +378,18 @@ export function mapClawdbotMatchStats(
       savePct: match.savePercentage ?? undefined,
       goalsConceded: toOptionalBigInt(match.goalsConceded),
       shotsAgainst: toOptionalBigInt(match.shotsAgainst ?? match.shots),
+      shotPercentage: match.shotPercentage ?? undefined,
+      fieldGoals: toOptionalBigInt(match.fieldGoals),
+      fieldShots: toOptionalBigInt(match.fieldShots),
+      fieldShotPercentage: match.fieldShotPercentage ?? undefined,
+      sevenMeterGoals: toOptionalBigInt(match.sevenMeterGoals),
+      sevenMeterShots: toOptionalBigInt(match.sevenMeterShots),
+      sevenMeterShotPercentage: match.sevenMeterShotPercentage ?? undefined,
+      causedSevenMeters: toOptionalBigInt(match.causedSevenMeters),
+      awardedSevenMeters: toOptionalBigInt(match.awardedSevenMeters),
+      warnings: toOptionalBigInt(match.warnings),
+      redCards: toOptionalBigInt(match.redCards),
+      playTime: match.playTime ?? undefined,
       date: match.date ?? undefined,
       opponent: match.opponent ?? undefined,
       homeAway: match.homeAway ?? undefined,
