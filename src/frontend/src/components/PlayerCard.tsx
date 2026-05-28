@@ -135,6 +135,8 @@ export function PlayerCard({
           <img
             src={player.imageUrl}
             alt={player.name}
+            loading="lazy"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
