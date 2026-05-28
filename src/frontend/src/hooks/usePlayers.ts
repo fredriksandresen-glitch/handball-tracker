@@ -8,40 +8,53 @@ import {
 import type { Player } from "../types/handball";
 import { enrichPlayersWithImages } from "../utils/playerImages";
 
+const STATIC_STALE_TIME = Number.POSITIVE_INFINITY;
+const STATIC_GC_TIME = 30 * 60_000;
+
 export function usePlayers() {
   const { actor, isFetching } = useActor(createActor);
+  const staticPlayers = getStaticPlayers();
+  const hasStaticPlayers = staticPlayers.length > 0;
+
   return useQuery<Player[]>({
     queryKey: ["players"],
     queryFn: async () => {
-      const staticPlayers = getStaticPlayers();
-      if (staticPlayers.length > 0) {
+      if (hasStaticPlayers) {
         return enrichPlayersWithImages(staticPlayers);
       }
 
       if (!actor) return [];
       return enrichPlayersWithImages(await actor.getPlayers());
     },
-    enabled: !isFetching || getStaticPlayers().length > 0,
-    staleTime: 120_000,
+    enabled: hasStaticPlayers || !isFetching,
+    initialData: hasStaticPlayers
+      ? enrichPlayersWithImages(staticPlayers)
+      : undefined,
+    staleTime: hasStaticPlayers ? STATIC_STALE_TIME : 120_000,
+    gcTime: STATIC_GC_TIME,
   });
 }
 
 export function useSearchPlayers(term: string) {
   const { actor, isFetching } = useActor(createActor);
-  return useQuery<Player[]>({
-    queryKey: ["searchPlayers", term],
-    queryFn: async () => {
-      if (!term.trim()) return [];
+  const trimmedTerm = term.trim();
+  const hasStaticPlayers = getStaticPlayers().length > 0;
 
-      const staticPlayers = searchStaticPlayers(term);
-      if (staticPlayers.length > 0) {
+  return useQuery<Player[]>({
+    queryKey: ["searchPlayers", trimmedTerm],
+    queryFn: async () => {
+      if (!trimmedTerm) return [];
+
+      const staticPlayers = searchStaticPlayers(trimmedTerm);
+      if (hasStaticPlayers || staticPlayers.length > 0) {
         return enrichPlayersWithImages(staticPlayers);
       }
 
       if (!actor) return [];
-      return enrichPlayersWithImages(await actor.searchPlayers(term.trim()));
+      return enrichPlayersWithImages(await actor.searchPlayers(trimmedTerm));
     },
-    enabled: !isFetching && term.trim().length > 0,
-    staleTime: 30_000,
+    enabled: trimmedTerm.length > 0 && (hasStaticPlayers || !isFetching),
+    staleTime: hasStaticPlayers ? STATIC_STALE_TIME : 30_000,
+    gcTime: STATIC_GC_TIME,
   });
 }
