@@ -4,6 +4,8 @@ import fjellhammerPlayerStatsData from "../data/fjellhammerPlayerStats.json";
 import fjellhammerRosterData from "../data/fjellhammerRoster.json";
 import larvikPlayerStatsData from "../data/larvikPlayerStats.json";
 import larvikRosterData from "../data/larvikRoster.json";
+import moldePlayerStatsData from "../data/moldePlayerStats.json";
+import moldeRosterData from "../data/moldeRoster.json";
 import { Position } from "../types/handball";
 import type {
   Player,
@@ -25,6 +27,8 @@ const FJELLHAMMER_LOGO_URL =
   "https://www.fjellhammer.no/wp-content/uploads/sites/19/2020/01/fjellhammer.svg";
 const LARVIK_LOGO_URL =
   "https://www.larvikhk.no/wp-content/uploads/sites/7/2019/08/larvikhk.svg";
+const MOLDE_LOGO_URL =
+  "https://www.handballjentan.no/wp-content/uploads/sites/8/2021/07/MOLDE-ELITE-LOGO.svg";
 const DEFAULT_TOURNAMENT = "REMA 1000-ligaen kvinner";
 
 type ClawdbotPlayer = {
@@ -134,6 +138,12 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     logoUrl: BYAASEN_LOGO_URL,
     roster: byaasenRosterData as StaticRosterPlayer[],
     statsById: statsById(byaasenPlayerStatsData as StaticPlayerStats[]),
+  },
+  {
+    name: "Molde",
+    logoUrl: MOLDE_LOGO_URL,
+    roster: moldeRosterData as StaticRosterPlayer[],
+    statsById: statsById(moldePlayerStatsData as StaticPlayerStats[]),
   },
 ];
 
