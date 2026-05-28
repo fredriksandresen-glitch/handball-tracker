@@ -92,7 +92,6 @@ export function useFollowPlayer() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (playerId: bigint) => {
-      addLocalFollowedPlayer(playerId);
       if (actor) {
         try {
           await actor.followPlayer(playerId);
@@ -102,6 +101,7 @@ export function useFollowPlayer() {
       }
     },
     onMutate: (playerId) => {
+      addLocalFollowedPlayer(playerId);
       const playerIdString = playerId.toString();
       qc.setQueryData(["isFollowing", playerIdString], true);
       qc.setQueryData(["followedPlayers"], getLocalFollowedPlayersWithImages());
@@ -119,7 +119,6 @@ export function useUnfollowPlayer() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (playerId: bigint) => {
-      removeLocalFollowedPlayer(playerId);
       if (actor) {
         try {
           await actor.unfollowPlayer(playerId);
@@ -129,6 +128,7 @@ export function useUnfollowPlayer() {
       }
     },
     onMutate: (playerId) => {
+      removeLocalFollowedPlayer(playerId);
       const playerIdString = playerId.toString();
       qc.setQueryData(["isFollowing", playerIdString], false);
       qc.setQueryData(["followedPlayers"], getLocalFollowedPlayersWithImages());
