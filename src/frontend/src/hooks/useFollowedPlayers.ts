@@ -9,6 +9,8 @@ import type { Player } from "../types/handball";
 import { enrichPlayersWithImages } from "../utils/playerImages";
 
 const FOLLOWED_PLAYERS_STORAGE_KEY = "handball-tracker-followed-player-ids";
+const LOCAL_STALE_TIME = Number.POSITIVE_INFINITY;
+const LOCAL_GC_TIME = 30 * 60_000;
 
 function canUseLocalStorage() {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
@@ -59,19 +61,29 @@ function getLocalFollowedPlayers(): Player[] {
   });
 }
 
+function getLocalFollowedPlayersWithImages() {
+  return enrichPlayersWithImages(getLocalFollowedPlayers());
+}
+
 export function useFollowedPlayers() {
   return useQuery<Player[]>({
     queryKey: ["followedPlayers"],
-    queryFn: async () => enrichPlayersWithImages(getLocalFollowedPlayers()),
-    staleTime: 30_000,
+    queryFn: async () => getLocalFollowedPlayersWithImages(),
+    initialData: getLocalFollowedPlayersWithImages,
+    staleTime: LOCAL_STALE_TIME,
+    gcTime: LOCAL_GC_TIME,
   });
 }
 
 export function useIsFollowing(playerId: bigint) {
+  const playerIdString = playerId.toString();
+
   return useQuery<boolean>({
-    queryKey: ["isFollowing", playerId.toString()],
-    queryFn: async () => readLocalFollowedIds().includes(playerId.toString()),
-    staleTime: 30_000,
+    queryKey: ["isFollowing", playerIdString],
+    queryFn: async () => readLocalFollowedIds().includes(playerIdString),
+    initialData: () => readLocalFollowedIds().includes(playerIdString),
+    staleTime: LOCAL_STALE_TIME,
+    gcTime: LOCAL_GC_TIME,
   });
 }
 
@@ -89,9 +101,14 @@ export function useFollowPlayer() {
         }
       }
     },
+    onMutate: (playerId) => {
+      const playerIdString = playerId.toString();
+      qc.setQueryData(["isFollowing", playerIdString], true);
+      qc.setQueryData(["followedPlayers"], getLocalFollowedPlayersWithImages());
+    },
     onSuccess: (_data, playerId) => {
-      qc.invalidateQueries({ queryKey: ["followedPlayers"] });
-      qc.invalidateQueries({ queryKey: ["isFollowing", playerId.toString()] });
+      qc.setQueryData(["isFollowing", playerId.toString()], true);
+      qc.setQueryData(["followedPlayers"], getLocalFollowedPlayersWithImages());
       qc.invalidateQueries({ queryKey: ["feedEvents"] });
     },
   });
@@ -111,9 +128,14 @@ export function useUnfollowPlayer() {
         }
       }
     },
+    onMutate: (playerId) => {
+      const playerIdString = playerId.toString();
+      qc.setQueryData(["isFollowing", playerIdString], false);
+      qc.setQueryData(["followedPlayers"], getLocalFollowedPlayersWithImages());
+    },
     onSuccess: (_data, playerId) => {
-      qc.invalidateQueries({ queryKey: ["followedPlayers"] });
-      qc.invalidateQueries({ queryKey: ["isFollowing", playerId.toString()] });
+      qc.setQueryData(["isFollowing", playerId.toString()], false);
+      qc.setQueryData(["followedPlayers"], getLocalFollowedPlayersWithImages());
       qc.invalidateQueries({ queryKey: ["feedEvents"] });
     },
   });
