@@ -194,7 +194,7 @@ export function FeedPlayerCard({
       className="w-full text-left rounded-2xl overflow-hidden cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shadow-subtle hover:shadow-elevated transition-smooth"
       data-ocid="feed-player-card"
     >
-      <div className={cn("relative w-full aspect-[3/4]", bgClass)}>
+      <div className={cn("relative w-full aspect-[3/4.45] sm:aspect-[3/4]", bgClass)}>
         {player.imageUrl ? (
           <img
             src={player.imageUrl}
@@ -216,30 +216,30 @@ export function FeedPlayerCard({
           onClick={handleUnfollow}
           disabled={isUnfollowLoading}
           aria-label="Slutt å følge"
-          className="absolute top-2.5 right-2.5 size-7 rounded-full bg-black/50 backdrop-blur-sm border border-white/25 flex items-center justify-center text-white/70 hover:bg-destructive/70 hover:text-white hover:border-destructive/60 transition-smooth"
+          className="absolute top-2.5 right-2.5 size-8 sm:size-7 rounded-full bg-black/50 backdrop-blur-sm border border-white/25 flex items-center justify-center text-white/80 hover:bg-destructive/70 hover:text-white hover:border-destructive/60 transition-smooth"
           data-ocid="feed-player-unfollow"
         >
           <span className="text-sm leading-none font-bold">×</span>
         </button>
 
-        <div className="absolute bottom-0 left-0 right-0 px-3 pb-3 pt-10">
+        <div className="absolute bottom-0 left-0 right-0 px-3.5 sm:px-3 pb-3.5 sm:pb-3 pt-12 sm:pt-10">
           <div className="mb-1">
             <PositionBadge position={player.position} variant="overlay" />
           </div>
 
-          <p className="font-display font-black text-white text-sm leading-tight truncate drop-shadow-sm">
+          <p className="font-display font-black text-white text-[15px] sm:text-sm leading-tight truncate drop-shadow-sm">
             {player.name}
           </p>
 
-          <p className="text-[10px] text-white/65 truncate mt-0.5 font-body">
+          <p className="text-[11px] sm:text-[10px] text-white/65 truncate mt-0.5 font-body">
             {teamName}
           </p>
 
-          <div className="flex items-end justify-between mt-2 pt-2 border-t border-white/15">
+          <div className="flex items-end justify-between mt-2.5 sm:mt-2 pt-2.5 sm:pt-2 border-t border-white/15">
             <div className="flex gap-3">
               {latestMatch?.mep !== undefined && (
                 <div>
-                  <span className="block font-display font-black text-xl text-white leading-none tabular-nums">
+                  <span className="block font-display font-black text-2xl sm:text-xl text-white leading-none tabular-nums">
                     {formatDecimal(latestMatch.mep)}
                   </span>
                   <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
