@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/generate-player-previews.mjs && pnpm copy:env",
+    "build": "node scripts/enrich-match-history.mjs && vite build && node scripts/generate-player-previews.mjs && pnpm copy:env",
     "copy:env": "cp env.json dist/",
     "typecheck": "tsc --noEmit",
     "check": "biome check src",
