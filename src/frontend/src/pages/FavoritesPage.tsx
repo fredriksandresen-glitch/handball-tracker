@@ -242,6 +242,7 @@ function ToplistCard({
         statItems={getCardStats(mode, insight)}
         sparkValues={insight.sparkValues}
         sparkLabel="MEP-form"
+        followOverlay
       />
     </motion.div>
   );
@@ -418,7 +419,7 @@ export default function FavoritesPage() {
               {TOPLIST_MODES.find((item) => item.value === mode)?.label}
             </span>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="-mx-2 grid grid-cols-2 gap-2 sm:mx-0 sm:gap-3">
             {topPlayers.map((player, index) => (
               <ToplistCard
                 key={player.id.toString()}
