@@ -379,7 +379,7 @@ export default function HomePage() {
       {/* ── Scrollable feed ─────────────────────────────────────────── */}
       <div className="flex-1 overflow-y-auto">
         {isLoading ? (
-          <div className="p-3 grid grid-cols-2 gap-3" data-ocid="feed-skeleton">
+          <div className="p-2 sm:p-3 grid grid-cols-2 gap-2 sm:gap-3" data-ocid="feed-skeleton">
             <SkeletonCard variant="feed" />
             <SkeletonCard variant="feed" />
             <SkeletonCard variant="feed" />
@@ -405,7 +405,7 @@ export default function HomePage() {
           </div>
         ) : (
           <div
-            className="p-3 grid grid-cols-2 gap-3 pb-6"
+            className="p-2 sm:p-3 grid grid-cols-2 gap-2 sm:gap-3 pb-6"
             data-ocid="feed-list"
           >
             {displayedPlayers.map((player, idx) => (
