@@ -15,6 +15,9 @@ import type {
   PlayerSeasonStats,
 } from "../types/handball";
 
+const STATIC_STALE_TIME = Number.POSITIVE_INFINITY;
+const STATIC_GC_TIME = 30 * 60_000;
+
 export function usePlayer(id: bigint) {
   const { actor, isFetching } = useActor(createActor);
   const staticProfile = getStaticProfile(id);
@@ -32,7 +35,8 @@ export function usePlayer(id: bigint) {
     },
     enabled: !isFetching || !!staticProfile,
     initialData: staticProfile ? mapClawdbotPlayer(staticProfile) : undefined,
-    staleTime: 60_000,
+    staleTime: staticProfile ? STATIC_STALE_TIME : 60_000,
+    gcTime: STATIC_GC_TIME,
   });
 }
 
@@ -55,7 +59,8 @@ export function usePlayerMatchStats(playerId: bigint) {
     },
     enabled: !isFetching || !!staticProfile,
     initialData: staticProfile ? mapClawdbotMatchStats(staticProfile) : undefined,
-    staleTime: 60_000,
+    staleTime: staticProfile ? STATIC_STALE_TIME : 60_000,
+    gcTime: STATIC_GC_TIME,
   });
 }
 
@@ -80,7 +85,8 @@ export function usePlayerSeasonStats(playerId: bigint) {
     initialData: staticProfile
       ? mapClawdbotSeasonStats(staticProfile)
       : undefined,
-    staleTime: 60_000,
+    staleTime: staticProfile ? STATIC_STALE_TIME : 60_000,
+    gcTime: STATIC_GC_TIME,
   });
 }
 
@@ -103,7 +109,8 @@ function useSingleMatchStats(id: bigint, enabled: boolean) {
     },
     enabled: enabled && (!isFetching || !!staticProfile),
     initialData: staticProfile ? mapClawdbotMatchStats(staticProfile) : undefined,
-    staleTime: 60_000,
+    staleTime: staticProfile ? STATIC_STALE_TIME : 60_000,
+    gcTime: STATIC_GC_TIME,
   });
 }
 
@@ -130,5 +137,5 @@ export function usePlayerMatchStatsBatch(
     }
     return map;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ids, r0, r1, r2, r3, r4]);
+  }, [ids, r0.data, r1.data, r2.data, r3.data, r4.data]);
 }
