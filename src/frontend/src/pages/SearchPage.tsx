@@ -155,6 +155,7 @@ function SearchResult({
       latestSaves={insight.latestSaves}
       latestSavePct={insight.latestSavePct}
       sparkValues={insight.sparkValues}
+      followOverlay
     />
   );
 }
@@ -351,7 +352,7 @@ export default function SearchPage() {
               {SORT_FILTERS.find((item) => item.value === sortMode)?.label}
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="-mx-2 grid grid-cols-2 gap-2 sm:mx-0 sm:gap-3">
             {results.map((player) => (
               <SearchResult
                 key={player.id.toString()}
