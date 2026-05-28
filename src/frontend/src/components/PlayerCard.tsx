@@ -64,6 +64,7 @@ interface Props {
   statItems?: CardStat[];
   sparkValues?: number[];
   sparkLabel?: string;
+  followOverlay?: boolean;
 }
 
 export function PlayerCard({
@@ -83,6 +84,7 @@ export function PlayerCard({
   statItems,
   sparkValues = [],
   sparkLabel = "Form",
+  followOverlay = false,
 }: Props) {
   const navigate = useNavigate();
 
@@ -120,7 +122,7 @@ export function PlayerCard({
   return (
     <div
       className={cn(
-        "w-full rounded-2xl overflow-hidden transition-smooth hover:shadow-elevated group",
+        "relative w-full rounded-2xl overflow-hidden transition-smooth hover:shadow-elevated group",
         className,
       )}
       data-ocid="player-card"
@@ -129,7 +131,7 @@ export function PlayerCard({
         type="button"
         onClick={handleCardClick}
         aria-label={`Vis profil for ${player.name}`}
-        className="relative block w-full aspect-[3/4] bg-muted text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        className="relative block w-full aspect-[3/4.45] sm:aspect-[3/4] bg-muted text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
         {player.imageUrl ? (
           <img
@@ -253,7 +255,25 @@ export function PlayerCard({
         </div>
       </button>
 
-      {(onFollow || onUnfollow) && (
+      {followOverlay && (onFollow || onUnfollow) && (
+        <Button
+          variant={isFollowing ? "outline" : "default"}
+          size="sm"
+          onClick={handleFollowClick}
+          disabled={isLoading}
+          className={cn(
+            "absolute top-2.5 right-2.5 z-20 h-8 rounded-full px-3 text-[11px] font-display font-black shadow-elevated backdrop-blur-md",
+            isFollowing
+              ? "border-primary/50 bg-black/45 text-primary hover:bg-destructive/80 hover:text-white hover:border-destructive/60"
+              : "bg-primary text-primary-foreground hover:bg-primary/90",
+          )}
+          data-ocid={isFollowing ? "player-unfollow-btn" : "player-follow-btn"}
+        >
+          {isFollowing ? "✓ FØLGER" : "+ FØLG"}
+        </Button>
+      )}
+
+      {!followOverlay && (onFollow || onUnfollow) && (
         <div className="px-1 pt-2 pb-1">
           {isFollowing ? (
             <Button
