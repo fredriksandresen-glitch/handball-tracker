@@ -13,6 +13,7 @@ const teams = [
   { name: "Fjellhammer", roster: "fjellhammerRoster.json", stats: "fjellhammerPlayerStats.json" },
   { name: "Larvik", roster: "larvikRoster.json", stats: "larvikPlayerStats.json" },
   { name: "Byåsen", roster: "byaasenRoster.json", stats: "byaasenPlayerStats.json" },
+  { name: "Molde", roster: "moldeRoster.json", stats: "moldePlayerStats.json" },
 ];
 
 function escapeHtml(value) {
