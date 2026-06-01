@@ -18,6 +18,17 @@ declare global {
 
 const queryClient = new QueryClient();
 
+const savedTheme = window.localStorage.getItem("handball-tracker-theme");
+const initialTheme =
+  savedTheme === "light" || savedTheme === "dark"
+    ? savedTheme
+    : window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+
+document.documentElement.classList.toggle("dark", initialTheme === "dark");
+document.documentElement.style.colorScheme = initialTheme;
+
 function PlayerImageLightbox() {
   const [image, setImage] = useState<{ src: string; alt: string } | null>(null);
 
