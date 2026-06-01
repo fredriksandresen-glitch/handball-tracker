@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, RefreshCw, Search, Trophy, Users } from "lucide-react";
+import { Home, Moon, RefreshCw, Search, Sun, Trophy, Users } from "lucide-react";
+import { useEffect, useState } from "react";
 import type { ProfixioStatus } from "../backend.d";
 import {
   useProfixioStatus,
@@ -13,6 +14,44 @@ const NAV_ITEMS = [
   { to: "/teams", label: "Lag", icon: Users, ocid: "nav-lag" },
   { to: "/favorites", label: "Toppliste", icon: Trophy, ocid: "nav-toppliste" },
 ] as const;
+
+type ThemeMode = "light" | "dark";
+const THEME_STORAGE_KEY = "handball-tracker-theme";
+
+function getInitialTheme(): ThemeMode {
+  if (typeof window === "undefined") return "light";
+
+  const saved = window.localStorage.getItem(THEME_STORAGE_KEY);
+  if (saved === "light" || saved === "dark") return saved;
+
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
+
+function ThemeToggle() {
+  const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
+  const isDark = theme === "dark";
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", isDark);
+    document.documentElement.style.colorScheme = theme;
+    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [isDark, theme]);
+
+  return (
+    <button
+      type="button"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className="flex size-9 items-center justify-center rounded-full border border-sidebar-border bg-sidebar-accent/65 text-sidebar-foreground transition-colors hover:bg-sidebar-accent"
+      aria-label={isDark ? "Bytt til lys modus" : "Bytt til mørk modus"}
+      title={isDark ? "Lys modus" : "Mørk modus"}
+      data-ocid="theme-toggle"
+    >
+      {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+    </button>
+  );
+}
 
 const DATA_SOURCE_CONFIG = {
   live: {
@@ -108,23 +147,23 @@ export function Layout({ children, title, headerRight }: Props) {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <header className="sticky top-0 z-40 bg-card border-b border-border shadow-subtle">
+      <header className="sticky top-0 z-40 bg-sidebar text-sidebar-foreground border-b border-sidebar-border shadow-subtle">
         <div className="flex items-center justify-between h-14 px-4 max-w-2xl mx-auto w-full">
           <Link
             to="/"
             className="flex items-center gap-2"
             data-ocid="header-logo"
           >
-            <span className="font-display font-black text-lg tracking-tight text-foreground">
-              REMA<span className="text-primary">1000</span>
+            <span className="font-display font-black text-lg tracking-tight text-sidebar-foreground">
+              REMA<span className="text-sidebar-primary">1000</span>
             </span>
-            <span className="hidden sm:inline text-xs text-muted-foreground font-body">
+            <span className="hidden sm:inline text-xs text-sidebar-foreground/65 font-body">
               -ligaen
             </span>
           </Link>
 
           {title && (
-            <h1 className="absolute left-1/2 -translate-x-1/2 font-display font-bold text-sm uppercase tracking-widest text-foreground">
+            <h1 className="absolute left-1/2 -translate-x-1/2 font-display font-bold text-sm uppercase tracking-widest text-sidebar-foreground">
               {title}
             </h1>
           )}
@@ -132,6 +171,7 @@ export function Layout({ children, title, headerRight }: Props) {
           <div className="flex items-center gap-2">
             <DataSourceBadge />
             {headerRight}
+            <ThemeToggle />
           </div>
         </div>
       </header>
