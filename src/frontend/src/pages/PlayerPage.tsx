@@ -8,6 +8,7 @@ import {
   Award,
   BarChart3,
   CalendarDays,
+  ChevronDown,
   Search,
   Shield,
   Target,
@@ -44,9 +45,12 @@ import { Position } from "../types/handball";
 type Tab = "season" | "matches" | "form";
 
 const CLUB_LOGOS: Record<string, string> = {
+  byåsen: "https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg",
   fjellhammer:
     "https://www.fjellhammer.no/wp-content/uploads/sites/19/2020/01/fjellhammer.svg",
   larvik: "https://www.larvikhk.no/wp-content/uploads/sites/7/2019/08/larvikhk.svg",
+  molde:
+    "https://www.handballjentan.no/wp-content/uploads/sites/8/2021/07/MOLDE-ELITE-LOGO.svg",
 };
 
 function getClubLogo(teamName?: string) {
@@ -457,14 +461,79 @@ function MatchHistory({
   stats: PlayerMatchStats[];
 }) {
   const keeper = isGK(player.position);
+  const [openMatchId, setOpenMatchId] = useState<string | null>(null);
   const matches = [...(stats as EnrichedPlayerMatchStats[])].sort((a, b) => getMatchDate(b).localeCompare(getMatchDate(a)));
 
   if (matches.length === 0) return <div className="py-12 text-center text-sm text-muted-foreground">Ingen kampstatistikk tilgjengelig</div>;
 
+  const getDetailRows = (match: EnrichedPlayerMatchStats) => [
+    ["Spillermål", formatNumber(match.fieldGoals ?? match.goals)],
+    ["Spillerskudd", formatNumber(match.fieldShots ?? match.shots)],
+    ["Uttelling", formatPct(match.fieldShotPercentage ?? match.shotPct)],
+    ["Mål 7m", formatNumber(match.sevenMeterGoals)],
+    ["Skudd 7m", formatNumber(match.sevenMeterShots)],
+    ["Uttelling 7m", formatPct(match.sevenMeterShotPercentage)],
+    ["Assist", formatNumber(match.assists)],
+    ["Teknisk feil", formatNumber(match.turnovers)],
+    ["Forårsaket 7m", formatNumber(match.causedSevenMeters)],
+    ["Tildelt 7m", formatNumber(match.awardedSevenMeters)],
+    ["Advarsel", formatNumber(match.warnings)],
+    ["2 min utvisning", formatNumber(match.twoMinSuspensions)],
+    ["Rødt kort", formatNumber(match.redCards)],
+    ["Spillertid", match.playTime || "-"],
+    ["Total MEP", formatDecimal(match.mep)],
+  ];
+
+  const getKeeperRows = (match: EnrichedPlayerMatchStats) => [
+    ["Redninger", formatNumber(match.saves)],
+    ["Redningsprosent", formatPct(match.savePct)],
+    ["Skudd mot", formatNumber(match.shotsAgainst ?? match.shots)],
+    ["Baklengsmål", formatNumber(match.goalsConceded)],
+    ...getDetailRows(match),
+  ];
+
   return (
     <div className="rounded-2xl border border-border bg-card overflow-hidden">
-      <div className="grid grid-cols-[1fr_52px_52px_52px] gap-2 px-4 py-2 border-b border-border text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold"><span>Kamp</span><span className="text-right">MEP</span><span className="text-right">{keeper ? "Red" : "Mål"}</span><span className="text-right">{keeper ? "Red%" : "Ass"}</span></div>
-      {matches.map((match) => (<div key={match.id.toString()} className="grid grid-cols-[1fr_52px_52px_52px] gap-2 px-4 py-3 border-b border-border/45 last:border-0 text-sm"><span className="min-w-0"><span className="block font-display font-bold text-foreground truncate">{match.opponent ? "mot " + match.opponent : "Kamp"}</span><span className="block text-xs text-muted-foreground truncate">{match.date ?? "Kamp " + match.matchId.toString()}</span></span><span className="text-right font-bold text-primary tabular-nums">{formatDecimal(match.mep)}</span><span className="text-right text-foreground tabular-nums">{keeper ? formatNumber(match.saves) : formatNumber(match.goals)}</span><span className="text-right text-foreground tabular-nums">{keeper ? formatPct(match.savePct) : formatNumber(match.assists)}</span></div>))}
+      <div className="grid grid-cols-[1fr_52px_52px_52px_24px] gap-2 px-4 py-2 border-b border-border text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold"><span>Kamp</span><span className="text-right">MEP</span><span className="text-right">{keeper ? "Red" : "Mål"}</span><span className="text-right">{keeper ? "Red%" : "Ass"}</span><span /></div>
+      {matches.map((match) => {
+        const id = match.id.toString();
+        const isOpen = openMatchId === id;
+        const rows = keeper ? getKeeperRows(match) : getDetailRows(match);
+
+        return (
+          <div key={id} className="border-b border-border/45 last:border-0">
+            <button
+              type="button"
+              onClick={() => setOpenMatchId(isOpen ? null : id)}
+              className="grid w-full grid-cols-[1fr_52px_52px_52px_24px] gap-2 px-4 py-3 text-sm text-left hover:bg-muted/25 transition-colors"
+            >
+              <span className="min-w-0">
+                <span className="block font-display font-bold text-foreground truncate">{match.opponent ? "mot " + match.opponent : "Kamp"}</span>
+                <span className="block text-xs text-muted-foreground truncate">{match.date ?? "Kamp " + match.matchId.toString()}</span>
+              </span>
+              <span className="text-right font-bold text-primary tabular-nums">{formatDecimal(match.mep)}</span>
+              <span className="text-right text-foreground tabular-nums">{keeper ? formatNumber(match.saves) : formatNumber(match.goals)}</span>
+              <span className="text-right text-foreground tabular-nums">{keeper ? formatPct(match.savePct) : formatNumber(match.assists)}</span>
+              <ChevronDown className={cn("mt-0.5 size-4 text-muted-foreground transition-transform", isOpen && "rotate-180 text-primary")} />
+            </button>
+
+            {isOpen && (
+              <div className="px-4 pb-4">
+                <div className="rounded-xl border border-border/70 bg-background/45 overflow-hidden">
+                  <div className="grid grid-cols-3 gap-px bg-border/45">
+                    {rows.map(([label, value]) => (
+                      <div key={label} className="min-w-0 bg-card px-3 py-2.5">
+                        <p className="truncate text-[9px] uppercase tracking-widest text-muted-foreground font-display font-bold">{label}</p>
+                        <p className={cn("mt-1 truncate font-mono text-sm font-bold tabular-nums", label === "Total MEP" ? "text-primary" : "text-foreground")}>{value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
