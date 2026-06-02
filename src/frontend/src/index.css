@@ -165,14 +165,15 @@
     cursor: zoom-in;
   }
 
-  a[href="/team/205902"] > svg:first-child {
+  a[href="/team/205902"] > svg:first-child,
+  a[href="/team/205902"] > span:first-child {
     display: none;
   }
 
   a[href="/team/205902"]::before {
     content: "";
-    width: 1.25rem;
-    height: 1.25rem;
+    width: 1.75rem;
+    height: 1.75rem;
     flex: 0 0 auto;
     background-image: url("https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg");
     background-repeat: no-repeat;
@@ -180,14 +181,31 @@
     background-size: contain;
   }
 
-  a[href="/team/524907"] > svg:first-child {
+  a[href="/team/234025"] > svg:first-child,
+  a[href="/team/234025"] > span:first-child {
+    display: none;
+  }
+
+  a[href="/team/234025"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("https://gjerpenhandball.no/wp-content/uploads/sites/36/2019/09/gjerpen.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+  a[href="/team/524907"] > svg:first-child,
+  a[href="/team/524907"] > span:first-child {
     display: none;
   }
 
   a[href="/team/524907"]::before {
     content: "";
-    width: 1.25rem;
-    height: 1.25rem;
+    width: 1.75rem;
+    height: 1.75rem;
     flex: 0 0 auto;
     background-image: url("https://www.handballjentan.no/wp-content/uploads/sites/8/2021/07/MOLDE-ELITE-LOGO.svg");
     background-repeat: no-repeat;
