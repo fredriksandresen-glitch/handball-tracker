@@ -11,6 +11,7 @@ const TOURNAMENT_NAME = "REMA 1000-ligaen kvinner, 2526";
 const teams = [
   { name: "Fjellhammer", id: "223982", stats: "fjellhammerPlayerStats.json" },
   { name: "Larvik", id: "223994", stats: "larvikPlayerStats.json" },
+  { name: "Fana", id: "225474", stats: "fanaPlayerStats.json" },
   { name: "Gjerpen", id: "453373", stats: "gjerpenPlayerStats.json" },
   { name: "Byåsen", id: "454116", stats: "byaasenPlayerStats.json" },
   { name: "Molde", id: "775789", stats: "moldePlayerStats.json" },
