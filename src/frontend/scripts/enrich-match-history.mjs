@@ -11,6 +11,7 @@ const TOURNAMENT_NAME = "REMA 1000-ligaen kvinner, 2526";
 const teams = [
   { name: "Fjellhammer", id: "223982", stats: "fjellhammerPlayerStats.json" },
   { name: "Larvik", id: "223994", stats: "larvikPlayerStats.json" },
+  { name: "Gjerpen", id: "453373", stats: "gjerpenPlayerStats.json" },
   { name: "Byåsen", id: "454116", stats: "byaasenPlayerStats.json" },
   { name: "Molde", id: "775789", stats: "moldePlayerStats.json" },
 ];
@@ -38,6 +39,10 @@ function toNumber(value) {
 
 function toInt(value) {
   return Math.round(toNumber(value));
+}
+
+function round1(value) {
+  return Math.round(value * 10) / 10;
 }
 
 function parseDate(value) {
@@ -169,6 +174,48 @@ async function parseMatchStats(match) {
   return rows;
 }
 
+function aggregateSeason(row) {
+  const matches = row.recentMatches ?? [];
+  const sum = (key) =>
+    matches.reduce((total, match) => total + (Number(match[key]) || 0), 0);
+  const matchCount = matches.length;
+  const goals = sum("goals");
+  const shots = sum("shots");
+  const assists = sum("assists");
+  const technicalErrors = sum("technicalErrors");
+  const suspensions = sum("suspensions");
+  const mepTotal = round1(sum("mep"));
+
+  row.seasonStats = {
+    matches: matchCount,
+    goals,
+    shots,
+    shotPercentage: shots > 0 ? round1((goals / shots) * 100) : 0,
+    assists,
+    technicalErrors,
+    suspensions,
+    mepAvg: matchCount > 0 ? round1(mepTotal / matchCount) : 0,
+    mepTotal,
+  };
+
+  const saves = sum("saves");
+  const shotsAgainst = sum("shotsAgainst");
+  if (shotsAgainst > 0 || row.goalkeeperStats) {
+    const goalsConceded = sum("goalsConceded");
+    const savePercentage =
+      shotsAgainst > 0 ? round1((saves / shotsAgainst) * 100) : 0;
+
+    row.seasonStats.shots = shotsAgainst;
+    row.seasonStats.shotPercentage = savePercentage;
+    row.goalkeeperStats = {
+      saves,
+      savePercentage,
+      goalsConceded,
+      shotsAgainst,
+    };
+  }
+}
+
 async function enrichTeam(team, matchStatsCache) {
   const statsPath = path.join(dataRoot, team.stats);
   const statsRows = JSON.parse(
@@ -196,6 +243,7 @@ async function enrichTeam(team, matchStatsCache) {
     row.recentMatches = histories
       .get(String(row.playerId))
       .sort((a, b) => b.date.localeCompare(a.date));
+    aggregateSeason(row);
   }
 
   await writeFile(statsPath, `${JSON.stringify(statsRows)}\n`);
