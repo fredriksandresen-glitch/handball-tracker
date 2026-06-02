@@ -1,5 +1,7 @@
 import byaasenPlayerStatsData from "../data/byaasenPlayerStats.json";
 import byaasenRosterData from "../data/byaasenRoster.json";
+import fanaPlayerStatsData from "../data/fanaPlayerStats.json";
+import fanaRosterData from "../data/fanaRoster.json";
 import fjellhammerPlayerStatsData from "../data/fjellhammerPlayerStats.json";
 import fjellhammerRosterData from "../data/fjellhammerRoster.json";
 import gjerpenPlayerStatsData from "../data/gjerpenPlayerStats.json";
@@ -25,6 +27,8 @@ const CLAWDBOT_API_BASE =
 const DEFAULT_SEASON = "2526";
 const BYAASEN_LOGO_URL =
   "https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg";
+const FANA_LOGO_URL =
+  "https://www.fanahandball.no/wp-content/uploads/sites/5/2024/05/Fana-IL-logo.svg";
 const FJELLHAMMER_LOGO_URL =
   "https://www.fjellhammer.no/wp-content/uploads/sites/19/2020/01/fjellhammer.svg";
 const GJERPEN_LOGO_URL =
@@ -167,6 +171,12 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     logoUrl: LARVIK_LOGO_URL,
     roster: larvikRosterData as StaticRosterPlayer[],
     statsById: statsById(larvikPlayerStatsData as StaticPlayerStats[]),
+  },
+  {
+    name: "Fana",
+    logoUrl: FANA_LOGO_URL,
+    roster: fanaRosterData as StaticRosterPlayer[],
+    statsById: statsById(fanaPlayerStatsData as StaticPlayerStats[]),
   },
   {
     name: "Gjerpen",
