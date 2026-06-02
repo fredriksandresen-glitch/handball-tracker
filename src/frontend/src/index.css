@@ -197,6 +197,22 @@
     background-size: contain;
   }
 
+  a[href="/team/802989"] > svg:first-child,
+  a[href="/team/802989"] > span:first-child {
+    display: none;
+  }
+
+  a[href="/team/802989"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("https://fredrikstadbk.no/wp-content/uploads/sites/6/2026/06/Ny-logo.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
   a[href="/team/234025"] > svg:first-child,
   a[href="/team/234025"] > span:first-child {
     display: none;
