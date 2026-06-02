@@ -35,6 +35,13 @@ const MOLDE_LOGO_URL =
   "https://www.handballjentan.no/wp-content/uploads/sites/8/2021/07/MOLDE-ELITE-LOGO.svg";
 const DEFAULT_TOURNAMENT = "REMA 1000-ligaen kvinner";
 
+function normalizeTeamLookup(value?: string | null) {
+  return (value ?? "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
 type ClawdbotPlayer = {
   id: string;
   name: string;
@@ -182,7 +189,7 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
 ];
 
 const STATIC_TEAM_LOGOS = Object.fromEntries(
-  STATIC_TEAM_CONFIGS.map((team) => [team.name.toLowerCase(), team.logoUrl]),
+  STATIC_TEAM_CONFIGS.map((team) => [normalizeTeamLookup(team.name), team.logoUrl]),
 );
 
 function createStaticProfile(
@@ -275,8 +282,8 @@ function stableTeamId(team?: string | null) {
   return BigInt(hash || 1);
 }
 
-function teamLogoUrl(team?: string | null) {
-  const normalized = (team ?? "").toLowerCase();
+export function getStaticTeamLogoUrl(team?: string | null) {
+  const normalized = normalizeTeamLookup(team);
   return Object.entries(STATIC_TEAM_LOGOS).find(([key]) =>
     normalized.includes(key),
   )?.[1];
@@ -441,7 +448,7 @@ export function getStaticTeams(): Team[] {
       id,
       name,
       slug: slugify(name),
-      logoUrl: teamLogoUrl(name),
+      logoUrl: getStaticTeamLogoUrl(name),
     });
   }
 
