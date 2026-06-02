@@ -4,6 +4,8 @@ import fanaPlayerStatsData from "../data/fanaPlayerStats.json";
 import fanaRosterData from "../data/fanaRoster.json";
 import fjellhammerPlayerStatsData from "../data/fjellhammerPlayerStats.json";
 import fjellhammerRosterData from "../data/fjellhammerRoster.json";
+import fredrikstadPlayerStatsData from "../data/fredrikstadPlayerStats.json";
+import fredrikstadRosterData from "../data/fredrikstadRoster.json";
 import gjerpenPlayerStatsData from "../data/gjerpenPlayerStats.json";
 import gjerpenRosterData from "../data/gjerpenRoster.json";
 import larvikPlayerStatsData from "../data/larvikPlayerStats.json";
@@ -31,6 +33,8 @@ const FANA_LOGO_URL =
   "https://www.fanahandball.no/wp-content/uploads/sites/5/2024/05/Fana-IL-logo.svg";
 const FJELLHAMMER_LOGO_URL =
   "https://www.fjellhammer.no/wp-content/uploads/sites/19/2020/01/fjellhammer.svg";
+const FREDRIKSTAD_LOGO_URL =
+  "https://fredrikstadbk.no/wp-content/uploads/sites/6/2026/06/Ny-logo.png";
 const GJERPEN_LOGO_URL =
   "https://gjerpenhandball.no/wp-content/uploads/sites/36/2019/09/gjerpen.svg";
 const LARVIK_LOGO_URL =
@@ -177,6 +181,12 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     logoUrl: FANA_LOGO_URL,
     roster: fanaRosterData as StaticRosterPlayer[],
     statsById: statsById(fanaPlayerStatsData as StaticPlayerStats[]),
+  },
+  {
+    name: "Fredrikstad",
+    logoUrl: FREDRIKSTAD_LOGO_URL,
+    roster: fredrikstadRosterData as StaticRosterPlayer[],
+    statsById: statsById(fredrikstadPlayerStatsData as StaticPlayerStats[]),
   },
   {
     name: "Gjerpen",
