@@ -181,6 +181,22 @@
     background-size: contain;
   }
 
+  a[href="/team/182094"] > svg:first-child,
+  a[href="/team/182094"] > span:first-child {
+    display: none;
+  }
+
+  a[href="/team/182094"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("https://www.fanahandball.no/wp-content/uploads/sites/5/2024/05/Fana-IL-logo.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
   a[href="/team/234025"] > svg:first-child,
   a[href="/team/234025"] > span:first-child {
     display: none;
