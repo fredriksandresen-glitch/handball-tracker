@@ -2,6 +2,8 @@ import byaasenPlayerStatsData from "../data/byaasenPlayerStats.json";
 import byaasenRosterData from "../data/byaasenRoster.json";
 import fjellhammerPlayerStatsData from "../data/fjellhammerPlayerStats.json";
 import fjellhammerRosterData from "../data/fjellhammerRoster.json";
+import gjerpenPlayerStatsData from "../data/gjerpenPlayerStats.json";
+import gjerpenRosterData from "../data/gjerpenRoster.json";
 import larvikPlayerStatsData from "../data/larvikPlayerStats.json";
 import larvikRosterData from "../data/larvikRoster.json";
 import moldePlayerStatsData from "../data/moldePlayerStats.json";
@@ -25,6 +27,8 @@ const BYAASEN_LOGO_URL =
   "https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg";
 const FJELLHAMMER_LOGO_URL =
   "https://www.fjellhammer.no/wp-content/uploads/sites/19/2020/01/fjellhammer.svg";
+const GJERPEN_LOGO_URL =
+  "https://gjerpenhandball.no/wp-content/uploads/sites/36/2019/09/gjerpen.svg";
 const LARVIK_LOGO_URL =
   "https://www.larvikhk.no/wp-content/uploads/sites/7/2019/08/larvikhk.svg";
 const MOLDE_LOGO_URL =
@@ -156,6 +160,12 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     logoUrl: LARVIK_LOGO_URL,
     roster: larvikRosterData as StaticRosterPlayer[],
     statsById: statsById(larvikPlayerStatsData as StaticPlayerStats[]),
+  },
+  {
+    name: "Gjerpen",
+    logoUrl: GJERPEN_LOGO_URL,
+    roster: gjerpenRosterData as StaticRosterPlayer[],
+    statsById: statsById(gjerpenPlayerStatsData as StaticPlayerStats[]),
   },
   {
     name: "Byåsen",
