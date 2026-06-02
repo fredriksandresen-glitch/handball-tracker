@@ -12,6 +12,7 @@ const SITE_URL = (process.env.VITE_PUBLIC_SITE_URL ?? "https://handball-tracker-
 const teams = [
   { name: "Fjellhammer", roster: "fjellhammerRoster.json", stats: "fjellhammerPlayerStats.json" },
   { name: "Larvik", roster: "larvikRoster.json", stats: "larvikPlayerStats.json" },
+  { name: "Fana", roster: "fanaRoster.json", stats: "fanaPlayerStats.json" },
   { name: "Gjerpen", roster: "gjerpenRoster.json", stats: "gjerpenPlayerStats.json" },
   { name: "Byåsen", roster: "byaasenRoster.json", stats: "byaasenPlayerStats.json" },
   { name: "Molde", roster: "moldeRoster.json", stats: "moldePlayerStats.json" },
