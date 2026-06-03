@@ -4,6 +4,8 @@ import fanaPlayerStatsData from "../data/fanaPlayerStats.json";
 import fanaRosterData from "../data/fanaRoster.json";
 import fjellhammerPlayerStatsData from "../data/fjellhammerPlayerStats.json";
 import fjellhammerRosterData from "../data/fjellhammerRoster.json";
+import folloPlayerStatsData from "../data/folloPlayerStats.json";
+import folloRosterData from "../data/folloRoster.json";
 import fredrikstadPlayerStatsData from "../data/fredrikstadPlayerStats.json";
 import fredrikstadRosterData from "../data/fredrikstadRoster.json";
 import gjerpenPlayerStatsData from "../data/gjerpenPlayerStats.json";
@@ -35,6 +37,8 @@ const FANA_LOGO_URL =
   "https://www.fanahandball.no/wp-content/uploads/sites/5/2024/05/Fana-IL-logo.svg";
 const FJELLHAMMER_LOGO_URL =
   "https://www.fjellhammer.no/wp-content/uploads/sites/19/2020/01/fjellhammer.svg";
+const FOLLO_LOGO_URL =
+  "https://follohk-damer.topphandball.no/wp-content/uploads/sites/34/2026/01/follohokdamer-hvit.svg";
 const FREDRIKSTAD_LOGO_URL = "/assets/team-logos/fredrikstad.svg";
 const GJERPEN_LOGO_URL =
   "https://gjerpenhandball.no/wp-content/uploads/sites/36/2019/09/gjerpen.svg";
@@ -184,6 +188,12 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     logoUrl: FANA_LOGO_URL,
     roster: fanaRosterData as StaticRosterPlayer[],
     statsById: statsById(fanaPlayerStatsData as StaticPlayerStats[]),
+  },
+  {
+    name: "Follo Damer",
+    logoUrl: FOLLO_LOGO_URL,
+    roster: folloRosterData as StaticRosterPlayer[],
+    statsById: statsById(folloPlayerStatsData as StaticPlayerStats[]),
   },
   {
     name: "Fredrikstad",
