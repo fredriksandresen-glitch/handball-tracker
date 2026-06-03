@@ -250,12 +250,12 @@
     background-size: contain;
   }
 
-  a.inline-flex[href$="/team/582770"] > svg:first-child,
-  a.inline-flex[href$="/team/582770"] > span:first-child {
+  a.inline-flex[href$="/team/582769"] > svg:first-child,
+  a.inline-flex[href$="/team/582769"] > span:first-child {
     display: none;
   }
 
-  a.inline-flex[href$="/team/582770"]::before {
+  a.inline-flex[href$="/team/582769"]::before {
     content: "";
     width: 1.75rem;
     height: 1.75rem;
@@ -266,12 +266,12 @@
     background-size: contain;
   }
 
-  a.inline-flex[href$="/team/696740"] > svg:first-child,
-  a.inline-flex[href$="/team/696740"] > span:first-child {
+  a.inline-flex[href$="/team/696739"] > svg:first-child,
+  a.inline-flex[href$="/team/696739"] > span:first-child {
     display: none;
   }
 
-  a.inline-flex[href$="/team/696740"]::before {
+  a.inline-flex[href$="/team/696739"]::before {
     content: "";
     width: 1.75rem;
     height: 1.75rem;
