@@ -197,12 +197,16 @@
     background-size: contain;
   }
 
+  a[href$="/team/2989"] > svg:first-child,
+  a[href$="/team/2989"] > span:first-child,
+  a[href$="/team/2989"] img[src*="fredrikstadbk.no"],
   a[href$="/team/802989"] > svg:first-child,
   a[href$="/team/802989"] > span:first-child,
   a[href$="/team/802989"] img[src*="fredrikstadbk.no"] {
     display: none;
   }
 
+  a.inline-flex[href$="/team/2989"]::before,
   a.inline-flex[href$="/team/802989"]::before {
     content: "";
     width: 1.75rem;
@@ -214,6 +218,7 @@
     background-size: contain;
   }
 
+  a.block[href$="/team/2989"] > div:first-child::before,
   a.block[href$="/team/802989"] > div:first-child::before {
     content: "";
     width: 2.5rem;
