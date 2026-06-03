@@ -249,4 +249,36 @@
     background-position: center;
     background-size: contain;
   }
+
+  a.inline-flex[href$="/team/582770"] > svg:first-child,
+  a.inline-flex[href$="/team/582770"] > span:first-child {
+    display: none;
+  }
+
+  a.inline-flex[href$="/team/582770"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("https://sola-hk.no/wp-content/uploads/sites/10/2022/10/SOLA-GUL.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+  a.inline-flex[href$="/team/696740"] > svg:first-child,
+  a.inline-flex[href$="/team/696740"] > span:first-child {
+    display: none;
+  }
+
+  a.inline-flex[href$="/team/696740"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("https://follohk-damer.topphandball.no/wp-content/uploads/sites/34/2026/01/follohokdamer-hvit.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
 }
