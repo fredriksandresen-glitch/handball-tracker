@@ -17,6 +17,7 @@ const teams = [
   { name: "Byåsen", id: "454116", stats: "byaasenPlayerStats.json" },
   { name: "Molde", id: "775789", stats: "moldePlayerStats.json" },
   { name: "Sola", id: "223983", stats: "solaPlayerStats.json" },
+  { name: "Follo Damer", id: "583889", stats: "folloPlayerStats.json" },
 ];
 
 function stripHtml(value = "") {
