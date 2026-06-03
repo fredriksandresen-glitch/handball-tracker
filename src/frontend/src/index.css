@@ -197,17 +197,29 @@
     background-size: contain;
   }
 
-  a[href="/team/802989"] > svg:first-child,
-  a[href="/team/802989"] > span:first-child {
+  a[href$="/team/802989"] > svg:first-child,
+  a[href$="/team/802989"] > span:first-child,
+  a[href$="/team/802989"] img[src*="fredrikstadbk.no"] {
     display: none;
   }
 
-  a[href="/team/802989"]::before {
+  a.inline-flex[href$="/team/802989"]::before {
     content: "";
     width: 1.75rem;
     height: 1.75rem;
     flex: 0 0 auto;
-    background-image: url("https://fredrikstadbk.no/wp-content/uploads/sites/6/2026/06/Ny-logo.png");
+    background-image: url("/assets/team-logos/fredrikstad.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+  a.block[href$="/team/802989"] > div:first-child::before {
+    content: "";
+    width: 2.5rem;
+    height: 2.5rem;
+    flex: 0 0 auto;
+    background-image: url("/assets/team-logos/fredrikstad.svg");
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
