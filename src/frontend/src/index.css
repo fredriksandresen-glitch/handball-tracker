@@ -218,18 +218,6 @@
     background-size: contain;
   }
 
-  a.block[href$="/team/2989"] > div:first-child::before,
-  a.block[href$="/team/802989"] > div:first-child::before {
-    content: "";
-    width: 2.5rem;
-    height: 2.5rem;
-    flex: 0 0 auto;
-    background-image: url("/assets/team-logos/fredrikstad.svg");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-  }
-
   a[href="/team/234025"] > svg:first-child,
   a[href="/team/234025"] > span:first-child {
     display: none;
