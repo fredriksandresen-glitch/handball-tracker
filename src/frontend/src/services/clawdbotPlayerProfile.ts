@@ -231,6 +231,14 @@ const STATIC_TEAM_LOGOS = Object.fromEntries(
   STATIC_TEAM_CONFIGS.map((team) => [normalizeTeamLookup(team.name), team.logoUrl]),
 );
 
+const STATIC_TEAM_LOGO_ALIASES: Record<string, string> = {
+  "follo": FOLLO_LOGO_URL,
+  "follo damer": FOLLO_LOGO_URL,
+  "follo hk damer": FOLLO_LOGO_URL,
+  "sola": SOLA_LOGO_URL,
+  "sola hk": SOLA_LOGO_URL,
+};
+
 function createStaticProfile(
   player: StaticRosterPlayer,
   team: StaticTeamConfig,
@@ -323,8 +331,15 @@ function stableTeamId(team?: string | null) {
 
 export function getStaticTeamLogoUrl(team?: string | null) {
   const normalized = normalizeTeamLookup(team);
+  const aliasLogo = Object.entries(STATIC_TEAM_LOGO_ALIASES).find(
+    ([key]) =>
+      normalized === key || normalized.includes(key) || key.includes(normalized),
+  )?.[1];
+
+  if (aliasLogo) return aliasLogo;
+
   return Object.entries(STATIC_TEAM_LOGOS).find(([key]) =>
-    normalized.includes(key),
+    normalized === key || normalized.includes(key) || key.includes(normalized),
   )?.[1];
 }
 
