@@ -12,6 +12,8 @@ import larvikPlayerStatsData from "../data/larvikPlayerStats.json";
 import larvikRosterData from "../data/larvikRoster.json";
 import moldePlayerStatsData from "../data/moldePlayerStats.json";
 import moldeRosterData from "../data/moldeRoster.json";
+import solaPlayerStatsData from "../data/solaPlayerStats.json";
+import solaRosterData from "../data/solaRoster.json";
 import { Position } from "../types/handball";
 import type {
   Player,
@@ -40,6 +42,8 @@ const LARVIK_LOGO_URL =
   "https://www.larvikhk.no/wp-content/uploads/sites/7/2019/08/larvikhk.svg";
 const MOLDE_LOGO_URL =
   "https://www.handballjentan.no/wp-content/uploads/sites/8/2021/07/MOLDE-ELITE-LOGO.svg";
+const SOLA_LOGO_URL =
+  "https://sola-hk.no/wp-content/uploads/sites/10/2022/10/SOLA-GUL.svg";
 const DEFAULT_TOURNAMENT = "REMA 1000-ligaen kvinner";
 
 function normalizeTeamLookup(value?: string | null) {
@@ -204,6 +208,12 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     logoUrl: MOLDE_LOGO_URL,
     roster: moldeRosterData as StaticRosterPlayer[],
     statsById: statsById(moldePlayerStatsData as StaticPlayerStats[]),
+  },
+  {
+    name: "Sola",
+    logoUrl: SOLA_LOGO_URL,
+    roster: solaRosterData as StaticRosterPlayer[],
+    statsById: statsById(solaPlayerStatsData as StaticPlayerStats[]),
   },
 ];
 
