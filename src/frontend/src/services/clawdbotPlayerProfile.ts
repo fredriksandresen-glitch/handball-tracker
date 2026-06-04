@@ -1,24 +1,13 @@
-import byaasenPlayerStatsData from "../data/byaasenPlayerStats.json";
 import byaasenRosterData from "../data/byaasenRoster.json";
-import fanaPlayerStatsData from "../data/fanaPlayerStats.json";
 import fanaRosterData from "../data/fanaRoster.json";
-import fjellhammerPlayerStatsData from "../data/fjellhammerPlayerStats.json";
 import fjellhammerRosterData from "../data/fjellhammerRoster.json";
-import folloPlayerStatsData from "../data/folloPlayerStats.json";
 import folloRosterData from "../data/folloRoster.json";
-import fredrikstadPlayerStatsData from "../data/fredrikstadPlayerStats.json";
 import fredrikstadRosterData from "../data/fredrikstadRoster.json";
-import gjerpenPlayerStatsData from "../data/gjerpenPlayerStats.json";
 import gjerpenRosterData from "../data/gjerpenRoster.json";
-import larvikPlayerStatsData from "../data/larvikPlayerStats.json";
 import larvikRosterData from "../data/larvikRoster.json";
-import moldePlayerStatsData from "../data/moldePlayerStats.json";
 import moldeRosterData from "../data/moldeRoster.json";
-import solaPlayerStatsData from "../data/solaPlayerStats.json";
 import solaRosterData from "../data/solaRoster.json";
-import storhamarPlayerStatsData from "../data/storhamarPlayerStats.json";
 import storhamarRosterData from "../data/storhamarRoster.json";
-import tertnesPlayerStatsData from "../data/tertnesPlayerStats.json";
 import tertnesRosterData from "../data/tertnesRoster.json";
 import { Position } from "../types/handball";
 import type {
@@ -171,11 +160,35 @@ type StaticTeamConfig = {
   name: string;
   logoUrl: string;
   roster: StaticRosterPlayer[];
-  statsById: Record<string, StaticPlayerStats>;
+  statsUrl: string;
+  statsById?: Record<string, StaticPlayerStats>;
 };
 
 function statsById(stats: StaticPlayerStats[]) {
   return Object.fromEntries(stats.map((item) => [item.playerId, item]));
+}
+
+function assetUrl(path: string) {
+  return new URL(path, import.meta.url).href;
+}
+
+function loadTeamStats(team: StaticTeamConfig) {
+  if (team.statsById) return team.statsById;
+  if (typeof XMLHttpRequest === "undefined") return {};
+
+  try {
+    const request = new XMLHttpRequest();
+    request.open("GET", team.statsUrl, false);
+    request.send(null);
+
+    if (request.status < 200 || request.status >= 300) return {};
+
+    const parsed = JSON.parse(request.responseText) as StaticPlayerStats[];
+    team.statsById = statsById(parsed);
+    return team.statsById;
+  } catch {
+    return {};
+  }
 }
 
 const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
@@ -183,67 +196,67 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     name: "Fjellhammer",
     logoUrl: FJELLHAMMER_LOGO_URL,
     roster: fjellhammerRosterData as StaticRosterPlayer[],
-    statsById: statsById(fjellhammerPlayerStatsData as StaticPlayerStats[]),
+    statsUrl: assetUrl("../data/fjellhammerPlayerStats.json"),
   },
   {
     name: "Larvik",
     logoUrl: LARVIK_LOGO_URL,
     roster: larvikRosterData as StaticRosterPlayer[],
-    statsById: statsById(larvikPlayerStatsData as StaticPlayerStats[]),
+    statsUrl: assetUrl("../data/larvikPlayerStats.json"),
   },
   {
     name: "Fana",
     logoUrl: FANA_LOGO_URL,
     roster: fanaRosterData as StaticRosterPlayer[],
-    statsById: statsById(fanaPlayerStatsData as StaticPlayerStats[]),
+    statsUrl: assetUrl("../data/fanaPlayerStats.json"),
   },
   {
     name: "Follo Damer",
     logoUrl: FOLLO_LOGO_URL,
     roster: folloRosterData as StaticRosterPlayer[],
-    statsById: statsById(folloPlayerStatsData as StaticPlayerStats[]),
+    statsUrl: assetUrl("../data/folloPlayerStats.json"),
   },
   {
     name: "Fredrikstad",
     logoUrl: FREDRIKSTAD_LOGO_URL,
     roster: fredrikstadRosterData as StaticRosterPlayer[],
-    statsById: statsById(fredrikstadPlayerStatsData as StaticPlayerStats[]),
+    statsUrl: assetUrl("../data/fredrikstadPlayerStats.json"),
   },
   {
     name: "Gjerpen",
     logoUrl: GJERPEN_LOGO_URL,
     roster: gjerpenRosterData as StaticRosterPlayer[],
-    statsById: statsById(gjerpenPlayerStatsData as StaticPlayerStats[]),
+    statsUrl: assetUrl("../data/gjerpenPlayerStats.json"),
   },
   {
-    name: "Byåsen",
+    name: "ByÃ¥sen",
     logoUrl: BYAASEN_LOGO_URL,
     roster: byaasenRosterData as StaticRosterPlayer[],
-    statsById: statsById(byaasenPlayerStatsData as StaticPlayerStats[]),
+    statsUrl: assetUrl("../data/byaasenPlayerStats.json"),
   },
   {
     name: "Molde",
     logoUrl: MOLDE_LOGO_URL,
     roster: moldeRosterData as StaticRosterPlayer[],
-    statsById: statsById(moldePlayerStatsData as StaticPlayerStats[]),
+    statsUrl: assetUrl("../data/moldePlayerStats.json"),
   },
   {
     name: "Sola",
     logoUrl: SOLA_LOGO_URL,
     roster: solaRosterData as StaticRosterPlayer[],
-    statsById: statsById(solaPlayerStatsData as StaticPlayerStats[]),
+    statsUrl: assetUrl("../data/solaPlayerStats.json"),
   },
   {
     name: "Storhamar",
     logoUrl: STORHAMAR_LOGO_URL,
     roster: storhamarRosterData as StaticRosterPlayer[],
-    statsById: statsById(storhamarPlayerStatsData as StaticPlayerStats[]),
+    statsUrl: assetUrl("../data/storhamarPlayerStats.json"),
   },
   {
     name: "Tertnes",
     logoUrl: TERTNES_LOGO_URL,
     roster: tertnesRosterData as StaticRosterPlayer[],
-    statsById: statsById(tertnesPlayerStatsData as StaticPlayerStats[]),
+    statsUrl: assetUrl("../data/tertnesPlayerStats.json"),
   },
 ];
 
@@ -258,11 +271,11 @@ const STATIC_TEAM_LOGO_ALIASES: Record<string, string> = {
   "sola": SOLA_LOGO_URL,
   "sola hk": SOLA_LOGO_URL,
   "storhamar": STORHAMAR_LOGO_URL,
-  "storhamar håndball elite": STORHAMAR_LOGO_URL,
+  "storhamar hÃ¥ndball elite": STORHAMAR_LOGO_URL,
   "storhamar handball elite": STORHAMAR_LOGO_URL,
   "tertnes": TERTNES_LOGO_URL,
   "tertnes elite": TERTNES_LOGO_URL,
-  "tertnes håndball elite": TERTNES_LOGO_URL,
+  "tertnes hÃ¥ndball elite": TERTNES_LOGO_URL,
   "tertnes handball elite": TERTNES_LOGO_URL,
 };
 
@@ -270,7 +283,7 @@ function createStaticProfile(
   player: StaticRosterPlayer,
   team: StaticTeamConfig,
 ): ClawdbotPlayerProfile {
-  const playerStats = team.statsById[player.id];
+  const playerStats = loadTeamStats(team)[player.id];
 
   return {
     player: {
@@ -289,15 +302,39 @@ function createStaticProfile(
   };
 }
 
-const STATIC_PLAYER_PROFILES: Record<string, ClawdbotPlayerProfile> =
+function createStaticRosterProfile(
+  player: StaticRosterPlayer,
+  team: StaticTeamConfig,
+): ClawdbotPlayerProfile {
+  return {
+    player: {
+      id: player.id,
+      name: player.name,
+      imageUrl: player.imageUrl,
+      team: team.name,
+      position: player.position,
+      shirtNumber: player.shirtNumber,
+      season: DEFAULT_SEASON,
+      tournament: DEFAULT_TOURNAMENT,
+    },
+    seasonStats: {},
+    recentMatches: [],
+  };
+}
+
+const STATIC_PLAYER_INDEX: Record<
+  string,
+  { player: StaticRosterPlayer; team: StaticTeamConfig }
+> =
   Object.fromEntries(
     STATIC_TEAM_CONFIGS.flatMap((team) =>
-      team.roster.map((player) => [player.id, createStaticProfile(player, team)]),
+      team.roster.map((player) => [player.id, { player, team }]),
     ),
   );
 
 export function getStaticProfile(playerId: bigint): ClawdbotPlayerProfile | null {
-  return STATIC_PLAYER_PROFILES[playerId.toString()] ?? null;
+  const entry = STATIC_PLAYER_INDEX[playerId.toString()];
+  return entry ? createStaticProfile(entry.player, entry.team) : null;
 }
 
 function toBigInt(value: string | number | null | undefined, fallback = 0n) {
@@ -325,7 +362,7 @@ function slugify(value: string) {
 function mapPosition(position?: string | null): Position {
   const normalized = (position ?? "").toLowerCase();
 
-  if (normalized.includes("keeper") || normalized.includes("målvakt")) {
+  if (normalized.includes("keeper") || normalized.includes("mÃ¥lvakt")) {
     return Position.Keeper;
   }
 
@@ -335,7 +372,7 @@ function mapPosition(position?: string | null): Position {
 
   if (
     normalized.includes("kant") &&
-    (normalized.includes("høyre") || normalized.includes("hoyre"))
+    (normalized.includes("hÃ¸yre") || normalized.includes("hoyre"))
   ) {
     return Position.HoyreKant;
   }
@@ -497,7 +534,9 @@ export function mapClawdbotMatchStats(
 }
 
 export function getStaticPlayers(): Player[] {
-  return Object.values(STATIC_PLAYER_PROFILES).map(mapClawdbotPlayer);
+  return Object.values(STATIC_PLAYER_INDEX).map(({ player, team }) =>
+    mapClawdbotPlayer(createStaticRosterProfile(player, team)),
+  );
 }
 
 export function searchStaticPlayers(term: string): Player[] {
@@ -518,22 +557,16 @@ export function searchStaticPlayers(term: string): Player[] {
 }
 
 export function getStaticTeams(): Team[] {
-  const uniqueTeams = new Map<string, Team>();
+  return STATIC_TEAM_CONFIGS.map((team) => {
+    const id = stableTeamId(team.name);
 
-  for (const profile of Object.values(STATIC_PLAYER_PROFILES)) {
-    const name = profile.player.team;
-    if (!name) continue;
-
-    const id = stableTeamId(name);
-    uniqueTeams.set(id.toString(), {
+    return {
       id,
-      name,
-      slug: slugify(name),
-      logoUrl: getStaticTeamLogoUrl(name),
-    });
-  }
-
-  return Array.from(uniqueTeams.values());
+      name: team.name,
+      slug: slugify(team.name),
+      logoUrl: getStaticTeamLogoUrl(team.name),
+    };
+  });
 }
 
 export function getStaticTeam(id: bigint): Team | null {
