@@ -4,6 +4,7 @@ import fjellhammerRosterData from "../data/fjellhammerRoster.json";
 import folloRosterData from "../data/folloRoster.json";
 import fredrikstadRosterData from "../data/fredrikstadRoster.json";
 import gjerpenRosterData from "../data/gjerpenRoster.json";
+import haslumRosterData from "../data/haslumRoster.json";
 import larvikRosterData from "../data/larvikRoster.json";
 import moldeRosterData from "../data/moldeRoster.json";
 import solaRosterData from "../data/solaRoster.json";
@@ -35,6 +36,8 @@ const FOLLO_LOGO_URL =
 const FREDRIKSTAD_LOGO_URL = "/assets/team-logos/fredrikstad.svg";
 const GJERPEN_LOGO_URL =
   "https://gjerpenhandball.no/wp-content/uploads/sites/36/2019/09/gjerpen.svg";
+const HASLUM_LOGO_URL =
+  "https://haslum.topphandball.no/wp-content/uploads/sites/30/2021/07/haslum.svg";
 const LARVIK_LOGO_URL =
   "https://www.larvikhk.no/wp-content/uploads/sites/7/2019/08/larvikhk.svg";
 const MOLDE_LOGO_URL =
@@ -50,6 +53,9 @@ const DEFAULT_TOURNAMENT = "REMA 1000-ligaen kvinner";
 function normalizeTeamLookup(value?: string | null) {
   return (value ?? "")
     .toLowerCase()
+    .replace(/\u00e6/g, "ae")
+    .replace(/\u00f8/g, "o")
+    .replace(/\u00e5/g, "a")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
 }
@@ -225,7 +231,13 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     statsUrl: "/data/player-stats/gjerpenPlayerStats.json",
   },
   {
-    name: "ByÃ¥sen",
+    name: "Haslum",
+    logoUrl: HASLUM_LOGO_URL,
+    roster: haslumRosterData as StaticRosterPlayer[],
+    statsUrl: "/data/player-stats/haslumPlayerStats.json",
+  },
+  {
+    name: "Byåsen",
     logoUrl: BYAASEN_LOGO_URL,
     roster: byaasenRosterData as StaticRosterPlayer[],
     statsUrl: "/data/player-stats/byaasenPlayerStats.json",
@@ -264,14 +276,14 @@ const STATIC_TEAM_LOGO_ALIASES: Record<string, string> = {
   "follo": FOLLO_LOGO_URL,
   "follo damer": FOLLO_LOGO_URL,
   "follo hk damer": FOLLO_LOGO_URL,
+  "haslum": HASLUM_LOGO_URL,
+  "haslum topphandballforening": HASLUM_LOGO_URL,
   "sola": SOLA_LOGO_URL,
   "sola hk": SOLA_LOGO_URL,
   "storhamar": STORHAMAR_LOGO_URL,
-  "storhamar hÃ¥ndball elite": STORHAMAR_LOGO_URL,
   "storhamar handball elite": STORHAMAR_LOGO_URL,
   "tertnes": TERTNES_LOGO_URL,
   "tertnes elite": TERTNES_LOGO_URL,
-  "tertnes hÃ¥ndball elite": TERTNES_LOGO_URL,
   "tertnes handball elite": TERTNES_LOGO_URL,
 };
 
@@ -321,12 +333,11 @@ function createStaticRosterProfile(
 const STATIC_PLAYER_INDEX: Record<
   string,
   { player: StaticRosterPlayer; team: StaticTeamConfig }
-> =
-  Object.fromEntries(
-    STATIC_TEAM_CONFIGS.flatMap((team) =>
-      team.roster.map((player) => [player.id, { player, team }]),
-    ),
-  );
+> = Object.fromEntries(
+  STATIC_TEAM_CONFIGS.flatMap((team) =>
+    team.roster.map((player) => [player.id, { player, team }]),
+  ),
+);
 
 export function getStaticProfile(playerId: bigint): ClawdbotPlayerProfile | null {
   const entry = STATIC_PLAYER_INDEX[playerId.toString()];
@@ -474,7 +485,8 @@ export function mapClawdbotSeasonStats(
     totalShots: toOptionalBigInt(
       goalkeeper?.shotsAgainst ?? profile.seasonStats.shots,
     ),
-    shootingPercent: goalkeeper?.savePercentage ?? profile.seasonStats.shotPercentage ?? undefined,
+    shootingPercent:
+      goalkeeper?.savePercentage ?? profile.seasonStats.shotPercentage ?? undefined,
     totalAssists: toOptionalBigInt(profile.seasonStats.assists),
     technicalFaults: toOptionalBigInt(profile.seasonStats.technicalErrors),
     totalTwoMin: toOptionalBigInt(profile.seasonStats.suspensions),
