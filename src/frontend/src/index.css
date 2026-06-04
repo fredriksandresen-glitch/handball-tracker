@@ -297,4 +297,20 @@
     background-position: center;
     background-size: contain;
   }
+
+  a.inline-flex[href$="/team/699561"] > svg:first-child,
+  a.inline-flex[href$="/team/699561"] > span:first-child {
+    display: none;
+  }
+
+  a.inline-flex[href$="/team/699561"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("https://tertneshandball.admin.topphandball.no/wp-content/uploads/sites/12/2022/10/Tertnes-2.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
 }
