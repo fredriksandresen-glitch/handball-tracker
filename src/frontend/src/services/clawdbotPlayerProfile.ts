@@ -7,6 +7,7 @@ import gjerpenRosterData from "../data/gjerpenRoster.json";
 import haslumRosterData from "../data/haslumRoster.json";
 import larvikRosterData from "../data/larvikRoster.json";
 import moldeRosterData from "../data/moldeRoster.json";
+import oppsalRosterData from "../data/oppsalRoster.json";
 import solaRosterData from "../data/solaRoster.json";
 import storhamarRosterData from "../data/storhamarRoster.json";
 import tertnesRosterData from "../data/tertnesRoster.json";
@@ -25,6 +26,8 @@ const CLAWDBOT_API_BASE =
   import.meta.env.VITE_CLAWDBOT_API_BASE ?? DEFAULT_CLAWDBOT_API_BASE;
 
 const DEFAULT_SEASON = "2526";
+const DEFAULT_TOURNAMENT = "REMA 1000-ligaen kvinner";
+
 const BYAASEN_LOGO_URL =
   "https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg";
 const FANA_LOGO_URL =
@@ -42,23 +45,14 @@ const LARVIK_LOGO_URL =
   "https://www.larvikhk.no/wp-content/uploads/sites/7/2019/08/larvikhk.svg";
 const MOLDE_LOGO_URL =
   "https://www.handballjentan.no/wp-content/uploads/sites/8/2021/07/MOLDE-ELITE-LOGO.svg";
+const OPPSAL_LOGO_URL =
+  "https://www.oppsalhandball.no/wp-content/uploads/sites/38/2019/06/oppsal.svg";
 const SOLA_LOGO_URL =
   "https://sola-hk.no/wp-content/uploads/sites/10/2022/10/SOLA-GUL.svg";
 const STORHAMAR_LOGO_URL =
   "https://storhamar.topphandball.no/wp-content/uploads/sites/11/2022/10/Storhamar.svg";
 const TERTNES_LOGO_URL =
   "https://tertneshandball.admin.topphandball.no/wp-content/uploads/sites/12/2022/10/Tertnes-2.svg";
-const DEFAULT_TOURNAMENT = "REMA 1000-ligaen kvinner";
-
-function normalizeTeamLookup(value?: string | null) {
-  return (value ?? "")
-    .toLowerCase()
-    .replace(/\u00e6/g, "ae")
-    .replace(/\u00f8/g, "o")
-    .replace(/\u00e5/g, "a")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
 
 type ClawdbotPlayer = {
   id: string;
@@ -170,29 +164,6 @@ type StaticTeamConfig = {
   statsById?: Record<string, StaticPlayerStats>;
 };
 
-function statsById(stats: StaticPlayerStats[]) {
-  return Object.fromEntries(stats.map((item) => [item.playerId, item]));
-}
-
-function loadTeamStats(team: StaticTeamConfig) {
-  if (team.statsById) return team.statsById;
-  if (typeof XMLHttpRequest === "undefined") return {};
-
-  try {
-    const request = new XMLHttpRequest();
-    request.open("GET", team.statsUrl, false);
-    request.send(null);
-
-    if (request.status < 200 || request.status >= 300) return {};
-
-    const parsed = JSON.parse(request.responseText) as StaticPlayerStats[];
-    team.statsById = statsById(parsed);
-    return team.statsById;
-  } catch {
-    return {};
-  }
-}
-
 const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
   {
     name: "Fjellhammer",
@@ -249,6 +220,12 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     statsUrl: "/data/player-stats/moldePlayerStats.json",
   },
   {
+    name: "Oppsal",
+    logoUrl: OPPSAL_LOGO_URL,
+    roster: oppsalRosterData as StaticRosterPlayer[],
+    statsUrl: "/data/player-stats/oppsalPlayerStats.json",
+  },
+  {
     name: "Sola",
     logoUrl: SOLA_LOGO_URL,
     roster: solaRosterData as StaticRosterPlayer[],
@@ -268,24 +245,122 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
   },
 ];
 
+function normalizeTeamLookup(value?: string | null) {
+  return (value ?? "")
+    .toLowerCase()
+    .replace(/\u00e6/g, "ae")
+    .replace(/\u00f8/g, "o")
+    .replace(/\u00e5/g, "a")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function stableTeamId(team?: string | null) {
+  const source = team || "unknown-team";
+  let hash = 0;
+  for (let i = 0; i < source.length; i += 1) {
+    hash = (hash * 31 + source.charCodeAt(i)) % 1_000_000;
+  }
+  return BigInt(hash || 1);
+}
+
+function toBigInt(value: string | number | null | undefined, fallback = 0n) {
+  if (value === null || value === undefined || value === "") return fallback;
+  try {
+    return BigInt(value);
+  } catch {
+    return fallback;
+  }
+}
+
+function toOptionalBigInt(value: number | null | undefined) {
+  return value === null || value === undefined ? undefined : BigInt(value);
+}
+
+function statsById(stats: StaticPlayerStats[]) {
+  return Object.fromEntries(stats.map((item) => [item.playerId, item]));
+}
+
+function loadTeamStats(team: StaticTeamConfig) {
+  if (team.statsById) return team.statsById;
+  if (typeof XMLHttpRequest === "undefined") return {};
+
+  try {
+    const request = new XMLHttpRequest();
+    request.open("GET", team.statsUrl, false);
+    request.send(null);
+
+    if (request.status < 200 || request.status >= 300) return {};
+
+    const parsed = JSON.parse(request.responseText) as StaticPlayerStats[];
+    team.statsById = statsById(parsed);
+    return team.statsById;
+  } catch {
+    return {};
+  }
+}
+
 const STATIC_TEAM_LOGOS = Object.fromEntries(
   STATIC_TEAM_CONFIGS.map((team) => [normalizeTeamLookup(team.name), team.logoUrl]),
 );
 
 const STATIC_TEAM_LOGO_ALIASES: Record<string, string> = {
-  "follo": FOLLO_LOGO_URL,
+  follo: FOLLO_LOGO_URL,
   "follo damer": FOLLO_LOGO_URL,
   "follo hk damer": FOLLO_LOGO_URL,
-  "haslum": HASLUM_LOGO_URL,
+  haslum: HASLUM_LOGO_URL,
   "haslum topphandballforening": HASLUM_LOGO_URL,
-  "sola": SOLA_LOGO_URL,
+  oppsal: OPPSAL_LOGO_URL,
+  "oppsal håndball": OPPSAL_LOGO_URL,
+  "oppsal handball": OPPSAL_LOGO_URL,
+  sola: SOLA_LOGO_URL,
   "sola hk": SOLA_LOGO_URL,
-  "storhamar": STORHAMAR_LOGO_URL,
+  storhamar: STORHAMAR_LOGO_URL,
+  "storhamar håndball elite": STORHAMAR_LOGO_URL,
   "storhamar handball elite": STORHAMAR_LOGO_URL,
-  "tertnes": TERTNES_LOGO_URL,
+  tertnes: TERTNES_LOGO_URL,
   "tertnes elite": TERTNES_LOGO_URL,
+  "tertnes håndball elite": TERTNES_LOGO_URL,
   "tertnes handball elite": TERTNES_LOGO_URL,
 };
+
+function mapPosition(position?: string | null): Position {
+  const normalized = normalizeTeamLookup(position);
+
+  if (
+    normalized.includes("keeper") ||
+    normalized.includes("malvakt") ||
+    normalized.includes("mlvakt")
+  ) {
+    return Position.Keeper;
+  }
+
+  if (normalized.includes("kant") && normalized.includes("venstre")) {
+    return Position.VenstreKant;
+  }
+
+  if (
+    normalized.includes("kant") &&
+    (normalized.includes("hoyre") || normalized.includes("hyre"))
+  ) {
+    return Position.HoyreKant;
+  }
+
+  if (normalized.includes("linje") || normalized.includes("strek")) {
+    return Position.Linje;
+  }
+
+  return Position.Bakspiller;
+}
 
 function createStaticProfile(
   player: StaticRosterPlayer,
@@ -342,66 +417,6 @@ const STATIC_PLAYER_INDEX: Record<
 export function getStaticProfile(playerId: bigint): ClawdbotPlayerProfile | null {
   const entry = STATIC_PLAYER_INDEX[playerId.toString()];
   return entry ? createStaticProfile(entry.player, entry.team) : null;
-}
-
-function toBigInt(value: string | number | null | undefined, fallback = 0n) {
-  if (value === null || value === undefined || value === "") return fallback;
-  try {
-    return BigInt(value);
-  } catch {
-    return fallback;
-  }
-}
-
-function toOptionalBigInt(value: number | null | undefined) {
-  return value === null || value === undefined ? undefined : BigInt(value);
-}
-
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
-function mapPosition(position?: string | null): Position {
-  const normalized = normalizeTeamLookup(position);
-
-  if (
-    normalized.includes("keeper") ||
-    normalized.includes("malvakt") ||
-    normalized.includes("mlvakt")
-  ) {
-    return Position.Keeper;
-  }
-
-  if (normalized.includes("kant") && normalized.includes("venstre")) {
-    return Position.VenstreKant;
-  }
-
-  if (
-    normalized.includes("kant") &&
-    (normalized.includes("hoyre") || normalized.includes("hyre"))
-  ) {
-    return Position.HoyreKant;
-  }
-
-  if (normalized.includes("linje") || normalized.includes("strek")) {
-    return Position.Linje;
-  }
-
-  return Position.Bakspiller;
-}
-
-function stableTeamId(team?: string | null) {
-  const source = team || "unknown-team";
-  let hash = 0;
-  for (let i = 0; i < source.length; i += 1) {
-    hash = (hash * 31 + source.charCodeAt(i)) % 1_000_000;
-  }
-  return BigInt(hash || 1);
 }
 
 export function getStaticTeamLogoUrl(team?: string | null) {
