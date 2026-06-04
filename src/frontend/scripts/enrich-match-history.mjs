@@ -18,6 +18,7 @@ const teams = [
   { name: "Molde", id: "775789", stats: "moldePlayerStats.json" },
   { name: "Sola", id: "223983", stats: "solaPlayerStats.json" },
   { name: "Follo Damer", id: "583889", stats: "folloPlayerStats.json" },
+  { name: "Storhamar", id: "746223", stats: "storhamarPlayerStats.json" },
 ];
 
 function stripHtml(value = "") {
@@ -231,12 +232,13 @@ async function enrichTeam(team, matchStatsCache) {
   console.log(`Full match history: ${team.name}, ${matches.length} league matches`);
 
   for (const match of matches) {
-    if (!matchStatsCache.has(match.matchId)) {
-      matchStatsCache.set(match.matchId, await parseMatchStats(match));
+    const cacheKey = `${team.id}:${match.matchId}`;
+    if (!matchStatsCache.has(cacheKey)) {
+      matchStatsCache.set(cacheKey, await parseMatchStats(match));
       await new Promise((resolve) => setTimeout(resolve, 120));
     }
 
-    const rows = matchStatsCache.get(match.matchId);
+    const rows = matchStatsCache.get(cacheKey);
     for (const [playerId, list] of histories.entries()) {
       const entry = rows.get(playerId);
       if (entry) list.push(entry);
