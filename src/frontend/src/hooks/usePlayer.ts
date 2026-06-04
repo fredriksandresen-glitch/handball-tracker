@@ -1,5 +1,5 @@
 import { useActor } from "@caffeineai/core-infrastructure";
-import { useQuery } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { createActor } from "../backend";
 import {
@@ -90,52 +90,48 @@ export function usePlayerSeasonStats(playerId: bigint) {
   });
 }
 
-// Batch hook: returns a map of playerId -> PlayerMatchStats[]
-// Uses individual usePlayerMatchStats calls to leverage query cache
-function useSingleMatchStats(id: bigint, enabled: boolean) {
-  const { actor, isFetching } = useActor(createActor);
-  const staticProfile = getStaticProfile(id);
-
-  return useQuery<PlayerMatchStats[]>({
-    queryKey: ["playerMatchStats", id.toString()],
-    queryFn: async () => {
-      if (staticProfile) return mapClawdbotMatchStats(staticProfile);
-
-      const clawdbotProfile = await fetchClawdbotPlayerProfile(id).catch(() => null);
-      if (clawdbotProfile) return mapClawdbotMatchStats(clawdbotProfile);
-
-      if (!actor) return [];
-      return actor.getPlayerMatchStats(id);
-    },
-    enabled: enabled && (!isFetching || !!staticProfile),
-    initialData: staticProfile ? mapClawdbotMatchStats(staticProfile) : undefined,
-    staleTime: staticProfile ? STATIC_STALE_TIME : 60_000,
-    gcTime: STATIC_GC_TIME,
-  });
-}
-
 export function usePlayerMatchStatsBatch(
   ids: bigint[],
 ): Record<string, PlayerMatchStats[]> {
-  const id0 = ids[0] ?? 0n;
-  const id1 = ids[1] ?? 0n;
-  const id2 = ids[2] ?? 0n;
-  const id3 = ids[3] ?? 0n;
-  const id4 = ids[4] ?? 0n;
+  const { actor, isFetching } = useActor(createActor);
+  const uniqueIds = useMemo(
+    () => Array.from(new Set(ids.map((id) => id.toString()))).map(BigInt),
+    [ids],
+  );
 
-  const r0 = useSingleMatchStats(id0, ids.length > 0);
-  const r1 = useSingleMatchStats(id1, ids.length > 1);
-  const r2 = useSingleMatchStats(id2, ids.length > 2);
-  const r3 = useSingleMatchStats(id3, ids.length > 3);
-  const r4 = useSingleMatchStats(id4, ids.length > 4);
+  const results = useQueries({
+    queries: uniqueIds.map((id) => {
+      const staticProfile = getStaticProfile(id);
+
+      return {
+        queryKey: ["playerMatchStats", id.toString()],
+        queryFn: async () => {
+          if (staticProfile) return mapClawdbotMatchStats(staticProfile);
+
+          const clawdbotProfile = await fetchClawdbotPlayerProfile(id).catch(
+            () => null,
+          );
+          if (clawdbotProfile) return mapClawdbotMatchStats(clawdbotProfile);
+
+          if (!actor) return [];
+          return actor.getPlayerMatchStats(id);
+        },
+        enabled: !isFetching || !!staticProfile,
+        initialData: staticProfile
+          ? mapClawdbotMatchStats(staticProfile)
+          : undefined,
+        staleTime: staticProfile ? STATIC_STALE_TIME : 60_000,
+        gcTime: STATIC_GC_TIME,
+      };
+    }),
+  });
 
   return useMemo(() => {
     const map: Record<string, PlayerMatchStats[]> = {};
-    const results = [r0, r1, r2, r3, r4];
-    for (let i = 0; i < ids.length && i < 5; i++) {
-      map[ids[i].toString()] = results[i].data ?? [];
+    for (let i = 0; i < uniqueIds.length; i++) {
+      map[uniqueIds[i].toString()] =
+        (results[i].data as PlayerMatchStats[] | undefined) ?? [];
     }
     return map;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ids, r0.data, r1.data, r2.data, r3.data, r4.data]);
+  }, [uniqueIds, results]);
 }
