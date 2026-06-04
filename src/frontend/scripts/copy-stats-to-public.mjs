@@ -6,6 +6,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const frontendRoot = path.resolve(__dirname, "..");
 const dataRoot = path.join(frontendRoot, "src", "data");
 const publicDataRoot = path.join(frontendRoot, "public", "data");
+const publicPlayerStatsRoot = path.join(publicDataRoot, "player-stats");
 
 const statFiles = [
   "fjellhammerPlayerStats.json",
@@ -23,9 +24,12 @@ const statFiles = [
 ];
 
 await mkdir(publicDataRoot, { recursive: true });
+await mkdir(publicPlayerStatsRoot, { recursive: true });
 
 for (const file of statFiles) {
-  await copyFile(path.join(dataRoot, file), path.join(publicDataRoot, file));
+  const source = path.join(dataRoot, file);
+  await copyFile(source, path.join(publicDataRoot, file));
+  await copyFile(source, path.join(publicPlayerStatsRoot, file));
 }
 
-console.log(`Copied ${statFiles.length} player stat files to public/data.`);
+console.log(`Copied ${statFiles.length} player stat files to public/data and public/data/player-stats.`);
