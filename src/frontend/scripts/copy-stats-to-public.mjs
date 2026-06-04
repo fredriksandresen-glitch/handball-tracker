@@ -13,6 +13,7 @@ const statFiles = [
   "fanaPlayerStats.json",
   "fredrikstadPlayerStats.json",
   "gjerpenPlayerStats.json",
+  "haslumPlayerStats.json",
   "byaasenPlayerStats.json",
   "moldePlayerStats.json",
   "solaPlayerStats.json",
