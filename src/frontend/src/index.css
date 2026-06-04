@@ -329,4 +329,20 @@
     background-position: center;
     background-size: contain;
   }
+
+  a.inline-flex[href$="/team/587503"] > svg:first-child,
+  a.inline-flex[href$="/team/587503"] > span:first-child {
+    display: none;
+  }
+
+  a.inline-flex[href$="/team/587503"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("https://www.oppsalhandball.no/wp-content/uploads/sites/38/2019/06/oppsal.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
 }
