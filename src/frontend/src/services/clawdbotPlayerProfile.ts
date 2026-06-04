@@ -18,6 +18,8 @@ import solaPlayerStatsData from "../data/solaPlayerStats.json";
 import solaRosterData from "../data/solaRoster.json";
 import storhamarPlayerStatsData from "../data/storhamarPlayerStats.json";
 import storhamarRosterData from "../data/storhamarRoster.json";
+import tertnesPlayerStatsData from "../data/tertnesPlayerStats.json";
+import tertnesRosterData from "../data/tertnesRoster.json";
 import { Position } from "../types/handball";
 import type {
   Player,
@@ -52,6 +54,8 @@ const SOLA_LOGO_URL =
   "https://sola-hk.no/wp-content/uploads/sites/10/2022/10/SOLA-GUL.svg";
 const STORHAMAR_LOGO_URL =
   "https://storhamar.topphandball.no/wp-content/uploads/sites/11/2022/10/Storhamar.svg";
+const TERTNES_LOGO_URL =
+  "https://tertneshandball.admin.topphandball.no/wp-content/uploads/sites/12/2022/10/Tertnes-2.svg";
 const DEFAULT_TOURNAMENT = "REMA 1000-ligaen kvinner";
 
 function normalizeTeamLookup(value?: string | null) {
@@ -235,6 +239,12 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     roster: storhamarRosterData as StaticRosterPlayer[],
     statsById: statsById(storhamarPlayerStatsData as StaticPlayerStats[]),
   },
+  {
+    name: "Tertnes",
+    logoUrl: TERTNES_LOGO_URL,
+    roster: tertnesRosterData as StaticRosterPlayer[],
+    statsById: statsById(tertnesPlayerStatsData as StaticPlayerStats[]),
+  },
 ];
 
 const STATIC_TEAM_LOGOS = Object.fromEntries(
@@ -250,6 +260,10 @@ const STATIC_TEAM_LOGO_ALIASES: Record<string, string> = {
   "storhamar": STORHAMAR_LOGO_URL,
   "storhamar håndball elite": STORHAMAR_LOGO_URL,
   "storhamar handball elite": STORHAMAR_LOGO_URL,
+  "tertnes": TERTNES_LOGO_URL,
+  "tertnes elite": TERTNES_LOGO_URL,
+  "tertnes håndball elite": TERTNES_LOGO_URL,
+  "tertnes handball elite": TERTNES_LOGO_URL,
 };
 
 function createStaticProfile(
