@@ -16,6 +16,8 @@ import moldePlayerStatsData from "../data/moldePlayerStats.json";
 import moldeRosterData from "../data/moldeRoster.json";
 import solaPlayerStatsData from "../data/solaPlayerStats.json";
 import solaRosterData from "../data/solaRoster.json";
+import storhamarPlayerStatsData from "../data/storhamarPlayerStats.json";
+import storhamarRosterData from "../data/storhamarRoster.json";
 import { Position } from "../types/handball";
 import type {
   Player,
@@ -48,6 +50,8 @@ const MOLDE_LOGO_URL =
   "https://www.handballjentan.no/wp-content/uploads/sites/8/2021/07/MOLDE-ELITE-LOGO.svg";
 const SOLA_LOGO_URL =
   "https://sola-hk.no/wp-content/uploads/sites/10/2022/10/SOLA-GUL.svg";
+const STORHAMAR_LOGO_URL =
+  "https://storhamar.topphandball.no/wp-content/uploads/sites/11/2022/10/Storhamar.svg";
 const DEFAULT_TOURNAMENT = "REMA 1000-ligaen kvinner";
 
 function normalizeTeamLookup(value?: string | null) {
@@ -225,6 +229,12 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     roster: solaRosterData as StaticRosterPlayer[],
     statsById: statsById(solaPlayerStatsData as StaticPlayerStats[]),
   },
+  {
+    name: "Storhamar",
+    logoUrl: STORHAMAR_LOGO_URL,
+    roster: storhamarRosterData as StaticRosterPlayer[],
+    statsById: statsById(storhamarPlayerStatsData as StaticPlayerStats[]),
+  },
 ];
 
 const STATIC_TEAM_LOGOS = Object.fromEntries(
@@ -237,6 +247,9 @@ const STATIC_TEAM_LOGO_ALIASES: Record<string, string> = {
   "follo hk damer": FOLLO_LOGO_URL,
   "sola": SOLA_LOGO_URL,
   "sola hk": SOLA_LOGO_URL,
+  "storhamar": STORHAMAR_LOGO_URL,
+  "storhamar håndball elite": STORHAMAR_LOGO_URL,
+  "storhamar handball elite": STORHAMAR_LOGO_URL,
 };
 
 function createStaticProfile(
