@@ -168,10 +168,6 @@ function statsById(stats: StaticPlayerStats[]) {
   return Object.fromEntries(stats.map((item) => [item.playerId, item]));
 }
 
-function assetUrl(path: string) {
-  return new URL(path, import.meta.url).href;
-}
-
 function loadTeamStats(team: StaticTeamConfig) {
   if (team.statsById) return team.statsById;
   if (typeof XMLHttpRequest === "undefined") return {};
@@ -196,67 +192,67 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     name: "Fjellhammer",
     logoUrl: FJELLHAMMER_LOGO_URL,
     roster: fjellhammerRosterData as StaticRosterPlayer[],
-    statsUrl: assetUrl("../data/fjellhammerPlayerStats.json"),
+    statsUrl: "/data/player-stats/fjellhammerPlayerStats.json",
   },
   {
     name: "Larvik",
     logoUrl: LARVIK_LOGO_URL,
     roster: larvikRosterData as StaticRosterPlayer[],
-    statsUrl: assetUrl("../data/larvikPlayerStats.json"),
+    statsUrl: "/data/player-stats/larvikPlayerStats.json",
   },
   {
     name: "Fana",
     logoUrl: FANA_LOGO_URL,
     roster: fanaRosterData as StaticRosterPlayer[],
-    statsUrl: assetUrl("../data/fanaPlayerStats.json"),
+    statsUrl: "/data/player-stats/fanaPlayerStats.json",
   },
   {
     name: "Follo Damer",
     logoUrl: FOLLO_LOGO_URL,
     roster: folloRosterData as StaticRosterPlayer[],
-    statsUrl: assetUrl("../data/folloPlayerStats.json"),
+    statsUrl: "/data/player-stats/folloPlayerStats.json",
   },
   {
     name: "Fredrikstad",
     logoUrl: FREDRIKSTAD_LOGO_URL,
     roster: fredrikstadRosterData as StaticRosterPlayer[],
-    statsUrl: assetUrl("../data/fredrikstadPlayerStats.json"),
+    statsUrl: "/data/player-stats/fredrikstadPlayerStats.json",
   },
   {
     name: "Gjerpen",
     logoUrl: GJERPEN_LOGO_URL,
     roster: gjerpenRosterData as StaticRosterPlayer[],
-    statsUrl: assetUrl("../data/gjerpenPlayerStats.json"),
+    statsUrl: "/data/player-stats/gjerpenPlayerStats.json",
   },
   {
     name: "ByÃ¥sen",
     logoUrl: BYAASEN_LOGO_URL,
     roster: byaasenRosterData as StaticRosterPlayer[],
-    statsUrl: assetUrl("../data/byaasenPlayerStats.json"),
+    statsUrl: "/data/player-stats/byaasenPlayerStats.json",
   },
   {
     name: "Molde",
     logoUrl: MOLDE_LOGO_URL,
     roster: moldeRosterData as StaticRosterPlayer[],
-    statsUrl: assetUrl("../data/moldePlayerStats.json"),
+    statsUrl: "/data/player-stats/moldePlayerStats.json",
   },
   {
     name: "Sola",
     logoUrl: SOLA_LOGO_URL,
     roster: solaRosterData as StaticRosterPlayer[],
-    statsUrl: assetUrl("../data/solaPlayerStats.json"),
+    statsUrl: "/data/player-stats/solaPlayerStats.json",
   },
   {
     name: "Storhamar",
     logoUrl: STORHAMAR_LOGO_URL,
     roster: storhamarRosterData as StaticRosterPlayer[],
-    statsUrl: assetUrl("../data/storhamarPlayerStats.json"),
+    statsUrl: "/data/player-stats/storhamarPlayerStats.json",
   },
   {
     name: "Tertnes",
     logoUrl: TERTNES_LOGO_URL,
     roster: tertnesRosterData as StaticRosterPlayer[],
-    statsUrl: assetUrl("../data/tertnesPlayerStats.json"),
+    statsUrl: "/data/player-stats/tertnesPlayerStats.json",
   },
 ];
 
@@ -360,9 +356,13 @@ function slugify(value: string) {
 }
 
 function mapPosition(position?: string | null): Position {
-  const normalized = (position ?? "").toLowerCase();
+  const normalized = normalizeTeamLookup(position);
 
-  if (normalized.includes("keeper") || normalized.includes("mÃ¥lvakt")) {
+  if (
+    normalized.includes("keeper") ||
+    normalized.includes("malvakt") ||
+    normalized.includes("mlvakt")
+  ) {
     return Position.Keeper;
   }
 
@@ -372,7 +372,7 @@ function mapPosition(position?: string | null): Position {
 
   if (
     normalized.includes("kant") &&
-    (normalized.includes("hÃ¸yre") || normalized.includes("hoyre"))
+    (normalized.includes("hoyre") || normalized.includes("hyre"))
   ) {
     return Position.HoyreKant;
   }
