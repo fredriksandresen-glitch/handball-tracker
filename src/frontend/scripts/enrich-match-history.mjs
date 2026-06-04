@@ -17,6 +17,7 @@ const teams = [
   { name: "Haslum", id: "928836", stats: "haslumPlayerStats.json" },
   { name: "Byåsen", id: "454116", stats: "byaasenPlayerStats.json" },
   { name: "Molde", id: "775789", stats: "moldePlayerStats.json" },
+  { name: "Oppsal", id: "441915", stats: "oppsalPlayerStats.json" },
   { name: "Sola", id: "223983", stats: "solaPlayerStats.json" },
   { name: "Follo Damer", id: "583889", stats: "folloPlayerStats.json" },
   { name: "Storhamar", id: "746223", stats: "storhamarPlayerStats.json" },
@@ -48,12 +49,23 @@ function toInt(value) {
   return Math.round(toNumber(value));
 }
 
+function deriveGoals(goalsValue, shotsValue, percentageValue) {
+  const goals = toInt(goalsValue);
+  const shots = toInt(shotsValue);
+  const percentage = toNumber(percentageValue);
+
+  if (goals > 0 || shots === 0 || percentage === 0) return goals;
+  return Math.round((shots * percentage) / 100);
+}
+
 function round1(value) {
   return Math.round(value * 10) / 10;
 }
 
 function parseDate(value) {
-  const [day, month, year] = stripHtml(value).split("/").map((part) => part.trim().padStart(2, "0"));
+  const [day, month, year] = stripHtml(value)
+    .split("/")
+    .map((part) => part.trim().padStart(2, "0"));
   return `${year}-${month}-${day}`;
 }
 
@@ -142,21 +154,28 @@ async function parseMatchStats(match) {
       cells.set(stripHtml(cell.groups.title), stripHtml(cell.groups.value));
     }
 
+    const totalShots = cells.get("Total skudd");
+    const totalShotPercentage = cells.get("Total uttelling");
+    const fieldShots = cells.get("Spillerskudd");
+    const fieldShotPercentage = cells.get("Uttelling spill");
+    const sevenMeterShots = cells.get("Skudd 7m");
+    const sevenMeterShotPercentage = cells.get("Uttelling 7m");
     const isKeeper = cells.has("Redninger") || cells.has("Redningsprosent");
+
     const entry = {
       matchId: match.matchId,
       date: match.date,
       opponent: match.opponent,
       homeAway: match.homeAway,
-      goals: toInt(cells.get("Total mål") ?? cells.get("Mål")),
-      shots: toInt(cells.get("Total skudd")),
-      shotPercentage: toNumber(cells.get("Total uttelling")),
-      fieldGoals: toInt(cells.get("Spillermål")),
-      fieldShots: toInt(cells.get("Spillerskudd")),
-      fieldShotPercentage: toNumber(cells.get("Uttelling spill")),
-      sevenMeterGoals: toInt(cells.get("Mål 7m")),
-      sevenMeterShots: toInt(cells.get("Skudd 7m")),
-      sevenMeterShotPercentage: toNumber(cells.get("Uttelling 7m")),
+      goals: deriveGoals(cells.get("Total mål") ?? cells.get("Mål"), totalShots, totalShotPercentage),
+      shots: toInt(totalShots),
+      shotPercentage: toNumber(totalShotPercentage),
+      fieldGoals: deriveGoals(cells.get("Spillermål"), fieldShots, fieldShotPercentage),
+      fieldShots: toInt(fieldShots),
+      fieldShotPercentage: toNumber(fieldShotPercentage),
+      sevenMeterGoals: deriveGoals(cells.get("Mål 7m"), sevenMeterShots, sevenMeterShotPercentage),
+      sevenMeterShots: toInt(sevenMeterShots),
+      sevenMeterShotPercentage: toNumber(sevenMeterShotPercentage),
       assists: toInt(cells.get("Assist")),
       technicalErrors: toInt(cells.get("Teknisk feil")),
       causedSevenMeters: toInt(cells.get("Forårsaket 7m")),
@@ -209,8 +228,7 @@ function aggregateSeason(row) {
   const shotsAgainst = sum("shotsAgainst");
   if (shotsAgainst > 0 || row.goalkeeperStats) {
     const goalsConceded = sum("goalsConceded");
-    const savePercentage =
-      shotsAgainst > 0 ? round1((saves / shotsAgainst) * 100) : 0;
+    const savePercentage = shotsAgainst > 0 ? round1((saves / shotsAgainst) * 100) : 0;
 
     row.seasonStats.shots = shotsAgainst;
     row.seasonStats.shotPercentage = savePercentage;
@@ -225,9 +243,7 @@ function aggregateSeason(row) {
 
 async function enrichTeam(team, matchStatsCache) {
   const statsPath = path.join(dataRoot, team.stats);
-  const statsRows = JSON.parse(
-    (await readFile(statsPath, "utf8")).replace(/^\uFEFF/, ""),
-  );
+  const statsRows = JSON.parse((await readFile(statsPath, "utf8")).replace(/^\uFEFF/, ""));
   const histories = new Map(statsRows.map((row) => [String(row.playerId), []]));
   const matches = await getTeamMatches(team);
 
