@@ -14,6 +14,7 @@ const teams = [
   { name: "Fana", id: "225474", stats: "fanaPlayerStats.json" },
   { name: "Fredrikstad", id: "441651", stats: "fredrikstadPlayerStats.json" },
   { name: "Gjerpen", id: "453373", stats: "gjerpenPlayerStats.json" },
+  { name: "Haslum", id: "928836", stats: "haslumPlayerStats.json" },
   { name: "Byåsen", id: "454116", stats: "byaasenPlayerStats.json" },
   { name: "Molde", id: "775789", stats: "moldePlayerStats.json" },
   { name: "Sola", id: "223983", stats: "solaPlayerStats.json" },
