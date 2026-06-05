@@ -151,9 +151,10 @@ function StandingRow({
 
 export default function TeamsPage() {
   const { data: teams, isLoading } = useTeams();
-  const teamByName = new Map(
-    (teams ?? []).map((team) => [normalizeName(team.name), team]),
-  );
+  const teamByName = new Map<string, Team>();
+  for (const team of teams ?? []) {
+    teamByName.set(normalizeName(team.name), team);
+  }
 
   return (
     <div className="space-y-5" data-ocid="teams-page">
