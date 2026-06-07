@@ -153,7 +153,7 @@ export function PlayerCard({
       >
         {nationalTeam?.countryCode === "FI" && (
           <div
-            className="absolute inset-0 z-0 opacity-30 bg-white"
+            className="absolute inset-0 z-0 bg-white"
             aria-hidden="true"
           >
             <div className="absolute inset-y-0 left-[31%] w-[16%] bg-[#002f6c]" />
@@ -178,7 +178,7 @@ export function PlayerCard({
 
         {nationalTeam && (
           <div className="absolute left-3 top-3 z-30 rounded-full border border-white/20 bg-black/35 px-2.5 py-1 text-[10px] font-display font-black uppercase tracking-wide text-white shadow-subtle backdrop-blur-md">
-            {nationalTeam.flagEmoji} {nationalTeam.countryCode}
+            {nationalTeam.countryCode}
           </div>
         )}
 
