@@ -3,7 +3,9 @@ import { useActor } from "@caffeineai/core-infrastructure";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { motion } from "motion/react";
+import { useState } from "react";
 import { createActor } from "../backend";
+import { getNationalTeamInfo } from "../data/nationalTeamPlayers";
 import { formatMatchDate, getCountdown } from "../services/handballService";
 import type { EnrichedPlayerMatchStats } from "../services/clawdbotPlayerProfile";
 import type { FeedEvent, Player, PlayerMatchStats } from "../types/handball";
@@ -131,6 +133,27 @@ function placeholderBg(teamName: string): string {
   return "bg-gradient-to-br from-muted to-muted/70";
 }
 
+function PlayerImageFallback({ name }: { name: string }) {
+  const initials = name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  return (
+    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-200 via-slate-300 to-slate-500 dark:from-slate-800 dark:via-slate-700 dark:to-slate-950">
+      <div className="relative flex flex-col items-center justify-center opacity-55">
+        <div className="size-16 rounded-full bg-white/45 dark:bg-white/15 border border-white/40" />
+        <div className="mt-2 h-24 w-28 rounded-t-full bg-white/35 dark:bg-white/12 border border-white/25" />
+        <span className="absolute bottom-8 font-display font-black text-5xl text-white/45 dark:text-white/20">
+          {initials}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 interface Props {
   player: Player;
   teamName: string;
@@ -151,6 +174,7 @@ export function FeedPlayerCard({
   index = 0,
 }: Props) {
   const navigate = useNavigate();
+  const [imageFailed, setImageFailed] = useState(false);
 
   const lastGoalEvent = feedEvents
     .filter((e) => e.eventType === FeedEventType.GoalsScored)
@@ -169,6 +193,7 @@ export function FeedPlayerCard({
   const latestGoals = keeper ? undefined : latestMatch?.goals ?? lastGoalEvent?.statValue;
   const latestSaves = keeper ? latestMatch?.saves : undefined;
   const latestSavePct = keeper ? latestMatch?.savePct : undefined;
+  const nationalTeam = getNationalTeamInfo(player.id);
 
   function handleCardClick() {
     navigate({ to: "/player/$id", params: { id: player.id.toString() } });
@@ -195,34 +220,47 @@ export function FeedPlayerCard({
       data-ocid="feed-player-card"
     >
       <div className={cn("relative w-full aspect-[3/4.45] sm:aspect-[3/4]", bgClass)}>
-        {player.imageUrl ? (
-          <img
-            src={player.imageUrl}
-            alt={player.name}
-            className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center opacity-20">
-            <span className="font-display font-black text-7xl text-white">
-              {player.name.charAt(0).toUpperCase()}
-            </span>
+        {nationalTeam?.countryCode === "FI" && (
+          <div
+            className="absolute inset-0 z-0 opacity-30 bg-white"
+            aria-hidden="true"
+          >
+            <div className="absolute inset-y-0 left-[31%] w-[16%] bg-[#002f6c]" />
+            <div className="absolute inset-x-0 top-[38%] h-[16%] bg-[#002f6c]" />
           </div>
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
+        {player.imageUrl && !imageFailed ? (
+          <img
+            src={player.imageUrl}
+            alt={player.name}
+            onError={() => setImageFailed(true)}
+            className="absolute inset-0 z-10 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <PlayerImageFallback name={player.name} />
+        )}
+
+        <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
+
+        {nationalTeam && (
+          <div className="absolute left-3 top-3 z-30 rounded-full border border-white/20 bg-black/35 px-2.5 py-1 text-[10px] font-display font-black uppercase tracking-wide text-white shadow-subtle backdrop-blur-md">
+            {nationalTeam.flagEmoji} {nationalTeam.countryCode}
+          </div>
+        )}
 
         <button
           type="button"
           onClick={handleUnfollow}
           disabled={isUnfollowLoading}
           aria-label="Slutt å følge"
-          className="absolute top-2.5 right-2.5 size-8 sm:size-7 rounded-full bg-black/50 backdrop-blur-sm border border-white/25 flex items-center justify-center text-white/80 hover:bg-destructive/70 hover:text-white hover:border-destructive/60 transition-smooth"
+          className="absolute top-2.5 right-2.5 z-30 size-8 sm:size-7 rounded-full bg-black/50 backdrop-blur-sm border border-white/25 flex items-center justify-center text-white/80 hover:bg-destructive/70 hover:text-white hover:border-destructive/60 transition-smooth"
           data-ocid="feed-player-unfollow"
         >
           <span className="text-sm leading-none font-bold">×</span>
         </button>
 
-        <div className="absolute bottom-0 left-0 right-0 px-3.5 sm:px-3 pb-3.5 sm:pb-3 pt-12 sm:pt-10">
+        <div className="absolute bottom-0 left-0 right-0 z-30 px-3.5 sm:px-3 pb-3.5 sm:pb-3 pt-12 sm:pt-10">
           <div className="mb-1">
             <PositionBadge position={player.position} variant="overlay" />
           </div>
