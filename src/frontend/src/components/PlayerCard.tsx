@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "@tanstack/react-router";
 import type { MouseEvent } from "react";
+import { useState } from "react";
+import { getNationalTeamInfo } from "../data/nationalTeamPlayers";
 import type { Player } from "../types/handball";
 import { PositionBadge } from "./PositionBadge";
 
@@ -46,6 +48,20 @@ type CardStat = {
   emphasis?: boolean;
 };
 
+function PlayerImageFallback({ initials }: { initials: string }) {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-200 via-slate-300 to-slate-500 dark:from-slate-800 dark:via-slate-700 dark:to-slate-950">
+      <div className="relative flex flex-col items-center justify-center opacity-55">
+        <div className="size-16 rounded-full bg-white/45 dark:bg-white/15 border border-white/40" />
+        <div className="mt-2 h-24 w-28 rounded-t-full bg-white/35 dark:bg-white/12 border border-white/25" />
+        <span className="absolute bottom-8 font-display font-black text-5xl text-white/45 dark:text-white/20">
+          {initials}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 interface Props {
   player: Player;
   teamName?: string;
@@ -87,6 +103,7 @@ export function PlayerCard({
   followOverlay = false,
 }: Props) {
   const navigate = useNavigate();
+  const [imageFailed, setImageFailed] = useState(false);
 
   const displayGoals = latestGoals ?? goals;
   const genericStats = statItems?.filter((item) => item.value !== "") ?? [];
@@ -99,6 +116,7 @@ export function PlayerCard({
     displayGoals !== undefined ||
     minutes !== undefined;
   const hasSpark = sparkValues.length >= 2;
+  const nationalTeam = getNationalTeamInfo(player.id);
   const initials = player.name
     .split(" ")
     .map((part) => part[0])
@@ -133,25 +151,38 @@ export function PlayerCard({
         aria-label={`Vis profil for ${player.name}`}
         className="relative block w-full aspect-[3/4.45] sm:aspect-[3/4] bg-muted text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
-        {player.imageUrl ? (
+        {nationalTeam?.countryCode === "FI" && (
+          <div
+            className="absolute inset-0 z-0 opacity-30 bg-white"
+            aria-hidden="true"
+          >
+            <div className="absolute inset-y-0 left-[31%] w-[16%] bg-[#002f6c]" />
+            <div className="absolute inset-x-0 top-[38%] h-[16%] bg-[#002f6c]" />
+          </div>
+        )}
+
+        {player.imageUrl && !imageFailed ? (
           <img
             src={player.imageUrl}
             alt={player.name}
             loading="lazy"
             decoding="async"
-            className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+            onError={() => setImageFailed(true)}
+            className="absolute inset-0 z-10 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-emerald-950 via-slate-900 to-cyan-950">
-            <span className="font-display font-black text-7xl text-white/18">
-              {initials}
-            </span>
+          <PlayerImageFallback initials={initials} />
+        )}
+
+        <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+        {nationalTeam && (
+          <div className="absolute left-3 top-3 z-30 rounded-full border border-white/20 bg-black/35 px-2.5 py-1 text-[10px] font-display font-black uppercase tracking-wide text-white shadow-subtle backdrop-blur-md">
+            {nationalTeam.flagEmoji} {nationalTeam.countryCode}
           </div>
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-
-        <div className="absolute bottom-0 left-0 right-0 px-3.5 pb-3.5 pt-12">
+        <div className="absolute bottom-0 left-0 right-0 z-30 px-3.5 pb-3.5 pt-12">
           <div className="mb-1.5">
             <PositionBadge position={player.position} variant="overlay" />
           </div>
