@@ -3,37 +3,39 @@ import { useActor } from "@caffeineai/core-infrastructure";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { motion } from "motion/react";
+import { useState } from "react";
 import { createActor } from "../backend";
-import {
-  computeFormSparkline,
-  formatMatchDate,
-  getCountdown,
-} from "../services/handballService";
+import { getNationalTeamInfo } from "../data/nationalTeamPlayers";
+import { formatMatchDate, getCountdown } from "../services/handballService";
+import type { EnrichedPlayerMatchStats } from "../services/clawdbotPlayerProfile";
 import type { FeedEvent, Player, PlayerMatchStats } from "../types/handball";
-import { FeedEventType } from "../types/handball";
+import { FeedEventType, Position } from "../types/handball";
 import { PositionBadge } from "./PositionBadge";
 
-// ── Sparkline (white for overlay) ─────────────────────────────────────────
 function Sparkline({ values }: { values: number[] }) {
   if (values.length < 2) return null;
+
+  const min = Math.min(...values, 0);
   const max = Math.max(...values, 1);
+  const range = Math.max(max - min, 1);
   const W = 48;
   const H = 20;
   const pts = values.map((v, i) => {
     const x = (i / (values.length - 1)) * W;
-    const y = H - (v / max) * (H - 3) - 2;
+    const y = H - ((v - min) / range) * (H - 4) - 2;
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   });
+
   return (
     <svg
       width={W}
       height={H}
       viewBox={`0 0 ${W} ${H}`}
       role="img"
-      aria-label="Formkurve"
-      className="flex-shrink-0 opacity-80"
+      aria-label="MEP-formkurve"
+      className="flex-shrink-0 opacity-85"
     >
-      <title>Formkurve siste kamper</title>
+      <title>MEP-form siste kamper</title>
       <polyline
         points={pts.join(" ")}
         fill="none"
@@ -46,7 +48,14 @@ function Sparkline({ values }: { values: number[] }) {
   );
 }
 
-// ── Next match pill inside card overlay ────────────────────────────────────
+function getMatchDate(match: EnrichedPlayerMatchStats) {
+  return match.date ?? match.matchId.toString();
+}
+
+function formatDecimal(value: number | undefined, digits = 1) {
+  return value === undefined ? "-" : value.toFixed(digits);
+}
+
 function NextMatchPill({ teamId }: { teamId: bigint }) {
   const { actor, isFetching } = useActor(createActor);
   const { data: nextMatch } = useQuery({
@@ -89,7 +98,7 @@ function NextMatchPill({ teamId }: { teamId: bigint }) {
         Neste
       </span>
       <span className="text-[10px] text-white/80 truncate min-w-0">
-        {isHome ? "vs" : "@"} {opponentName ?? "–"}
+        {isHome ? "vs" : "@"} {opponentName ?? "-"}
       </span>
       <span className="flex-shrink-0 text-[9px] font-display font-bold text-white bg-white/15 px-1.5 py-0.5 rounded-full border border-white/20">
         {countdown}
@@ -101,7 +110,6 @@ function NextMatchPill({ teamId }: { teamId: bigint }) {
   );
 }
 
-// ── Team-color placeholder backgrounds (by team name keyword) ─────────────
 const TEAM_BG_CLASSES: Record<string, string> = {
   vipers: "bg-gradient-to-br from-purple-900 to-purple-700",
   storhamar: "bg-gradient-to-br from-red-900 to-red-700",
@@ -125,7 +133,27 @@ function placeholderBg(teamName: string): string {
   return "bg-gradient-to-br from-muted to-muted/70";
 }
 
-// ── Main FeedPlayerCard ────────────────────────────────────────────────────
+function PlayerImageFallback({ name }: { name: string }) {
+  const initials = name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  return (
+    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-200 via-slate-300 to-slate-500 dark:from-slate-800 dark:via-slate-700 dark:to-slate-950">
+      <div className="relative flex flex-col items-center justify-center opacity-55">
+        <div className="size-16 rounded-full bg-white/45 dark:bg-white/15 border border-white/40" />
+        <div className="mt-2 h-24 w-28 rounded-t-full bg-white/35 dark:bg-white/12 border border-white/25" />
+        <span className="absolute bottom-8 font-display font-black text-5xl text-white/45 dark:text-white/20">
+          {initials}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 interface Props {
   player: Player;
   teamName: string;
@@ -146,8 +174,8 @@ export function FeedPlayerCard({
   index = 0,
 }: Props) {
   const navigate = useNavigate();
+  const [imageFailed, setImageFailed] = useState(false);
 
-  // Derive last match stats from events
   const lastGoalEvent = feedEvents
     .filter((e) => e.eventType === FeedEventType.GoalsScored)
     .at(-1);
@@ -155,9 +183,17 @@ export function FeedPlayerCard({
     .filter((e) => e.eventType === FeedEventType.MinutesPlayed)
     .at(-1);
 
-  const sparkValues = computeFormSparkline(
-    matchStats.map((s) => ({ goals: s.goals })),
-  );
+  const mepMatches = (matchStats as EnrichedPlayerMatchStats[])
+    .filter((match) => typeof match.mep === "number")
+    .sort((a, b) => getMatchDate(a).localeCompare(getMatchDate(b)))
+    .slice(-5);
+  const latestMatch = mepMatches.at(-1);
+  const sparkValues = mepMatches.map((match) => match.mep ?? 0);
+  const keeper = player.position === Position.Keeper;
+  const latestGoals = keeper ? undefined : latestMatch?.goals ?? lastGoalEvent?.statValue;
+  const latestSaves = keeper ? latestMatch?.saves : undefined;
+  const latestSavePct = keeper ? latestMatch?.savePct : undefined;
+  const nationalTeam = getNationalTeamInfo(player.id);
 
   function handleCardClick() {
     navigate({ to: "/player/$id", params: { id: player.id.toString() } });
@@ -168,7 +204,7 @@ export function FeedPlayerCard({
     onUnfollow();
   }
 
-  const bgClass = placeholderBg(teamName);
+  const bgClass = nationalTeam?.countryCode === "FI" ? "bg-white" : placeholderBg(teamName);
 
   return (
     <motion.button
@@ -183,74 +219,99 @@ export function FeedPlayerCard({
       className="w-full text-left rounded-2xl overflow-hidden cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shadow-subtle hover:shadow-elevated transition-smooth"
       data-ocid="feed-player-card"
     >
-      {/* ── Poster area: aspect-[3/4] fill ── */}
-      <div className={cn("relative w-full aspect-[3/4]", bgClass)}>
-        {/* Player photo */}
-        {player.imageUrl ? (
+      <div className={cn("relative w-full aspect-[3/4.45] sm:aspect-[3/4]", bgClass)}>
+        {nationalTeam?.countryCode === "FI" && (
+          <div
+            className="absolute inset-0 z-0 bg-white"
+            aria-hidden="true"
+          >
+            <div className="absolute inset-y-0 left-[31%] w-[16%] bg-[#002f6c]" />
+            <div className="absolute inset-x-0 top-[38%] h-[16%] bg-[#002f6c]" />
+          </div>
+        )}
+
+        {player.imageUrl && !imageFailed ? (
           <img
             src={player.imageUrl}
             alt={player.name}
-            className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+            onError={() => setImageFailed(true)}
+            className="absolute inset-0 z-10 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center opacity-20">
-            <span className="font-display font-black text-7xl text-white">
-              {player.name.charAt(0).toUpperCase()}
-            </span>
+          <PlayerImageFallback name={player.name} />
+        )}
+
+        <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
+
+        {nationalTeam && (
+          <div className="absolute left-3 top-3 z-30 rounded-full border border-white/20 bg-black/35 px-2.5 py-1 text-[10px] font-display font-black uppercase tracking-wide text-white shadow-subtle backdrop-blur-md">
+            {nationalTeam.countryCode}
           </div>
         )}
 
-        {/* Gradient overlay: fully transparent at top → dark at bottom */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
-
-        {/* Jersey number badge — top left */}
-        {player.jerseyNumber !== undefined && (
-          <div className="absolute top-2.5 left-2.5 size-7 rounded-full bg-black/50 backdrop-blur-sm border border-white/25 flex items-center justify-center">
-            <span className="font-display font-black text-[11px] text-white leading-none">
-              {player.jerseyNumber.toString()}
-            </span>
-          </div>
-        )}
-
-        {/* Unfollow button — top right */}
         <button
           type="button"
           onClick={handleUnfollow}
           disabled={isUnfollowLoading}
           aria-label="Slutt å følge"
-          className="absolute top-2.5 right-2.5 size-7 rounded-full bg-black/50 backdrop-blur-sm border border-white/25 flex items-center justify-center text-white/70 hover:bg-destructive/70 hover:text-white hover:border-destructive/60 transition-smooth"
+          className="absolute top-2.5 right-2.5 z-30 size-8 sm:size-7 rounded-full bg-black/50 backdrop-blur-sm border border-white/25 flex items-center justify-center text-white/80 hover:bg-destructive/70 hover:text-white hover:border-destructive/60 transition-smooth"
           data-ocid="feed-player-unfollow"
         >
           <span className="text-sm leading-none font-bold">×</span>
         </button>
 
-        {/* ── Bottom overlay: name, team, stats ── */}
-        <div className="absolute bottom-0 left-0 right-0 px-3 pb-3 pt-10">
-          {/* Position badge */}
+        <div className="absolute bottom-0 left-0 right-0 z-30 px-3.5 sm:px-3 pb-3.5 sm:pb-3 pt-12 sm:pt-10">
           <div className="mb-1">
             <PositionBadge position={player.position} variant="overlay" />
           </div>
 
-          {/* Name */}
-          <p className="font-display font-black text-white text-sm leading-tight truncate drop-shadow-sm">
+          <p className="font-display font-black text-white text-[15px] sm:text-sm leading-tight truncate drop-shadow-sm">
             {player.name}
           </p>
 
-          {/* Team */}
-          <p className="text-[10px] text-white/65 truncate mt-0.5 font-body">
+          <p className="text-[11px] sm:text-[10px] text-white/65 truncate mt-0.5 font-body">
             {teamName}
           </p>
 
-          {/* Stats row: goals + minutes + sparkline */}
-          <div className="flex items-end justify-between mt-2 pt-2 border-t border-white/15">
+          <div className="flex items-end justify-between mt-2.5 sm:mt-2 pt-2.5 sm:pt-2 border-t border-white/15">
             <div className="flex gap-3">
-              {lastGoalEvent?.statValue !== undefined && (
+              {latestMatch?.mep !== undefined && (
                 <div>
-                  <span className="block font-display font-black text-xl text-white leading-none">
-                    {lastGoalEvent.statValue.toString()}
+                  <span className="block font-display font-black text-2xl sm:text-xl text-white leading-none tabular-nums">
+                    {formatDecimal(latestMatch.mep)}
                   </span>
                   <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
-                    Mål sist
+                    MEP sist
+                  </span>
+                </div>
+              )}
+              {latestSaves !== undefined && (
+                <div>
+                  <span className="block font-display font-bold text-base text-white/85 leading-none tabular-nums">
+                    {latestSaves.toString()}
+                  </span>
+                  <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
+                    Redn.
+                  </span>
+                </div>
+              )}
+              {latestSavePct !== undefined && (
+                <div>
+                  <span className="block font-display font-bold text-base text-white/85 leading-none tabular-nums">
+                    {latestSavePct.toFixed(1)}%
+                  </span>
+                  <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
+                    Red%
+                  </span>
+                </div>
+              )}
+              {latestGoals !== undefined && (
+                <div>
+                  <span className="block font-display font-bold text-base text-white/85 leading-none tabular-nums">
+                    {latestGoals.toString()}
+                  </span>
+                  <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
+                    Mål
                   </span>
                 </div>
               )}
@@ -270,13 +331,12 @@ export function FeedPlayerCard({
               <div className="flex flex-col items-end gap-0.5">
                 <Sparkline values={sparkValues} />
                 <span className="text-[8px] uppercase tracking-wide text-white/45">
-                  Form
+                  MEP-form
                 </span>
               </div>
             )}
           </div>
 
-          {/* Next match pill */}
           <NextMatchPill teamId={player.teamId} />
         </div>
       </div>

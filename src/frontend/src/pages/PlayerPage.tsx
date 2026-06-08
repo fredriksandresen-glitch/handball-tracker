@@ -1,22 +1,22 @@
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { Link, useParams, useRouter } from "@tanstack/react-router";
 import {
-  ArrowDown,
+  Activity,
   ArrowLeft,
   ArrowRight,
-  ArrowUp,
-  ChevronRight,
-  Clock,
-  Loader2,
-  MapPin,
-  Medal,
+  Award,
+  BarChart3,
+  CalendarDays,
+  ChevronDown,
+  Search,
   Shield,
+  Target,
+  TrendingUp,
   Users,
+  X,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { ComparisonTab } from "../components/ComparisonTab";
+import { useMemo, useState } from "react";
 import { PositionBadge } from "../components/PositionBadge";
 import {
   useFollowPlayer,
@@ -28,880 +28,887 @@ import {
   usePlayerMatchStats,
   usePlayerSeasonStats,
 } from "../hooks/usePlayer";
-import { usePlayers } from "../hooks/usePlayers";
-import { useNextMatchForTeam, useTeam } from "../hooks/useTeam";
-import { formatMatchDate, getCountdown } from "../services/handballService";
+import { useTeam } from "../hooks/useTeam";
+import {
+  getStaticPlayers,
+  getStaticProfile,
+  mapClawdbotSeasonStats,
+  type EnrichedPlayerMatchStats,
+} from "../services/clawdbotPlayerProfile";
 import type {
   Player,
   PlayerMatchStats,
   PlayerSeasonStats,
 } from "../types/handball";
-import { POSITION_LABELS, Position } from "../types/handball";
+import { Position } from "../types/handball";
 
-// ─── Tab config ───────────────────────────────────────────────────────────────
-type Tab = "sesong" | "kamp" | "form";
-const TABS: { id: Tab; label: string }[] = [
-  { id: "sesong", label: "Sesong" },
-  { id: "kamp", label: "Kamphistorikk" },
-  { id: "form", label: "Formkurve" },
-];
+type Tab = "season" | "matches" | "form";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-function n(v: bigint | undefined): number | undefined {
-  return v !== undefined ? Number(v) : undefined;
-}
-function fmt(v: bigint | undefined): string {
-  return v !== undefined ? v.toString() : "—";
-}
-function isGK(pos: Position): boolean {
-  return pos === Position.Keeper;
+const CLUB_LOGOS: Record<string, string> = {
+  byåsen: "https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg",
+  fjellhammer:
+    "https://www.fjellhammer.no/wp-content/uploads/sites/19/2020/01/fjellhammer.svg",
+  larvik: "https://www.larvikhk.no/wp-content/uploads/sites/7/2019/08/larvikhk.svg",
+  molde:
+    "https://www.handballjentan.no/wp-content/uploads/sites/8/2021/07/MOLDE-ELITE-LOGO.svg",
+};
+
+function getClubLogo(teamName?: string) {
+  const normalized = teamName?.toLowerCase() ?? "";
+  return Object.entries(CLUB_LOGOS).find(([key]) => normalized.includes(key))?.[1];
 }
 
-// ─── Position average + ranking from all same-pos players ─────────────────────
-function usePositionStats(position: Position) {
-  const { data: allPlayers } = usePlayers();
-  return { posLabel: POSITION_LABELS[position] ?? position, allPlayers };
+function isGK(position: Position) {
+  return position === Position.Keeper;
 }
 
-// ─── Stat Chip ────────────────────────────────────────────────────────────────
-function StatChip({
+function asNumber(value: bigint | undefined) {
+  return value === undefined ? undefined : Number(value);
+}
+
+function formatNumber(value: number | bigint | undefined) {
+  if (value === undefined) return "-";
+  return typeof value === "bigint" ? value.toString() : value.toString();
+}
+
+function formatDecimal(value: number | undefined, digits = 1) {
+  return value === undefined ? "-" : value.toFixed(digits);
+}
+
+function formatPct(value: number | undefined) {
+  return value === undefined ? "-" : `${value.toFixed(1)}%`;
+}
+
+function formatSigned(value: number | undefined, digits = 1) {
+  if (value === undefined) return "-";
+  return `${value > 0 ? "+" : ""}${value.toFixed(digits)}`;
+}
+
+function getMatchDate(match: EnrichedPlayerMatchStats) {
+  return match.date ?? match.matchId.toString();
+}
+
+function getStaticTeamName(playerId: bigint) {
+  return getStaticProfile(playerId)?.player.team ?? "Ukjent lag";
+}
+
+function hasUsefulStats(stats: PlayerSeasonStats) {
+  return Number(stats.matchesPlayed) > 0 || (stats.mepAvg ?? 0) !== 0;
+}
+
+function compareDelta(
+  base: number | undefined,
+  other: number | undefined,
+  higherIsBetter = true,
+) {
+  if (base === undefined || other === undefined) return null;
+  const delta = other - base;
+  const good = higherIsBetter ? delta > 0 : delta < 0;
+  const bad = higherIsBetter ? delta < 0 : delta > 0;
+  return { delta, good, bad };
+}
+
+function TeamLogo({ teamName, size = "sm" }: { teamName?: string; size?: "sm" | "md" }) {
+  const logoUrl = getClubLogo(teamName);
+  const boxClass = size === "md" ? "size-10" : "size-5";
+  const imgClass = size === "md" ? "size-10" : "size-5";
+
+  if (!logoUrl) {
+    return <Shield className={size === "md" ? "size-5 text-primary" : "size-4"} />;
+  }
+
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center justify-center shrink-0",
+        boxClass,
+      )}
+    >
+      <img src={logoUrl} alt="" className={cn("object-contain", imgClass)} />
+    </span>
+  );
+}
+
+function StatCard({
   label,
   value,
+  detail,
   highlight,
-}: { label: string; value: string; highlight?: boolean }) {
+}: {
+  label: string;
+  value: string;
+  detail?: string;
+  highlight?: boolean;
+}) {
   return (
     <div
       className={cn(
-        "flex flex-col items-center px-3 py-2 rounded-xl border",
-        highlight ? "bg-primary/10 border-primary/30" : "bg-card border-border",
+        "rounded-xl border px-4 py-3 min-h-[82px] flex flex-col justify-center overflow-hidden",
+        highlight
+          ? "bg-primary/12 border-primary/45 shadow-[inset_0_0_0_1px_rgba(18,224,214,0.12)]"
+          : "bg-card border-border",
       )}
     >
-      <span
+      <p
         className={cn(
-          "font-display font-bold text-lg leading-none",
+          "font-display font-black text-3xl leading-none tabular-nums",
           highlight ? "text-primary" : "text-foreground",
         )}
       >
         {value}
-      </span>
-      <span className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">
+      </p>
+      <p className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold">
         {label}
-      </span>
+      </p>
+      {detail && <p className="mt-1 text-[11px] text-muted-foreground">{detail}</p>}
     </div>
   );
 }
 
-// ─── Form Bar Chart ───────────────────────────────────────────────────────────
-function FormBarChart({
-  stats,
-  gk,
-}: { stats: PlayerMatchStats[]; gk: boolean }) {
-  const recent = [...stats]
-    .sort((a, b) => Number(a.matchId - b.matchId))
-    .slice(-5);
-  const values = recent.map((s) =>
-    gk ? Number(s.saves ?? 0n) : Number(s.goals ?? 0n),
-  );
-  const maxVal = Math.max(...values, 1);
-  const avg =
-    values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
-  const statLabel = gk ? "Redninger" : "Mål";
-
-  return (
-    <div className="rounded-xl bg-card border border-border p-4">
-      <div className="flex items-end gap-2 h-28">
-        {recent.map((s, i) => {
-          const val = values[i];
-          const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
-          const isLast = i === recent.length - 1;
-          return (
-            <div
-              key={s.id.toString()}
-              className="flex-1 flex flex-col items-center justify-end gap-1"
-            >
-              <span
-                className={cn(
-                  "text-[10px] font-bold leading-none",
-                  isLast ? "text-primary" : "text-muted-foreground",
-                )}
-              >
-                {val > 0 ? val : ""}
-              </span>
-              <div
-                className={cn(
-                  "w-full rounded-t-sm transition-all duration-500 min-h-[3px]",
-                  isLast ? "bg-primary" : "bg-primary/40",
-                )}
-                style={{ height: `${Math.max(pct, 3)}%` }}
-              />
-              <span className="text-[9px] text-muted-foreground">{i + 1}</span>
-            </div>
-          );
-        })}
-        {/* Average line indicator */}
-        <div className="absolute pointer-events-none" />
-      </div>
-      <div className="flex items-center justify-between mt-3 pt-2 border-t border-border/50">
-        <span className="text-[10px] text-muted-foreground">
-          {statLabel} per kamp
-        </span>
-        <span className="text-[11px] font-display font-bold text-primary">
-          Snitt: {avg.toFixed(1)} {statLabel.toLowerCase()}/kamp
-        </span>
-      </div>
-    </div>
-  );
-}
-
-// ─── Position Indicator (above/below avg) ─────────────────────────────────────
-function PositionIndicator({
-  player,
-  seasonStats,
-}: { player: Player; seasonStats: PlayerSeasonStats }) {
-  const { posLabel } = usePositionStats(player.position);
-  const gk = isGK(player.position);
-  const mc = Math.max(Number(seasonStats.matchesPlayed), 1);
-  const primaryStat = gk
-    ? Number(seasonStats.totalSaves ?? 0n) / mc
-    : Number(seasonStats.totalGoals ?? 0n) / mc;
-  const statName = gk ? "redninger" : "mål";
-
-  // Compute position average from similar players (placeholder — in real app from all season stats)
-  const posAvg = gk ? 7.8 : 3.5; // Realistic averages per position
-  const isAbove = primaryStat > posAvg;
-  const diff = Math.abs(primaryStat - posAvg).toFixed(1);
-
-  // Ranking simulation based on primary stat
-  const samePosPrimary = gk ? 8.2 : 4.9; // Highest in position
-  const samePosCount = 4; // Number of players in position
-  const rank =
-    primaryStat >= samePosPrimary
-      ? 1
-      : primaryStat >= posAvg
-        ? 2
-        : primaryStat >= posAvg * 0.8
-          ? 3
-          : 4;
-
-  // Medal colors
-  const rankColor =
-    rank === 1
-      ? "text-yellow-400 border-yellow-400/40 bg-yellow-400/10"
-      : rank === 2
-        ? "text-slate-300 border-slate-300/40 bg-slate-300/10"
-        : rank === 3
-          ? "text-amber-600 border-amber-600/40 bg-amber-600/10"
-          : "text-muted-foreground border-border bg-muted/40";
-
-  return (
-    <div className="mx-4 space-y-2" data-ocid="position-indicator">
-      {/* Avg indicator */}
-      <div
-        className={cn(
-          "flex items-center gap-3 rounded-xl border px-4 py-3",
-          isAbove
-            ? "bg-chart-2/10 border-chart-2/30"
-            : "bg-destructive/10 border-destructive/30",
-        )}
-      >
-        <div
-          className={cn(
-            "size-8 rounded-full flex items-center justify-center flex-shrink-0",
-            isAbove ? "bg-chart-2/20" : "bg-destructive/20",
-          )}
-        >
-          {isAbove ? (
-            <ArrowUp className="size-4 text-chart-2" />
-          ) : (
-            <ArrowDown className="size-4 text-destructive" />
-          )}
-        </div>
-        <div className="flex-1 min-w-0">
-          <p
-            className={cn(
-              "text-[13px] font-display font-bold",
-              isAbove ? "text-chart-2" : "text-destructive",
-            )}
-          >
-            {isAbove ? "Over snittet" : "Under snittet"} for {posLabel}e
-          </p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">
-            {primaryStat.toFixed(1)} {statName}/kamp · snitt {posAvg.toFixed(1)}{" "}
-            · {isAbove ? "+" : "-"}
-            {diff}
-          </p>
-        </div>
-      </div>
-
-      {/* Liga ranking */}
-      <div
-        className="flex items-center gap-3 rounded-xl bg-card border border-border px-4 py-3"
-        data-ocid="position-ranking"
-      >
-        <div
-          className={cn(
-            "size-9 rounded-full border flex items-center justify-center flex-shrink-0 font-display font-black text-sm",
-            rankColor,
-          )}
-        >
-          {rank <= 3 ? <Medal className="size-4" /> : `#${rank}`}
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-[13px] font-display font-bold text-foreground">
-            Rangering: #{rank} av {samePosCount} {posLabel}e
-          </p>
-          <p className="text-[11px] text-muted-foreground">
-            Basert på {statName} per kamp · {primaryStat.toFixed(1)}/kamp
-          </p>
-        </div>
-        {rank <= 3 && (
-          <span
-            className={cn(
-              "text-[10px] font-display font-bold px-2 py-0.5 rounded-full border",
-              rankColor,
-            )}
-          >
-            {rank === 1 ? "Gull" : rank === 2 ? "Sølv" : "Bronse"}
-          </span>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ─── Follow Button ────────────────────────────────────────────────────────────
-function FollowButton({ playerId }: { playerId: bigint }) {
-  const { data: isFollowing } = useIsFollowing(playerId);
-  const follow = useFollowPlayer();
-  const unfollow = useUnfollowPlayer();
-  const isLoading = follow.isPending || unfollow.isPending;
-
-  if (isFollowing) {
-    return (
-      <Button
-        variant="outline"
-        onClick={() => unfollow.mutate(playerId)}
-        disabled={isLoading}
-        className="flex-1 h-12 rounded-full font-display font-bold tracking-wide border-primary text-primary hover:bg-destructive/10 hover:text-destructive hover:border-destructive/40 transition-smooth text-base"
-        data-ocid="player-unfollow-btn"
-      >
-        {isLoading ? <Loader2 className="size-4 animate-spin" /> : "✓ FØLGER"}
-      </Button>
-    );
-  }
-  return (
-    <Button
-      onClick={() => follow.mutate(playerId)}
-      disabled={isLoading}
-      className="flex-1 h-12 rounded-full font-display font-bold tracking-widest bg-primary text-primary-foreground hover:bg-primary/90 transition-smooth shadow-md text-base"
-      data-ocid="player-follow-btn"
-    >
-      {isLoading ? (
-        <Loader2 className="size-4 animate-spin" />
-      ) : (
-        "+ FØLG SPILLER"
-      )}
-    </Button>
-  );
-}
-
-// ─── Hero / Header ────────────────────────────────────────────────────────────
 function PlayerHero({
   player,
   teamName,
   teamId,
-}: { player: Player; teamName?: string; teamId: bigint }) {
+}: {
+  player: Player;
+  teamName?: string;
+  teamId: bigint;
+}) {
+  const { data: isFollowing = false, isLoading: checkingFollow } =
+    useIsFollowing(player.id);
+  const followMutation = useFollowPlayer();
+  const unfollowMutation = useUnfollowPlayer();
+  const isFollowLoading =
+    checkingFollow || followMutation.isPending || unfollowMutation.isPending;
+
   const initials = player.name
     .split(" ")
-    .map((p) => p[0])
+    .map((part) => part[0])
     .join("")
     .slice(0, 2)
     .toUpperCase();
+
+  function handleFollowClick() {
+    if (isFollowing) unfollowMutation.mutate(player.id);
+    else followMutation.mutate(player.id);
+  }
+
   return (
-    <div className="bg-card border-b border-border px-4 pt-5 pb-5">
-      <div className="flex items-start gap-4 mb-4">
-        <div className="flex-shrink-0 relative">
-          {player.imageUrl ? (
-            <img
-              src={player.imageUrl}
-              alt={player.name}
-              className="size-24 rounded-2xl object-cover border-2 border-primary/40"
-            />
-          ) : (
-            <div className="size-24 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border-2 border-primary/40 flex items-center justify-center">
-              <span className="font-display font-bold text-3xl text-primary">
-                {initials}
-              </span>
-            </div>
-          )}
-          {player.jerseyNumber !== undefined && (
-            <span className="absolute -bottom-2 -right-2 size-7 rounded-full bg-primary text-primary-foreground font-display font-black text-[11px] flex items-center justify-center border-2 border-background">
-              {player.jerseyNumber.toString()}
+    <section className="bg-card border-b border-border px-4 py-5">
+      <div className="flex items-start gap-4">
+        {player.imageUrl ? (
+          <img
+            src={player.imageUrl}
+            alt={player.name}
+            className="size-28 rounded-2xl object-cover object-top border-2 border-primary/40 bg-muted"
+          />
+        ) : (
+          <div className="size-28 rounded-2xl bg-gradient-to-br from-emerald-950 via-slate-900 to-cyan-950 border-2 border-primary/40 flex items-center justify-center">
+            <span className="font-display font-black text-3xl text-primary">
+              {initials}
             </span>
-          )}
-        </div>
+          </div>
+        )}
+
         <div className="flex-1 min-w-0 pt-1">
-          <h1 className="font-display font-bold text-2xl text-foreground leading-tight break-words">
+          <h1 className="font-display font-black text-3xl text-foreground leading-tight break-words">
             {player.name}
           </h1>
-          <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+          <div className="flex items-center gap-2 mt-2 flex-wrap">
             <PositionBadge position={player.position} size="md" />
             {player.isActive && (
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-chart-2/15 text-chart-2 border border-chart-2/30 font-display font-semibold uppercase tracking-wide">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-chart-2/15 text-chart-2 border border-chart-2/30 font-display font-bold uppercase tracking-wide">
                 Aktiv
               </span>
             )}
           </div>
+
           {teamName && (
             <Link
               to="/team/$id"
               params={{ id: teamId.toString() }}
-              className="inline-flex items-center gap-1.5 mt-2.5 text-sm font-display font-semibold text-primary hover:text-primary/80 transition-colors group"
-              data-ocid="player-team-link"
+              className="inline-flex items-center gap-2 mt-3 text-sm font-display font-bold text-primary hover:text-primary/80 transition-colors"
             >
-              <Shield className="size-3.5 opacity-70" />
+              <TeamLogo teamName={teamName} />
               {teamName}
-              <ArrowRight className="size-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+              <ArrowRight className="size-4" />
             </Link>
           )}
         </div>
       </div>
-      <div className="flex gap-2">
-        <FollowButton playerId={player.id} />
+
+      <div className="flex gap-2 mt-5">
+        <Button
+          type="button"
+          onClick={handleFollowClick}
+          disabled={isFollowLoading}
+          variant={isFollowing ? "outline" : "default"}
+          className={cn(
+            "flex-1 h-12 rounded-full font-display font-black tracking-widest",
+            isFollowing
+              ? "border-primary/40 text-primary hover:bg-destructive/10 hover:text-destructive hover:border-destructive/40"
+              : "bg-primary text-primary-foreground hover:bg-primary/90",
+          )}
+        >
+          {isFollowing ? "✓ FØLGER" : "+ FØLG SPILLER"}
+        </Button>
         {teamName && (
-          <Link
-            to="/team/$id"
-            params={{ id: teamId.toString() }}
-            data-ocid="player-team-btn"
-          >
+          <Link to="/team/$id" params={{ id: teamId.toString() }}>
             <Button
               variant="outline"
-              className="h-12 px-4 rounded-full border-border text-muted-foreground hover:text-primary hover:border-primary/40 transition-smooth"
+              className="h-12 px-4 rounded-full border-border text-muted-foreground hover:text-primary hover:border-primary/40"
             >
               <Users className="size-4" />
             </Button>
           </Link>
         )}
       </div>
-    </div>
+    </section>
   );
 }
 
-// ─── Next Match Module ────────────────────────────────────────────────────────
-function NextMatchModule({
+function KeyStats({
   player,
-  teamName,
-}: { player: Player; teamName?: string }) {
-  const { data: match, isLoading } = useNextMatchForTeam(player.teamId);
-  const [countdown, setCountdown] = useState("");
-  const opponentId = match
-    ? match.homeTeamId === player.teamId
-      ? match.awayTeamId
-      : match.homeTeamId
-    : undefined;
-  const { data: opponentTeam } = useTeam(opponentId ?? 0n);
-
-  useEffect(() => {
-    if (!match) return;
-    const update = () => setCountdown(getCountdown(match.startTime));
-    update();
-    const id = setInterval(update, 60_000);
-    return () => clearInterval(id);
-  }, [match]);
-
-  if (isLoading) {
-    return (
-      <div className="mx-4 rounded-2xl border border-primary/20 bg-card p-4 space-y-3">
-        <Skeleton className="h-4 w-24" />
-        <Skeleton className="h-6 w-48" />
-        <Skeleton className="h-10 w-full rounded-xl" />
-      </div>
-    );
-  }
-  if (!match) {
-    return (
-      <div className="mx-4 rounded-2xl border border-border bg-card/60 p-4 flex items-center gap-3">
-        <Clock className="size-5 text-muted-foreground flex-shrink-0" />
-        <p className="text-sm text-muted-foreground">
-          Ingen kommende kamp planlagt
-        </p>
-      </div>
-    );
-  }
-
-  const isHome = match.homeTeamId === player.teamId;
-  const opponentName = opponentTeam?.name ?? "Motstander";
-
-  return (
-    <div
-      className="mx-4 rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/8 to-primary/3 overflow-hidden"
-      data-ocid="next-match-module"
-    >
-      <div className="px-4 pt-3 pb-2 flex items-center justify-between">
-        <span className="text-[10px] font-display font-bold uppercase tracking-widest text-primary">
-          Neste kamp
-        </span>
-        <span
-          className={cn(
-            "text-[10px] font-display font-bold uppercase tracking-wide px-2 py-0.5 rounded-full",
-            isHome
-              ? "bg-primary/15 text-primary"
-              : "bg-muted text-muted-foreground",
-          )}
-        >
-          {isHome ? "HJEMME" : "BORTE"}
-        </span>
-      </div>
-      <div className="px-4 pb-2">
-        <p className="font-display font-bold text-foreground text-base leading-tight">
-          {teamName ?? "Laget"}{" "}
-          <span className="text-muted-foreground font-normal">vs</span>{" "}
-          <span className="text-primary">{opponentName}</span>
-        </p>
-        <div className="flex items-center gap-3 flex-wrap mt-1.5">
-          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <Clock className="size-3.5" />
-            {formatMatchDate(match.startTime)}
-          </span>
-          {match.venue && (
-            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <MapPin className="size-3.5" />
-              {match.venue}
-            </span>
-          )}
-        </div>
-      </div>
-      <div className="mx-4 mb-4 mt-2 rounded-xl bg-primary/15 border border-primary/25 px-4 py-3 flex items-center justify-between">
-        <span className="text-xs text-muted-foreground uppercase tracking-wide">
-          Kampstart om
-        </span>
-        <span className="font-display font-bold text-primary text-xl">
-          {countdown || getCountdown(match.startTime)}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-// ─── Quick Stats Row ──────────────────────────────────────────────────────────
-function QuickStatsRow({
-  player,
-  seasonStats,
-}: { player: Player; seasonStats: PlayerSeasonStats | null | undefined }) {
-  const gk = isGK(player.position);
-  const mc = Number(seasonStats?.matchesPlayed ?? 1n) || 1;
-  const chips = useMemo(() => {
-    if (!seasonStats) return [];
-    const result: { label: string; value: string; highlight?: boolean }[] = [
-      { label: "Kamper", value: seasonStats.matchesPlayed.toString() },
-    ];
-    if (gk) {
-      if (seasonStats.totalSaves !== undefined) {
-        result.push({
-          label: "Red/kamp",
-          value: (Number(seasonStats.totalSaves) / mc).toFixed(1),
-          highlight: true,
-        });
-      }
-    } else {
-      if (seasonStats.totalGoals !== undefined) {
-        result.push({
-          label: "Mål/kamp",
-          value: (Number(seasonStats.totalGoals) / mc).toFixed(2),
-          highlight: true,
-        });
-      }
-      if (seasonStats.totalAssists !== undefined) {
-        result.push({
-          label: "Assists",
-          value: n(seasonStats.totalAssists)?.toString() ?? "—",
-        });
-      }
-    }
-    if (seasonStats.totalMinutes !== undefined) {
-      result.push({
-        label: "Min/kamp",
-        value: Math.round(Number(seasonStats.totalMinutes) / mc).toString(),
-      });
-    }
-    return result.slice(0, 4);
-  }, [seasonStats, gk, mc]);
-
-  if (!seasonStats || chips.length === 0) return null;
-  return (
-    <div className="px-4" data-ocid="quick-stats-row">
-      <div className="grid grid-cols-4 gap-2">
-        {chips.map((c) => (
-          <StatChip
-            key={c.label}
-            label={c.label}
-            value={c.value}
-            highlight={c.highlight}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ─── Team Nav Card ────────────────────────────────────────────────────────────
-function TeamNavCard({
-  teamId,
-  teamName,
-}: { teamId: bigint; teamName?: string }) {
-  if (!teamName) return null;
-  return (
-    <Link
-      to="/team/$id"
-      params={{ id: teamId.toString() }}
-      className="mx-4 flex items-center justify-between bg-card border border-border rounded-2xl px-4 py-4 hover:border-primary/40 hover:bg-card/80 transition-smooth group"
-      data-ocid="team-nav-card"
-    >
-      <div className="flex items-center gap-3">
-        <div className="size-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-          <Users className="size-4.5 text-primary" />
-        </div>
-        <div>
-          <p className="text-xs text-muted-foreground">Se hele lagstallen</p>
-          <p className="font-display font-bold text-foreground text-sm">
-            {teamName}
-          </p>
-        </div>
-      </div>
-      <ArrowRight className="size-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
-    </Link>
-  );
-}
-
-// ─── Stat Row (label + value in a horizontal row) ────────────────────────────
-function StatRow({
-  label,
-  value,
-  highlight,
-}: { label: string; value: string; highlight?: boolean }) {
-  return (
-    <div className="flex items-center justify-between py-2.5 border-b border-border/40 last:border-0">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <span
-        className={cn(
-          "font-mono font-bold text-sm tabular-nums",
-          highlight ? "text-primary" : "text-foreground",
-        )}
-      >
-        {value}
-      </span>
-    </div>
-  );
-}
-
-// ─── Stat Group Card ──────────────────────────────────────────────────────────
-function StatGroup({
-  title,
-  rows,
+  stats,
 }: {
-  title: string;
-  rows: { label: string; value: string; highlight?: boolean }[];
+  player: Player;
+  stats: PlayerSeasonStats | null | undefined;
 }) {
-  if (rows.length === 0) return null;
+  if (!stats) return null;
+
+  const keeper = isGK(player.position);
+  const matches = Math.max(Number(stats.matchesPlayed), 1);
+  const totalGoals = asNumber(stats.totalGoals);
+  const totalSaves = asNumber(stats.totalSaves);
+  const shotsAgainst = asNumber(stats.totalShots);
+  const savesPerMatch = totalSaves === undefined ? undefined : totalSaves / matches;
+  const goalsPerMatch = totalGoals === undefined ? undefined : totalGoals / matches;
+
+  if (keeper) {
+    return (
+      <section className="px-4" data-ocid="key-stats">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <StatCard label="Snitt MEP" value={formatDecimal(stats.mepAvg)} detail={matches + " kamper"} highlight />
+          <StatCard label="Rednings%" value={formatPct(stats.shootingPercent)} detail="sesongsnitt" />
+          <StatCard label="Redninger" value={formatNumber(totalSaves)} detail={savesPerMatch === undefined ? undefined : savesPerMatch.toFixed(1) + " per kamp"} />
+          <StatCard label="Skudd mot" value={formatNumber(shotsAgainst)} detail="totalt" />
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="px-4" data-ocid="key-stats">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StatCard label="Snitt MEP" value={formatDecimal(stats.mepAvg)} detail={matches + " kamper"} highlight />
+        <StatCard label="Total MEP" value={formatDecimal(stats.mepTotal)} detail="sesongscore" />
+        <StatCard label="Mål" value={formatNumber(totalGoals)} detail={goalsPerMatch === undefined ? undefined : goalsPerMatch.toFixed(2) + " per kamp"} />
+        <StatCard
+          label="Assists"
+          value={formatNumber(stats.totalAssists)}
+          detail={stats.assistsPerGame === undefined ? undefined : stats.assistsPerGame.toFixed(1) + " per kamp"}
+        />
+      </div>
+    </section>
+  );
+}
+
+function FormOverview({
+  player,
+  stats,
+}: {
+  player: Player;
+  stats: PlayerMatchStats[];
+}) {
+  const keeper = isGK(player.position);
+  const recent = useMemo(() => {
+    return (stats as EnrichedPlayerMatchStats[])
+      .filter((match) => typeof match.mep === "number")
+      .sort((a, b) => getMatchDate(a).localeCompare(getMatchDate(b)))
+      .slice(-5);
+  }, [stats]);
+
+  const values = recent.map((match) => match.mep ?? 0);
+  const min = Math.min(...values, 0);
+  const max = Math.max(...values, 1);
+  const range = Math.max(max - min, 1);
+  const avg = values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
+  const last = values.at(-1);
+  const best = values.length ? Math.max(...values) : undefined;
+
+  if (recent.length === 0) return null;
+
+  return (
+    <section className="mx-4 space-y-3" data-ocid="form-overview">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold">MEP siste {recent.length} kamper</p>
+          <h2 className="font-display font-black text-lg text-foreground">Formkurve basert på prestasjonsscore</h2>
+        </div>
+        <Activity className="size-5 text-primary" />
+      </div>
+
+      <div className="rounded-2xl border border-border bg-card p-4 space-y-4">
+        <div className="grid grid-cols-3 gap-2">
+          <div className="rounded-xl bg-primary/12 border border-primary/35 px-3 py-2"><p className="text-[9px] uppercase tracking-widest text-muted-foreground">Siste</p><p className="font-display font-black text-2xl text-primary leading-none tabular-nums">{formatDecimal(last)}</p></div>
+          <div className="rounded-xl bg-muted/35 border border-border px-3 py-2"><p className="text-[9px] uppercase tracking-widest text-muted-foreground">Snitt</p><p className="font-display font-black text-2xl text-foreground leading-none tabular-nums">{avg.toFixed(1)}</p></div>
+          <div className="rounded-xl bg-muted/35 border border-border px-3 py-2"><p className="text-[9px] uppercase tracking-widest text-muted-foreground">Beste</p><p className="font-display font-black text-2xl text-foreground leading-none tabular-nums">{formatDecimal(best)}</p></div>
+        </div>
+
+        <div className="h-28 rounded-xl bg-background/45 border border-border/60 px-3 pt-3 pb-2 flex items-end gap-2">
+          {recent.map((match) => {
+            const value = match.mep ?? 0;
+            const height = 18 + ((value - min) / range) * 70;
+            const isLast = match === recent.at(-1);
+            return (
+              <div key={match.id.toString()} className="flex-1 h-full flex flex-col justify-end gap-1 min-w-0">
+                <div className="flex-1 flex items-end justify-center">
+                  <div className={cn("w-full max-w-12 rounded-t-lg transition-all duration-500", value < 0 ? "bg-destructive/70" : isLast ? "bg-primary" : "bg-primary/45")} style={{ height: height + "%" }} />
+                </div>
+                <p className={cn("text-center text-[11px] font-mono font-bold tabular-nums truncate", isLast ? "text-primary" : "text-muted-foreground")}>{formatDecimal(value)}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="space-y-2">
+          {recent.map((match) => {
+            const value = match.mep ?? 0;
+            const isLast = match === recent.at(-1);
+            const keeperLine = (match.date ?? "Siste kamp") + " · " + formatNumber(match.saves) + " redninger · " + formatPct(match.savePct);
+            const playerLine = (match.date ?? "Siste kamp") + " · " + formatNumber(match.goals) + " mål · " + formatNumber(match.assists) + " assist";
+            return (
+              <div key={match.id.toString() + "-row"} className={cn("rounded-xl border px-3 py-2 flex items-center justify-between gap-3", isLast ? "border-primary/45 bg-primary/8" : "border-border bg-background/35")}>
+                <div className="min-w-0"><p className="font-display font-bold text-sm text-foreground truncate">{match.opponent ? "mot " + match.opponent : "Kamp"}</p><p className="text-xs text-muted-foreground">{keeper ? keeperLine : playerLine}</p></div>
+                <div className="text-right shrink-0"><p className={cn("font-display font-black text-2xl leading-none tabular-nums", value < 0 ? "text-destructive" : isLast ? "text-primary" : "text-foreground")}>{formatSigned(value)}</p><p className="text-[9px] uppercase tracking-widest text-muted-foreground">MEP</p></div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function InsightCards({
+  player,
+  stats,
+}: {
+  player: Player;
+  stats: PlayerSeasonStats | null | undefined;
+}) {
+  if (!stats) return null;
+
+  const keeper = isGK(player.position);
+  const matches = Math.max(Number(stats.matchesPlayed), 1);
+  const totalGoals = asNumber(stats.totalGoals) ?? 0;
+  const totalAssists = asNumber(stats.totalAssists) ?? 0;
+  const totalSaves = asNumber(stats.totalSaves) ?? 0;
+  const shotsAgainst = asNumber(stats.totalShots) ?? 0;
+  const goalsAgainst = Math.max(shotsAgainst - totalSaves, 0);
+  const savesPerMatch = totalSaves / matches;
+  const directContributions = totalGoals + totalAssists;
+  const contributionPerMatch = directContributions / matches;
+  const technicalFaults = asNumber(stats.technicalFaults) ?? 0;
+  const assistFaultBalance = totalAssists - technicalFaults;
+
+  if (keeper) {
+    return (
+      <section className="mx-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="rounded-2xl border border-primary/30 bg-primary/10 px-4 py-4 flex items-center gap-3"><div className="size-11 rounded-xl bg-primary/15 flex items-center justify-center"><Award className="size-5 text-primary" /></div><div><p className="font-display font-black text-primary text-sm">Keeperprofil: {formatPct(stats.shootingPercent)} redningsprosent</p><p className="text-xs text-muted-foreground">{totalSaves} redninger · {savesPerMatch.toFixed(1)} per kamp</p></div></div>
+        <div className="rounded-2xl border border-border bg-card px-4 py-4 flex items-center gap-3"><div className="size-11 rounded-xl bg-chart-2/10 border border-chart-2/25 flex items-center justify-center"><Target className="size-5 text-chart-2" /></div><div><p className="font-display font-black text-foreground text-sm">{shotsAgainst} skudd mot · {goalsAgainst} mål imot</p><p className="text-xs text-muted-foreground">Snitt MEP {formatDecimal(stats.mepAvg)} · total MEP {formatDecimal(stats.mepTotal)}</p></div></div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="mx-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="rounded-2xl border border-primary/30 bg-primary/10 px-4 py-4 flex items-center gap-3"><div className="size-11 rounded-xl bg-primary/15 flex items-center justify-center"><Award className="size-5 text-primary" /></div><div><p className="font-display font-black text-primary text-sm">Angrepsbidrag: {formatDecimal(stats.mepAvg)} i snitt MEP</p><p className="text-xs text-muted-foreground">Total MEP {formatDecimal(stats.mepTotal)} gjennom {matches} kamper.</p></div></div>
+      <div className="rounded-2xl border border-border bg-card px-4 py-4 flex items-center gap-3"><div className="size-11 rounded-xl bg-chart-2/10 border border-chart-2/25 flex items-center justify-center"><Target className="size-5 text-chart-2" /></div><div><p className="font-display font-black text-foreground text-sm">{directContributions} målpoeng · {contributionPerMatch.toFixed(1)} per kamp</p><p className="text-xs text-muted-foreground">Assist/teknisk-feil balanse: {formatSigned(assistFaultBalance, 0)} · uttelling {formatPct(stats.shootingPercent)}</p></div></div>
+    </section>
+  );
+}
+
+function SeasonDetails({
+  player,
+  stats,
+}: {
+  player: Player;
+  stats: PlayerSeasonStats;
+}) {
+  const keeper = isGK(player.position);
+  const matches = Math.max(Number(stats.matchesPlayed), 1);
+  const totalSaves = asNumber(stats.totalSaves);
+  const shotsAgainst = asNumber(stats.totalShots);
+  const goalsAgainst = totalSaves === undefined || shotsAgainst === undefined ? undefined : Math.max(shotsAgainst - totalSaves, 0);
+  const keeperRows = [["Snitt MEP", formatDecimal(stats.mepAvg)], ["Total MEP", formatDecimal(stats.mepTotal)], ["Redninger", formatNumber(totalSaves)], ["Redningsprosent", formatPct(stats.shootingPercent)], ["Skudd mot", formatNumber(shotsAgainst)], ["Mål imot", formatNumber(goalsAgainst)], ["Redninger/kamp", totalSaves === undefined ? "-" : (totalSaves / matches).toFixed(2)], ["Assists", formatNumber(stats.totalAssists)], ["Tekniske feil", formatNumber(stats.technicalFaults)], ["2 min", formatNumber(stats.totalTwoMin)], ["Kamper", stats.matchesPlayed.toString()]];
+  const playerRows = [["Snitt MEP", formatDecimal(stats.mepAvg)], ["Total MEP", formatDecimal(stats.mepTotal)], ["Total mål", formatNumber(stats.totalGoals)], ["Skudd", formatNumber(stats.totalShots)], ["Uttelling", formatPct(stats.shootingPercent)], ["Mål/kamp", stats.goalsPerGame?.toFixed(2) ?? "-"], ["Assists", formatNumber(stats.totalAssists)], ["Assists/kamp", stats.assistsPerGame?.toFixed(2) ?? "-"], ["Tekniske feil", formatNumber(stats.technicalFaults)], ["2 min", formatNumber(stats.totalTwoMin)], ["Kamper", stats.matchesPlayed.toString()]];
+  const rows = keeper ? keeperRows : playerRows;
+
   return (
     <div className="rounded-2xl border border-border bg-card overflow-hidden">
-      <div className="px-4 py-2.5 bg-muted/40 border-b border-border">
-        <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-muted-foreground">
-          {title}
-        </h3>
+      <div className="px-4 py-3 border-b border-border bg-muted/35 flex items-center justify-between"><p className="text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold">Sesong {stats.season}</p><span className="text-[10px] uppercase tracking-widest text-primary font-display font-bold">{keeper ? "Keeperdata" : "MEP først"}</span></div>
+      <div className="px-4">{rows.map(([label, value], index) => (<div key={label} className="flex items-center justify-between py-3 border-b border-border/45 last:border-0"><span className="text-sm text-muted-foreground">{label}</span><span className={cn("font-mono font-bold text-sm tabular-nums", index < 2 ? "text-primary" : "text-foreground")}>{value}</span></div>))}</div>
+    </div>
+  );
+}
+
+function MatchHistory({
+  player,
+  stats,
+}: {
+  player: Player;
+  stats: PlayerMatchStats[];
+}) {
+  const keeper = isGK(player.position);
+  const [openMatchId, setOpenMatchId] = useState<string | null>(null);
+  const matches = [...(stats as EnrichedPlayerMatchStats[])].sort((a, b) => getMatchDate(b).localeCompare(getMatchDate(a)));
+
+  if (matches.length === 0) return <div className="py-12 text-center text-sm text-muted-foreground">Ingen kampstatistikk tilgjengelig</div>;
+
+  const getDetailRows = (match: EnrichedPlayerMatchStats) => [
+    ["Spillermål", formatNumber(match.fieldGoals ?? match.goals)],
+    ["Spillerskudd", formatNumber(match.fieldShots ?? match.shots)],
+    ["Uttelling", formatPct(match.fieldShotPercentage ?? match.shotPct)],
+    ["Mål 7m", formatNumber(match.sevenMeterGoals)],
+    ["Skudd 7m", formatNumber(match.sevenMeterShots)],
+    ["Uttelling 7m", formatPct(match.sevenMeterShotPercentage)],
+    ["Assist", formatNumber(match.assists)],
+    ["Teknisk feil", formatNumber(match.turnovers)],
+    ["Forårsaket 7m", formatNumber(match.causedSevenMeters)],
+    ["Tildelt 7m", formatNumber(match.awardedSevenMeters)],
+    ["Advarsel", formatNumber(match.warnings)],
+    ["2 min utvisning", formatNumber(match.twoMinSuspensions)],
+    ["Rødt kort", formatNumber(match.redCards)],
+    ["Spillertid", match.playTime || "-"],
+    ["Total MEP", formatDecimal(match.mep)],
+  ];
+
+  const getKeeperRows = (match: EnrichedPlayerMatchStats) => [
+    ["Redninger", formatNumber(match.saves)],
+    ["Redningsprosent", formatPct(match.savePct)],
+    ["Skudd mot", formatNumber(match.shotsAgainst ?? match.shots)],
+    ["Baklengsmål", formatNumber(match.goalsConceded)],
+    ...getDetailRows(match),
+  ];
+
+  return (
+    <div className="rounded-2xl border border-border bg-card overflow-hidden">
+      <div className="grid grid-cols-[1fr_52px_52px_52px_24px] gap-2 px-4 py-2 border-b border-border text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold"><span>Kamp</span><span className="text-right">MEP</span><span className="text-right">{keeper ? "Red" : "Mål"}</span><span className="text-right">{keeper ? "Red%" : "Ass"}</span><span /></div>
+      {matches.map((match) => {
+        const id = match.id.toString();
+        const isOpen = openMatchId === id;
+        const rows = keeper ? getKeeperRows(match) : getDetailRows(match);
+
+        return (
+          <div key={id} className="border-b border-border/45 last:border-0">
+            <button
+              type="button"
+              onClick={() => setOpenMatchId(isOpen ? null : id)}
+              className="grid w-full grid-cols-[1fr_52px_52px_52px_24px] gap-2 px-4 py-3 text-sm text-left hover:bg-muted/25 transition-colors"
+            >
+              <span className="min-w-0">
+                <span className="block font-display font-bold text-foreground truncate">{match.opponent ? "mot " + match.opponent : "Kamp"}</span>
+                <span className="block text-xs text-muted-foreground truncate">{match.date ?? "Kamp " + match.matchId.toString()}</span>
+              </span>
+              <span className="text-right font-bold text-primary tabular-nums">{formatDecimal(match.mep)}</span>
+              <span className="text-right text-foreground tabular-nums">{keeper ? formatNumber(match.saves) : formatNumber(match.goals)}</span>
+              <span className="text-right text-foreground tabular-nums">{keeper ? formatPct(match.savePct) : formatNumber(match.assists)}</span>
+              <ChevronDown className={cn("mt-0.5 size-4 text-muted-foreground transition-transform", isOpen && "rotate-180 text-primary")} />
+            </button>
+
+            {isOpen && (
+              <div className="px-4 pb-4">
+                <div className="rounded-xl border border-border/70 bg-background/45 overflow-hidden">
+                  <div className="grid grid-cols-3 gap-px bg-border/45">
+                    {rows.map(([label, value]) => (
+                      <div key={label} className="min-w-0 bg-card px-3 py-2.5">
+                        <p className="truncate text-[9px] uppercase tracking-widest text-muted-foreground font-display font-bold">{label}</p>
+                        <p className={cn("mt-1 truncate font-mono text-sm font-bold tabular-nums", label === "Total MEP" ? "text-primary" : "text-foreground")}>{value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function PlayerComparison({
+  player,
+  seasonStats,
+}: {
+  player: Player;
+  seasonStats: PlayerSeasonStats | null | undefined;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const candidates = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+
+    return getStaticPlayers()
+      .filter((candidate) => candidate.id !== player.id)
+      .map((candidate) => {
+        const profile = getStaticProfile(candidate.id);
+        if (!profile) return null;
+        const stats = mapClawdbotSeasonStats(profile);
+        const teamName = profile.player.team ?? getStaticTeamName(candidate.id);
+        const samePosition = candidate.position === player.position;
+        const otherClub = candidate.teamId !== player.teamId;
+        const searchable = [candidate.name, teamName, profile.player.position ?? ""]
+          .join(" ")
+          .toLowerCase();
+        const matchesQuery = !normalizedQuery || searchable.includes(normalizedQuery);
+        const score =
+          (samePosition ? 1000 : 0) +
+          (otherClub ? 100 : 0) +
+          (stats.mepAvg ?? 0) +
+          Number(stats.matchesPlayed) / 100;
+
+        return {
+          player: candidate,
+          stats,
+          teamName,
+          samePosition,
+          otherClub,
+          matchesQuery,
+          score,
+        };
+      })
+      .filter((candidate): candidate is NonNullable<typeof candidate> =>
+        Boolean(candidate && candidate.matchesQuery && hasUsefulStats(candidate.stats)),
+      )
+      .sort((a, b) => {
+        if (a.samePosition !== b.samePosition) return a.samePosition ? -1 : 1;
+        if (a.otherClub !== b.otherClub) return a.otherClub ? -1 : 1;
+        return b.score - a.score;
+      })
+      .slice(0, normalizedQuery ? 8 : 5);
+  }, [player.id, player.position, player.teamId, query]);
+
+  const selected = selectedId
+    ? candidates.find((candidate) => candidate.player.id.toString() === selectedId) ??
+      null
+    : null;
+
+  if (!seasonStats) return null;
+
+  const keeper = isGK(player.position);
+  const currentTeam = getStaticTeamName(player.id);
+  const rows =
+    selected === null
+      ? []
+      : keeper
+        ? [
+            {
+              label: "Snitt MEP",
+              base: seasonStats.mepAvg,
+              other: selected.stats.mepAvg,
+              format: (value: number | undefined) => formatDecimal(value),
+            },
+            {
+              label: "Kamper",
+              base: Number(seasonStats.matchesPlayed),
+              other: Number(selected.stats.matchesPlayed),
+              format: (value: number | undefined) => formatNumber(value),
+            },
+            {
+              label: "Rednings%",
+              base: seasonStats.shootingPercent,
+              other: selected.stats.shootingPercent,
+              format: (value: number | undefined) => formatPct(value),
+            },
+            {
+              label: "Redninger",
+              base: asNumber(seasonStats.totalSaves),
+              other: asNumber(selected.stats.totalSaves),
+              format: (value: number | undefined) => formatNumber(value),
+            },
+            {
+              label: "Skudd mot",
+              base: asNumber(seasonStats.totalShots),
+              other: asNumber(selected.stats.totalShots),
+              format: (value: number | undefined) => formatNumber(value),
+            },
+            {
+              label: "Tekn. feil",
+              base: asNumber(seasonStats.technicalFaults),
+              other: asNumber(selected.stats.technicalFaults),
+              format: (value: number | undefined) => formatNumber(value),
+              higherIsBetter: false,
+            },
+          ]
+        : [
+            {
+              label: "Snitt MEP",
+              base: seasonStats.mepAvg,
+              other: selected.stats.mepAvg,
+              format: (value: number | undefined) => formatDecimal(value),
+            },
+            {
+              label: "Kamper",
+              base: Number(seasonStats.matchesPlayed),
+              other: Number(selected.stats.matchesPlayed),
+              format: (value: number | undefined) => formatNumber(value),
+            },
+            {
+              label: "Mål",
+              base: asNumber(seasonStats.totalGoals),
+              other: asNumber(selected.stats.totalGoals),
+              format: (value: number | undefined) => formatNumber(value),
+            },
+            {
+              label: "Mål/kamp",
+              base: seasonStats.goalsPerGame,
+              other: selected.stats.goalsPerGame,
+              format: (value: number | undefined) => formatDecimal(value, 2),
+            },
+            {
+              label: "Assists",
+              base: asNumber(seasonStats.totalAssists),
+              other: asNumber(selected.stats.totalAssists),
+              format: (value: number | undefined) => formatNumber(value),
+            },
+            {
+              label: "Tekn. feil",
+              base: asNumber(seasonStats.technicalFaults),
+              other: asNumber(selected.stats.technicalFaults),
+              format: (value: number | undefined) => formatNumber(value),
+              higherIsBetter: false,
+            },
+          ];
+
+  if (!isOpen) {
+    return (
+      <section className="mx-4" data-ocid="player-comparison-collapsed">
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          className="w-full rounded-2xl border border-border bg-card px-4 py-4 flex items-center justify-between gap-4 hover:border-primary/45 hover:bg-card/80 transition-colors text-left"
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="size-10 rounded-xl bg-primary/12 border border-primary/30 flex items-center justify-center shrink-0">
+              <Users className="size-5 text-primary" />
+            </span>
+            <div className="min-w-0">
+              <p className="font-display font-black text-sm text-foreground">
+                Sammenlign spiller
+              </p>
+              <p className="text-xs text-muted-foreground truncate">
+                Søk eller velg forslag i samme posisjon
+              </p>
+            </div>
+          </div>
+          <ArrowRight className="size-5 text-muted-foreground shrink-0" />
+        </button>
+      </section>
+    );
+  }
+
+  return (
+    <section className="mx-4 space-y-3" data-ocid="player-comparison">
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+        <div className="p-4 border-b border-border bg-muted/20 space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold">
+                Sammenlign
+              </p>
+              <h2 className="font-display font-black text-lg text-foreground">
+                Finn spiller å måle mot
+              </h2>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setIsOpen(false);
+                setQuery("");
+                setSelectedId(null);
+              }}
+              className="size-9 rounded-full border border-border bg-background/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
+              aria-label="Lukk sammenligning"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
+
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+            <input
+              value={query}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setSelectedId(null);
+              }}
+              placeholder="Søk spiller, lag eller posisjon"
+              className="w-full h-11 rounded-xl bg-background border border-border pl-10 pr-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/60"
+            />
+          </div>
+
+          {candidates.length > 0 ? (
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {candidates.map((candidate) => {
+                const active = candidate.player.id.toString() === selectedId;
+                return (
+                  <button
+                    key={candidate.player.id.toString()}
+                    type="button"
+                    onClick={() => setSelectedId(candidate.player.id.toString())}
+                    className={cn(
+                      "min-w-[178px] rounded-xl border p-2 text-left transition-colors",
+                      active
+                        ? "border-primary/60 bg-primary/12"
+                        : "border-border bg-background/40 hover:border-primary/35",
+                    )}
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      {candidate.player.imageUrl ? (
+                        <img
+                          src={candidate.player.imageUrl}
+                          alt=""
+                          className="size-10 rounded-lg object-cover object-top bg-muted shrink-0"
+                        />
+                      ) : (
+                        <div className="size-10 rounded-lg bg-muted shrink-0" />
+                      )}
+                      <div className="min-w-0">
+                        <p className="text-xs font-display font-black text-foreground truncate">
+                          {candidate.player.name}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground truncate">
+                          {candidate.teamName} · MEP {formatDecimal(candidate.stats.mepAvg)}
+                        </p>
+                        <p className="text-[9px] uppercase tracking-wider text-primary font-display font-bold truncate">
+                          {candidate.samePosition ? "Samme posisjon" : "Annen posisjon"}
+                          {candidate.otherClub ? " · annet lag" : ""}
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-border bg-background/35 px-3 py-4 text-center text-sm text-muted-foreground">
+              Ingen spillere funnet. Prøv et annet navn eller lag.
+            </div>
+          )}
+        </div>
+
+        {selected ? (
+          <>
+            <div className="grid grid-cols-[1fr_auto_1fr] gap-2 p-4 border-b border-border bg-background/25">
+              <div className="min-w-0">
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold">
+                  Denne spilleren
+                </p>
+                <p className="font-display font-black text-sm text-foreground truncate">
+                  {player.name}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">{currentTeam}</p>
+              </div>
+              <div className="self-center rounded-full border border-primary/30 bg-primary/10 px-2 py-1 text-[10px] font-display font-bold text-primary">
+                VS
+              </div>
+              <div className="min-w-0 text-right">
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold">
+                  Valgt spiller
+                </p>
+                <p className="font-display font-black text-sm text-foreground truncate">
+                  {selected.player.name}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">{selected.teamName}</p>
+              </div>
+            </div>
+
+            <div className="divide-y divide-border/55">
+              {rows.map((row) => {
+                const delta = compareDelta(row.base, row.other, row.higherIsBetter ?? true);
+                return (
+                  <div
+                    key={row.label}
+                    className="grid grid-cols-[1fr_92px_1fr] items-center gap-2 px-4 py-3"
+                  >
+                    <p className="text-right font-mono font-bold text-sm text-foreground tabular-nums">
+                      {row.format(row.base)}
+                    </p>
+                    <div className="text-center">
+                      <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold">
+                        {row.label}
+                      </p>
+                      {delta && Math.abs(delta.delta) > 0.01 && (
+                        <p
+                          className={cn(
+                            "mt-0.5 text-[10px] font-mono font-bold tabular-nums",
+                            delta.good && "text-chart-2",
+                            delta.bad && "text-destructive",
+                            !delta.good && !delta.bad && "text-muted-foreground",
+                          )}
+                        >
+                          {formatSigned(delta.delta, row.label === "Kamper" ? 0 : 1)}
+                        </p>
+                      )}
+                    </div>
+                    <p className="font-mono font-bold text-sm text-foreground tabular-nums">
+                      {row.format(row.other)}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          <div className="px-4 py-5 text-center text-sm text-muted-foreground">
+            Velg en spiller over for å se sammenligningen.
+          </div>
+        )}
       </div>
-      <div className="px-4">
-        {rows.map((row) => (
-          <StatRow
-            key={row.label}
-            label={row.label}
-            value={row.value}
-            highlight={row.highlight}
-          />
+    </section>
+  );
+}
+
+function Tabs({ active, onChange }: { active: Tab; onChange: (tab: Tab) => void }) {
+  const tabs = [
+    { id: "season" as const, label: "Sesong", icon: BarChart3 },
+    { id: "matches" as const, label: "Kamper", icon: CalendarDays },
+    { id: "form" as const, label: "Form", icon: TrendingUp },
+  ];
+
+  return (
+    <div className="px-4">
+      <div className="grid grid-cols-3 rounded-xl bg-card border border-border overflow-hidden">
+        {tabs.map(({ id, label, icon: Icon }) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => onChange(id)}
+            className={cn(
+              "flex items-center justify-center gap-1.5 py-3 text-[11px] font-display font-bold uppercase tracking-wide transition-colors",
+              active === id
+                ? "bg-primary/15 text-primary"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            <Icon className="size-3.5" />
+            {label}
+          </button>
         ))}
       </div>
     </div>
   );
 }
 
-// ─── Format helpers ───────────────────────────────────────────────────────────
-function fmtPct(v: number | undefined): string | null {
-  if (v === undefined || v === null) return null;
-  return `${v.toFixed(1)}%`;
-}
-function fmtAvg1(v: number | undefined): string | null {
-  if (v === undefined || v === null) return null;
-  return v.toFixed(1);
-}
-function fmtAvg2(v: number | undefined): string | null {
-  if (v === undefined || v === null) return null;
-  return v.toFixed(2);
-}
-function fmtBig(v: bigint | undefined, alwaysShow?: boolean): string | null {
-  if (v === undefined || v === null) return null;
-  if (!alwaysShow && v === 0n) return null;
-  return Number(v).toString();
-}
-
-// ─── Season Stats Tab ─────────────────────────────────────────────────────────
-function SeasonTab({
-  stats,
-  player,
-}: {
-  stats: PlayerSeasonStats;
-  player: Player;
-}) {
-  type StatRowDef = { label: string; value: string; highlight?: boolean };
-  function row(
-    label: string,
-    value: string | null,
-    highlight?: boolean,
-  ): StatRowDef | null {
-    if (value === null) return null;
-    return { label, value, highlight };
-  }
-  function compact<T>(arr: (T | null)[]): T[] {
-    return arr.filter((x): x is T => x !== null);
-  }
-
-  // Group 1: Mål og skudd
-  const goalsGroup = compact([
-    row("Total mål", fmtBig(stats.totalGoals, true), !isGK(player.position)),
-    row("Total uttelling %", fmtPct(stats.shootingPercent)),
-    row("Total skudd", fmtBig(stats.totalShots)),
-    row("Snitt mål/kamp", fmtAvg1(stats.goalsPerGame)),
-  ]);
-
-  // Group 2: Spillemål
-  const fieldGoalsGroup = compact([
-    row("Spillermål", fmtBig(stats.fieldGoals)),
-    row("Spillerskudd", fmtBig(stats.fieldShots)),
-    row("Uttelling spill", fmtPct(stats.fieldGoalPercent)),
-  ]);
-
-  // Group 3: 7-meter
-  const sevenMGroup = compact([
-    row("Mål 7M", fmtBig(stats.goals7m)),
-    row("Skudd 7M", fmtBig(stats.shots7m)),
-    row("Uttelling 7M", fmtPct(stats.percent7m)),
-  ]);
-
-  // Group 4: Assist og disiplin
-  const assistGroup = compact([
-    row("Assist", fmtBig(stats.totalAssists)),
-    row("Assist snitt/kamp", fmtAvg1(stats.assistsPerGame)),
-    row("Teknisk feil", fmtBig(stats.technicalFaults)),
-    row("Forårsaket 7M", fmtBig(stats.provoked7m)),
-    row("Tildelt 7M", fmtBig(stats.awarded7m)),
-  ]);
-
-  // Group 5: Disiplin og tid
-  const disciplineGroup = compact([
-    row("Advarsel", fmtBig(stats.totalYellowCards)),
-    row("2 min utvisning", fmtBig(stats.totalTwoMin)),
-    row("Rødt kort", fmtBig(stats.totalRedCards)),
-    row("Antall kamper", Number(stats.matchesPlayed).toString(), true),
-    row("Spillertid (min)", fmtBig(stats.totalMinutes, true)),
-  ]);
-
-  // Group 6: MEP
-  const mepGroup = compact([
-    row("Snitt MEP", fmtAvg2(stats.mepAvg), true),
-    row("Total MEP", fmtAvg2(stats.mepTotal), true),
-  ]);
-
-  return (
-    <div className="space-y-3" data-ocid="season-stats-tab">
-      <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-display font-semibold">
-        Sesong {stats.season}
-      </p>
-      <StatGroup title="Mål og skudd" rows={goalsGroup} />
-      {fieldGoalsGroup.length > 0 && (
-        <StatGroup title="Spillemål" rows={fieldGoalsGroup} />
-      )}
-      {sevenMGroup.length > 0 && (
-        <StatGroup title="7-meter" rows={sevenMGroup} />
-      )}
-      {assistGroup.length > 0 && (
-        <StatGroup title="Assist og disiplin" rows={assistGroup} />
-      )}
-      <StatGroup title="Disiplin og tid" rows={disciplineGroup} />
-      {mepGroup.length > 0 && <StatGroup title="MEP" rows={mepGroup} />}
-    </div>
-  );
-}
-
-// ─── Match Table Tab ──────────────────────────────────────────────────────────
-function MatchTab({ stats }: { stats: PlayerMatchStats[] }) {
-  const hasAssists = stats.some((s) => s.assists !== undefined);
-  const hasTwoMin = stats.some((s) => s.twoMinSuspensions !== undefined);
-  const hasYellow = stats.some((s) => s.yellowCards !== undefined);
-  const hasRed = stats.some((s) => s.redCards !== undefined);
-  const hasSaves = stats.some((s) => s.saves !== undefined);
-
-  if (stats.length === 0) {
-    return (
-      <div className="py-12 text-center">
-        <p className="text-muted-foreground text-sm">
-          Ingen kampstatistikk tilgjengelig
-        </p>
-      </div>
-    );
-  }
-  return (
-    <div className="overflow-x-auto -mx-4">
-      <table className="w-full text-xs min-w-[320px]">
-        <thead>
-          <tr className="border-b border-border">
-            <th className="text-left pl-4 pb-2 text-muted-foreground font-display uppercase tracking-wider text-[10px] w-8">
-              #
-            </th>
-            <th className="text-center pb-2 text-muted-foreground font-display uppercase tracking-wider text-[10px]">
-              Min
-            </th>
-            <th className="text-center pb-2 text-muted-foreground font-display uppercase tracking-wider text-[10px]">
-              Mål
-            </th>
-            {hasAssists && (
-              <th className="text-center pb-2 text-muted-foreground font-display uppercase tracking-wider text-[10px]">
-                Ass
-              </th>
-            )}
-            {hasSaves && (
-              <th className="text-center pb-2 text-muted-foreground font-display uppercase tracking-wider text-[10px]">
-                Red
-              </th>
-            )}
-            {hasTwoMin && (
-              <th className="text-center pb-2 text-muted-foreground font-display uppercase tracking-wider text-[10px]">
-                2m
-              </th>
-            )}
-            {hasYellow && (
-              <th className="text-center pb-2 text-muted-foreground font-display uppercase tracking-wider text-[10px]">
-                GK
-              </th>
-            )}
-            {hasRed && (
-              <th className="text-center pr-4 pb-2 text-muted-foreground font-display uppercase tracking-wider text-[10px]">
-                Rød
-              </th>
-            )}
-          </tr>
-        </thead>
-        <tbody>
-          {stats.map((s, i) => (
-            <tr
-              key={s.id.toString()}
-              className={cn(
-                "border-b border-border/50",
-                i % 2 === 0 ? "bg-card/40" : "bg-transparent",
-              )}
-            >
-              <td className="pl-4 py-2.5 text-muted-foreground text-[11px]">
-                {i + 1}
-              </td>
-              <td className="text-center py-2.5 font-display font-semibold text-foreground">
-                {fmt(s.minutesPlayed)}
-              </td>
-              <td className="text-center py-2.5 font-display font-bold text-primary">
-                {s.goals !== undefined ? s.goals.toString() : "—"}
-              </td>
-              {hasAssists && (
-                <td className="text-center py-2.5 text-foreground">
-                  {s.assists !== undefined ? s.assists.toString() : "—"}
-                </td>
-              )}
-              {hasSaves && (
-                <td className="text-center py-2.5 font-display font-bold text-primary">
-                  {s.saves !== undefined ? s.saves.toString() : "—"}
-                </td>
-              )}
-              {hasTwoMin && (
-                <td className="text-center py-2.5 text-foreground">
-                  {s.twoMinSuspensions !== undefined
-                    ? s.twoMinSuspensions.toString()
-                    : "—"}
-                </td>
-              )}
-              {hasYellow && (
-                <td className="text-center py-2.5">
-                  {s.yellowCards !== undefined && s.yellowCards > 0n ? (
-                    <span className="inline-block size-3 rounded-sm bg-chart-4" />
-                  ) : (
-                    <span className="text-muted-foreground">—</span>
-                  )}
-                </td>
-              )}
-              {hasRed && (
-                <td className="text-center pr-4 py-2.5">
-                  {s.redCards !== undefined && s.redCards > 0n ? (
-                    <span className="inline-block size-3 rounded-sm bg-chart-3" />
-                  ) : (
-                    <span className="text-muted-foreground">—</span>
-                  )}
-                </td>
-              )}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-// ─── Form Chart Tab ───────────────────────────────────────────────────────────
-function FormTab({ stats, gk }: { stats: PlayerMatchStats[]; gk: boolean }) {
-  const statLabel = gk ? "Redninger" : "Mål";
-  return (
-    <div className="space-y-5">
-      <p className="text-xs text-muted-foreground uppercase tracking-widest font-display">
-        {statLabel} per kamp – siste {Math.min(stats.length, 5)}
-      </p>
-      <FormBarChart stats={stats} gk={gk} />
-    </div>
-  );
-}
-
-// ─── Loading skeleton ─────────────────────────────────────────────────────────
-function PlayerPageSkeleton() {
-  return (
-    <div className="animate-pulse">
-      <div className="bg-card border-b border-border px-4 pt-5 pb-5 space-y-4">
-        <div className="flex items-start gap-4">
-          <Skeleton className="size-24 rounded-2xl flex-shrink-0" />
-          <div className="flex-1 space-y-2 pt-1">
-            <Skeleton className="h-7 w-44" />
-            <div className="flex gap-2 mt-2">
-              <Skeleton className="h-5 w-20 rounded-full" />
-              <Skeleton className="h-5 w-14 rounded-full" />
-            </div>
-            <Skeleton className="h-4 w-32 mt-1" />
-          </div>
-        </div>
-        <Skeleton className="h-12 w-full rounded-full" />
-      </div>
-      <div className="pt-4 space-y-4">
-        <Skeleton className="mx-4 h-32 rounded-2xl" />
-        <div className="grid grid-cols-4 gap-2 mx-4">
-          {[...Array(4)].map((_, i) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: skeleton
-            <Skeleton key={i} className="h-14 rounded-xl" />
-          ))}
-        </div>
-        <Skeleton className="mx-4 h-20 rounded-2xl" />
-      </div>
-    </div>
-  );
-}
-
-// ─── Main Page ────────────────────────────────────────────────────────────────
 export default function PlayerPage() {
   const { id } = useParams({ from: "/player/$id" });
   const router = useRouter();
   const playerId = BigInt(id);
-  const [activeTab, setActiveTab] = useState<Tab>("sesong");
-  const [showFullComparison, setShowFullComparison] = useState(false);
+  const [activeTab, setActiveTab] = useState<Tab>("season");
 
   const { data: player, isLoading: playerLoading } = usePlayer(playerId);
   const { data: seasonStats, isLoading: seasonLoading } =
@@ -912,7 +919,13 @@ export default function PlayerPage() {
 
   const isLoading = playerLoading || seasonLoading || matchLoading;
 
-  if (isLoading && !player) return <PlayerPageSkeleton />;
+  if (isLoading && !player) {
+    return (
+      <div className="px-4 py-20 text-center text-muted-foreground">
+        Laster spillerprofil...
+      </div>
+    );
+  }
 
   if (!player) {
     return (
@@ -926,129 +939,40 @@ export default function PlayerPage() {
     );
   }
 
-  const gk = isGK(player.position);
-
   return (
     <div className="flex flex-col min-h-full pb-8">
-      {/* Back nav */}
       <div className="px-4 pt-3 pb-1">
         <button
           type="button"
           onClick={() => router.history.back()}
           className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          data-ocid="back-btn"
         >
           <ArrowLeft className="size-4" />
           Tilbake
         </button>
       </div>
 
-      {/* Hero */}
-      <PlayerHero
-        player={player}
-        teamName={team?.name}
-        teamId={player.teamId}
-      />
+      <PlayerHero player={player} teamName={team?.name} teamId={player.teamId} />
 
-      {/* ── HUB SECTIONS ── */}
       <div className="flex flex-col gap-5 pt-5">
-        {/* 1. Next Match */}
-        <NextMatchModule player={player} teamName={team?.name} />
+        <KeyStats player={player} stats={seasonStats} />
+        <InsightCards player={player} stats={seasonStats} />
+        <PlayerComparison player={player} seasonStats={seasonStats} />
+        <FormOverview player={player} stats={matchStats} />
 
-        {/* 2. Quick Stats */}
-        <QuickStatsRow player={player} seasonStats={seasonStats} />
+        <Tabs active={activeTab} onChange={setActiveTab} />
 
-        {/* 3. Position Indicator — above/below avg + ranking */}
-        {seasonStats && (
-          <PositionIndicator player={player} seasonStats={seasonStats} />
-        )}
-
-        {/* 4. Form Bar Chart (last 5 matches) */}
-        {matchStats.length >= 2 && (
-          <div className="mx-4 space-y-2" data-ocid="form-chart-section">
-            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-display font-semibold">
-              Form siste {Math.min(matchStats.length, 5)} kamper
-            </p>
-            <FormBarChart stats={matchStats} gk={gk} />
-          </div>
-        )}
-
-        {/* 5. Comparison — PROMINENTLY near top */}
-        <div className="mx-4">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-sm font-display font-bold text-foreground tracking-tight">
-              Sammenlign med lignende spillere
-            </h2>
-            {!showFullComparison && (
-              <button
-                type="button"
-                onClick={() => setShowFullComparison(true)}
-                className="text-xs text-primary hover:text-primary/80 flex items-center gap-1 font-display font-semibold"
-                data-ocid="expand-comparison-btn"
-              >
-                Vis full <ChevronRight className="size-3.5" />
-              </button>
-            )}
-          </div>
-          {showFullComparison ? (
-            <ComparisonTab playerId={player.id} position={player.position} />
-          ) : (
-            <ComparisonTab
-              playerId={player.id}
-              position={player.position}
-              compact
-            />
-          )}
-        </div>
-
-        {/* 6. Team Nav */}
-        <TeamNavCard teamId={player.teamId} teamName={team?.name} />
-
-        {/* ── DETAILED STATS TABS ── */}
-        <div className="space-y-0">
-          <div className="px-4 mb-3">
-            <div className="flex rounded-xl bg-card border border-border overflow-hidden">
-              {TABS.map((tab) => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id)}
-                  className={cn(
-                    "flex-1 py-2.5 text-[11px] font-display font-semibold uppercase tracking-wide transition-colors",
-                    activeTab === tab.id
-                      ? "bg-primary/15 text-primary"
-                      : "text-muted-foreground hover:text-foreground",
-                  )}
-                  data-ocid={`tab-${tab.id}`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="px-4">
-            {activeTab === "sesong" &&
-              (seasonStats ? (
-                <SeasonTab stats={seasonStats} player={player} />
-              ) : (
-                <div className="py-10 text-center">
-                  <p className="text-muted-foreground text-sm">
-                    Ingen sesongsstatistikk tilgjengelig
-                  </p>
-                </div>
-              ))}
-            {activeTab === "kamp" && <MatchTab stats={matchStats} />}
-            {activeTab === "form" &&
-              (matchStats.length > 0 ? (
-                <FormTab stats={matchStats} gk={gk} />
-              ) : (
-                <div className="py-10 text-center">
-                  <p className="text-muted-foreground text-sm">
-                    Ingen kampdata for formkurve
-                  </p>
-                </div>
-              ))}
-          </div>
+        <div className="px-4">
+          {activeTab === "season" &&
+            (seasonStats ? (
+              <SeasonDetails player={player} stats={seasonStats} />
+            ) : (
+              <div className="py-10 text-center text-sm text-muted-foreground">
+                Ingen sesongstatistikk tilgjengelig
+              </div>
+            ))}
+          {activeTab === "matches" && <MatchHistory player={player} stats={matchStats} />}
+          {activeTab === "form" && <FormOverview player={player} stats={matchStats} />}
         </div>
       </div>
     </div>

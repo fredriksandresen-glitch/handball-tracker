@@ -1,33 +1,60 @@
 import { useActor } from "@caffeineai/core-infrastructure";
 import { useQuery } from "@tanstack/react-query";
 import { createActor } from "../backend";
+import {
+  getStaticPlayers,
+  searchStaticPlayers,
+} from "../services/clawdbotPlayerProfile";
 import type { Player } from "../types/handball";
 import { enrichPlayersWithImages } from "../utils/playerImages";
 
+const STATIC_STALE_TIME = Number.POSITIVE_INFINITY;
+const STATIC_GC_TIME = 30 * 60_000;
+
 export function usePlayers() {
   const { actor, isFetching } = useActor(createActor);
+  const staticPlayers = getStaticPlayers();
+  const hasStaticPlayers = staticPlayers.length > 0;
+
   return useQuery<Player[]>({
     queryKey: ["players"],
     queryFn: async () => {
+      if (hasStaticPlayers) {
+        return enrichPlayersWithImages(staticPlayers);
+      }
+
       if (!actor) return [];
-      const players = await actor.getPlayers();
-      return enrichPlayersWithImages(players);
+      return enrichPlayersWithImages(await actor.getPlayers());
     },
-    enabled: !!actor && !isFetching,
-    staleTime: 120_000,
+    enabled: hasStaticPlayers || !isFetching,
+    initialData: hasStaticPlayers
+      ? enrichPlayersWithImages(staticPlayers)
+      : undefined,
+    staleTime: hasStaticPlayers ? STATIC_STALE_TIME : 120_000,
+    gcTime: STATIC_GC_TIME,
   });
 }
 
 export function useSearchPlayers(term: string) {
   const { actor, isFetching } = useActor(createActor);
+  const trimmedTerm = term.trim();
+  const hasStaticPlayers = getStaticPlayers().length > 0;
+
   return useQuery<Player[]>({
-    queryKey: ["searchPlayers", term],
+    queryKey: ["searchPlayers", trimmedTerm],
     queryFn: async () => {
-      if (!actor || !term.trim()) return [];
-      const players = await actor.searchPlayers(term.trim());
-      return enrichPlayersWithImages(players);
+      if (!trimmedTerm) return [];
+
+      const staticPlayers = searchStaticPlayers(trimmedTerm);
+      if (hasStaticPlayers || staticPlayers.length > 0) {
+        return enrichPlayersWithImages(staticPlayers);
+      }
+
+      if (!actor) return [];
+      return enrichPlayersWithImages(await actor.searchPlayers(trimmedTerm));
     },
-    enabled: !!actor && !isFetching && term.trim().length > 0,
-    staleTime: 30_000,
+    enabled: trimmedTerm.length > 0 && (hasStaticPlayers || !isFetching),
+    staleTime: hasStaticPlayers ? STATIC_STALE_TIME : 30_000,
+    gcTime: STATIC_GC_TIME,
   });
 }

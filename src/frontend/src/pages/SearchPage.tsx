@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Search, X } from "lucide-react";
+import { Search, TrendingUp, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PlayerCard } from "../components/PlayerCard";
 import { SkeletonCard } from "../components/SkeletonCard";
@@ -10,14 +10,31 @@ import {
   useUnfollowPlayer,
 } from "../hooks/useFollowedPlayers";
 import { usePlayers, useSearchPlayers } from "../hooks/usePlayers";
+import {
+  getStaticProfile,
+  mapClawdbotMatchStats,
+  mapClawdbotSeasonStats,
+  type EnrichedPlayerMatchStats,
+} from "../services/clawdbotPlayerProfile";
 import { useTeams } from "../hooks/useTeams";
 import {
   POSITION_LABELS,
   type Player,
+  type PlayerSeasonStats,
   type PositionFilter,
 } from "../types/handball";
 
 // ─── Position filter pills ────────────────────────────────────────────────────
+
+type SortMode = "hot" | "form" | "goals" | "mep" | "name";
+
+const SORT_FILTERS: { value: SortMode; label: string }[] = [
+  { value: "hot", label: "Heitest" },
+  { value: "form", label: "Beste form" },
+  { value: "goals", label: "Flest mål" },
+  { value: "mep", label: "Snitt MEP" },
+  { value: "name", label: "Navn" },
+];
 
 const POSITION_FILTERS: { value: PositionFilter; label: string }[] = [
   { value: "all", label: "Alle" },
@@ -28,12 +45,95 @@ const POSITION_FILTERS: { value: PositionFilter; label: string }[] = [
   { value: "Bakspiller", label: POSITION_LABELS.Bakspiller },
 ];
 
+function getPositionValue(player: Player) {
+  return String(player.position);
+}
+
+type PlayerSearchInsight = {
+  seasonStats?: PlayerSeasonStats;
+  sparkValues: number[];
+  formAvg?: number;
+  latestMep?: number;
+  hotScore: number;
+  totalGoals?: number;
+  latestGoals?: number;
+  latestSaves?: number;
+  latestSavePct?: number;
+};
+
+function getMatchDate(match: EnrichedPlayerMatchStats) {
+  return match.date ?? match.matchId.toString();
+}
+
+function asNumber(value: bigint | undefined) {
+  return value === undefined ? undefined : Number(value);
+}
+
+function getPlayerSearchInsight(player: Player): PlayerSearchInsight {
+  const profile = getStaticProfile(player.id);
+  if (!profile) return { sparkValues: [], hotScore: 0 };
+
+  const seasonStats = mapClawdbotSeasonStats(profile);
+  const mepMatches = (mapClawdbotMatchStats(profile) as EnrichedPlayerMatchStats[])
+    .filter((match) => typeof match.mep === "number")
+    .sort((a, b) => getMatchDate(a).localeCompare(getMatchDate(b)))
+    .slice(-5);
+  const sparkValues = mepMatches.map((match) => match.mep ?? 0);
+  const latestMatch = mepMatches.at(-1);
+  const latestMep = sparkValues.at(-1);
+  const formAvg = sparkValues.length
+    ? sparkValues.reduce((sum, value) => sum + value, 0) / sparkValues.length
+    : seasonStats.mepAvg;
+  const goalsPerGame = seasonStats.goalsPerGame ?? 0;
+  const matches = Number(seasonStats.matchesPlayed);
+  const hotScore =
+    (formAvg ?? 0) * 12 +
+    (seasonStats.mepAvg ?? 0) * 5 +
+    goalsPerGame * 4 +
+    Math.min(matches, 26) / 10;
+
+  return {
+    seasonStats,
+    sparkValues,
+    formAvg,
+    latestMep,
+    hotScore,
+    totalGoals: asNumber(seasonStats.totalGoals),
+    latestGoals: latestMatch?.goals === undefined ? undefined : Number(latestMatch.goals),
+    latestSaves: latestMatch?.saves === undefined ? undefined : Number(latestMatch.saves),
+    latestSavePct: latestMatch?.savePct,
+  };
+}
+
+function comparePlayersBySort(
+  a: Player,
+  b: Player,
+  sortMode: SortMode,
+  insights: Map<string, PlayerSearchInsight>,
+) {
+  const ai = insights.get(a.id.toString()) ?? getPlayerSearchInsight(a);
+  const bi = insights.get(b.id.toString()) ?? getPlayerSearchInsight(b);
+
+  if (sortMode === "name") return a.name.localeCompare(b.name, "nb");
+  if (sortMode === "goals") return (bi.totalGoals ?? 0) - (ai.totalGoals ?? 0);
+  if (sortMode === "mep") {
+    return (bi.seasonStats?.mepAvg ?? 0) - (ai.seasonStats?.mepAvg ?? 0);
+  }
+  if (sortMode === "form") return (bi.formAvg ?? 0) - (ai.formAvg ?? 0);
+  return bi.hotScore - ai.hotScore;
+}
+
 // ─── Single result row ────────────────────────────────────────────────────────
 
 function SearchResult({
   player,
   teamName,
-}: { player: Player; teamName?: string }) {
+  insight,
+}: {
+  player: Player;
+  teamName?: string;
+  insight: PlayerSearchInsight;
+}) {
   const { data: following, isLoading: checkingFollow } = useIsFollowing(
     player.id,
   );
@@ -50,6 +150,12 @@ function SearchResult({
       isLoading={
         checkingFollow || followMutation.isPending || unfollowMutation.isPending
       }
+      latestMep={insight.latestMep}
+      latestGoals={insight.latestGoals}
+      latestSaves={insight.latestSaves}
+      latestSavePct={insight.latestSavePct}
+      sparkValues={insight.sparkValues}
+      followOverlay
     />
   );
 }
@@ -60,6 +166,7 @@ export default function SearchPage() {
   const [inputValue, setInputValue] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [positionFilter, setPositionFilter] = useState<PositionFilter>("all");
+  const [sortMode, setSortMode] = useState<SortMode>("hot");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { data: rawResults, isLoading } = useSearchPlayers(debouncedQuery);
@@ -73,11 +180,26 @@ export default function SearchPage() {
   const totalPlayers = allPlayers?.length ?? 0;
   const totalTeams = teams?.length ?? 0;
 
-  // Filter by position client-side
-  const results =
+  const hasQuery = debouncedQuery.trim() !== "";
+  const sourcePlayers = hasQuery ? rawResults : allPlayers;
+
+  const playerInsights = new Map(
+    (sourcePlayers ?? []).map((player) => [
+      player.id.toString(),
+      getPlayerSearchInsight(player),
+    ]),
+  );
+
+  const filteredResults =
     positionFilter === "all"
-      ? rawResults
-      : rawResults?.filter((p) => p.position.toString() === positionFilter);
+      ? sourcePlayers
+      : sourcePlayers?.filter((p) => getPositionValue(p) === positionFilter);
+
+  const results = filteredResults
+    ? [...filteredResults].sort((a, b) =>
+        comparePlayersBySort(a, b, sortMode, playerInsights),
+      )
+    : undefined;
 
   // Debounce input → query
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,11 +224,10 @@ export default function SearchPage() {
     };
   }, []);
 
-  const hasQuery = debouncedQuery.trim() !== "";
   const showSkeletons = isLoading && hasQuery;
-  const showNoResults =
-    !isLoading && results !== undefined && results.length === 0 && hasQuery;
-  const showResults = results && results.length > 0;
+  const showNoResults = !isLoading && results !== undefined && results.length === 0;
+  const showResults = results !== undefined && results.length > 0;
+  const showEmptyPrompt = !showResults && !showNoResults && !showSkeletons;
 
   return (
     <div className="flex flex-col gap-4">
@@ -159,8 +280,8 @@ export default function SearchPage() {
         ))}
       </div>
 
-      {/* ── Empty prompt (no query typed yet) ────────────────────────── */}
-      {!hasQuery && (
+      {/* ── Empty prompt ──────────────────────────────────────────────── */}
+      {showEmptyPrompt && (
         <div
           className="flex flex-col items-center justify-center py-16 gap-4 text-center"
           data-ocid="search-empty-prompt"
@@ -197,7 +318,7 @@ export default function SearchPage() {
         </div>
       )}
 
-      {/* ── No results ────────────────────────────────────────────────── */}
+      {/* ── No results ───────────────────────────────────────────────── */}
       {showNoResults && (
         <div
           className="flex flex-col items-center justify-center py-14 gap-3 text-center"
@@ -211,7 +332,9 @@ export default function SearchPage() {
               Ingen treff
             </p>
             <p className="text-sm text-muted-foreground mt-1">
-              Ingen spillere funnet for «{debouncedQuery}»
+              {hasQuery
+                ? `Ingen spillere funnet for «${debouncedQuery}»`
+                : `Ingen spillere funnet i ${POSITION_LABELS[positionFilter] ?? "filteret"}`}
             </p>
           </div>
         </div>
@@ -220,16 +343,22 @@ export default function SearchPage() {
       {/* ── Results list ──────────────────────────────────────────────── */}
       {showResults && !showSkeletons && (
         <div data-ocid="search-results">
-          <p className="text-[10px] font-display font-semibold uppercase tracking-widest text-muted-foreground px-0.5 mb-3">
-            {results.length} {results.length === 1 ? "spiller" : "spillere"}{" "}
-            funnet
-          </p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="flex items-center justify-between gap-3 px-0.5 mb-3">
+            <p className="text-[10px] font-display font-semibold uppercase tracking-widest text-muted-foreground">
+              {results.length} {results.length === 1 ? "spiller" : "spillere"}{" "}
+              funnet
+            </p>
+            <p className="text-[10px] font-display font-bold uppercase tracking-widest text-primary">
+              {SORT_FILTERS.find((item) => item.value === sortMode)?.label}
+            </p>
+          </div>
+          <div className="-mx-2 grid grid-cols-2 gap-2 sm:mx-0 sm:gap-3">
             {results.map((player) => (
               <SearchResult
                 key={player.id.toString()}
                 player={player}
                 teamName={teamMap.get(player.teamId.toString())}
+                insight={playerInsights.get(player.id.toString()) ?? getPlayerSearchInsight(player)}
               />
             ))}
           </div>

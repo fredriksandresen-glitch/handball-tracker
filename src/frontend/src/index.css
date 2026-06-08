@@ -9,94 +9,94 @@
     --font-mono: monospace;
     --radius: 0.625rem;
 
-    --background: 0.145 0.014 260;
-    --foreground: 0.95 0.01 260;
-    --card: 0.22 0.014 260;
-    --card-foreground: 0.95 0.01 260;
-    --popover: 0.25 0.02 260;
-    --popover-foreground: 0.95 0.01 260;
+    --background: 0.985 0.004 255;
+    --foreground: 0.17 0.055 268;
+    --card: 1 0 0;
+    --card-foreground: 0.17 0.055 268;
+    --popover: 1 0 0;
+    --popover-foreground: 0.17 0.055 268;
 
-    --primary: 0.78 0.18 190;
-    --primary-foreground: 0.145 0.014 260;
+    --primary: 0.22 0.09 268;
+    --primary-foreground: 0.99 0.003 255;
 
-    --secondary: 0.22 0.02 260;
-    --secondary-foreground: 0.85 0.01 260;
-    --muted: 0.22 0.02 260;
-    --muted-foreground: 0.55 0.01 260;
+    --secondary: 0.94 0.012 258;
+    --secondary-foreground: 0.22 0.07 268;
+    --muted: 0.94 0.012 258;
+    --muted-foreground: 0.46 0.028 265;
 
-    --accent: 0.78 0.18 190;
-    --accent-foreground: 0.145 0.014 260;
+    --accent: 0.54 0.18 258;
+    --accent-foreground: 0.99 0.003 255;
 
     --destructive: 0.55 0.2 25;
     --destructive-foreground: 0.95 0.01 25;
 
-    --border: 0.32 0.02 260;
-    --input: 0.32 0.02 260;
-    --ring: 0.78 0.18 190;
+    --border: 0.82 0.022 260;
+    --input: 0.82 0.022 260;
+    --ring: 0.54 0.18 258;
 
-    --chart-1: 0.75 0.15 190;
-    --chart-2: 0.65 0.18 145;
+    --chart-1: 0.54 0.18 258;
+    --chart-2: 0.56 0.16 150;
     --chart-3: 0.55 0.2 25;
     --chart-4: 0.72 0.15 85;
     --chart-5: 0.7 0.17 162;
 
-    --sidebar: 0.18 0.014 260;
-    --sidebar-foreground: 0.95 0.01 260;
-    --sidebar-primary: 0.75 0.15 190;
-    --sidebar-primary-foreground: 0.145 0.014 260;
-    --sidebar-accent: 0.22 0.02 260;
-    --sidebar-accent-foreground: 0.85 0.01 260;
-    --sidebar-border: 0.28 0.02 260;
-    --sidebar-ring: 0.75 0.15 190;
+    --sidebar: 0.22 0.09 268;
+    --sidebar-foreground: 0.99 0.003 255;
+    --sidebar-primary: 0.99 0.003 255;
+    --sidebar-primary-foreground: 0.22 0.09 268;
+    --sidebar-accent: 0.31 0.09 268;
+    --sidebar-accent-foreground: 0.99 0.003 255;
+    --sidebar-border: 0.31 0.09 268;
+    --sidebar-ring: 0.54 0.18 258;
   }
 
   .dark {
-    --background: 0.145 0.014 260;
-    --foreground: 0.95 0.01 260;
-    --card: 0.22 0.014 260;
-    --card-foreground: 0.95 0.01 260;
-    --popover: 0.25 0.02 260;
-    --popover-foreground: 0.95 0.01 260;
+    --background: 0.14 0.04 268;
+    --foreground: 0.97 0.006 255;
+    --card: 0.2 0.045 268;
+    --card-foreground: 0.97 0.006 255;
+    --popover: 0.22 0.05 268;
+    --popover-foreground: 0.97 0.006 255;
 
-    --primary: 0.78 0.18 190;
-    --primary-foreground: 0.145 0.014 260;
+    --primary: 0.97 0.006 255;
+    --primary-foreground: 0.16 0.055 268;
 
-    --secondary: 0.22 0.02 260;
-    --secondary-foreground: 0.85 0.01 260;
-    --muted: 0.22 0.02 260;
-    --muted-foreground: 0.55 0.01 260;
+    --secondary: 0.25 0.05 268;
+    --secondary-foreground: 0.93 0.012 255;
+    --muted: 0.25 0.05 268;
+    --muted-foreground: 0.72 0.018 258;
 
-    --accent: 0.78 0.18 190;
-    --accent-foreground: 0.145 0.014 260;
+    --accent: 0.68 0.16 258;
+    --accent-foreground: 0.98 0.004 255;
 
     --destructive: 0.55 0.2 25;
     --destructive-foreground: 0.95 0.01 25;
 
-    --border: 0.32 0.02 260;
-    --input: 0.32 0.02 260;
-    --ring: 0.78 0.18 190;
+    --border: 0.34 0.05 268;
+    --input: 0.34 0.05 268;
+    --ring: 0.88 0.03 255;
 
-    --chart-1: 0.75 0.15 190;
-    --chart-2: 0.65 0.18 145;
+    --chart-1: 0.82 0.08 258;
+    --chart-2: 0.66 0.18 150;
     --chart-3: 0.55 0.2 25;
     --chart-4: 0.72 0.15 85;
     --chart-5: 0.7 0.17 162;
 
-    --sidebar: 0.18 0.014 260;
-    --sidebar-foreground: 0.95 0.01 260;
-    --sidebar-primary: 0.75 0.15 190;
-    --sidebar-primary-foreground: 0.145 0.014 260;
-    --sidebar-accent: 0.22 0.02 260;
-    --sidebar-accent-foreground: 0.85 0.01 260;
-    --sidebar-border: 0.28 0.02 260;
-    --sidebar-ring: 0.75 0.15 190;
+    --sidebar: 0.18 0.055 268;
+    --sidebar-foreground: 0.97 0.006 255;
+    --sidebar-primary: 0.97 0.006 255;
+    --sidebar-primary-foreground: 0.16 0.055 268;
+    --sidebar-accent: 0.25 0.05 268;
+    --sidebar-accent-foreground: 0.93 0.012 255;
+    --sidebar-border: 0.32 0.05 268;
+    --sidebar-ring: 0.88 0.03 255;
   }
 
   * {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-body antialiased;
+    @apply bg-background text-foreground font-body antialiased transition-colors duration-300;
   }
 }
 
@@ -159,5 +159,190 @@
   }
   .no-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  img.size-28.object-top[alt] {
+    cursor: zoom-in;
+  }
+
+  a[href="/team/205902"] > svg:first-child,
+  a[href="/team/205902"] > span:first-child {
+    display: none;
+  }
+
+  a[href="/team/205902"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+  a[href="/team/182094"] > svg:first-child,
+  a[href="/team/182094"] > span:first-child {
+    display: none;
+  }
+
+  a[href="/team/182094"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("https://www.fanahandball.no/wp-content/uploads/sites/5/2024/05/Fana-IL-logo.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+  a[href$="/team/2989"] > svg:first-child,
+  a[href$="/team/2989"] > span:first-child,
+  a[href$="/team/2989"] img[src*="fredrikstadbk.no"],
+  a[href$="/team/802989"] > svg:first-child,
+  a[href$="/team/802989"] > span:first-child,
+  a[href$="/team/802989"] img[src*="fredrikstadbk.no"] {
+    display: none;
+  }
+
+  a.inline-flex[href$="/team/2989"]::before,
+  a.inline-flex[href$="/team/802989"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("/assets/team-logos/fredrikstad.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+  a[href="/team/234025"] > svg:first-child,
+  a[href="/team/234025"] > span:first-child {
+    display: none;
+  }
+
+  a[href="/team/234025"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("https://gjerpenhandball.no/wp-content/uploads/sites/36/2019/09/gjerpen.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+  a[href="/team/524907"] > svg:first-child,
+  a[href="/team/524907"] > span:first-child {
+    display: none;
+  }
+
+  a[href="/team/524907"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("https://www.handballjentan.no/wp-content/uploads/sites/8/2021/07/MOLDE-ELITE-LOGO.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+  a.inline-flex[href$="/team/582769"] > svg:first-child,
+  a.inline-flex[href$="/team/582769"] > span:first-child {
+    display: none;
+  }
+
+  a.inline-flex[href$="/team/582769"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("https://sola-hk.no/wp-content/uploads/sites/10/2022/10/SOLA-GUL.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+  a.inline-flex[href$="/team/696739"] > svg:first-child,
+  a.inline-flex[href$="/team/696739"] > span:first-child {
+    display: none;
+  }
+
+  a.inline-flex[href$="/team/696739"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("https://follohk-damer.topphandball.no/wp-content/uploads/sites/34/2026/01/follohokdamer-hvit.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+  a.inline-flex[href$="/team/20065"] > svg:first-child,
+  a.inline-flex[href$="/team/20065"] > span:first-child {
+    display: none;
+  }
+
+  a.inline-flex[href$="/team/20065"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("https://storhamar.topphandball.no/wp-content/uploads/sites/11/2022/10/Storhamar.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+  a.inline-flex[href$="/team/699561"] > svg:first-child,
+  a.inline-flex[href$="/team/699561"] > span:first-child {
+    display: none;
+  }
+
+  a.inline-flex[href$="/team/699561"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("https://tertneshandball.admin.topphandball.no/wp-content/uploads/sites/12/2022/10/Tertnes-2.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+  a.inline-flex[href$="/team/413898"] > svg:first-child,
+  a.inline-flex[href$="/team/413898"] > span:first-child {
+    display: none;
+  }
+
+  a.inline-flex[href$="/team/413898"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("https://haslum.topphandball.no/wp-content/uploads/sites/30/2021/07/haslum.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+  a.inline-flex[href$="/team/587503"] > svg:first-child,
+  a.inline-flex[href$="/team/587503"] > span:first-child {
+    display: none;
+  }
+
+  a.inline-flex[href$="/team/587503"]::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    background-image: url("https://www.oppsalhandball.no/wp-content/uploads/sites/38/2019/06/oppsal.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
   }
 }

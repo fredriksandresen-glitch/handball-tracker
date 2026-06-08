@@ -1,61 +1,89 @@
 import { useActor } from "@caffeineai/core-infrastructure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createActor } from "../backend";
+import {
+  getStaticProfile,
+  mapClawdbotPlayer,
+} from "../services/clawdbotPlayerProfile";
 import type { Player } from "../types/handball";
 import { enrichPlayersWithImages } from "../utils/playerImages";
 
-// Demo players shown on first load when no players have been followed yet.
-// This ensures the live app looks identical to the demo on first visit.
-const DEMO_PLAYER_IDS = [BigInt(3), BigInt(14), BigInt(68)]; // Camilla Herrem, Ida Alstad, Sarah Solheim
+const FOLLOWED_PLAYERS_STORAGE_KEY = "handball-tracker-followed-player-ids";
+const LOCAL_STALE_TIME = Number.POSITIVE_INFINITY;
+const LOCAL_GC_TIME = 30 * 60_000;
+
+function canUseLocalStorage() {
+  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+}
+
+function readLocalFollowedIds(): string[] {
+  if (!canUseLocalStorage()) return [];
+
+  try {
+    const raw = window.localStorage.getItem(FOLLOWED_PLAYERS_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.map(String) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeLocalFollowedIds(ids: string[]) {
+  if (!canUseLocalStorage()) return;
+
+  const uniqueIds = Array.from(new Set(ids));
+  window.localStorage.setItem(
+    FOLLOWED_PLAYERS_STORAGE_KEY,
+    JSON.stringify(uniqueIds),
+  );
+}
+
+function addLocalFollowedPlayer(playerId: bigint) {
+  const ids = readLocalFollowedIds();
+  writeLocalFollowedIds([...ids, playerId.toString()]);
+}
+
+function removeLocalFollowedPlayer(playerId: bigint) {
+  const playerIdString = playerId.toString();
+  writeLocalFollowedIds(
+    readLocalFollowedIds().filter((id) => id !== playerIdString),
+  );
+}
+
+function getLocalFollowedPlayers(): Player[] {
+  return readLocalFollowedIds().flatMap((id) => {
+    try {
+      const profile = getStaticProfile(BigInt(id));
+      return profile ? [mapClawdbotPlayer(profile)] : [];
+    } catch {
+      return [];
+    }
+  });
+}
+
+function getLocalFollowedPlayersWithImages() {
+  return enrichPlayersWithImages(getLocalFollowedPlayers());
+}
 
 export function useFollowedPlayers() {
-  const { actor, isFetching } = useActor(createActor);
   return useQuery<Player[]>({
     queryKey: ["followedPlayers"],
-    queryFn: async () => {
-      if (!actor) return [];
-      const followed = await actor.getFollowedPlayers();
-      // If the user hasn't followed anyone yet, show the 3 demo players
-      // so the feed looks great on first load (matches demo behaviour).
-      if (followed.length === 0) {
-        // Auto-follow the 3 demo players so they persist for this user
-        try {
-          await Promise.all(
-            DEMO_PLAYER_IDS.map((id) => actor.followPlayer(id)),
-          );
-        } catch {
-          // Non-fatal — we'll still fetch them below
-        }
-        const withDemos = await actor.getFollowedPlayers();
-        // If the follow calls worked, return those; otherwise build list from search
-        if (withDemos.length > 0) {
-          return enrichPlayersWithImages(withDemos);
-        }
-        // Last resort: fetch each demo player individually
-        const demos = await Promise.all(
-          DEMO_PLAYER_IDS.map((id) => actor.getPlayer(id)),
-        );
-        return enrichPlayersWithImages(
-          demos.filter((p): p is Player => p !== null),
-        );
-      }
-      return enrichPlayersWithImages(followed);
-    },
-    enabled: !!actor && !isFetching,
-    staleTime: 30_000,
+    queryFn: async () => getLocalFollowedPlayersWithImages(),
+    initialData: getLocalFollowedPlayersWithImages,
+    staleTime: LOCAL_STALE_TIME,
+    gcTime: LOCAL_GC_TIME,
   });
 }
 
 export function useIsFollowing(playerId: bigint) {
-  const { actor, isFetching } = useActor(createActor);
+  const playerIdString = playerId.toString();
+
   return useQuery<boolean>({
-    queryKey: ["isFollowing", playerId.toString()],
-    queryFn: async () => {
-      if (!actor) return false;
-      return actor.isFollowing(playerId);
-    },
-    enabled: !!actor && !isFetching,
-    staleTime: 30_000,
+    queryKey: ["isFollowing", playerIdString],
+    queryFn: async () => readLocalFollowedIds().includes(playerIdString),
+    initialData: () => readLocalFollowedIds().includes(playerIdString),
+    staleTime: LOCAL_STALE_TIME,
+    gcTime: LOCAL_GC_TIME,
   });
 }
 
@@ -64,12 +92,23 @@ export function useFollowPlayer() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (playerId: bigint) => {
-      if (!actor) throw new Error("Ingen tilkobling");
-      return actor.followPlayer(playerId);
+      if (actor) {
+        try {
+          await actor.followPlayer(playerId);
+        } catch {
+          // Local MVP follow state is the source of truth for now.
+        }
+      }
+    },
+    onMutate: (playerId) => {
+      addLocalFollowedPlayer(playerId);
+      const playerIdString = playerId.toString();
+      qc.setQueryData(["isFollowing", playerIdString], true);
+      qc.setQueryData(["followedPlayers"], getLocalFollowedPlayersWithImages());
     },
     onSuccess: (_data, playerId) => {
-      qc.invalidateQueries({ queryKey: ["followedPlayers"] });
-      qc.invalidateQueries({ queryKey: ["isFollowing", playerId.toString()] });
+      qc.setQueryData(["isFollowing", playerId.toString()], true);
+      qc.setQueryData(["followedPlayers"], getLocalFollowedPlayersWithImages());
       qc.invalidateQueries({ queryKey: ["feedEvents"] });
     },
   });
@@ -80,12 +119,23 @@ export function useUnfollowPlayer() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (playerId: bigint) => {
-      if (!actor) throw new Error("Ingen tilkobling");
-      return actor.unfollowPlayer(playerId);
+      if (actor) {
+        try {
+          await actor.unfollowPlayer(playerId);
+        } catch {
+          // Local MVP follow state is the source of truth for now.
+        }
+      }
+    },
+    onMutate: (playerId) => {
+      removeLocalFollowedPlayer(playerId);
+      const playerIdString = playerId.toString();
+      qc.setQueryData(["isFollowing", playerIdString], false);
+      qc.setQueryData(["followedPlayers"], getLocalFollowedPlayersWithImages());
     },
     onSuccess: (_data, playerId) => {
-      qc.invalidateQueries({ queryKey: ["followedPlayers"] });
-      qc.invalidateQueries({ queryKey: ["isFollowing", playerId.toString()] });
+      qc.setQueryData(["isFollowing", playerId.toString()], false);
+      qc.setQueryData(["followedPlayers"], getLocalFollowedPlayersWithImages());
       qc.invalidateQueries({ queryKey: ["feedEvents"] });
     },
   });
