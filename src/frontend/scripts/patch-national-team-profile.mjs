@@ -5,13 +5,18 @@ const playerPagePath = path.resolve("src/pages/PlayerPage.tsx");
 let source = fs.readFileSync(playerPagePath, "utf8");
 let changed = false;
 
-function replaceOnce(search, replacement, label) {
+function replaceAny(searches, replacement, label) {
   if (source.includes(replacement)) return;
-  if (!source.includes(search)) {
+  const search = searches.find((candidate) => source.includes(candidate));
+  if (!search) {
     throw new Error(`Could not patch PlayerPage.tsx: missing ${label}`);
   }
   source = source.replace(search, replacement);
   changed = true;
+}
+
+function replaceOnce(search, replacement, label) {
+  replaceAny([search], replacement, label);
 }
 
 if (!source.includes("../data/nationalTeamPlayers")) {
@@ -30,7 +35,7 @@ if (!source.includes("const nationalTeam = getNationalTeamInfo(player.id);")) {
   );
 }
 
-const oldTeamBlock = `          {teamName && (
+const originalTeamBlock = `          {teamName && (
             <Link
               to="/team/$id"
               params={{ id: teamId.toString() }}
@@ -42,7 +47,7 @@ const oldTeamBlock = `          {teamName && (
             </Link>
           )}`;
 
-const newTeamBlock = `          {teamName && (
+const previousTeamBlock = `          {teamName && (
             <div className="mt-3 space-y-1.5">
               <div className="flex items-center gap-2 flex-wrap">
                 <Link
@@ -80,7 +85,45 @@ const newTeamBlock = `          {teamName && (
             </div>
           )}`;
 
-replaceOnce(oldTeamBlock, newTeamBlock, "team/national team block");
+const newTeamBlock = `          {teamName && (
+            <div className="mt-3 space-y-1.5">
+              <div className="flex items-center gap-2 flex-wrap">
+                {nationalTeam?.logoUrl && (
+                  <a
+                    href={nationalTeam.sourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex size-9 items-center justify-center p-0"
+                    title={nationalTeam.teamLabel}
+                  >
+                    <img
+                      src={nationalTeam.logoUrl}
+                      alt={nationalTeam.teamLabel}
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </a>
+                )}
+
+                <Link
+                  to="/team/$id"
+                  params={{ id: teamId.toString() }}
+                  className="inline-flex items-center gap-2 text-sm font-display font-bold text-primary hover:text-primary/80 transition-colors"
+                >
+                  <TeamLogo teamName={teamName} />
+                  {teamName}
+                  <ArrowRight className="size-4" />
+                </Link>
+              </div>
+
+              {nationalTeam && (
+                <p className="text-[11px] font-display font-bold uppercase tracking-widest text-muted-foreground">
+                  Landslagsspiller
+                </p>
+              )}
+            </div>
+          )}`;
+
+replaceAny([originalTeamBlock, previousTeamBlock], newTeamBlock, "team/national team block");
 
 if (changed) {
   fs.writeFileSync(playerPagePath, source);
