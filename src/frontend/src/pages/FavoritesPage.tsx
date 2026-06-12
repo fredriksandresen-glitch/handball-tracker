@@ -331,15 +331,15 @@ function TeamLogo({
 
   if (!resolvedLogo) {
     return (
-      <span className="size-8 rounded-lg border border-border bg-muted/40 flex items-center justify-center shrink-0">
-        <Shield className="size-4 text-muted-foreground" />
+      <span className="size-8 flex items-center justify-center shrink-0">
+        <Shield className="size-5 text-muted-foreground" />
       </span>
     );
   }
 
   return (
-    <span className="size-8 rounded-lg border border-border/50 bg-background/55 flex items-center justify-center shrink-0">
-      <img src={resolvedLogo} alt="" className="size-6 object-contain" />
+    <span className="size-8 flex items-center justify-center shrink-0">
+      <img src={resolvedLogo} alt="" className="size-8 object-contain" />
     </span>
   );
 }
@@ -428,9 +428,6 @@ function RankingListItem({
           </p>
           <div className="mt-1 flex items-center gap-2 min-w-0">
             <PositionBadge position={row.player.position} />
-            <span className="text-xs text-muted-foreground truncate">
-              {row.teamName ?? "Ukjent lag"}
-            </span>
           </div>
         </div>
       </div>
