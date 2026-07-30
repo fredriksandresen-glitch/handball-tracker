@@ -45,6 +45,8 @@ const POSITION_FILTERS: { value: PositionFilter; label: string }[] = [
   { value: "Bakspiller", label: POSITION_LABELS.Bakspiller },
 ];
 
+const INITIAL_RESULT_LIMIT = 30;
+
 function getPositionValue(player: Player) {
   return String(player.position);
 }
@@ -195,11 +197,19 @@ export default function SearchPage() {
       ? sourcePlayers
       : sourcePlayers?.filter((p) => getPositionValue(p) === positionFilter);
 
-  const results = filteredResults
+  const sortedResults = filteredResults
     ? [...filteredResults].sort((a, b) =>
         comparePlayersBySort(a, b, sortMode, playerInsights),
       )
     : undefined;
+
+  const isInitialBrowse = !hasQuery;
+  const results = sortedResults
+    ? isInitialBrowse
+      ? sortedResults.slice(0, INITIAL_RESULT_LIMIT)
+      : sortedResults
+    : undefined;
+  const totalResultCount = sortedResults?.length ?? 0;
 
   // Debounce input → query
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -345,13 +355,19 @@ export default function SearchPage() {
         <div data-ocid="search-results">
           <div className="flex items-center justify-between gap-3 px-0.5 mb-3">
             <p className="text-[10px] font-display font-semibold uppercase tracking-widest text-muted-foreground">
-              {results.length} {results.length === 1 ? "spiller" : "spillere"}{" "}
-              funnet
+              {isInitialBrowse && totalResultCount > results.length
+                ? `Viser ${results.length} av ${totalResultCount} spillere`
+                : `${results.length} ${results.length === 1 ? "spiller" : "spillere"} funnet`}
             </p>
             <p className="text-[10px] font-display font-bold uppercase tracking-widest text-primary">
               {SORT_FILTERS.find((item) => item.value === sortMode)?.label}
             </p>
           </div>
+          {isInitialBrowse && totalResultCount > results.length && (
+            <p className="mb-3 px-0.5 text-xs text-muted-foreground">
+              Søk for å filtrere hele spillerlisten.
+            </p>
+          )}
           <div className="-mx-2 grid grid-cols-2 gap-2 sm:mx-0 sm:gap-3">
             {results.map((player) => (
               <SearchResult
