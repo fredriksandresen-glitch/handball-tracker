@@ -2,6 +2,7 @@
   "rewrites": [
     { "source": "/search", "destination": "/index.html" },
     { "source": "/teams", "destination": "/index.html" },
+    { "source": "/team/:path*", "destination": "/index.html" },
     { "source": "/favorites", "destination": "/index.html" },
     { "source": "/player/:path*", "destination": "/index.html" }
   ]
