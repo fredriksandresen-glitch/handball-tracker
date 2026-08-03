@@ -1,4 +1,7 @@
 import type { Player } from "../types/handball";
+import playerImageManifest from "../data/playerImageManifest.json";
+
+const IMAGE_MANIFEST = playerImageManifest as Record<string, string>;
 
 // Known player image mappings — keyed by player ID (primary) and name variants (fallback).
 const ID_OVERRIDES: Record<string, string> = {
@@ -22,11 +25,45 @@ const NAME_OVERRIDES: Array<{ matchNames: string[]; imageUrl: string }> = [
   },
 ];
 
-/** Returns the player with imageUrl set if a known override exists.
- *  Priority: player.imageUrl already set → ID override → name override.
+/** Resolve an image URL through the local manifest.
+ *  - If the URL is in the manifest, return the local path.
+ *  - If already a local path (/assets/...) or data-URI, return as-is.
+ *  - Otherwise return the original external URL.
+ */
+export function resolveImageUrl(url: string | undefined): string | undefined {
+  if (!url) return undefined;
+
+  // Already local or data-URI — keep as-is
+  if (url.startsWith("/") || url.startsWith("data:")) {
+    return url;
+  }
+
+  // Check manifest for a local copy
+  const localPath = IMAGE_MANIFEST[url];
+  if (localPath) {
+    return localPath;
+  }
+
+  // Fallback to original external URL
+  return url;
+}
+
+/** Returns the player with imageUrl resolved through the manifest.
+ *  Priority:
+ *    1. Manifest lookup for existing imageUrl (external → local)
+ *    2. If no imageUrl, try ID override
+ *    3. If no ID override, try name override
+ *    4. Keep original (undefined) if nothing matches
  */
 export function enrichPlayerWithImage(player: Player): Player {
-  if (player.imageUrl) return player;
+  // If player already has an imageUrl, remap via manifest if possible
+  if (player.imageUrl) {
+    const resolved = resolveImageUrl(player.imageUrl);
+    if (resolved !== player.imageUrl) {
+      return { ...player, imageUrl: resolved };
+    }
+    return player;
+  }
 
   // Check by ID first (most reliable)
   const idOverride = ID_OVERRIDES[player.id.toString()];
