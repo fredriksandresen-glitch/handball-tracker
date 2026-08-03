@@ -28,6 +28,7 @@ import {
   usePlayersByTeam,
   useTeam,
 } from "../hooks/useTeam";
+import { resolveImageUrl } from "../utils/playerImages";
 import { useTeams } from "../hooks/useTeams";
 import type { Player } from "../types/handball";
 import { Position } from "../types/handball";
@@ -83,9 +84,9 @@ function RosterPlayerCard({
     >
       {/* Poster card */}
       <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden bg-muted">
-        {player.imageUrl ? (
+        {resolveImageUrl(player.imageUrl) ? (
           <img
-            src={player.imageUrl}
+            src={resolveImageUrl(player.imageUrl)}
             alt={player.name}
             className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />

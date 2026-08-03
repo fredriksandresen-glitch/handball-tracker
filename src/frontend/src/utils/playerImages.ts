@@ -30,7 +30,7 @@ const NAME_OVERRIDES: Array<{ matchNames: string[]; imageUrl: string }> = [
  *  - If already a local path (/assets/...) or data-URI, return as-is.
  *  - Otherwise return the original external URL.
  */
-export function resolveImageUrl(url: string | undefined): string | undefined {
+export function resolveImageUrl(url: string | null | undefined): string | undefined {
   if (!url) return undefined;
 
   // Already local or data-URI — keep as-is

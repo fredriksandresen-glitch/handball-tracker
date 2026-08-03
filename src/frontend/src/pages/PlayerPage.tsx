@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { PositionBadge } from "../components/PositionBadge";
+import { getNationalTeamInfo } from "../data/nationalTeamPlayers";
 import {
   useFollowPlayer,
   useIsFollowing,
@@ -28,6 +29,7 @@ import {
   usePlayerMatchStats,
   usePlayerSeasonStats,
 } from "../hooks/usePlayer";
+import { resolveImageUrl } from "../utils/playerImages";
 import { useTeam } from "../hooks/useTeam";
 import {
   getStaticPlayers,
@@ -187,6 +189,7 @@ function PlayerHero({
     .join("")
     .slice(0, 2)
     .toUpperCase();
+  const nationalTeam = getNationalTeamInfo(player.id);
 
   function handleFollowClick() {
     if (isFollowing) unfollowMutation.mutate(player.id);
@@ -196,9 +199,9 @@ function PlayerHero({
   return (
     <section className="bg-card border-b border-border px-4 py-5">
       <div className="flex items-start gap-4">
-        {player.imageUrl ? (
+        {resolveImageUrl(player.imageUrl) ? (
           <img
-            src={player.imageUrl}
+            src={resolveImageUrl(player.imageUrl)}
             alt={player.name}
             className="size-28 rounded-2xl object-cover object-top border-2 border-primary/40 bg-muted"
           />
@@ -224,15 +227,41 @@ function PlayerHero({
           </div>
 
           {teamName && (
-            <Link
-              to="/team/$id"
-              params={{ id: teamId.toString() }}
-              className="inline-flex items-center gap-2 mt-3 text-sm font-display font-bold text-primary hover:text-primary/80 transition-colors"
-            >
-              <TeamLogo teamName={teamName} />
-              {teamName}
-              <ArrowRight className="size-4" />
-            </Link>
+            <div className="mt-3 space-y-1.5">
+              <div className="flex items-center gap-2 flex-wrap">
+                {nationalTeam?.logoUrl && (
+                  <a
+                    href={nationalTeam.sourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex size-9 items-center justify-center p-0"
+                    title={nationalTeam.teamLabel}
+                  >
+                    <img
+                      src={nationalTeam.logoUrl}
+                      alt={nationalTeam.teamLabel}
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </a>
+                )}
+
+                <Link
+                  to="/team/$id"
+                  params={{ id: teamId.toString() }}
+                  className="inline-flex items-center gap-2 text-sm font-display font-bold text-primary hover:text-primary/80 transition-colors"
+                >
+                  <TeamLogo teamName={teamName} />
+                  {teamName}
+                  <ArrowRight className="size-4" />
+                </Link>
+              </div>
+
+              {nationalTeam && (
+                <p className="text-[11px] font-display font-bold uppercase tracking-widest text-muted-foreground">
+                  Landslagsspiller
+                </p>
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -768,9 +797,9 @@ function PlayerComparison({
                     )}
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      {candidate.player.imageUrl ? (
+                      {resolveImageUrl(candidate.player.imageUrl) ? (
                         <img
-                          src={candidate.player.imageUrl}
+                          src={resolveImageUrl(candidate.player.imageUrl)}
                           alt=""
                           className="size-10 rounded-lg object-cover object-top bg-muted shrink-0"
                         />

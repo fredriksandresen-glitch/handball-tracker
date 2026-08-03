@@ -5,6 +5,7 @@ import type { MouseEvent } from "react";
 import { useState } from "react";
 import { getNationalTeamInfo } from "../data/nationalTeamPlayers";
 import type { Player } from "../types/handball";
+import { resolveImageUrl } from "../utils/playerImages";
 import { PositionBadge } from "./PositionBadge";
 
 function Sparkline({ values }: { values: number[] }) {
@@ -163,9 +164,9 @@ export function PlayerCard({
 
         <PlayerImageFallback initials={initials} />
 
-        {player.imageUrl && !imageFailed && (
+        {resolveImageUrl(player.imageUrl) && !imageFailed && (
           <img
-            src={player.imageUrl}
+            src={resolveImageUrl(player.imageUrl)}
             alt={player.name}
             loading="lazy"
             decoding="async"

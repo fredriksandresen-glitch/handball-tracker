@@ -18,6 +18,7 @@ import type {
   PlayerSeasonStats,
   Team,
 } from "../types/handball";
+import { resolveImageUrl } from "../utils/playerImages";
 
 const DEFAULT_CLAWDBOT_API_BASE =
   "https://statistical-fotos-return-importance.trycloudflare.com";
@@ -372,7 +373,7 @@ function createStaticProfile(
     player: {
       id: player.id,
       name: player.name,
-      imageUrl: player.imageUrl,
+      imageUrl: resolveImageUrl(player.imageUrl),
       team: team.name,
       position: player.position,
       shirtNumber: player.shirtNumber,
@@ -393,7 +394,7 @@ function createStaticRosterProfile(
     player: {
       id: player.id,
       name: player.name,
-      imageUrl: player.imageUrl,
+      imageUrl: resolveImageUrl(player.imageUrl),
       team: team.name,
       position: player.position,
       shirtNumber: player.shirtNumber,
@@ -476,7 +477,7 @@ export function mapClawdbotPlayer(profile: ClawdbotPlayerProfile): Player {
     slug: slugify(profile.player.name),
     isActive: true,
     jerseyNumber: toOptionalBigInt(profile.player.shirtNumber),
-    imageUrl: profile.player.imageUrl || undefined,
+    imageUrl: resolveImageUrl(profile.player.imageUrl),
     teamId: stableTeamId(profile.player.team),
     position: mapPosition(profile.player.position),
   };

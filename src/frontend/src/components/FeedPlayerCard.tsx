@@ -10,6 +10,7 @@ import { formatMatchDate, getCountdown } from "../services/handballService";
 import type { EnrichedPlayerMatchStats } from "../services/clawdbotPlayerProfile";
 import type { FeedEvent, Player, PlayerMatchStats } from "../types/handball";
 import { FeedEventType, Position } from "../types/handball";
+import { resolveImageUrl } from "../utils/playerImages";
 import { PositionBadge } from "./PositionBadge";
 
 function Sparkline({ values }: { values: number[] }) {
@@ -230,9 +231,9 @@ export function FeedPlayerCard({
           </div>
         )}
 
-        {player.imageUrl && !imageFailed ? (
+        {resolveImageUrl(player.imageUrl) && !imageFailed ? (
           <img
-            src={player.imageUrl}
+            src={resolveImageUrl(player.imageUrl)}
             alt={player.name}
             onError={() => setImageFailed(true)}
             className="absolute inset-0 z-10 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
