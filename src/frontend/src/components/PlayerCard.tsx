@@ -161,7 +161,9 @@ export function PlayerCard({
           </div>
         )}
 
-        {player.imageUrl && !imageFailed ? (
+        <PlayerImageFallback initials={initials} />
+
+        {player.imageUrl && !imageFailed && (
           <img
             src={player.imageUrl}
             alt={player.name}
@@ -170,8 +172,6 @@ export function PlayerCard({
             onError={() => setImageFailed(true)}
             className="absolute inset-0 z-10 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />
-        ) : (
-          <PlayerImageFallback initials={initials} />
         )}
 
         <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
