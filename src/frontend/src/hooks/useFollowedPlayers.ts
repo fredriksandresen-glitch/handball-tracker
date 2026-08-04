@@ -1,6 +1,4 @@
-import { useActor } from "@caffeineai/core-infrastructure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createActor } from "../backend";
 import {
   getStaticProfile,
   mapClawdbotPlayer,
@@ -88,18 +86,9 @@ export function useIsFollowing(playerId: bigint) {
 }
 
 export function useFollowPlayer() {
-  const { actor } = useActor(createActor);
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (playerId: bigint) => {
-      if (actor) {
-        try {
-          await actor.followPlayer(playerId);
-        } catch {
-          // Local MVP follow state is the source of truth for now.
-        }
-      }
-    },
+    mutationFn: async (_playerId: bigint) => undefined,
     onMutate: (playerId) => {
       addLocalFollowedPlayer(playerId);
       const playerIdString = playerId.toString();
@@ -115,18 +104,9 @@ export function useFollowPlayer() {
 }
 
 export function useUnfollowPlayer() {
-  const { actor } = useActor(createActor);
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (playerId: bigint) => {
-      if (actor) {
-        try {
-          await actor.unfollowPlayer(playerId);
-        } catch {
-          // Local MVP follow state is the source of truth for now.
-        }
-      }
-    },
+    mutationFn: async (_playerId: bigint) => undefined,
     onMutate: (playerId) => {
       removeLocalFollowedPlayer(playerId);
       const playerIdString = playerId.toString();
