@@ -1,12 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Moon, RefreshCw, Search, Sun, Trophy, Users } from "lucide-react";
+import { Home, Moon, Search, Sun, Trophy, Users } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { ProfixioStatus } from "../backend.d";
-import {
-  useProfixioStatus,
-  useRefreshProfixio,
-} from "../hooks/useProfixio";
 
 const NAV_ITEMS = [
   { to: "/", label: "Hjem", icon: Home, ocid: "nav-hjem" },
@@ -53,88 +48,6 @@ function ThemeToggle() {
   );
 }
 
-const DATA_SOURCE_CONFIG = {
-  live: {
-    dot: "bg-green-400",
-    ping: "bg-green-400",
-    label: "Live",
-    textColor: "text-green-400",
-    showPing: true,
-  },
-  scraped: {
-    dot: "bg-amber-400",
-    ping: "bg-amber-400",
-    label: "handball.no",
-    textColor: "text-amber-400",
-    showPing: false,
-  },
-  mock: {
-    dot: "bg-cyan-500",
-    ping: "bg-cyan-500",
-    label: "MVP-data",
-    textColor: "text-cyan-400",
-    showPing: false,
-  },
-  topphandball: {
-    dot: "bg-cyan-500",
-    ping: "bg-cyan-500",
-    label: "topphandball.no",
-    textColor: "text-cyan-400",
-    showPing: true,
-  },
-} as const;
-
-function DataSourceBadge() {
-  const { data: status } = useProfixioStatus() as {
-    data: ProfixioStatus | undefined;
-  };
-  const refresh = useRefreshProfixio();
-
-  if (!status) return null;
-
-  const source = (status.dataSource ??
-    (status.isLive ? "live" : "mock")) as keyof typeof DATA_SOURCE_CONFIG;
-  const cfg = DATA_SOURCE_CONFIG[source] ?? DATA_SOURCE_CONFIG.mock;
-
-  return (
-    <div className="flex items-center gap-1.5" title={status.message}>
-      <span className="relative flex size-2">
-        {cfg.showPing && (
-          <span
-            className={cn(
-              "animate-ping absolute inline-flex h-full w-full rounded-full opacity-60",
-              cfg.ping,
-            )}
-          />
-        )}
-        <span
-          className={cn("relative inline-flex size-2 rounded-full", cfg.dot)}
-        />
-      </span>
-      <span
-        className={cn(
-          "text-[10px] font-display font-semibold uppercase tracking-wide hidden xs:inline",
-          cfg.textColor,
-        )}
-      >
-        {cfg.label}
-      </span>
-      <button
-        type="button"
-        onClick={() => refresh.mutate()}
-        disabled={refresh.isPending}
-        aria-label="Oppdater data"
-        className="p-1.5 rounded-full text-muted-foreground hover:text-primary transition-colors disabled:opacity-40"
-        data-ocid="header-refresh-btn"
-      >
-        <RefreshCw
-          className={cn("size-3.5", refresh.isPending && "animate-spin")}
-        />
-      </button>
-    </div>
-  );
-}
-
 interface Props {
   children: React.ReactNode;
   title?: string;
@@ -169,7 +82,6 @@ export function Layout({ children, title, headerRight }: Props) {
           )}
 
           <div className="flex items-center gap-2">
-            <DataSourceBadge />
             {headerRight}
             <ThemeToggle />
           </div>
