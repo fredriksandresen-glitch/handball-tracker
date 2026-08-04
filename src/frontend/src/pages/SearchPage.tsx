@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Search, TrendingUp, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PlayerCard } from "../components/PlayerCard";
 import { SkeletonCard } from "../components/SkeletonCard";
 import {
@@ -9,20 +9,22 @@ import {
   useIsFollowing,
   useUnfollowPlayer,
 } from "../hooks/useFollowedPlayers";
-import { usePlayers, useSearchPlayers } from "../hooks/usePlayers";
 import {
+  getStaticPlayers,
   getStaticProfile,
+  getStaticTeams,
   mapClawdbotMatchStats,
   mapClawdbotSeasonStats,
+  searchStaticPlayers,
   type EnrichedPlayerMatchStats,
 } from "../services/clawdbotPlayerProfile";
-import { useTeams } from "../hooks/useTeams";
 import {
   POSITION_LABELS,
   type Player,
   type PlayerSeasonStats,
   type PositionFilter,
 } from "../types/handball";
+import { enrichPlayersWithImages } from "../utils/playerImages";
 
 // ─── Position filter pills ────────────────────────────────────────────────────
 
@@ -71,9 +73,20 @@ function asNumber(value: bigint | undefined) {
   return value === undefined ? undefined : Number(value);
 }
 
+const PLAYER_INSIGHT_CACHE = new Map<string, PlayerSearchInsight>();
+const INSIGHT_BATCH_SIZE = 8;
+
 function getPlayerSearchInsight(player: Player): PlayerSearchInsight {
+  const cacheKey = player.id.toString();
+  const cached = PLAYER_INSIGHT_CACHE.get(cacheKey);
+  if (cached) return cached;
+
   const profile = getStaticProfile(player.id);
-  if (!profile) return { sparkValues: [], hotScore: 0 };
+  if (!profile) {
+    const emptyInsight = { sparkValues: [], hotScore: 0 };
+    PLAYER_INSIGHT_CACHE.set(cacheKey, emptyInsight);
+    return emptyInsight;
+  }
 
   const seasonStats = mapClawdbotSeasonStats(profile);
   const mepMatches = (mapClawdbotMatchStats(profile) as EnrichedPlayerMatchStats[])
@@ -94,7 +107,7 @@ function getPlayerSearchInsight(player: Player): PlayerSearchInsight {
     goalsPerGame * 4 +
     Math.min(matches, 26) / 10;
 
-  return {
+  const insight = {
     seasonStats,
     sparkValues,
     formAvg,
@@ -105,6 +118,8 @@ function getPlayerSearchInsight(player: Player): PlayerSearchInsight {
     latestSaves: latestMatch?.saves === undefined ? undefined : Number(latestMatch.saves),
     latestSavePct: latestMatch?.savePct,
   };
+  PLAYER_INSIGHT_CACHE.set(cacheKey, insight);
+  return insight;
 }
 
 function comparePlayersBySort(
@@ -171,25 +186,72 @@ export default function SearchPage() {
   const [sortMode, setSortMode] = useState<SortMode>("hot");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { data: rawResults, isLoading } = useSearchPlayers(debouncedQuery);
-  const { data: teams } = useTeams();
-  const { data: allPlayers } = usePlayers();
+  const allPlayers = useMemo(
+    () => enrichPlayersWithImages(getStaticPlayers()),
+    [],
+  );
+  const teams = useMemo(() => getStaticTeams(), []);
+  const rawResults = useMemo(
+    () =>
+      debouncedQuery.trim()
+        ? enrichPlayersWithImages(searchStaticPlayers(debouncedQuery))
+        : [],
+    [debouncedQuery],
+  );
+  const [initialInsightsReady, setInitialInsightsReady] = useState(false);
 
-  const teamMap = new Map<string, string>(
-    (teams ?? []).map((t) => [t.id.toString(), t.name]),
+  useEffect(() => {
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let index = 0;
+
+    const processBatch = () => {
+      if (cancelled) return;
+
+      const end = Math.min(index + INSIGHT_BATCH_SIZE, allPlayers.length);
+      for (; index < end; index += 1) {
+        getPlayerSearchInsight(allPlayers[index]);
+      }
+
+      if (index < allPlayers.length) {
+        timer = setTimeout(processBatch, 0);
+      } else {
+        setInitialInsightsReady(true);
+      }
+    };
+
+    timer = setTimeout(processBatch, 0);
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+    };
+  }, [allPlayers]);
+
+  const teamMap = useMemo(
+    () => new Map(teams.map((team) => [team.id.toString(), team.name])),
+    [teams],
   );
 
-  const totalPlayers = allPlayers?.length ?? 0;
-  const totalTeams = teams?.length ?? 0;
+  const totalPlayers = allPlayers.length;
+  const totalTeams = teams.length;
 
   const hasQuery = debouncedQuery.trim() !== "";
-  const sourcePlayers = hasQuery ? rawResults : allPlayers;
+  const waitingForInitialInsights = !hasQuery && !initialInsightsReady;
+  const sourcePlayers = hasQuery
+    ? rawResults
+    : initialInsightsReady
+      ? allPlayers
+      : [];
 
-  const playerInsights = new Map(
-    (sourcePlayers ?? []).map((player) => [
-      player.id.toString(),
-      getPlayerSearchInsight(player),
-    ]),
+  const playerInsights = useMemo(
+    () =>
+      new Map(
+        sourcePlayers.map((player) => [
+          player.id.toString(),
+          getPlayerSearchInsight(player),
+        ]),
+      ),
+    [sourcePlayers],
   );
 
   const filteredResults =
@@ -234,8 +296,8 @@ export default function SearchPage() {
     };
   }, []);
 
-  const showSkeletons = isLoading && hasQuery;
-  const showNoResults = !isLoading && results !== undefined && results.length === 0;
+  const showSkeletons = waitingForInitialInsights;
+  const showNoResults = !showSkeletons && results !== undefined && results.length === 0;
   const showResults = results !== undefined && results.length > 0;
   const showEmptyPrompt = !showResults && !showNoResults && !showSkeletons;
 
