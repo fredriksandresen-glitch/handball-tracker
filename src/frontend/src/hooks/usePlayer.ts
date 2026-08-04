@@ -93,7 +93,6 @@ export function usePlayerSeasonStats(playerId: bigint) {
 export function usePlayerMatchStatsBatch(
   ids: bigint[],
 ): Record<string, PlayerMatchStats[]> {
-  const { actor, isFetching } = useActor(createActor);
   const uniqueIds = useMemo(
     () => Array.from(new Set(ids.map((id) => id.toString()))).map(BigInt),
     [ids],
@@ -113,10 +112,9 @@ export function usePlayerMatchStatsBatch(
           );
           if (clawdbotProfile) return mapClawdbotMatchStats(clawdbotProfile);
 
-          if (!actor) return [];
-          return actor.getPlayerMatchStats(id);
+          return [];
         },
-        enabled: !isFetching || !!staticProfile,
+        enabled: true,
         initialData: staticProfile
           ? mapClawdbotMatchStats(staticProfile)
           : undefined,
