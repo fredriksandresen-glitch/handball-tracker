@@ -76,6 +76,7 @@ function asNumber(value: bigint | undefined) {
 const PLAYER_INSIGHT_CACHE = new Map<string, PlayerSearchInsight>();
 const INSIGHT_BATCH_SIZE = 2;
 const INSIGHT_BATCH_DELAY_MS = 16;
+const INITIAL_INSIGHT_DELAY_MS = 500;
 
 function getPlayerSearchInsight(player: Player): PlayerSearchInsight {
   const cacheKey = player.id.toString();
@@ -221,7 +222,7 @@ export default function SearchPage() {
       }
     };
 
-    timer = setTimeout(processBatch, INSIGHT_BATCH_DELAY_MS);
+    timer = setTimeout(processBatch, INITIAL_INSIGHT_DELAY_MS);
     return () => {
       cancelled = true;
       if (timer) clearTimeout(timer);
