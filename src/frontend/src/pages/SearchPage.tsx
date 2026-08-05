@@ -74,7 +74,8 @@ function asNumber(value: bigint | undefined) {
 }
 
 const PLAYER_INSIGHT_CACHE = new Map<string, PlayerSearchInsight>();
-const INSIGHT_BATCH_SIZE = 8;
+const INSIGHT_BATCH_SIZE = 2;
+const INSIGHT_BATCH_DELAY_MS = 16;
 
 function getPlayerSearchInsight(player: Player): PlayerSearchInsight {
   const cacheKey = player.id.toString();
@@ -214,13 +215,13 @@ export default function SearchPage() {
       }
 
       if (index < allPlayers.length) {
-        timer = setTimeout(processBatch, 0);
+        timer = setTimeout(processBatch, INSIGHT_BATCH_DELAY_MS);
       } else {
         setInitialInsightsReady(true);
       }
     };
 
-    timer = setTimeout(processBatch, 0);
+    timer = setTimeout(processBatch, INSIGHT_BATCH_DELAY_MS);
     return () => {
       cancelled = true;
       if (timer) clearTimeout(timer);
