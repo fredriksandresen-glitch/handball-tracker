@@ -1,4 +1,3 @@
-import { InternetIdentityProvider } from "@caffeineai/core-infrastructure";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -87,9 +86,7 @@ function PlayerImageLightbox() {
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
-    <InternetIdentityProvider>
-      <App />
-      <PlayerImageLightbox />
-    </InternetIdentityProvider>
+    <App />
+    <PlayerImageLightbox />
   </QueryClientProvider>,
 );

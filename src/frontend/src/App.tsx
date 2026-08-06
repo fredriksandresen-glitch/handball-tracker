@@ -5,12 +5,13 @@ import {
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 import { Suspense, lazy } from "react";
 import { Layout } from "./components/Layout";
 import { SkeletonCard } from "./components/SkeletonCard";
+import HomePage from "./pages/HomePage";
 
-// Lazy page imports
-const HomePage = lazy(() => import("./pages/HomePage"));
+const BackendProvider = lazy(() => import("./components/BackendProvider"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
 const TeamsPage = lazy(() => import("./pages/TeamsPage"));
 const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
@@ -27,7 +28,10 @@ function PageLoader() {
   );
 }
 
-// Root route
+function BackendBoundary({ children }: { children: ReactNode }) {
+  return <BackendProvider>{children}</BackendProvider>;
+}
+
 const rootRoute = createRootRoute({
   component: () => (
     <Layout>
@@ -56,17 +60,29 @@ const teamsRoute = createRoute({
 const favoritesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/favorites",
-  component: FavoritesPage,
+  component: () => (
+    <BackendBoundary>
+      <FavoritesPage />
+    </BackendBoundary>
+  ),
 });
 const playerRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/player/$id",
-  component: PlayerPage,
+  component: () => (
+    <BackendBoundary>
+      <PlayerPage />
+    </BackendBoundary>
+  ),
 });
 const teamRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/team/$id",
-  component: TeamPage,
+  component: () => (
+    <BackendBoundary>
+      <TeamPage />
+    </BackendBoundary>
+  ),
 });
 
 const routeTree = rootRoute.addChildren([
