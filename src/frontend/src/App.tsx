@@ -45,7 +45,11 @@ const rootRoute = createRootRoute({
 const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
-  component: HomePage,
+  component: () => (
+    <BackendBoundary>
+      <HomePage />
+    </BackendBoundary>
+  ),
 });
 const searchRoute = createRoute({
   getParentRoute: () => rootRoute,
