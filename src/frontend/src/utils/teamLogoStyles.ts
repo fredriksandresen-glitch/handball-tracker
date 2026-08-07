@@ -11,7 +11,7 @@ function normalizeTeamLogoName(value?: string) {
 export function getTeamLogoClassName(teamName?: string) {
   const normalized = normalizeTeamLogoName(teamName);
 
-  if (normalized === "kjelsas" || normalized === "volda") {
+  if (normalized === "kjelsas" || normalized === "volda" || normalized === "ravens") {
     return "team-logo-darkmode-white";
   }
 
