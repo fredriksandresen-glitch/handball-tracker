@@ -68,6 +68,8 @@ const CLUB_LOGOS: Record<string, string> = {
     "https://aasane.admin.topphandball.no/wp-content/uploads/sites/59/2024/08/aasane-e1737718047504.png",
   trondheim:
     "https://trondheim.admin.topphandball.no/wp-content/uploads/sites/73/2024/08/trondheim-e1737719517913.png",
+  gjøvik:
+    "https://gjovik.admin.topphandball.no/wp-content/uploads/sites/80/2025/05/Gjovik.png",
   byåsen: "https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg",
   fjellhammer:
     "https://www.fjellhammer.no/wp-content/uploads/sites/19/2020/01/fjellhammer.svg",
