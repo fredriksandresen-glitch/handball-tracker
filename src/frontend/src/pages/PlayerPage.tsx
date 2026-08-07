@@ -966,6 +966,8 @@ export default function PlayerPage() {
   );
 
   const isLoading = playerLoading || seasonLoading || matchLoading;
+  const visibleSeasonStats =
+    seasonStats && hasUsefulStats(seasonStats) ? seasonStats : null;
 
   if (isLoading && !player) {
     return (
@@ -1014,22 +1016,22 @@ export default function PlayerPage() {
       />
 
       <div className="flex flex-col gap-5 pt-5">
-        <KeyStats player={player} stats={seasonStats} />
-        <InsightCards player={player} stats={seasonStats} />
+        <KeyStats player={player} stats={visibleSeasonStats} />
+        <InsightCards player={player} stats={visibleSeasonStats} />
         {!hasSeasonSnapshot && (
           <div className="mx-4 rounded-xl border border-border bg-card px-4 py-4 text-sm text-muted-foreground">
             Spilleren har ingen registrert lagtilknytning eller statistikk for {season.label}.
           </div>
         )}
-        <PlayerComparison player={player} seasonStats={seasonStats} />
+        <PlayerComparison player={player} seasonStats={visibleSeasonStats} />
         <FormOverview player={player} stats={matchStats} />
 
         <Tabs active={activeTab} onChange={setActiveTab} />
 
         <div className="px-4">
           {activeTab === "season" &&
-            (seasonStats ? (
-              <SeasonDetails player={player} stats={seasonStats} />
+            (visibleSeasonStats ? (
+              <SeasonDetails player={player} stats={visibleSeasonStats} />
             ) : (
               <div className="py-10 text-center text-sm text-muted-foreground">
                 Ingen sesongstatistikk tilgjengelig
