@@ -323,6 +323,7 @@ function statsById(stats: StaticPlayerStats[]) {
 
 function loadTeamStats(team: StaticTeamConfig) {
   if (team.statsById) return team.statsById;
+  if (!team.statsUrl) return {};
   if (typeof XMLHttpRequest === "undefined") return {};
 
   try {

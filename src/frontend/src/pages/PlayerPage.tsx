@@ -55,6 +55,10 @@ const CLUB_LOGOS: Record<string, string> = {
   larvik: "https://www.larvikhk.no/wp-content/uploads/sites/7/2019/08/larvikhk.svg",
   molde:
     "https://www.handballjentan.no/wp-content/uploads/sites/8/2021/07/MOLDE-ELITE-LOGO.svg",
+  utleira:
+    "https://utleira.topphandball.no/wp-content/uploads/sites/66/2024/08/utleira-logo.png",
+  flint:
+    "https://flinthandball.admin.topphandball.no/wp-content/uploads/sites/33/2022/10/flint_fav.png",
 };
 
 function getClubLogo(teamName?: string) {
@@ -955,7 +959,11 @@ export default function PlayerPage() {
     usePlayerSeasonStats(playerId, seasonId);
   const { data: matchStats = [], isLoading: matchLoading } =
     usePlayerMatchStats(playerId, seasonId);
-  const { data: team } = useTeam(player?.teamId ?? 0n, seasonId);
+  const hasSeasonSnapshot = !!getStaticProfile(playerId, seasonId);
+  const { data: team } = useTeam(
+    hasSeasonSnapshot ? (player?.teamId ?? 0n) : 0n,
+    seasonId,
+  );
 
   const isLoading = playerLoading || seasonLoading || matchLoading;
 
@@ -1008,6 +1016,11 @@ export default function PlayerPage() {
       <div className="flex flex-col gap-5 pt-5">
         <KeyStats player={player} stats={seasonStats} />
         <InsightCards player={player} stats={seasonStats} />
+        {!hasSeasonSnapshot && (
+          <div className="mx-4 rounded-xl border border-border bg-card px-4 py-4 text-sm text-muted-foreground">
+            Spilleren har ingen registrert lagtilknytning eller statistikk for {season.label}.
+          </div>
+        )}
         <PlayerComparison player={player} seasonStats={seasonStats} />
         <FormOverview player={player} stats={matchStats} />
 

@@ -50,6 +50,7 @@ export function usePlayerMatchStats(playerId: bigint, seasonId?: SeasonId) {
     queryKey: ["playerMatchStats", playerId.toString(), seasonId ?? "all"],
     queryFn: async () => {
       if (staticProfile) return mapClawdbotMatchStats(staticProfile);
+      if (seasonId) return [];
 
       const clawdbotProfile = await fetchClawdbotPlayerProfile(playerId).catch(
         () => null,
@@ -75,6 +76,7 @@ export function usePlayerSeasonStats(playerId: bigint, seasonId?: SeasonId) {
     queryKey: ["playerSeasonStats", playerId.toString(), seasonId ?? "all"],
     queryFn: async () => {
       if (staticProfile) return mapClawdbotSeasonStats(staticProfile);
+      if (seasonId) return null;
 
       const clawdbotProfile = await fetchClawdbotPlayerProfile(playerId).catch(
         () => null,
