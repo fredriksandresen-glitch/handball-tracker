@@ -3,12 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { createActor } from "../backend";
 import { getStaticTeams } from "../services/clawdbotPlayerProfile";
 import type { Match, Team } from "../types/handball";
+import type { SeasonId } from "../data/seasons";
 
-export function useTeams() {
-  const staticTeams = getStaticTeams();
+export function useTeams(seasonId?: SeasonId) {
+  const staticTeams = getStaticTeams(seasonId);
 
   return useQuery<Team[]>({
-    queryKey: ["teams"],
+    queryKey: ["teams", seasonId ?? "all"],
     queryFn: async () => staticTeams,
     initialData: staticTeams,
     staleTime: Number.POSITIVE_INFINITY,

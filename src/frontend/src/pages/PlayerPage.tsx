@@ -18,7 +18,9 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { PositionBadge } from "../components/PositionBadge";
+import { SeasonSelect, useSelectedSeason } from "../components/SeasonSelect";
 import { getNationalTeamInfo } from "../data/nationalTeamPlayers";
+import { getSeason, type SeasonId } from "../data/seasons";
 import {
   useFollowPlayer,
   useIsFollowing,
@@ -171,10 +173,12 @@ function PlayerHero({
   player,
   teamName,
   teamId,
+  season,
 }: {
   player: Player;
   teamName?: string;
   teamId: bigint;
+  season: SeasonId;
 }) {
   const { data: isFollowing = false, isLoading: checkingFollow } =
     useIsFollowing(player.id);
@@ -248,6 +252,7 @@ function PlayerHero({
                 <Link
                   to="/team/$id"
                   params={{ id: teamId.toString() }}
+                  search={{ season }}
                   className="inline-flex items-center gap-2 text-sm font-display font-bold text-primary hover:text-primary/80 transition-colors"
                 >
                   <TeamLogo teamName={teamName} />
@@ -282,7 +287,11 @@ function PlayerHero({
           {isFollowing ? "✓ FØLGER" : "+ FØLG SPILLER"}
         </Button>
         {teamName && (
-          <Link to="/team/$id" params={{ id: teamId.toString() }}>
+          <Link
+            to="/team/$id"
+            params={{ id: teamId.toString() }}
+            search={{ season }}
+          >
             <Button
               variant="outline"
               className="h-12 px-4 rounded-full border-border text-muted-foreground hover:text-primary hover:border-primary/40"
@@ -934,17 +943,19 @@ function Tabs({ active, onChange }: { active: Tab; onChange: (tab: Tab) => void 
 }
 
 export default function PlayerPage() {
+  const seasonId = useSelectedSeason();
+  const season = getSeason(seasonId);
   const { id } = useParams({ from: "/player/$id" });
   const router = useRouter();
   const playerId = BigInt(id);
   const [activeTab, setActiveTab] = useState<Tab>("season");
 
-  const { data: player, isLoading: playerLoading } = usePlayer(playerId);
+  const { data: player, isLoading: playerLoading } = usePlayer(playerId, seasonId);
   const { data: seasonStats, isLoading: seasonLoading } =
-    usePlayerSeasonStats(playerId);
+    usePlayerSeasonStats(playerId, seasonId);
   const { data: matchStats = [], isLoading: matchLoading } =
-    usePlayerMatchStats(playerId);
-  const { data: team } = useTeam(player?.teamId ?? 0n);
+    usePlayerMatchStats(playerId, seasonId);
+  const { data: team } = useTeam(player?.teamId ?? 0n, seasonId);
 
   const isLoading = playerLoading || seasonLoading || matchLoading;
 
@@ -970,7 +981,7 @@ export default function PlayerPage() {
 
   return (
     <div className="flex flex-col min-h-full pb-8">
-      <div className="px-4 pt-3 pb-1">
+      <div className="px-4 pt-3 pb-1 flex items-center justify-between gap-3">
         <button
           type="button"
           onClick={() => router.history.back()}
@@ -979,9 +990,20 @@ export default function PlayerPage() {
           <ArrowLeft className="size-4" />
           Tilbake
         </button>
+        <div className="flex items-center gap-2">
+          <span className="hidden sm:inline text-xs font-display font-bold text-muted-foreground">
+            {season.leagueName}
+          </span>
+          <SeasonSelect compact />
+        </div>
       </div>
 
-      <PlayerHero player={player} teamName={team?.name} teamId={player.teamId} />
+      <PlayerHero
+        player={player}
+        teamName={team?.name}
+        teamId={player.teamId}
+        season={seasonId}
+      />
 
       <div className="flex flex-col gap-5 pt-5">
         <KeyStats player={player} stats={seasonStats} />

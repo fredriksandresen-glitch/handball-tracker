@@ -1,0 +1,121 @@
+[
+  {
+    "id": "5321366781945",
+    "name": "Hannah Giskeødegård Tornes",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Hannah-Giskeodegard-Tornes-Utleira.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 1
+  },
+  {
+    "id": "5321369290190",
+    "name": "Silje Rekdal",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Silje-Rekdal-Utleira.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 2
+  },
+  {
+    "id": "5321366743267",
+    "name": "Kine Hauge Kvalsund",
+    "imageUrl": "",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 3
+  },
+  {
+    "id": "5321369998605",
+    "name": "June Skei Kaspersen",
+    "imageUrl": "",
+    "position": "Bakspiller",
+    "shirtNumber": 4
+  },
+  {
+    "id": "5321367424596",
+    "name": "Lucille Esther Ryan-Øye",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Lucille-Esther-Ryan-Oye-Utleira.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 5
+  },
+  {
+    "id": "5321368422044",
+    "name": "Marie Kristine Hagen Hella",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Marie-Kristine-Hagen-Hella-Utleira.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 6
+  },
+  {
+    "id": "5321367386450",
+    "name": "Synne Olsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Synne-Olsen-Utleira.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 7
+  },
+  {
+    "id": "5321368943183",
+    "name": "Mari Hvattum Cheetham",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mari-Hvattum-Cheetham-Utleira.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 8
+  },
+  {
+    "id": "5321369640437",
+    "name": "Kaja Røddesnes",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Kaja-Roddesnes-Utleira.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 10
+  },
+  {
+    "id": "5321368337162",
+    "name": "Emma Eidem Olsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Emma-Eidem-Olsen-Utleira.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 11
+  },
+  {
+    "id": "5321368310909",
+    "name": "Ingvild Skaufel Holmen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ingvild-Skaufel-Holmen-Utleira.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 12
+  },
+  {
+    "id": "5321367300207",
+    "name": "Ingvild Margrete Følstad",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ingvild-Margrete-Folstad-Utleira.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 13
+  },
+  {
+    "id": "5321369486797",
+    "name": "Linea Tangen Sunde",
+    "imageUrl": "",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 14
+  },
+  {
+    "id": "5321368278029",
+    "name": "Signe Berntzen-Trondmo",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Signe-Berntzen-Trondmo-Utleira.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 17
+  },
+  {
+    "id": "5321365265882",
+    "name": "Ida Larsen Brattreit",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ida-Larsen-Brattreit-Utleira.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 20
+  },
+  {
+    "id": "5321369024016",
+    "name": "Regine Haugdal Nygård",
+    "imageUrl": "",
+    "position": "Kantspiller",
+    "shirtNumber": 22
+  },
+  {
+    "id": "5321367097701",
+    "name": "Hanne Marie Tørhaug",
+    "imageUrl": "",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 29
+  }
+]

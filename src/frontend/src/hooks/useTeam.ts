@@ -6,19 +6,20 @@ import {
   getStaticTeam,
 } from "../services/clawdbotPlayerProfile";
 import type { Match, Player, Team } from "../types/handball";
+import type { SeasonId } from "../data/seasons";
 
-export function useTeam(id: bigint) {
+export function useTeam(id: bigint, seasonId?: SeasonId) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery<Team | null>({
-    queryKey: ["team", id.toString()],
+    queryKey: ["team", id.toString(), seasonId ?? "all"],
     queryFn: async () => {
-      const staticTeam = getStaticTeam(id);
+      const staticTeam = getStaticTeam(id, seasonId);
       if (staticTeam) return staticTeam;
 
       if (!actor) return null;
       return actor.getTeam(id);
     },
-    enabled: !isFetching || !!getStaticTeam(id),
+    enabled: !isFetching || !!getStaticTeam(id, seasonId),
     staleTime: 60_000,
   });
 }
@@ -36,12 +37,12 @@ export function useNextMatchForTeam(teamId: bigint) {
   });
 }
 
-export function usePlayersByTeam(teamId: bigint) {
+export function usePlayersByTeam(teamId: bigint, seasonId?: SeasonId) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery<Player[]>({
-    queryKey: ["playersByTeam", teamId.toString()],
+    queryKey: ["playersByTeam", teamId.toString(), seasonId ?? "all"],
     queryFn: async () => {
-      const staticPlayers = getStaticPlayers().filter(
+      const staticPlayers = getStaticPlayers(seasonId).filter(
         (player) => player.teamId === teamId,
       );
       if (staticPlayers.length > 0) return staticPlayers;
@@ -49,7 +50,7 @@ export function usePlayersByTeam(teamId: bigint) {
       if (!actor) return [];
       return actor.getPlayersByTeam(teamId);
     },
-    enabled: !isFetching || getStaticPlayers().length > 0,
+    enabled: !isFetching || getStaticPlayers(seasonId).length > 0,
     staleTime: 60_000,
   });
 }

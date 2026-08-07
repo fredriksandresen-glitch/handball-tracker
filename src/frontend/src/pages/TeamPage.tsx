@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SeasonSelect, useSelectedSeason } from "../components/SeasonSelect";
 import { cn } from "@/lib/utils";
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import {
@@ -30,6 +31,7 @@ import {
 } from "../hooks/useTeam";
 import { resolveImageUrl } from "../utils/playerImages";
 import { useTeams } from "../hooks/useTeams";
+import { getSeason, type SeasonId } from "../data/seasons";
 import type { Player } from "../types/handball";
 import { Position } from "../types/handball";
 
@@ -45,11 +47,12 @@ const POSITION_GROUPS = [
 function RosterPlayerCard({
   player,
   teamName,
-}: { player: Player; teamName?: string }) {
+  season,
+}: { player: Player; teamName?: string; season: SeasonId }) {
   const { data: isFollowing } = useIsFollowing(player.id);
   const followMutation = useFollowPlayer();
   const unfollowMutation = useUnfollowPlayer();
-  const { data: matchStats = [] } = usePlayerMatchStats(player.id);
+  const { data: matchStats = [] } = usePlayerMatchStats(player.id, season);
 
   const lastStat = useMemo(() => {
     if (!matchStats.length) return null;
@@ -79,6 +82,7 @@ function RosterPlayerCard({
     <Link
       to="/player/$id"
       params={{ id: player.id.toString() }}
+      search={{ season }}
       className="block group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl"
       data-ocid="roster-player-card"
     >
@@ -195,15 +199,17 @@ function SkeletonRosterCard() {
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 export default function TeamPage() {
+  const seasonId = useSelectedSeason();
+  const season = getSeason(seasonId);
   const { id } = useParams({ from: "/team/$id" });
   const teamId = BigInt(id);
   const navigate = useNavigate();
 
-  const { data: team, isLoading: loadingTeam } = useTeam(teamId);
+  const { data: team, isLoading: loadingTeam } = useTeam(teamId, seasonId);
   const { data: players = [], isLoading: loadingPlayers } =
-    usePlayersByTeam(teamId);
+    usePlayersByTeam(teamId, seasonId);
   const { data: nextMatch } = useNextMatchForTeam(teamId);
-  const { data: allTeams = [] } = useTeams();
+  const { data: allTeams = [] } = useTeams(seasonId);
   const { data: followedPlayers = [] } = useFollowedPlayers();
   const followPlayer = useFollowPlayer();
 
@@ -251,7 +257,7 @@ export default function TeamPage() {
       <div className="space-y-4" data-ocid="team-page-loading">
         <button
           type="button"
-          onClick={() => navigate({ to: "/teams" })}
+          onClick={() => navigate({ to: "/teams", search: { season: seasonId } })}
           className="flex items-center gap-1 text-muted-foreground text-xs hover:text-foreground transition-colors"
         >
           <ArrowLeft className="size-3.5" />
@@ -294,7 +300,7 @@ export default function TeamPage() {
       <div className="text-center py-16 space-y-3">
         <Shield className="size-10 text-muted-foreground mx-auto" />
         <p className="text-muted-foreground font-body">Lag ikke funnet</p>
-        <Link to="/teams" className="text-primary text-sm block">
+        <Link to="/teams" search={{ season: seasonId }} className="text-primary text-sm block">
           ← Tilbake til lag
         </Link>
       </div>
@@ -307,13 +313,20 @@ export default function TeamPage() {
       {/* Back navigation */}
       <button
         type="button"
-        onClick={() => navigate({ to: "/teams" })}
+        onClick={() => navigate({ to: "/teams", search: { season: seasonId } })}
         className="flex items-center gap-1 text-muted-foreground text-xs hover:text-foreground transition-colors"
         data-ocid="team-back-btn"
       >
         <ArrowLeft className="size-3.5" />
         Alle lag
       </button>
+
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-xs font-display font-bold text-muted-foreground">
+          {season.leagueName} · {season.label}
+        </p>
+        <SeasonSelect compact />
+      </div>
 
       {/* ── Team hero card ── */}
       <motion.div
@@ -463,7 +476,11 @@ export default function TeamPage() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: gi * 0.05 + i * 0.04, duration: 0.25 }}
                   >
-                    <RosterPlayerCard player={player} teamName={team.name} />
+                    <RosterPlayerCard
+                      player={player}
+                      teamName={team.name}
+                      season={seasonId}
+                    />
                   </motion.div>
                 ))}
               </div>
@@ -478,7 +495,9 @@ export default function TeamPage() {
         >
           <Users className="size-10 text-muted-foreground" />
           <p className="text-sm text-muted-foreground text-center font-body">
-            Ingen spillere i stallen
+            {season.isCurrent
+              ? `Spillerstallen for ${season.label} er ikke kvalitetssikret ennå`
+              : "Ingen spillere i stallen"}
           </p>
         </div>
       )}
@@ -493,6 +512,7 @@ export default function TeamPage() {
         </div>
         <Link
           to="/teams"
+          search={{ season: seasonId }}
           className="flex items-center gap-1 text-primary text-sm font-display font-semibold hover:opacity-80 transition-opacity"
           data-ocid="team-explore-cta"
         >

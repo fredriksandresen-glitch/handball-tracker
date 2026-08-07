@@ -11,6 +11,14 @@ import oppsalRosterData from "../data/oppsalRoster.json";
 import solaRosterData from "../data/solaRoster.json";
 import storhamarRosterData from "../data/storhamarRoster.json";
 import tertnesRosterData from "../data/tertnesRoster.json";
+import utleiraRosterData from "../data/utleiraRoster.json";
+import {
+  ARCHIVE_SEASON_ID,
+  CURRENT_SEASON_ID,
+  getSeason,
+  isTeamInSeason,
+  type SeasonId,
+} from "../data/seasons";
 import { Position } from "../types/handball";
 import type {
   Player,
@@ -26,8 +34,7 @@ const DEFAULT_CLAWDBOT_API_BASE =
 const CLAWDBOT_API_BASE =
   import.meta.env.VITE_CLAWDBOT_API_BASE ?? DEFAULT_CLAWDBOT_API_BASE;
 
-const DEFAULT_SEASON = "2526";
-const DEFAULT_TOURNAMENT = "REMA 1000-ligaen kvinner";
+const DEFAULT_SEASON_ID = ARCHIVE_SEASON_ID;
 
 const BYAASEN_LOGO_URL =
   "https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg";
@@ -54,6 +61,10 @@ const STORHAMAR_LOGO_URL =
   "https://storhamar.topphandball.no/wp-content/uploads/sites/11/2022/10/Storhamar.svg";
 const TERTNES_LOGO_URL =
   "https://tertneshandball.admin.topphandball.no/wp-content/uploads/sites/12/2022/10/Tertnes-2.svg";
+const UTLEIRA_LOGO_URL =
+  "https://utleira.topphandball.no/wp-content/uploads/sites/66/2024/08/utleira-logo.png";
+const FLINT_LOGO_URL =
+  "https://flinthandball.admin.topphandball.no/wp-content/uploads/sites/33/2022/10/flint_fav.png";
 
 type ClawdbotPlayer = {
   id: string;
@@ -124,7 +135,7 @@ export type ClawdbotPlayerProfile = {
 type StaticRosterPlayer = {
   id: string;
   name: string;
-  imageUrl: string;
+  imageUrl?: string;
   position: string;
   shirtNumber: number;
 };
@@ -163,6 +174,7 @@ type StaticTeamConfig = {
   roster: StaticRosterPlayer[];
   statsUrl: string;
   statsById?: Record<string, StaticPlayerStats>;
+  dataSeason?: SeasonId;
 };
 
 const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
@@ -244,7 +256,25 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     roster: tertnesRosterData as StaticRosterPlayer[],
     statsUrl: "/data/player-stats/tertnesPlayerStats.json",
   },
+  {
+    name: "Utleira",
+    logoUrl: UTLEIRA_LOGO_URL,
+    roster: utleiraRosterData as StaticRosterPlayer[],
+    statsUrl: "",
+    dataSeason: CURRENT_SEASON_ID,
+  },
+  {
+    name: "Flint",
+    logoUrl: FLINT_LOGO_URL,
+    roster: [],
+    statsUrl: "",
+    dataSeason: CURRENT_SEASON_ID,
+  },
 ];
+
+function getTeamDataSeason(team: StaticTeamConfig): SeasonId {
+  return team.dataSeason ?? DEFAULT_SEASON_ID;
+}
 
 function normalizeTeamLookup(value?: string | null) {
   return (value ?? "")
@@ -332,6 +362,10 @@ const STATIC_TEAM_LOGO_ALIASES: Record<string, string> = {
   "tertnes elite": TERTNES_LOGO_URL,
   "tertnes håndball elite": TERTNES_LOGO_URL,
   "tertnes handball elite": TERTNES_LOGO_URL,
+  utleira: UTLEIRA_LOGO_URL,
+  "utleira il": UTLEIRA_LOGO_URL,
+  flint: FLINT_LOGO_URL,
+  "flint tonsberg": FLINT_LOGO_URL,
 };
 
 function mapPosition(position?: string | null): Position {
@@ -377,8 +411,8 @@ function createStaticProfile(
       team: team.name,
       position: player.position,
       shirtNumber: player.shirtNumber,
-      season: DEFAULT_SEASON,
-      tournament: DEFAULT_TOURNAMENT,
+      season: getSeason(getTeamDataSeason(team)).statsCode,
+      tournament: `${getSeason(getTeamDataSeason(team)).leagueName} kvinner`,
     },
     seasonStats: playerStats?.seasonStats ?? {},
     goalkeeperStats: playerStats?.goalkeeperStats,
@@ -398,8 +432,8 @@ function createStaticRosterProfile(
       team: team.name,
       position: player.position,
       shirtNumber: player.shirtNumber,
-      season: DEFAULT_SEASON,
-      tournament: DEFAULT_TOURNAMENT,
+      season: getSeason(getTeamDataSeason(team)).statsCode,
+      tournament: `${getSeason(getTeamDataSeason(team)).leagueName} kvinner`,
     },
     seasonStats: {},
     recentMatches: [],
@@ -415,9 +449,14 @@ const STATIC_PLAYER_INDEX: Record<
   ),
 );
 
-export function getStaticProfile(playerId: bigint): ClawdbotPlayerProfile | null {
+export function getStaticProfile(
+  playerId: bigint,
+  seasonId?: SeasonId,
+): ClawdbotPlayerProfile | null {
   const entry = STATIC_PLAYER_INDEX[playerId.toString()];
-  return entry ? createStaticProfile(entry.player, entry.team) : null;
+  if (!entry) return null;
+  if (seasonId && getTeamDataSeason(entry.team) !== seasonId) return null;
+  return createStaticProfile(entry.player, entry.team);
 }
 
 export function getStaticTeamLogoUrl(team?: string | null) {
@@ -495,7 +534,7 @@ export function mapClawdbotSeasonStats(
   return {
     id: playerId,
     playerId,
-    season: profile.player.season ?? DEFAULT_SEASON,
+    season: profile.player.season ?? getSeason(DEFAULT_SEASON_ID).statsCode,
     matchesPlayed: BigInt(matches),
     totalGoals: toOptionalBigInt(profile.seasonStats.goals),
     totalShots: toOptionalBigInt(
@@ -561,10 +600,12 @@ export function mapClawdbotMatchStats(
   });
 }
 
-export function getStaticPlayers(): Player[] {
-  return Object.values(STATIC_PLAYER_INDEX).map(({ player, team }) =>
-    mapClawdbotPlayer(createStaticRosterProfile(player, team)),
-  );
+export function getStaticPlayers(seasonId?: SeasonId): Player[] {
+  return Object.values(STATIC_PLAYER_INDEX)
+    .filter(({ team }) => !seasonId || getTeamDataSeason(team) === seasonId)
+    .map(({ player, team }) =>
+      mapClawdbotPlayer(createStaticRosterProfile(player, team)),
+    );
 }
 
 export function searchStaticPlayers(term: string): Player[] {
@@ -584,8 +625,10 @@ export function searchStaticPlayers(term: string): Player[] {
   });
 }
 
-export function getStaticTeams(): Team[] {
-  return STATIC_TEAM_CONFIGS.map((team) => {
+export function getStaticTeams(seasonId?: SeasonId): Team[] {
+  return STATIC_TEAM_CONFIGS.filter(
+    (team) => !seasonId || isTeamInSeason(team.name, seasonId),
+  ).map((team) => {
     const id = stableTeamId(team.name);
 
     return {
@@ -597,6 +640,6 @@ export function getStaticTeams(): Team[] {
   });
 }
 
-export function getStaticTeam(id: bigint): Team | null {
-  return getStaticTeams().find((team) => team.id === id) ?? null;
+export function getStaticTeam(id: bigint, seasonId?: SeasonId): Team | null {
+  return getStaticTeams(seasonId).find((team) => team.id === id) ?? null;
 }

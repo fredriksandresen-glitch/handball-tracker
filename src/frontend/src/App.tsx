@@ -10,6 +10,7 @@ import { Suspense, lazy } from "react";
 import { Layout } from "./components/Layout";
 import { SkeletonCard } from "./components/SkeletonCard";
 import HomePage from "./pages/HomePage";
+import { isSeasonId, type SeasonId } from "./data/seasons";
 
 const BackendProvider = lazy(() => import("./components/BackendProvider"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
@@ -33,6 +34,9 @@ function BackendBoundary({ children }: { children: ReactNode }) {
 }
 
 const rootRoute = createRootRoute({
+  validateSearch: (search: Record<string, unknown>): { season?: SeasonId } => ({
+    season: isSeasonId(search.season) ? search.season : undefined,
+  }),
   component: () => (
     <Layout>
       <Suspense fallback={<PageLoader />}>

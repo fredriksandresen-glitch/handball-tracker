@@ -7,17 +7,18 @@ import {
 } from "../services/clawdbotPlayerProfile";
 import type { Player } from "../types/handball";
 import { enrichPlayersWithImages } from "../utils/playerImages";
+import type { SeasonId } from "../data/seasons";
 
 const STATIC_STALE_TIME = Number.POSITIVE_INFINITY;
 const STATIC_GC_TIME = 30 * 60_000;
 
-export function usePlayers() {
+export function usePlayers(seasonId?: SeasonId) {
   const { actor, isFetching } = useActor(createActor);
-  const staticPlayers = getStaticPlayers();
+  const staticPlayers = getStaticPlayers(seasonId);
   const hasStaticPlayers = staticPlayers.length > 0;
 
   return useQuery<Player[]>({
-    queryKey: ["players"],
+    queryKey: ["players", seasonId ?? "all"],
     queryFn: async () => {
       if (hasStaticPlayers) {
         return enrichPlayersWithImages(staticPlayers);

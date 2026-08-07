@@ -14,16 +14,18 @@ import type {
   PlayerMatchStats,
   PlayerSeasonStats,
 } from "../types/handball";
+import type { SeasonId } from "../data/seasons";
 
 const STATIC_STALE_TIME = Number.POSITIVE_INFINITY;
 const STATIC_GC_TIME = 30 * 60_000;
 
-export function usePlayer(id: bigint) {
+export function usePlayer(id: bigint, seasonId?: SeasonId) {
   const { actor, isFetching } = useActor(createActor);
-  const staticProfile = getStaticProfile(id);
+  const seasonProfile = getStaticProfile(id, seasonId);
+  const staticProfile = seasonProfile ?? getStaticProfile(id);
 
   return useQuery<Player | null>({
-    queryKey: ["player", id.toString()],
+    queryKey: ["player", id.toString(), seasonId ?? "all"],
     queryFn: async () => {
       if (staticProfile) return mapClawdbotPlayer(staticProfile);
 
@@ -40,12 +42,12 @@ export function usePlayer(id: bigint) {
   });
 }
 
-export function usePlayerMatchStats(playerId: bigint) {
+export function usePlayerMatchStats(playerId: bigint, seasonId?: SeasonId) {
   const { actor, isFetching } = useActor(createActor);
-  const staticProfile = getStaticProfile(playerId);
+  const staticProfile = getStaticProfile(playerId, seasonId);
 
   return useQuery<PlayerMatchStats[]>({
-    queryKey: ["playerMatchStats", playerId.toString()],
+    queryKey: ["playerMatchStats", playerId.toString(), seasonId ?? "all"],
     queryFn: async () => {
       if (staticProfile) return mapClawdbotMatchStats(staticProfile);
 
@@ -54,6 +56,7 @@ export function usePlayerMatchStats(playerId: bigint) {
       );
       if (clawdbotProfile) return mapClawdbotMatchStats(clawdbotProfile);
 
+      if (seasonId) return [];
       if (!actor) return [];
       return actor.getPlayerMatchStats(playerId);
     },
@@ -64,12 +67,12 @@ export function usePlayerMatchStats(playerId: bigint) {
   });
 }
 
-export function usePlayerSeasonStats(playerId: bigint) {
+export function usePlayerSeasonStats(playerId: bigint, seasonId?: SeasonId) {
   const { actor, isFetching } = useActor(createActor);
-  const staticProfile = getStaticProfile(playerId);
+  const staticProfile = getStaticProfile(playerId, seasonId);
 
   return useQuery<PlayerSeasonStats | null>({
-    queryKey: ["playerSeasonStats", playerId.toString()],
+    queryKey: ["playerSeasonStats", playerId.toString(), seasonId ?? "all"],
     queryFn: async () => {
       if (staticProfile) return mapClawdbotSeasonStats(staticProfile);
 
@@ -78,6 +81,7 @@ export function usePlayerSeasonStats(playerId: bigint) {
       );
       if (clawdbotProfile) return mapClawdbotSeasonStats(clawdbotProfile);
 
+      if (seasonId) return null;
       if (!actor) return null;
       return actor.getPlayerSeasonStats(playerId);
     },

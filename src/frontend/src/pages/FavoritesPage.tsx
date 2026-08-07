@@ -13,7 +13,9 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { PositionBadge } from "../components/PositionBadge";
+import { SeasonSelect, useSelectedSeason } from "../components/SeasonSelect";
 import { SkeletonCard } from "../components/SkeletonCard";
+import { getSeason, type SeasonId } from "../data/seasons";
 import { usePlayers } from "../hooks/usePlayers";
 import { useTeams } from "../hooks/useTeams";
 import {
@@ -399,10 +401,12 @@ function RankingListItem({
   row,
   rank,
   mode,
+  season,
 }: {
   row: RankingRow;
   rank: number;
   mode: ToplistMode;
+  season: SeasonId;
 }) {
   const metricCells = getMetricCells(mode, row.insight);
 
@@ -410,6 +414,7 @@ function RankingListItem({
     <Link
       to="/player/$id"
       params={{ id: row.player.id.toString() }}
+      search={{ season }}
       className="group grid grid-cols-[34px_1fr_auto] items-center gap-3 rounded-2xl border border-border bg-card px-3 py-3 hover:border-primary/45 hover:bg-card/80 transition-colors"
       data-ocid="toplist-row"
     >
@@ -456,9 +461,11 @@ function RankingListItem({
 function RankingList({
   rows,
   mode,
+  season,
 }: {
   rows: RankingRow[];
   mode: ToplistMode;
+  season: SeasonId;
 }) {
   return (
     <div className="space-y-2">
@@ -468,6 +475,7 @@ function RankingList({
           row={row}
           rank={index + 1}
           mode={mode}
+          season={season}
         />
       ))}
     </div>
@@ -475,10 +483,12 @@ function RankingList({
 }
 
 export default function FavoritesPage() {
+  const seasonId = useSelectedSeason();
+  const season = getSeason(seasonId);
   const [mode, setMode] = useState<ToplistMode>("form");
   const [positionFilter, setPositionFilter] = useState<PositionOption>("all");
-  const { data: players = [], isLoading } = usePlayers();
-  const { data: teams = [] } = useTeams();
+  const { data: players = [], isLoading } = usePlayers(seasonId);
+  const { data: teams = [] } = useTeams(seasonId);
 
   const teamMap = useMemo(
     () => new Map(teams.map((team) => [team.id.toString(), team])),
@@ -496,7 +506,9 @@ export default function FavoritesPage() {
       : positionFilter;
 
   const rankedRows = useMemo(() => {
-    const filtered = filterPlayers(players, mode, activePositionFilter);
+    const filtered = filterPlayers(players, mode, activePositionFilter).filter(
+      (player) => (insights.get(player.id.toString())?.matchesPlayed ?? 0) > 0,
+    );
     const current = sortRankedPlayers(filtered, mode, insights);
     const previous = sortRankedPlayers(filtered, mode, insights, true);
     const previousRanks = new Map(
@@ -542,7 +554,7 @@ export default function FavoritesPage() {
     <div className="space-y-5" data-ocid="toplist-page">
       <section className="rounded-2xl bg-card border border-border p-4 space-y-4">
         <div className="flex items-start justify-between gap-4">
-          <div>
+          <div className="min-w-0">
             <p className="text-[10px] uppercase tracking-widest text-primary font-display font-bold mb-1">
               Toppliste
             </p>
@@ -552,9 +564,15 @@ export default function FavoritesPage() {
             <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
               {copy.text}
             </p>
+            <p className="mt-1 text-xs font-display font-bold text-primary">
+              {season.leagueName} · {season.label}
+            </p>
           </div>
-          <div className="size-11 rounded-full bg-primary/12 border border-primary/30 flex items-center justify-center text-primary flex-shrink-0">
-            <Trophy className="size-5" />
+          <div className="flex flex-col items-end gap-2 shrink-0">
+            <SeasonSelect compact />
+            <div className="size-11 rounded-full bg-primary/12 border border-primary/30 flex items-center justify-center text-primary">
+              <Trophy className="size-5" />
+            </div>
           </div>
         </div>
 
@@ -621,10 +639,12 @@ export default function FavoritesPage() {
         <div className="min-h-[45vh] flex flex-col items-center justify-center text-center px-6 rounded-2xl bg-card border border-border">
           <Search className="size-10 text-muted-foreground mb-4" />
           <h2 className="font-display font-bold text-lg text-foreground">
-            Ingen spillere funnet
+            {season.isCurrent ? "Ingen statistikk ennå" : "Ingen spillere funnet"}
           </h2>
           <p className="text-sm text-muted-foreground mt-1 max-w-[260px]">
-            Prøv en annen posisjon eller kategori.
+            {season.isCurrent
+              ? "Topplisten fylles når kampene i den nye sesongen er i gang."
+              : "Prøv en annen posisjon eller kategori."}
           </p>
         </div>
       ) : (
@@ -640,7 +660,7 @@ export default function FavoritesPage() {
                 : POSITION_LABELS[activePositionFilter]}
             </span>
           </div>
-          <RankingList rows={rankedRows} mode={mode} />
+          <RankingList rows={rankedRows} mode={mode} season={seasonId} />
         </div>
       )}
     </div>

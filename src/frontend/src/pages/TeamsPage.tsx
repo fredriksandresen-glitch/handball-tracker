@@ -2,8 +2,13 @@ import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { ArrowDown, ArrowUp, Minus, Shield, Trophy } from "lucide-react";
 import { motion } from "motion/react";
+import { SeasonSelect, useSelectedSeason } from "../components/SeasonSelect";
 import { SkeletonCard } from "../components/SkeletonCard";
-import { leagueStandings, type LeagueStanding } from "../data/leagueStandings";
+import {
+  leagueStandingsBySeason,
+  type LeagueStanding,
+} from "../data/leagueStandings";
+import { getSeason, type SeasonId } from "../data/seasons";
 import { useTeams } from "../hooks/useTeams";
 import type { Team } from "../types/handball";
 
@@ -14,7 +19,8 @@ function normalizeName(value: string) {
     .replace(/\u00f8/g, "o")
     .replace(/\u00e5/g, "a")
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(" handball klubb", "");
 }
 
 function Movement({ delta }: { delta: number }) {
@@ -63,10 +69,12 @@ function StandingRow({
   standing,
   team,
   index,
+  season,
 }: {
   standing: LeagueStanding;
   team?: Team;
   index: number;
+  season: SeasonId;
 }) {
   const goalDifference = standing.goalsFor - standing.goalsAgainst;
   const hrefTeamId = team?.id.toString();
@@ -135,6 +143,7 @@ function StandingRow({
         <Link
           to="/team/$id"
           params={{ id: hrefTeamId }}
+          search={{ season }}
           className="block transition-colors hover:bg-muted/25"
           data-ocid="standings-team-row"
         >
@@ -150,7 +159,10 @@ function StandingRow({
 }
 
 export default function TeamsPage() {
-  const { data: teams, isLoading } = useTeams();
+  const seasonId = useSelectedSeason();
+  const season = getSeason(seasonId);
+  const standings = leagueStandingsBySeason[seasonId];
+  const { data: teams, isLoading } = useTeams(seasonId);
   const teamByName = new Map<string, Team>();
   for (const team of teams ?? []) {
     teamByName.set(normalizeName(team.name), team);
@@ -158,13 +170,16 @@ export default function TeamsPage() {
 
   return (
     <div className="space-y-5" data-ocid="teams-page">
-      <div className="pt-1 space-y-1">
-        <h1 className="font-display font-black text-2xl tracking-tight text-foreground">
-          REMA 1000-ligaen
-        </h1>
-        <p className="text-sm text-muted-foreground font-body">
-          Damenes håndball — 2025/26
-        </p>
+      <div className="pt-1 flex items-start justify-between gap-4">
+        <div className="space-y-1 min-w-0">
+          <h1 className="font-display font-black text-2xl tracking-tight text-foreground">
+            {season.leagueName}
+          </h1>
+          <p className="text-sm text-muted-foreground font-body">
+            Damenes håndball · {season.label}
+          </p>
+        </div>
+        <SeasonSelect compact />
       </div>
 
       <div className="flex items-center gap-4 bg-card border border-border rounded-xl px-4 py-3">
@@ -202,12 +217,13 @@ export default function TeamsPage() {
             <span className="text-right">Form</span>
           </div>
 
-          {leagueStandings.map((standing, index) => (
+          {standings.map((standing, index) => (
             <StandingRow
               key={standing.primeTeamId}
               standing={standing}
               team={teamByName.get(normalizeName(standing.name))}
               index={index}
+              season={seasonId}
             />
           ))}
         </section>
