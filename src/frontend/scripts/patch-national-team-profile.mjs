@@ -123,7 +123,18 @@ const newTeamBlock = `          {teamName && (
             </div>
           )}`;
 
-replaceAny([originalTeamBlock, previousTeamBlock], newTeamBlock, "team/national team block");
+const alreadyHasNationalTeamBlock =
+  source.includes("const nationalTeam = getNationalTeamInfo(player.id);") &&
+  source.includes('className="inline-flex size-9 items-center justify-center p-0"') &&
+  source.includes("Landslagsspiller");
+
+if (!alreadyHasNationalTeamBlock) {
+  replaceAny(
+    [originalTeamBlock, previousTeamBlock],
+    newTeamBlock,
+    "team/national team block",
+  );
+}
 
 if (changed) {
   fs.writeFileSync(playerPagePath, source);
