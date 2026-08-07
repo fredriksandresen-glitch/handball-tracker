@@ -26,6 +26,7 @@ import {
 } from "../data/seasons";
 import { useTeams } from "../hooks/useTeams";
 import type { Team } from "../types/handball";
+import { getTeamLogoClassName } from "../utils/teamLogoStyles";
 
 function normalizeName(value: string) {
   return value
@@ -50,7 +51,7 @@ function Movement({ delta }: { delta: number }) {
 
 function TeamLogo({ team }: { team?: Team }) {
   if (team?.logoUrl) {
-    return <span className="size-8 flex items-center justify-center shrink-0"><img src={team.logoUrl} alt="" className="size-8 object-contain" /></span>;
+    return <span className="size-8 flex items-center justify-center shrink-0"><img src={team.logoUrl} alt="" className={cn("size-8 object-contain", getTeamLogoClassName(team?.name))} /></span>;
   }
   return <span className="size-8 rounded-lg bg-muted border border-border flex items-center justify-center shrink-0"><Shield className="size-4 text-muted-foreground" /></span>;
 }

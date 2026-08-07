@@ -38,6 +38,7 @@ import {
   usePlayerSeasonStats,
 } from "../hooks/usePlayer";
 import { resolveImageUrl } from "../utils/playerImages";
+import { getTeamLogoClassName } from "../utils/teamLogoStyles";
 import { useTeam } from "../hooks/useTeam";
 import {
   getStaticPlayerLeagueId,
@@ -148,7 +149,7 @@ function TeamLogo({ teamName, size = "sm" }: { teamName?: string; size?: "sm" | 
         boxClass,
       )}
     >
-      <img src={logoUrl} alt="" className={cn("object-contain", imgClass)} />
+      <img src={logoUrl} alt="" className={cn("object-contain", imgClass, getTeamLogoClassName(teamName))} />
     </span>
   );
 }

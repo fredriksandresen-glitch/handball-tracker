@@ -346,3 +346,21 @@
     background-size: contain;
   }
 }
+
+.team-logo-darkmode-white {
+  transition: filter 160ms ease;
+}
+
+.dark .team-logo-darkmode-white {
+  filter: brightness(0) invert(1);
+}
+
+.team-logo-lightmode-navy {
+  filter: brightness(0) saturate(100%) invert(17%) sepia(24%) saturate(1173%)
+    hue-rotate(176deg) brightness(90%) contrast(94%);
+  transition: filter 160ms ease;
+}
+
+.dark .team-logo-lightmode-navy {
+  filter: none;
+}

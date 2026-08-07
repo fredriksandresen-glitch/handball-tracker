@@ -31,6 +31,7 @@ import {
   useTeam,
 } from "../hooks/useTeam";
 import { resolveImageUrl } from "../utils/playerImages";
+import { getTeamLogoClassName } from "../utils/teamLogoStyles";
 import { useTeams } from "../hooks/useTeams";
 import {
   getLeagueLabel,
@@ -356,7 +357,7 @@ export default function TeamPage() {
             <img
               src={team.logoUrl}
               alt={team.name}
-              className="size-14 object-contain flex-shrink-0"
+              className={cn("size-14 object-contain flex-shrink-0", getTeamLogoClassName(team.name))}
             />
           ) : (
             <div className="size-14 rounded-xl bg-muted flex items-center justify-center border border-border flex-shrink-0">
