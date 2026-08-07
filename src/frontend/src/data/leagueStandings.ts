@@ -71,6 +71,20 @@ const currentFirstDivisionTeams: LeagueStanding[] = [
     goalsAgainst: 0,
     points: 0,
   },
+  {
+    name: "Kjelsås",
+    primeTeamId: "224860",
+    rank: 2,
+    previousRank: 2,
+    rankDelta: 0,
+    played: 0,
+    wins: 0,
+    draws: 0,
+    losses: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+  },
 ];
 
 const archiveStandings: LeagueStanding[] = [
