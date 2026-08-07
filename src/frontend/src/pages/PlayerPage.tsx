@@ -76,6 +76,8 @@ const CLUB_LOGOS: Record<string, string> = {
     "https://stavanger.topphandball.no/wp-content/uploads/sites/81/2025/05/Stavanger.png",
   bækkelaget:
     "https://www.bskhe.no/wp-content/uploads/sites/16/2019/07/BSK.svg",
+  haslum:
+    "https://haslum.topphandball.no/wp-content/uploads/sites/30/2021/07/haslum.svg",
   byåsen: "https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg",
   fjellhammer:
     "https://www.fjellhammer.no/wp-content/uploads/sites/19/2020/01/fjellhammer.svg",

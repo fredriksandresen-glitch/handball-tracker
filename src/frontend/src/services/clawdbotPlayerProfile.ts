@@ -8,6 +8,7 @@ import gjovikRosterData from "../data/gjovikRoster.json";
 import ravensRosterData from "../data/ravensRoster.json";
 import stavangerRosterData from "../data/stavangerRoster.json";
 import baekkelagetRosterData from "../data/baekkelagetRoster.json";
+import haslumCurrentRosterData from "../data/haslumCurrentRoster.json";
 import byaasenRosterData from "../data/byaasenRoster.json";
 import fanaRosterData from "../data/fanaRoster.json";
 import fjellhammerRosterData from "../data/fjellhammerRoster.json";
@@ -289,6 +290,14 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     name: "Bækkelaget",
     logoUrl: BAEKKELAGET_LOGO_URL,
     roster: baekkelagetRosterData as StaticRosterPlayer[],
+    statsUrl: "",
+    dataSeason: CURRENT_SEASON_ID,
+    leagueId: FIRST_DIVISION_LEAGUE_ID,
+  },
+  {
+    name: "Haslum",
+    logoUrl: HASLUM_LOGO_URL,
+    roster: haslumCurrentRosterData as StaticRosterPlayer[],
     statsUrl: "",
     dataSeason: CURRENT_SEASON_ID,
     leagueId: FIRST_DIVISION_LEAGUE_ID,
@@ -576,22 +585,35 @@ function createStaticRosterProfile(
   };
 }
 
-const STATIC_PLAYER_INDEX: Record<
-  string,
-  { player: StaticRosterPlayer; team: StaticTeamConfig }
-> = Object.fromEntries(
+type StaticPlayerEntry = {
+  player: StaticRosterPlayer;
+  team: StaticTeamConfig;
+};
+
+const STATIC_PLAYER_INDEX: Record<string, StaticPlayerEntry[]> =
   STATIC_TEAM_CONFIGS.flatMap((team) =>
-    team.roster.map((player) => [player.id, { player, team }]),
-  ),
-);
+    team.roster.map((player) => [player.id, { player, team }] as const),
+  ).reduce<Record<string, StaticPlayerEntry[]>>((index, [id, entry]) => {
+    (index[id] ??= []).push(entry);
+    return index;
+  }, {});
+
+function getStaticPlayerEntry(playerId: bigint, seasonId?: SeasonId) {
+  const entries = STATIC_PLAYER_INDEX[playerId.toString()];
+  if (!entries) return null;
+  return (
+    (seasonId
+      ? entries.find((entry) => getTeamDataSeason(entry.team) === seasonId)
+      : entries[0]) ?? null
+  );
+}
 
 export function getStaticProfile(
   playerId: bigint,
   seasonId?: SeasonId,
 ): ClawdbotPlayerProfile | null {
-  const entry = STATIC_PLAYER_INDEX[playerId.toString()];
+  const entry = getStaticPlayerEntry(playerId, seasonId);
   if (!entry) return null;
-  if (seasonId && getTeamDataSeason(entry.team) !== seasonId) return null;
   return createStaticProfile(entry.player, entry.team);
 }
 
@@ -741,6 +763,7 @@ export function getStaticPlayers(
   leagueId?: LeagueId,
 ): Player[] {
   return Object.values(STATIC_PLAYER_INDEX)
+    .flat()
     .filter(
       ({ team }) =>
         (!seasonId || getTeamDataSeason(team) === seasonId) &&
@@ -806,6 +829,6 @@ export function getStaticTeamLeagueId(id: bigint): LeagueId | undefined {
 export function getStaticPlayerLeagueId(
   playerId: bigint,
 ): LeagueId | undefined {
-  const entry = STATIC_PLAYER_INDEX[playerId.toString()];
+  const entry = getStaticPlayerEntry(playerId);
   return entry ? getTeamLeagueId(entry.team) : undefined;
 }

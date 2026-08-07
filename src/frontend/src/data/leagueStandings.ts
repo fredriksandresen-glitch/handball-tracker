@@ -197,6 +197,20 @@ const currentFirstDivisionTeams: LeagueStanding[] = [
     goalsAgainst: 0,
     points: 0,
   },
+  {
+    name: "Haslum",
+    primeTeamId: "928836",
+    rank: 11,
+    previousRank: 11,
+    rankDelta: 0,
+    played: 0,
+    wins: 0,
+    draws: 0,
+    losses: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+  },
 ];
 
 const archiveStandings: LeagueStanding[] = [
