@@ -5,7 +5,10 @@ import type { MouseEvent } from "react";
 import { useState } from "react";
 import { getNationalTeamInfo } from "../data/nationalTeamPlayers";
 import type { Player } from "../types/handball";
-import { resolveImageUrl } from "../utils/playerImages";
+import {
+  resolveImageUrl,
+  resolvePlayerCardImageUrl,
+} from "../utils/playerImages";
 import { PositionBadge } from "./PositionBadge";
 
 function Sparkline({ values }: { values: number[] }) {
@@ -82,6 +85,7 @@ interface Props {
   sparkValues?: number[];
   sparkLabel?: string;
   followOverlay?: boolean;
+  imagePriority?: boolean;
 }
 
 export function PlayerCard({
@@ -102,9 +106,16 @@ export function PlayerCard({
   sparkValues = [],
   sparkLabel = "Form",
   followOverlay = false,
+  imagePriority = false,
 }: Props) {
   const navigate = useNavigate();
   const [imageFailed, setImageFailed] = useState(false);
+  const [useOriginalImage, setUseOriginalImage] = useState(false);
+  const originalImageUrl = resolveImageUrl(player.imageUrl);
+  const cardImageUrl = resolvePlayerCardImageUrl(player.imageUrl);
+  const displayedImageUrl = useOriginalImage
+    ? originalImageUrl
+    : (cardImageUrl ?? originalImageUrl);
 
   const displayGoals = latestGoals ?? goals;
   const genericStats = statItems?.filter((item) => item.value !== "") ?? [];
@@ -164,13 +175,24 @@ export function PlayerCard({
 
         <PlayerImageFallback initials={initials} />
 
-        {resolveImageUrl(player.imageUrl) && !imageFailed && (
+        {displayedImageUrl && !imageFailed && (
           <img
-            src={resolveImageUrl(player.imageUrl)}
+            src={displayedImageUrl}
             alt={player.name}
-            loading="lazy"
+            loading={imagePriority ? "eager" : "lazy"}
+            fetchPriority={imagePriority ? "high" : "auto"}
             decoding="async"
-            onError={() => setImageFailed(true)}
+            onError={() => {
+              if (
+                !useOriginalImage &&
+                originalImageUrl &&
+                displayedImageUrl !== originalImageUrl
+              ) {
+                setUseOriginalImage(true);
+                return;
+              }
+              setImageFailed(true);
+            }}
             className="absolute inset-0 z-10 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />
         )}

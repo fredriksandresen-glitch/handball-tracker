@@ -2,6 +2,20 @@ import type { Player } from "../types/handball";
 import playerImageManifest from "../data/playerImageManifest.json";
 
 const IMAGE_MANIFEST = playerImageManifest as Record<string, string>;
+const BROKEN_REMOTE_IMAGE_URLS = new Set([
+  "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ingeborg-Rolseth-Holt-Gjerpen-Skien.png",
+  "https://nthapi.webcore.no/wp-content/uploads/2026/05/Janne-Havelsrud-Eklo-Byasen-Elite.png",
+  "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ingvild-Bersas-Westersjo-Gjerpen-Skien.png",
+  "https://nthapi.webcore.no/wp-content/uploads/2026/05/Martine-Karigstad-Andersen-Fana.png",
+  "https://nthapi.webcore.no/wp-content/uploads/2026/05/Anniken-Obaidli-Storhamar-Handball-Elite.png",
+]);
+
+const ORIGINAL_URL_BY_LOCAL_PATH = Object.fromEntries(
+  Object.entries(IMAGE_MANIFEST).map(([originalUrl, localPath]) => [
+    localPath,
+    originalUrl,
+  ]),
+) as Record<string, string>;
 
 // Known player image mappings — keyed by player ID (primary) and name variants (fallback).
 const ID_OVERRIDES: Record<string, string> = {
@@ -32,6 +46,10 @@ const NAME_OVERRIDES: Array<{ matchNames: string[]; imageUrl: string }> = [
  */
 export function resolveImageUrl(url: string | null | undefined): string | undefined {
   if (!url) return undefined;
+
+  if (BROKEN_REMOTE_IMAGE_URLS.has(url.split("?")[0])) {
+    return undefined;
+  }
 
   // Already local or data-URI — keep as-is
   if (url.startsWith("/") || url.startsWith("data:")) {
@@ -83,4 +101,46 @@ export function enrichPlayerWithImage(player: Player): Player {
 /** Enrich an array of players with image overrides. */
 export function enrichPlayersWithImages(players: Player[]): Player[] {
   return players.map(enrichPlayerWithImage);
+}
+
+function getOriginalImageUrl(url: string) {
+  const resolved = resolveImageUrl(url);
+  if (!resolved) return undefined;
+  return ORIGINAL_URL_BY_LOCAL_PATH[resolved] ?? url;
+}
+
+/**
+ * Returns a lightweight image for cards and search results.
+ * Full-resolution local images remain available on the player profile.
+ */
+export function resolvePlayerCardImageUrl(
+  url: string | null | undefined,
+): string | undefined {
+  if (!url) return undefined;
+
+  const originalUrl = getOriginalImageUrl(url);
+  if (!originalUrl) return resolveImageUrl(url);
+
+  if (
+    originalUrl.startsWith(
+      "https://nthapi.webcore.no/wp-content/uploads/",
+    )
+  ) {
+    const cleanUrl = originalUrl.split("?")[0];
+    if (/-(?:150x150|200x300)\.(?:png|jpe?g|webp)$/i.test(cleanUrl)) {
+      return cleanUrl;
+    }
+
+    return cleanUrl.replace(
+      /\.(png|jpe?g|webp)$/i,
+      "-200x300.$1",
+    );
+  }
+
+  if (originalUrl.startsWith("https://lhk.baksystem.no/assets/")) {
+    const separator = originalUrl.includes("?") ? "&" : "?";
+    return `${originalUrl}${separator}width=240&height=360&quality=82&fit=cover`;
+  }
+
+  return resolveImageUrl(url);
 }

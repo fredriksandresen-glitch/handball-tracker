@@ -47,7 +47,7 @@ const POSITION_FILTERS: { value: PositionFilter; label: string }[] = [
   { value: "Bakspiller", label: POSITION_LABELS.Bakspiller },
 ];
 
-const INITIAL_RESULT_LIMIT = 30;
+const INITIAL_RESULT_LIMIT = 12;
 
 function getPositionValue(player: Player) {
   return String(player.position);
@@ -148,10 +148,12 @@ function SearchResult({
   player,
   teamName,
   insight,
+  imagePriority = false,
 }: {
   player: Player;
   teamName?: string;
   insight: PlayerSearchInsight;
+  imagePriority?: boolean;
 }) {
   const { data: following, isLoading: checkingFollow } = useIsFollowing(
     player.id,
@@ -175,6 +177,7 @@ function SearchResult({
       latestSavePct={insight.latestSavePct}
       sparkValues={insight.sparkValues}
       followOverlay
+      imagePriority={imagePriority}
     />
   );
 }
@@ -433,12 +436,13 @@ export default function SearchPage() {
             </p>
           )}
           <div className="-mx-2 grid grid-cols-2 gap-2 sm:mx-0 sm:gap-3">
-            {results.map((player) => (
+            {results.map((player, index) => (
               <SearchResult
                 key={player.id.toString()}
                 player={player}
                 teamName={teamMap.get(player.teamId.toString())}
                 insight={playerInsights.get(player.id.toString()) ?? getPlayerSearchInsight(player)}
+                imagePriority={index === 0}
               />
             ))}
           </div>
