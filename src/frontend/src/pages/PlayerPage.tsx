@@ -222,7 +222,7 @@ function PlayerHero({
         )}
 
         <div className="flex-1 min-w-0 pt-1">
-          <h1 className="font-display font-black text-3xl text-foreground leading-tight break-words">
+          <h1 className="font-display font-black text-2xl sm:text-3xl text-foreground leading-tight break-words">
             {player.name}
           </h1>
           <div className="flex items-center gap-2 mt-2 flex-wrap">
