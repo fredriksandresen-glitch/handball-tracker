@@ -8,6 +8,8 @@ const ii_url =
     ? `http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:8081/`
     : `https://identity.internetcomputer.org/`;
 
+process.env.CANISTER_ID_BACKEND =
+  process.env.CANISTER_ID_BACKEND || "lj6bx-dyaaa-aaaap-qumhq-cai";
 process.env.II_URL = process.env.II_URL || ii_url;
 process.env.STORAGE_GATEWAY_URL =
   process.env.STORAGE_GATEWAY_URL || "https://blob.caffeine.ai";
@@ -18,7 +20,7 @@ export default defineConfig({
   build: {
     emptyOutDir: true,
     sourcemap: false,
-    minify: false,
+    minify: "esbuild",
   },
   css: {
     postcss: "./postcss.config.js",
