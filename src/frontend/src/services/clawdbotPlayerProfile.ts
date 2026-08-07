@@ -5,6 +5,7 @@ import levangerRosterData from "../data/levangerRoster.json";
 import asaneRosterData from "../data/asaneRoster.json";
 import trondheimRosterData from "../data/trondheimRoster.json";
 import gjovikRosterData from "../data/gjovikRoster.json";
+import ravensRosterData from "../data/ravensRoster.json";
 import byaasenRosterData from "../data/byaasenRoster.json";
 import fanaRosterData from "../data/fanaRoster.json";
 import fjellhammerRosterData from "../data/fjellhammerRoster.json";
@@ -61,6 +62,8 @@ const TRONDHEIM_LOGO_URL =
   "https://trondheim.admin.topphandball.no/wp-content/uploads/sites/73/2024/08/trondheim-e1737719517913.png";
 const GJOVIK_LOGO_URL =
   "https://gjovik.admin.topphandball.no/wp-content/uploads/sites/80/2025/05/Gjovik.png";
+const RAVENS_LOGO_URL =
+  "https://www.ravens.no/wp-content/uploads/sites/9/2022/10/ravens-1.svg";
 const BYAASEN_LOGO_URL =
   "https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg";
 const FANA_LOGO_URL =
@@ -261,6 +264,14 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     leagueId: FIRST_DIVISION_LEAGUE_ID,
   },
   {
+    name: "Ravens",
+    logoUrl: RAVENS_LOGO_URL,
+    roster: ravensRosterData as StaticRosterPlayer[],
+    statsUrl: "",
+    dataSeason: CURRENT_SEASON_ID,
+    leagueId: FIRST_DIVISION_LEAGUE_ID,
+  },
+  {
     name: "Fjellhammer",
     logoUrl: FJELLHAMMER_LOGO_URL,
     roster: fjellhammerRosterData as StaticRosterPlayer[],
@@ -456,6 +467,7 @@ const STATIC_TEAM_LOGO_ALIASES: Record<string, string> = {
   levanger: LEVANGER_LOGO_URL,
   asane: ASANE_LOGO_URL,
   trondheim: TRONDHEIM_LOGO_URL,
+  ravens: RAVENS_LOGO_URL,
   utleira: UTLEIRA_LOGO_URL,
   "utleira il": UTLEIRA_LOGO_URL,
   flint: FLINT_LOGO_URL,
