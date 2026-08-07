@@ -1,6 +1,7 @@
 import akerRosterData from "../data/akerRoster.json";
 import kjelsaasRosterData from "../data/kjelsaasRoster.json";
 import voldaRosterData from "../data/voldaRoster.json";
+import levangerRosterData from "../data/levangerRoster.json";
 import byaasenRosterData from "../data/byaasenRoster.json";
 import fanaRosterData from "../data/fanaRoster.json";
 import fjellhammerRosterData from "../data/fjellhammerRoster.json";
@@ -49,6 +50,8 @@ const KJELSAAS_LOGO_URL =
   "https://kjelsaas.topphandball.no/wp-content/uploads/sites/82/2025/05/Kjelsaas-favicon.png";
 const VOLDA_LOGO_URL =
   "https://voldahandball.no/wp-content/uploads/sites/14/2022/05/Volda.svg";
+const LEVANGER_LOGO_URL =
+  "https://lhk.baksystem.no/assets/d4b73961-b69e-4061-bfc6-637b5e2b61d0";
 const BYAASEN_LOGO_URL =
   "https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg";
 const FANA_LOGO_URL =
@@ -212,6 +215,14 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     name: "Volda",
     logoUrl: VOLDA_LOGO_URL,
     roster: voldaRosterData as StaticRosterPlayer[],
+    statsUrl: "",
+    dataSeason: CURRENT_SEASON_ID,
+    leagueId: FIRST_DIVISION_LEAGUE_ID,
+  },
+  {
+    name: "Levanger",
+    logoUrl: LEVANGER_LOGO_URL,
+    roster: levangerRosterData as StaticRosterPlayer[],
     statsUrl: "",
     dataSeason: CURRENT_SEASON_ID,
     leagueId: FIRST_DIVISION_LEAGUE_ID,
@@ -409,6 +420,7 @@ const STATIC_TEAM_LOGO_ALIASES: Record<string, string> = {
   "aker topphandball": AKER_LOGO_URL,
   kjelsas: KJELSAAS_LOGO_URL,
   volda: VOLDA_LOGO_URL,
+  levanger: LEVANGER_LOGO_URL,
   utleira: UTLEIRA_LOGO_URL,
   "utleira il": UTLEIRA_LOGO_URL,
   flint: FLINT_LOGO_URL,

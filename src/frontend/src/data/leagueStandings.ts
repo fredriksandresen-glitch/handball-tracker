@@ -99,6 +99,20 @@ const currentFirstDivisionTeams: LeagueStanding[] = [
     goalsAgainst: 0,
     points: 0,
   },
+  {
+    name: "Levanger",
+    primeTeamId: "224372",
+    rank: 4,
+    previousRank: 4,
+    rankDelta: 0,
+    played: 0,
+    wins: 0,
+    draws: 0,
+    losses: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+  },
 ];
 
 const archiveStandings: LeagueStanding[] = [
