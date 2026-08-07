@@ -127,6 +127,20 @@ const currentFirstDivisionTeams: LeagueStanding[] = [
     goalsAgainst: 0,
     points: 0,
   },
+  {
+    name: "Trondheim",
+    primeTeamId: "985298",
+    rank: 6,
+    previousRank: 6,
+    rankDelta: 0,
+    played: 0,
+    wins: 0,
+    draws: 0,
+    losses: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+  },
 ];
 
 const archiveStandings: LeagueStanding[] = [
