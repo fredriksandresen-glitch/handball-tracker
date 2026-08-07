@@ -984,7 +984,8 @@ export default function PlayerPage() {
   const { id } = useParams({ from: "/player/$id" });
   const router = useRouter();
   const playerId = BigInt(id);
-  const leagueId = getStaticPlayerLeagueId(playerId) ?? selectedLeagueId;
+  const leagueId =
+    getStaticPlayerLeagueId(playerId, seasonId) ?? selectedLeagueId;
   const leagueLabel = getLeagueLabel(leagueId, seasonId);
   const [activeTab, setActiveTab] = useState<Tab>("season");
 

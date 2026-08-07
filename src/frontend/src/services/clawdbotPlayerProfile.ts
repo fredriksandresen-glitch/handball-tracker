@@ -828,7 +828,8 @@ export function getStaticTeamLeagueId(id: bigint): LeagueId | undefined {
 
 export function getStaticPlayerLeagueId(
   playerId: bigint,
+  seasonId?: SeasonId,
 ): LeagueId | undefined {
-  const entry = getStaticPlayerEntry(playerId);
+  const entry = getStaticPlayerEntry(playerId, seasonId);
   return entry ? getTeamLeagueId(entry.team) : undefined;
 }
