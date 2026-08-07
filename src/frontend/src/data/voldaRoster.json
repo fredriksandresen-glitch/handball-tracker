@@ -1,0 +1,100 @@
+[
+  {
+    "id": "5327887052787",
+    "name": "Thea Brænde",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Thea-Braende-Volda.png",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 10
+  },
+  {
+    "id": "5327887451210",
+    "name": "Julie Ellingsen",
+    "imageUrl": "",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 24
+  },
+  {
+    "id": "5327887900637",
+    "name": "Aurora Hjelseth-Steen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Aurora-Hjelseth-Steen-Volda.png",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 22
+  },
+  {
+    "id": "53278810382381",
+    "name": "Natasja Haugaard Kyndesen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Natasja-Haugaard-Kyndesen-Volda.png",
+    "position": "Målvakt",
+    "shirtNumber": 20
+  },
+  {
+    "id": "53278810382369",
+    "name": "Sofie Stokkendal Poulsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Sofie-Stokkendal-Poulsen-Volda.png",
+    "position": "Bakspiller midt",
+    "shirtNumber": 34
+  },
+  {
+    "id": "5327887784340",
+    "name": "Emily Dyrhol Slenes",
+    "imageUrl": "",
+    "position": "Bakspiller midt",
+    "shirtNumber": 11
+  },
+  {
+    "id": "5327887785189",
+    "name": "Thea Dyrhol Slenes",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Thea-Dyrhol-Slenes-Volda.png",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 25
+  },
+  {
+    "id": "5327887445822",
+    "name": "Tuva Willmann",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Tuva-Willmann-Volda.png",
+    "position": "Bakspiller midt",
+    "shirtNumber": 5
+  },
+  {
+    "id": "5327887220941",
+    "name": "Victoria Flo Bratteberg",
+    "imageUrl": "",
+    "position": "",
+    "shirtNumber": 0
+  },
+  {
+    "id": "5327886285116",
+    "name": "Marte Olava Ertresvåg",
+    "imageUrl": "",
+    "position": "",
+    "shirtNumber": 0
+  },
+  {
+    "id": "5327887366782",
+    "name": "Emma Celine Grøndahl",
+    "imageUrl": "",
+    "position": "",
+    "shirtNumber": 0
+  },
+  {
+    "id": "5327889273036",
+    "name": "Line Strand-Larsen",
+    "imageUrl": "",
+    "position": "",
+    "shirtNumber": 0
+  },
+  {
+    "id": "5327887661392",
+    "name": "Ingeborg Johanne Nyborg Tømmervåg",
+    "imageUrl": "",
+    "position": "",
+    "shirtNumber": 0
+  },
+  {
+    "id": "5327887693417",
+    "name": "Mia Hjertø Alagic",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mia-Hjerto-Alagic-Volda.png",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 17
+  }
+]

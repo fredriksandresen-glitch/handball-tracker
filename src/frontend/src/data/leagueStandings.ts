@@ -85,6 +85,20 @@ const currentFirstDivisionTeams: LeagueStanding[] = [
     goalsAgainst: 0,
     points: 0,
   },
+  {
+    name: "Volda",
+    primeTeamId: "532788",
+    rank: 3,
+    previousRank: 3,
+    rankDelta: 0,
+    played: 0,
+    wins: 0,
+    draws: 0,
+    losses: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+  },
 ];
 
 const archiveStandings: LeagueStanding[] = [

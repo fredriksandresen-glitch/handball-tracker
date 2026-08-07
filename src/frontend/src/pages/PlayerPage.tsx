@@ -59,6 +59,8 @@ const CLUB_LOGOS: Record<string, string> = {
   aker: "https://akerth.no/wp-content/uploads/sites/3/2021/11/aker.svg",
   kjelsås:
     "https://kjelsaas.topphandball.no/wp-content/uploads/sites/82/2025/05/Kjelsaas-favicon.png",
+  volda:
+    "https://voldahandball.no/wp-content/uploads/sites/14/2022/05/Volda.svg",
   byåsen: "https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg",
   fjellhammer:
     "https://www.fjellhammer.no/wp-content/uploads/sites/19/2020/01/fjellhammer.svg",
