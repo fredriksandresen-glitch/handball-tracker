@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSelectedLeague } from "../components/LeagueSelect";
 import { SeasonSelect, useSelectedSeason } from "../components/SeasonSelect";
 import { cn } from "@/lib/utils";
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
@@ -31,7 +32,13 @@ import {
 } from "../hooks/useTeam";
 import { resolveImageUrl } from "../utils/playerImages";
 import { useTeams } from "../hooks/useTeams";
-import { getSeason, type SeasonId } from "../data/seasons";
+import {
+  getLeagueLabel,
+  getSeason,
+  type LeagueId,
+  type SeasonId,
+} from "../data/seasons";
+import { getStaticTeamLeagueId } from "../services/clawdbotPlayerProfile";
 import type { Player } from "../types/handball";
 import { Position } from "../types/handball";
 
@@ -48,7 +55,13 @@ function RosterPlayerCard({
   player,
   teamName,
   season,
-}: { player: Player; teamName?: string; season: SeasonId }) {
+  league,
+}: {
+  player: Player;
+  teamName?: string;
+  season: SeasonId;
+  league: LeagueId;
+}) {
   const { data: isFollowing } = useIsFollowing(player.id);
   const followMutation = useFollowPlayer();
   const unfollowMutation = useUnfollowPlayer();
@@ -82,7 +95,7 @@ function RosterPlayerCard({
     <Link
       to="/player/$id"
       params={{ id: player.id.toString() }}
-      search={{ season }}
+      search={{ season, league }}
       className="block group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl"
       data-ocid="roster-player-card"
     >
@@ -200,16 +213,19 @@ function SkeletonRosterCard() {
 // ─── Main page ────────────────────────────────────────────────────────────────
 export default function TeamPage() {
   const seasonId = useSelectedSeason();
+  const selectedLeagueId = useSelectedLeague();
   const season = getSeason(seasonId);
   const { id } = useParams({ from: "/team/$id" });
   const teamId = BigInt(id);
+  const leagueId = getStaticTeamLeagueId(teamId) ?? selectedLeagueId;
+  const leagueLabel = getLeagueLabel(leagueId, seasonId);
   const navigate = useNavigate();
 
-  const { data: team, isLoading: loadingTeam } = useTeam(teamId, seasonId);
+  const { data: team, isLoading: loadingTeam } = useTeam(teamId, seasonId, leagueId);
   const { data: players = [], isLoading: loadingPlayers } =
-    usePlayersByTeam(teamId, seasonId);
+    usePlayersByTeam(teamId, seasonId, leagueId);
   const { data: nextMatch } = useNextMatchForTeam(teamId);
-  const { data: allTeams = [] } = useTeams(seasonId);
+  const { data: allTeams = [] } = useTeams(seasonId, leagueId);
   const { data: followedPlayers = [] } = useFollowedPlayers();
   const followPlayer = useFollowPlayer();
 
@@ -257,7 +273,7 @@ export default function TeamPage() {
       <div className="space-y-4" data-ocid="team-page-loading">
         <button
           type="button"
-          onClick={() => navigate({ to: "/teams", search: { season: seasonId } })}
+          onClick={() => navigate({ to: "/teams", search: { season: seasonId, league: leagueId } })}
           className="flex items-center gap-1 text-muted-foreground text-xs hover:text-foreground transition-colors"
         >
           <ArrowLeft className="size-3.5" />
@@ -300,7 +316,7 @@ export default function TeamPage() {
       <div className="text-center py-16 space-y-3">
         <Shield className="size-10 text-muted-foreground mx-auto" />
         <p className="text-muted-foreground font-body">Lag ikke funnet</p>
-        <Link to="/teams" search={{ season: seasonId }} className="text-primary text-sm block">
+        <Link to="/teams" search={{ season: seasonId, league: leagueId }} className="text-primary text-sm block">
           ← Tilbake til lag
         </Link>
       </div>
@@ -313,7 +329,7 @@ export default function TeamPage() {
       {/* Back navigation */}
       <button
         type="button"
-        onClick={() => navigate({ to: "/teams", search: { season: seasonId } })}
+        onClick={() => navigate({ to: "/teams", search: { season: seasonId, league: leagueId } })}
         className="flex items-center gap-1 text-muted-foreground text-xs hover:text-foreground transition-colors"
         data-ocid="team-back-btn"
       >
@@ -323,7 +339,7 @@ export default function TeamPage() {
 
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs font-display font-bold text-muted-foreground">
-          {season.leagueName} · {season.label}
+          {leagueLabel} · {season.label}
         </p>
         <SeasonSelect compact />
       </div>
@@ -480,6 +496,7 @@ export default function TeamPage() {
                       player={player}
                       teamName={team.name}
                       season={seasonId}
+                      league={leagueId}
                     />
                   </motion.div>
                 ))}
@@ -512,7 +529,7 @@ export default function TeamPage() {
         </div>
         <Link
           to="/teams"
-          search={{ season: seasonId }}
+          search={{ season: seasonId, league: leagueId }}
           className="flex items-center gap-1 text-primary text-sm font-display font-semibold hover:opacity-80 transition-opacity"
           data-ocid="team-explore-cta"
         >

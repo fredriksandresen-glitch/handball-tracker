@@ -13,9 +13,15 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { PositionBadge } from "../components/PositionBadge";
+import { LeagueSelect, useSelectedLeague } from "../components/LeagueSelect";
 import { SeasonSelect, useSelectedSeason } from "../components/SeasonSelect";
 import { SkeletonCard } from "../components/SkeletonCard";
-import { getSeason, type SeasonId } from "../data/seasons";
+import {
+  getLeagueLabel,
+  getSeason,
+  type LeagueId,
+  type SeasonId,
+} from "../data/seasons";
 import { usePlayers } from "../hooks/usePlayers";
 import { useTeams } from "../hooks/useTeams";
 import {
@@ -402,11 +408,13 @@ function RankingListItem({
   rank,
   mode,
   season,
+  league,
 }: {
   row: RankingRow;
   rank: number;
   mode: ToplistMode;
   season: SeasonId;
+  league: LeagueId;
 }) {
   const metricCells = getMetricCells(mode, row.insight);
 
@@ -414,7 +422,7 @@ function RankingListItem({
     <Link
       to="/player/$id"
       params={{ id: row.player.id.toString() }}
-      search={{ season }}
+      search={{ season, league }}
       className="group grid grid-cols-[34px_1fr_auto] items-center gap-3 rounded-2xl border border-border bg-card px-3 py-3 hover:border-primary/45 hover:bg-card/80 transition-colors"
       data-ocid="toplist-row"
     >
@@ -462,10 +470,12 @@ function RankingList({
   rows,
   mode,
   season,
+  league,
 }: {
   rows: RankingRow[];
   mode: ToplistMode;
   season: SeasonId;
+  league: LeagueId;
 }) {
   return (
     <div className="space-y-2">
@@ -476,6 +486,7 @@ function RankingList({
           rank={index + 1}
           mode={mode}
           season={season}
+          league={league}
         />
       ))}
     </div>
@@ -484,11 +495,13 @@ function RankingList({
 
 export default function FavoritesPage() {
   const seasonId = useSelectedSeason();
+  const leagueId = useSelectedLeague();
   const season = getSeason(seasonId);
+  const leagueLabel = getLeagueLabel(leagueId, seasonId);
   const [mode, setMode] = useState<ToplistMode>("form");
   const [positionFilter, setPositionFilter] = useState<PositionOption>("all");
-  const { data: players = [], isLoading } = usePlayers(seasonId);
-  const { data: teams = [] } = useTeams(seasonId);
+  const { data: players = [], isLoading } = usePlayers(seasonId, leagueId);
+  const { data: teams = [] } = useTeams(seasonId, leagueId);
 
   const teamMap = useMemo(
     () => new Map(teams.map((team) => [team.id.toString(), team])),
@@ -565,7 +578,7 @@ export default function FavoritesPage() {
               {copy.text}
             </p>
             <p className="mt-1 text-xs font-display font-bold text-primary">
-              {season.leagueName} · {season.label}
+              {leagueLabel} · {season.label}
             </p>
           </div>
           <div className="flex flex-col items-end gap-2 shrink-0">
@@ -575,6 +588,8 @@ export default function FavoritesPage() {
             </div>
           </div>
         </div>
+
+        <LeagueSelect />
 
         <div className="grid grid-cols-3 gap-2">
           {heroStats.map((stat) => (
@@ -660,7 +675,12 @@ export default function FavoritesPage() {
                 : POSITION_LABELS[activePositionFilter]}
             </span>
           </div>
-          <RankingList rows={rankedRows} mode={mode} season={seasonId} />
+          <RankingList
+            rows={rankedRows}
+            mode={mode}
+            season={seasonId}
+            league={leagueId}
+          />
         </div>
       )}
     </div>

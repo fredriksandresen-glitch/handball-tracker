@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { Link, useRouterState, useSearch } from "@tanstack/react-router";
 import { Home, Moon, Search, Sun, Trophy, Users } from "lucide-react";
 import { useEffect, useState } from "react";
-import { normalizeSeasonId } from "../data/seasons";
+import { normalizeLeagueId, normalizeSeasonId } from "../data/seasons";
 
 const NAV_ITEMS = [
   { to: "/", label: "Hjem", icon: Home, ocid: "nav-hjem" },
@@ -60,6 +60,7 @@ export function Layout({ children, title, headerRight }: Props) {
   const pathname = router.location.pathname;
   const search = useSearch({ from: "__root__" });
   const season = normalizeSeasonId(search.season);
+  const league = normalizeLeagueId(search.league);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -67,7 +68,7 @@ export function Layout({ children, title, headerRight }: Props) {
         <div className="flex items-center justify-between h-14 px-4 max-w-2xl mx-auto w-full">
           <Link
             to="/"
-            search={{ season }}
+            search={{ season, league }}
             className="flex items-center gap-2"
             data-ocid="header-logo"
           >
@@ -109,7 +110,7 @@ export function Layout({ children, title, headerRight }: Props) {
               <Link
                 key={to}
                 to={to}
-                search={{ season }}
+                search={{ season, league }}
                 className={cn(
                   "relative flex flex-col items-center justify-center flex-1 min-h-[56px] py-2.5 gap-1 transition-colors",
                   isActive

@@ -1,3 +1,4 @@
+import akerRosterData from "../data/akerRoster.json";
 import byaasenRosterData from "../data/byaasenRoster.json";
 import fanaRosterData from "../data/fanaRoster.json";
 import fjellhammerRosterData from "../data/fjellhammerRoster.json";
@@ -15,8 +16,12 @@ import utleiraRosterData from "../data/utleiraRoster.json";
 import {
   ARCHIVE_SEASON_ID,
   CURRENT_SEASON_ID,
+  ELITE_LEAGUE_ID,
+  FIRST_DIVISION_LEAGUE_ID,
+  getLeagueLabel,
   getSeason,
   isTeamInSeason,
+  type LeagueId,
   type SeasonId,
 } from "../data/seasons";
 import { Position } from "../types/handball";
@@ -36,6 +41,8 @@ const CLAWDBOT_API_BASE =
 
 const DEFAULT_SEASON_ID = ARCHIVE_SEASON_ID;
 
+const AKER_LOGO_URL =
+  "https://akerth.no/wp-content/uploads/sites/3/2021/11/aker.svg";
 const BYAASEN_LOGO_URL =
   "https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg";
 const FANA_LOGO_URL =
@@ -175,9 +182,18 @@ type StaticTeamConfig = {
   statsUrl: string;
   statsById?: Record<string, StaticPlayerStats>;
   dataSeason?: SeasonId;
+  leagueId?: LeagueId;
 };
 
 const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
+  {
+    name: "Aker Topphåndball",
+    logoUrl: AKER_LOGO_URL,
+    roster: akerRosterData as StaticRosterPlayer[],
+    statsUrl: "",
+    dataSeason: CURRENT_SEASON_ID,
+    leagueId: FIRST_DIVISION_LEAGUE_ID,
+  },
   {
     name: "Fjellhammer",
     logoUrl: FJELLHAMMER_LOGO_URL,
@@ -276,6 +292,10 @@ function getTeamDataSeason(team: StaticTeamConfig): SeasonId {
   return team.dataSeason ?? DEFAULT_SEASON_ID;
 }
 
+function getTeamLeagueId(team: StaticTeamConfig): LeagueId {
+  return team.leagueId ?? ELITE_LEAGUE_ID;
+}
+
 function normalizeTeamLookup(value?: string | null) {
   return (value ?? "")
     .toLowerCase()
@@ -363,6 +383,8 @@ const STATIC_TEAM_LOGO_ALIASES: Record<string, string> = {
   "tertnes elite": TERTNES_LOGO_URL,
   "tertnes håndball elite": TERTNES_LOGO_URL,
   "tertnes handball elite": TERTNES_LOGO_URL,
+  aker: AKER_LOGO_URL,
+  "aker topphandball": AKER_LOGO_URL,
   utleira: UTLEIRA_LOGO_URL,
   "utleira il": UTLEIRA_LOGO_URL,
   flint: FLINT_LOGO_URL,
@@ -413,7 +435,10 @@ function createStaticProfile(
       position: player.position,
       shirtNumber: player.shirtNumber,
       season: getSeason(getTeamDataSeason(team)).statsCode,
-      tournament: `${getSeason(getTeamDataSeason(team)).leagueName} kvinner`,
+      tournament: `${getLeagueLabel(
+        getTeamLeagueId(team),
+        getTeamDataSeason(team),
+      )} kvinner`,
     },
     seasonStats: playerStats?.seasonStats ?? {},
     goalkeeperStats: playerStats?.goalkeeperStats,
@@ -434,7 +459,10 @@ function createStaticRosterProfile(
       position: player.position,
       shirtNumber: player.shirtNumber,
       season: getSeason(getTeamDataSeason(team)).statsCode,
-      tournament: `${getSeason(getTeamDataSeason(team)).leagueName} kvinner`,
+      tournament: `${getLeagueLabel(
+        getTeamLeagueId(team),
+        getTeamDataSeason(team),
+      )} kvinner`,
     },
     seasonStats: {},
     recentMatches: [],
@@ -601,9 +629,16 @@ export function mapClawdbotMatchStats(
   });
 }
 
-export function getStaticPlayers(seasonId?: SeasonId): Player[] {
+export function getStaticPlayers(
+  seasonId?: SeasonId,
+  leagueId?: LeagueId,
+): Player[] {
   return Object.values(STATIC_PLAYER_INDEX)
-    .filter(({ team }) => !seasonId || getTeamDataSeason(team) === seasonId)
+    .filter(
+      ({ team }) =>
+        (!seasonId || getTeamDataSeason(team) === seasonId) &&
+        (!leagueId || getTeamLeagueId(team) === leagueId),
+    )
     .map(({ player, team }) =>
       mapClawdbotPlayer(createStaticRosterProfile(player, team)),
     );
@@ -626,10 +661,15 @@ export function searchStaticPlayers(term: string): Player[] {
   });
 }
 
-export function getStaticTeams(seasonId?: SeasonId): Team[] {
-  return STATIC_TEAM_CONFIGS.filter(
-    (team) => !seasonId || isTeamInSeason(team.name, seasonId),
-  ).map((team) => {
+export function getStaticTeams(
+  seasonId?: SeasonId,
+  leagueId?: LeagueId,
+): Team[] {
+  return STATIC_TEAM_CONFIGS.filter((team) => {
+    const teamLeagueId = getTeamLeagueId(team);
+    if (leagueId && teamLeagueId !== leagueId) return false;
+    return !seasonId || isTeamInSeason(team.name, seasonId, teamLeagueId);
+  }).map((team) => {
     const id = stableTeamId(team.name);
 
     return {
@@ -641,6 +681,24 @@ export function getStaticTeams(seasonId?: SeasonId): Team[] {
   });
 }
 
-export function getStaticTeam(id: bigint, seasonId?: SeasonId): Team | null {
-  return getStaticTeams(seasonId).find((team) => team.id === id) ?? null;
+export function getStaticTeam(
+  id: bigint,
+  seasonId?: SeasonId,
+  leagueId?: LeagueId,
+): Team | null {
+  return getStaticTeams(seasonId, leagueId).find((team) => team.id === id) ?? null;
+}
+
+export function getStaticTeamLeagueId(id: bigint): LeagueId | undefined {
+  const team = STATIC_TEAM_CONFIGS.find(
+    (candidate) => stableTeamId(candidate.name) === id,
+  );
+  return team ? getTeamLeagueId(team) : undefined;
+}
+
+export function getStaticPlayerLeagueId(
+  playerId: bigint,
+): LeagueId | undefined {
+  const entry = STATIC_PLAYER_INDEX[playerId.toString()];
+  return entry ? getTeamLeagueId(entry.team) : undefined;
 }

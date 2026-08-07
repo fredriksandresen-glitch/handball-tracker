@@ -1,6 +1,9 @@
 import {
   ARCHIVE_SEASON_ID,
   CURRENT_SEASON_ID,
+  ELITE_LEAGUE_ID,
+  FIRST_DIVISION_LEAGUE_ID,
+  type LeagueId,
   type SeasonId,
 } from "./seasons";
 
@@ -53,6 +56,23 @@ const currentStandings: LeagueStanding[] = currentTeamNames.map(
   }),
 );
 
+const currentFirstDivisionTeams: LeagueStanding[] = [
+  {
+    name: "Aker Topphåndball",
+    primeTeamId: "816397",
+    rank: 1,
+    previousRank: 1,
+    rankDelta: 0,
+    played: 0,
+    wins: 0,
+    draws: 0,
+    losses: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+  },
+];
+
 const archiveStandings: LeagueStanding[] = [
   { name: "Sola", primeTeamId: "223983", rank: 1, previousRank: 1, rankDelta: 0, played: 26, wins: 25, draws: 0, losses: 1, goalsFor: 865, goalsAgainst: 675, points: 50 },
   { name: "Storhamar", primeTeamId: "746223", rank: 2, previousRank: 2, rankDelta: 0, played: 26, wins: 22, draws: 1, losses: 3, goalsFor: 808, goalsAgainst: 630, points: 45 },
@@ -69,6 +89,20 @@ const archiveStandings: LeagueStanding[] = [
   { name: "Haslum", primeTeamId: "928836", rank: 13, previousRank: 13, rankDelta: 0, played: 26, wins: 4, draws: 0, losses: 22, goalsFor: 635, goalsAgainst: 877, points: 8 },
   { name: "Ravens", primeTeamId: "948459", rank: 14, previousRank: 14, rankDelta: 0, played: 26, wins: 2, draws: 1, losses: 23, goalsFor: 632, goalsAgainst: 877, points: 5 },
 ];
+
+export const leagueStandingsBySeasonAndLeague: Record<
+  SeasonId,
+  Record<LeagueId, LeagueStanding[]>
+> = {
+  [CURRENT_SEASON_ID]: {
+    [ELITE_LEAGUE_ID]: currentStandings,
+    [FIRST_DIVISION_LEAGUE_ID]: currentFirstDivisionTeams,
+  },
+  [ARCHIVE_SEASON_ID]: {
+    [ELITE_LEAGUE_ID]: archiveStandings,
+    [FIRST_DIVISION_LEAGUE_ID]: [],
+  },
+};
 
 export const leagueStandingsBySeason: Record<SeasonId, LeagueStanding[]> = {
   [CURRENT_SEASON_ID]: currentStandings,

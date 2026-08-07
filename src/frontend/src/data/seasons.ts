@@ -1,7 +1,13 @@
 export const CURRENT_SEASON_ID = "2026-27";
 export const ARCHIVE_SEASON_ID = "2025-26";
 
+export const ELITE_LEAGUE_ID = "elite";
+export const FIRST_DIVISION_LEAGUE_ID = "first-division";
+
 export type SeasonId = typeof CURRENT_SEASON_ID | typeof ARCHIVE_SEASON_ID;
+export type LeagueId =
+  | typeof ELITE_LEAGUE_ID
+  | typeof FIRST_DIVISION_LEAGUE_ID;
 
 export type Season = {
   id: SeasonId;
@@ -9,6 +15,11 @@ export type Season = {
   statsCode: string;
   leagueName: string;
   isCurrent: boolean;
+};
+
+export type League = {
+  id: LeagueId;
+  label: string;
 };
 
 export const SEASONS: Season[] = [
@@ -28,51 +39,78 @@ export const SEASONS: Season[] = [
   },
 ];
 
-const TEAM_NAMES_BY_SEASON: Record<SeasonId, string[]> = {
-  [CURRENT_SEASON_ID]: [
-    "Sola",
-    "Storhamar",
-    "Molde",
-    "Larvik",
-    "Tertnes",
-    "Fredrikstad",
-    "Gjerpen",
-    "Flint",
-    "Byåsen",
-    "Fana",
-    "Oppsal",
-    "Follo Damer",
-    "Utleira",
-    "Fjellhammer",
-  ],
-  [ARCHIVE_SEASON_ID]: [
-    "Sola",
-    "Storhamar",
-    "Molde",
-    "Larvik",
-    "Tertnes",
-    "Fana",
-    "Fredrikstad",
-    "Byåsen",
-    "Gjerpen",
-    "Follo Damer",
-    "Oppsal",
-    "Fjellhammer",
-    "Haslum",
-    "Ravens",
-  ],
+export const LEAGUES: League[] = [
+  { id: ELITE_LEAGUE_ID, label: "Eliteserien" },
+  { id: FIRST_DIVISION_LEAGUE_ID, label: "1. divisjon" },
+];
+
+const TEAM_NAMES_BY_SEASON_AND_LEAGUE: Record<
+  SeasonId,
+  Record<LeagueId, string[]>
+> = {
+  [CURRENT_SEASON_ID]: {
+    [ELITE_LEAGUE_ID]: [
+      "Sola",
+      "Storhamar",
+      "Molde",
+      "Larvik",
+      "Tertnes",
+      "Fredrikstad",
+      "Gjerpen",
+      "Flint",
+      "Byåsen",
+      "Fana",
+      "Oppsal",
+      "Follo Damer",
+      "Utleira",
+      "Fjellhammer",
+    ],
+    [FIRST_DIVISION_LEAGUE_ID]: ["Aker Topphåndball"],
+  },
+  [ARCHIVE_SEASON_ID]: {
+    [ELITE_LEAGUE_ID]: [
+      "Sola",
+      "Storhamar",
+      "Molde",
+      "Larvik",
+      "Tertnes",
+      "Fana",
+      "Fredrikstad",
+      "Byåsen",
+      "Gjerpen",
+      "Follo Damer",
+      "Oppsal",
+      "Fjellhammer",
+      "Haslum",
+      "Ravens",
+    ],
+    [FIRST_DIVISION_LEAGUE_ID]: [],
+  },
 };
 
 export function isSeasonId(value: unknown): value is SeasonId {
   return value === CURRENT_SEASON_ID || value === ARCHIVE_SEASON_ID;
 }
 
+export function isLeagueId(value: unknown): value is LeagueId {
+  return value === ELITE_LEAGUE_ID || value === FIRST_DIVISION_LEAGUE_ID;
+}
+
 export function normalizeSeasonId(value: unknown): SeasonId {
   return isSeasonId(value) ? value : CURRENT_SEASON_ID;
 }
 
+export function normalizeLeagueId(value: unknown): LeagueId {
+  return isLeagueId(value) ? value : ELITE_LEAGUE_ID;
+}
+
 export function getSeason(seasonId: SeasonId) {
   return SEASONS.find((season) => season.id === seasonId) ?? SEASONS[0];
+}
+
+export function getLeagueLabel(leagueId: LeagueId, seasonId: SeasonId) {
+  if (leagueId === ELITE_LEAGUE_ID) return getSeason(seasonId).leagueName;
+  return LEAGUES.find((league) => league.id === leagueId)?.label ?? "1. divisjon";
 }
 
 function normalizeTeamName(value: string) {
@@ -85,9 +123,17 @@ function normalizeTeamName(value: string) {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
-export function isTeamInSeason(teamName: string, seasonId: SeasonId) {
+export function isTeamInSeason(
+  teamName: string,
+  seasonId: SeasonId,
+  leagueId?: LeagueId,
+) {
   const normalized = normalizeTeamName(teamName);
-  return TEAM_NAMES_BY_SEASON[seasonId].some(
+  const leagueTeamNames = leagueId
+    ? TEAM_NAMES_BY_SEASON_AND_LEAGUE[seasonId][leagueId]
+    : Object.values(TEAM_NAMES_BY_SEASON_AND_LEAGUE[seasonId]).flat();
+
+  return leagueTeamNames.some(
     (name) => normalizeTeamName(name) === normalized,
   );
 }

@@ -18,9 +18,15 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { PositionBadge } from "../components/PositionBadge";
+import { useSelectedLeague } from "../components/LeagueSelect";
 import { SeasonSelect, useSelectedSeason } from "../components/SeasonSelect";
 import { getNationalTeamInfo } from "../data/nationalTeamPlayers";
-import { getSeason, type SeasonId } from "../data/seasons";
+import {
+  getLeagueLabel,
+  getSeason,
+  type LeagueId,
+  type SeasonId,
+} from "../data/seasons";
 import {
   useFollowPlayer,
   useIsFollowing,
@@ -34,6 +40,7 @@ import {
 import { resolveImageUrl } from "../utils/playerImages";
 import { useTeam } from "../hooks/useTeam";
 import {
+  getStaticPlayerLeagueId,
   getStaticPlayers,
   getStaticProfile,
   mapClawdbotSeasonStats,
@@ -49,6 +56,7 @@ import { Position } from "../types/handball";
 type Tab = "season" | "matches" | "form";
 
 const CLUB_LOGOS: Record<string, string> = {
+  aker: "https://akerth.no/wp-content/uploads/sites/3/2021/11/aker.svg",
   byåsen: "https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg",
   fjellhammer:
     "https://www.fjellhammer.no/wp-content/uploads/sites/19/2020/01/fjellhammer.svg",
@@ -178,11 +186,13 @@ function PlayerHero({
   teamName,
   teamId,
   season,
+  league,
 }: {
   player: Player;
   teamName?: string;
   teamId: bigint;
   season: SeasonId;
+  league: LeagueId;
 }) {
   const { data: isFollowing = false, isLoading: checkingFollow } =
     useIsFollowing(player.id);
@@ -256,7 +266,7 @@ function PlayerHero({
                 <Link
                   to="/team/$id"
                   params={{ id: teamId.toString() }}
-                  search={{ season }}
+                  search={{ season, league }}
                   className="inline-flex items-center gap-2 text-sm font-display font-bold text-primary hover:text-primary/80 transition-colors"
                 >
                   <TeamLogo teamName={teamName} />
@@ -294,7 +304,7 @@ function PlayerHero({
           <Link
             to="/team/$id"
             params={{ id: teamId.toString() }}
-            search={{ season }}
+            search={{ season, league }}
           >
             <Button
               variant="outline"
@@ -948,10 +958,13 @@ function Tabs({ active, onChange }: { active: Tab; onChange: (tab: Tab) => void 
 
 export default function PlayerPage() {
   const seasonId = useSelectedSeason();
+  const selectedLeagueId = useSelectedLeague();
   const season = getSeason(seasonId);
   const { id } = useParams({ from: "/player/$id" });
   const router = useRouter();
   const playerId = BigInt(id);
+  const leagueId = getStaticPlayerLeagueId(playerId) ?? selectedLeagueId;
+  const leagueLabel = getLeagueLabel(leagueId, seasonId);
   const [activeTab, setActiveTab] = useState<Tab>("season");
 
   const { data: player, isLoading: playerLoading } = usePlayer(playerId, seasonId);
@@ -963,6 +976,7 @@ export default function PlayerPage() {
   const { data: team } = useTeam(
     hasSeasonSnapshot ? (player?.teamId ?? 0n) : 0n,
     seasonId,
+    leagueId,
   );
 
   const isLoading = playerLoading || seasonLoading || matchLoading;
@@ -1002,7 +1016,7 @@ export default function PlayerPage() {
         </button>
         <div className="flex items-center gap-2">
           <span className="hidden sm:inline text-xs font-display font-bold text-muted-foreground">
-            {season.leagueName}
+            {leagueLabel}
           </span>
           <SeasonSelect compact />
         </div>
@@ -1013,6 +1027,7 @@ export default function PlayerPage() {
         teamName={team?.name}
         teamId={player.teamId}
         season={seasonId}
+        league={leagueId}
       />
 
       <div className="flex flex-col gap-5 pt-5">
