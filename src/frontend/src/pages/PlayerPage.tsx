@@ -62,7 +62,7 @@ const CLUB_LOGOS: Record<string, string> = {
   volda:
     "https://voldahandball.no/wp-content/uploads/sites/14/2022/05/Volda.svg",
   levanger:
-    "https://lhk.baksystem.no/assets/d4b73961-b69e-4061-bfc6-637b5e2b61d0",
+    "https://lhk.baksystem.no/assets/d4b73961-b69e-4061-bfc6-637b5e2b61d0?width=300&height=300&quality=100",
   byåsen: "https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg",
   fjellhammer:
     "https://www.fjellhammer.no/wp-content/uploads/sites/19/2020/01/fjellhammer.svg",

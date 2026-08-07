@@ -51,7 +51,7 @@ const KJELSAAS_LOGO_URL =
 const VOLDA_LOGO_URL =
   "https://voldahandball.no/wp-content/uploads/sites/14/2022/05/Volda.svg";
 const LEVANGER_LOGO_URL =
-  "https://lhk.baksystem.no/assets/d4b73961-b69e-4061-bfc6-637b5e2b61d0";
+  "https://lhk.baksystem.no/assets/d4b73961-b69e-4061-bfc6-637b5e2b61d0?width=300&height=300&quality=100";
 const BYAASEN_LOGO_URL =
   "https://byaasen.no/wp-content/uploads/sites/4/2022/10/byaasen.svg";
 const FANA_LOGO_URL =
