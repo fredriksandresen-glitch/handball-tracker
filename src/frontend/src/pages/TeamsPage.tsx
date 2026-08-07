@@ -18,7 +18,6 @@ import {
   type LeagueStanding,
 } from "../data/leagueStandings";
 import {
-  FIRST_DIVISION_LEAGUE_ID,
   getLeagueLabel,
   getSeason,
   type LeagueId,
@@ -125,7 +124,7 @@ export default function TeamsPage() {
   const season = getSeason(seasonId);
   const leagueLabel = getLeagueLabel(leagueId, seasonId);
   const standings = leagueStandingsBySeasonAndLeague[seasonId][leagueId];
-  const isTeamDirectory = leagueId === FIRST_DIVISION_LEAGUE_ID;
+  const isTeamDirectory = false;
   const { data: teams, isLoading } = useTeams(seasonId, leagueId);
   const teamByName = new Map<string, Team>();
   for (const team of teams ?? []) teamByName.set(normalizeName(team.name), team);
