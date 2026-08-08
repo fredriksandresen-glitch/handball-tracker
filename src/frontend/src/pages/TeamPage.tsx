@@ -225,7 +225,7 @@ export default function TeamPage() {
   const { data: team, isLoading: loadingTeam } = useTeam(teamId, seasonId, leagueId);
   const { data: players = [], isLoading: loadingPlayers } =
     usePlayersByTeam(teamId, seasonId, leagueId);
-  const { data: nextMatch } = useNextMatchForTeam(teamId);
+  const { data: nextMatchResult } = useNextMatchForTeam(teamId, seasonId, leagueId);
   const { data: allTeams = [] } = useTeams(seasonId, leagueId);
   const { data: followedPlayers = [] } = useFollowedPlayers();
   const followPlayer = useFollowPlayer();
@@ -241,12 +241,13 @@ export default function TeamPage() {
     return map;
   }, [allTeams]);
 
-  const homeTeamName = nextMatch
-    ? teamsMap[nextMatch.homeTeamId.toString()]
-    : undefined;
-  const awayTeamName = nextMatch
-    ? teamsMap[nextMatch.awayTeamId.toString()]
-    : undefined;
+  const nextMatch = nextMatchResult?.match;
+  const homeTeamName =
+    nextMatchResult?.homeTeamName ??
+    (nextMatch ? teamsMap[nextMatch.homeTeamId.toString()] : undefined);
+  const awayTeamName =
+    nextMatchResult?.awayTeamName ??
+    (nextMatch ? teamsMap[nextMatch.awayTeamId.toString()] : undefined);
 
   const allFollowed =
     players.length > 0 &&
