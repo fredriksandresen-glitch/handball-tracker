@@ -5,6 +5,10 @@ import {
   getStaticPlayers,
   getStaticTeam,
 } from "../services/clawdbotPlayerProfile";
+import {
+  getStaticNextMatchForTeam,
+  type NextMatchResult,
+} from "../data/nextMatches";
 import type { Match, Player, Team } from "../types/handball";
 import type { LeagueId, SeasonId } from "../data/seasons";
 
@@ -28,15 +32,34 @@ export function useTeam(
   });
 }
 
-export function useNextMatchForTeam(teamId: bigint) {
+export function useNextMatchForTeam(
+  teamId: bigint,
+  seasonId?: SeasonId,
+  leagueId?: LeagueId,
+) {
   const { actor, isFetching } = useActor(createActor);
-  return useQuery<Match | null>({
-    queryKey: ["nextMatch", teamId.toString()],
+  const staticTeam = getStaticTeam(teamId, seasonId, leagueId);
+
+  return useQuery<NextMatchResult | null>({
+    queryKey: [
+      "nextMatch",
+      teamId.toString(),
+      seasonId ?? "all",
+      leagueId ?? "all",
+    ],
     queryFn: async () => {
+      if (staticTeam) {
+        const staticMatch = getStaticNextMatchForTeam(staticTeam.name);
+        if (staticMatch) return staticMatch;
+      }
+
       if (!actor) return null;
-      return actor.getNextMatchForTeam(teamId);
+      const match = await actor.getNextMatchForTeam(teamId);
+      return match
+        ? { match, homeTeamName: undefined, awayTeamName: undefined }
+        : null;
     },
-    enabled: !isFetching,
+    enabled: !isFetching || !!staticTeam,
     staleTime: 60_000,
   });
 }
