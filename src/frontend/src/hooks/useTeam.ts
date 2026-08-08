@@ -9,7 +9,7 @@ import {
   getStaticNextMatchForTeam,
   type NextMatchResult,
 } from "../data/nextMatches";
-import type { Match, Player, Team } from "../types/handball";
+import type { Player, Team } from "../types/handball";
 import type { LeagueId, SeasonId } from "../data/seasons";
 
 export function useTeam(
