@@ -17,6 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { MatchCard } from "../components/MatchCard";
 import { PositionBadge } from "../components/PositionBadge";
 import { useSelectedLeague } from "../components/LeagueSelect";
 import { SeasonSelect, useSelectedSeason } from "../components/SeasonSelect";
@@ -39,7 +40,7 @@ import {
 } from "../hooks/usePlayer";
 import { resolveImageUrl } from "../utils/playerImages";
 import { getTeamLogoClassName } from "../utils/teamLogoStyles";
-import { useTeam } from "../hooks/useTeam";
+import { useNextMatchForTeam, useTeam } from "../hooks/useTeam";
 import {
   getStaticPlayerLeagueId,
   getStaticPlayers,
@@ -1002,6 +1003,11 @@ export default function PlayerPage() {
     seasonId,
     leagueId,
   );
+  const { data: nextMatchResult } = useNextMatchForTeam(
+    player?.teamId ?? 0n,
+    seasonId,
+    leagueId,
+  );
 
   const isLoading = playerLoading || seasonLoading || matchLoading;
   const visibleSeasonStats =
@@ -1053,6 +1059,17 @@ export default function PlayerPage() {
         season={seasonId}
         league={leagueId}
       />
+
+      {nextMatchResult && (
+        <div className="px-4 pt-4">
+          <MatchCard
+            match={nextMatchResult.match}
+            teamId={player.teamId}
+            homeTeamName={nextMatchResult.homeTeamName}
+            awayTeamName={nextMatchResult.awayTeamName}
+          />
+        </div>
+      )}
 
       <div className="flex flex-col gap-5 pt-5">
         <KeyStats player={player} stats={visibleSeasonStats} />
