@@ -78,12 +78,13 @@ function stableTeamId(teamName: string): bigint {
 
 function toMatch(entry: MatchEntry): Match {
   return {
-    matchId: BigInt(entry.matchId),
+    id: BigInt(entry.matchId),
     homeTeamId: stableTeamId(entry.homeTeamName),
     awayTeamId: stableTeamId(entry.awayTeamName),
     startTime: BigInt(Date.parse(entry.startTime)) * 1_000_000n,
     status: MatchStatus.Upcoming,
     venue: entry.venue,
+    competition: "1. divisjon kvinner",
   } as unknown as Match;
 }
 
