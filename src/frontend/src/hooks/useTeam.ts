@@ -49,7 +49,7 @@ export function useNextMatchForTeam(
     ],
     queryFn: async () => {
       if (staticTeam) {
-        const staticMatch = getStaticNextMatchForTeam(staticTeam.name);
+        const staticMatch = getStaticNextMatchForTeam(staticTeam.name, leagueId);
         if (staticMatch) return staticMatch;
       }
 
