@@ -136,7 +136,7 @@ function stableTeamId(teamName: string): bigint {
   return BigInt(hash || 1);
 }
 
-function toMatch(entry: MatchEntry): Match {
+function toMatch(entry: MatchEntry, leagueId?: LeagueId): Match {
   return {
     id: BigInt(entry.matchId),
     homeTeamId: stableTeamId(entry.homeTeamName),
@@ -144,7 +144,7 @@ function toMatch(entry: MatchEntry): Match {
     startTime: BigInt(Date.parse(entry.startTime)) * 1_000_000n,
     status: MatchStatus.Upcoming,
     venue: entry.venue,
-    competition: "1. divisjon kvinner",
+    competition: leagueId === "elite" ? "Elkjøp-ligaen kvinner" : "1. divisjon kvinner",
   } as unknown as Match;
 }
 
@@ -161,7 +161,7 @@ export function getStaticNextMatchForTeam(
   if (!entry) return null;
 
   return {
-    match: toMatch(entry),
+    match: toMatch(entry, leagueId),
     homeTeamName: entry.homeTeamName,
     awayTeamName: entry.awayTeamName,
   };
