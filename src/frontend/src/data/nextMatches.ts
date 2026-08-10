@@ -1,5 +1,6 @@
 import type { Match } from "../types/handball";
 import { MatchStatus } from "../types/handball";
+import type { LeagueId } from "./seasons";
 
 export type NextMatchResult = {
   match: Match;
@@ -68,6 +69,65 @@ const UPCOMING_MATCHES: MatchEntry[] = [
   },
 ];
 
+const ELITE_UPCOMING_MATCHES: MatchEntry[] = [
+  {
+    matchId: 8393077,
+    startTime: "2026-08-26T18:15:00+02:00",
+    homeTeamName: "Storhamar",
+    awayTeamName: "Gjerpen",
+    venue: "OBOS Arena",
+  },
+  {
+    matchId: 8393054,
+    startTime: "2026-08-30T16:00:00+02:00",
+    homeTeamName: "Molde",
+    awayTeamName: "Fjellhammer",
+    venue: "Molde Arena",
+  },
+  {
+    matchId: 8393056,
+    startTime: "2026-08-30T16:00:00+02:00",
+    homeTeamName: "Flint",
+    awayTeamName: "Gjerpen",
+    venue: "Sparebanken Norge Arena",
+  },
+  {
+    matchId: 8393055,
+    startTime: "2026-08-30T17:00:00+02:00",
+    homeTeamName: "Sola",
+    awayTeamName: "Fredrikstad",
+    venue: "Åsenhallen A",
+  },
+  {
+    matchId: 8393053,
+    startTime: "2026-08-30T17:00:00+02:00",
+    homeTeamName: "Tertnes",
+    awayTeamName: "Oppsal",
+    venue: "Åsane Arena",
+  },
+  {
+    matchId: 8393052,
+    startTime: "2026-08-30T18:00:00+02:00",
+    homeTeamName: "Larvik",
+    awayTeamName: "Fana",
+    venue: "Jotron Arena",
+  },
+  {
+    matchId: 8393050,
+    startTime: "2026-08-30T19:15:00+02:00",
+    homeTeamName: "Byåsen",
+    awayTeamName: "Utleira",
+    venue: "Trondheim Spektrum D",
+  },
+  {
+    matchId: 8393051,
+    startTime: "2026-08-30T15:00:00+02:00",
+    homeTeamName: "Storhamar",
+    awayTeamName: "Follo Damer",
+    venue: "OBOS Arena",
+  },
+];
+
 function stableTeamId(teamName: string): bigint {
   let hash = 0;
   for (let index = 0; index < teamName.length; index += 1) {
@@ -90,8 +150,11 @@ function toMatch(entry: MatchEntry): Match {
 
 export function getStaticNextMatchForTeam(
   teamName: string,
+  leagueId?: LeagueId,
 ): NextMatchResult | null {
-  const entry = UPCOMING_MATCHES.find(
+  const matches =
+    leagueId === "elite" ? ELITE_UPCOMING_MATCHES : UPCOMING_MATCHES;
+  const entry = matches.find(
     (match) =>
       match.homeTeamName === teamName || match.awayTeamName === teamName,
   );
