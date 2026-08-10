@@ -314,6 +314,22 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     leagueId: FIRST_DIVISION_LEAGUE_ID,
   },
   {
+    name: "Byåsen Rekrutt",
+    logoUrl: BYAASEN_LOGO_URL,
+    roster: [],
+    statsUrl: "",
+    dataSeason: CURRENT_SEASON_ID,
+    leagueId: FIRST_DIVISION_LEAGUE_ID,
+  },
+  {
+    name: "Storhamar Rekrutt",
+    logoUrl: STORHAMAR_LOGO_URL,
+    roster: [],
+    statsUrl: "",
+    dataSeason: CURRENT_SEASON_ID,
+    leagueId: FIRST_DIVISION_LEAGUE_ID,
+  },
+  {
     name: "Fjellhammer",
     logoUrl: FJELLHAMMER_LOGO_URL,
     roster: fjellhammerRosterData as StaticRosterPlayer[],
