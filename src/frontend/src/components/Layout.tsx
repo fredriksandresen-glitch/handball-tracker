@@ -2,7 +2,11 @@ import { cn } from "@/lib/utils";
 import { Link, useRouterState, useSearch } from "@tanstack/react-router";
 import { Home, Moon, Search, Sun, Trophy, Users } from "lucide-react";
 import { useEffect, useState } from "react";
-import { normalizeLeagueId, normalizeSeasonId } from "../data/seasons";
+import {
+  CURRENT_SEASON_ID,
+  normalizeLeagueId,
+  normalizeSeasonId,
+} from "../data/seasons";
 
 const NAV_ITEMS = [
   { to: "/", label: "Hjem", icon: Home, ocid: "nav-hjem" },
@@ -72,12 +76,25 @@ export function Layout({ children, title, headerRight }: Props) {
             className="flex items-center gap-2"
             data-ocid="header-logo"
           >
-            <span className="font-display font-black text-lg tracking-tight text-sidebar-foreground">
-              REMA<span className="text-sidebar-primary">1000</span>
-            </span>
-            <span className="hidden sm:inline text-xs text-sidebar-foreground/65 font-body">
-              -ligaen
-            </span>
+            {season === CURRENT_SEASON_ID ? (
+              <>
+                <span className="font-display font-black text-lg text-sidebar-foreground">
+                  Elkjøp
+                </span>
+                <span className="hidden sm:inline text-xs text-sidebar-foreground/65 font-body">
+                  -ligaen
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="font-display font-black text-lg text-sidebar-foreground">
+                  REMA<span className="text-sidebar-primary">1000</span>
+                </span>
+                <span className="hidden sm:inline text-xs text-sidebar-foreground/65 font-body">
+                  -ligaen
+                </span>
+              </>
+            )}
           </Link>
 
           {title && (
