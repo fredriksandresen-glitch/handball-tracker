@@ -178,6 +178,15 @@ export function PlayerCard({
         {displayedImageUrl && !imageFailed && (
           <img
             src={displayedImageUrl}
+            srcSet={
+              !useOriginalImage &&
+              cardImageUrl &&
+              originalImageUrl &&
+              cardImageUrl !== originalImageUrl
+                ? `${cardImageUrl} 200w, ${originalImageUrl} 800w`
+                : undefined
+            }
+            sizes="(max-width: 640px) calc(50vw - 24px), 310px"
             alt={player.name}
             loading={imagePriority ? "eager" : "lazy"}
             fetchPriority={imagePriority ? "high" : "auto"}
