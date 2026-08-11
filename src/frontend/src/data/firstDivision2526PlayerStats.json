@@ -1,0 +1,1724 @@
+[
+  {
+    "playerId": "8163979773868",
+    "seasonStats": {
+      "matches": 2,
+      "goals": 2,
+      "shots": 2,
+      "shotPercentage": 100,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0.8,
+      "mepTotal": 1.5
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "8163978083300",
+    "seasonStats": {
+      "matches": 21,
+      "goals": 36,
+      "shots": 43,
+      "shotPercentage": 83.7,
+      "assists": 7,
+      "technicalErrors": 6,
+      "suspensions": 4,
+      "mepAvg": 1.1,
+      "mepTotal": 23.6
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "8163978717973",
+    "seasonStats": {
+      "matches": 25,
+      "goals": 56,
+      "shots": 66,
+      "shotPercentage": 84.8,
+      "assists": 15,
+      "technicalErrors": 7,
+      "suspensions": 0,
+      "mepAvg": 1.6,
+      "mepTotal": 39.5
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "8163976457589",
+    "seasonStats": {
+      "matches": 14,
+      "goals": 28,
+      "shots": 35,
+      "shotPercentage": 80,
+      "assists": 24,
+      "technicalErrors": 11,
+      "suspensions": 0,
+      "mepAvg": 1.4,
+      "mepTotal": 19.2
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "8163974643040",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 90,
+      "shots": 113,
+      "shotPercentage": 79.6,
+      "assists": 6,
+      "technicalErrors": 14,
+      "suspensions": 2,
+      "mepAvg": 1.9,
+      "mepTotal": 49.2
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "8163978768264",
+    "seasonStats": {
+      "matches": 16,
+      "goals": 57,
+      "shots": 77,
+      "shotPercentage": 74,
+      "assists": 45,
+      "technicalErrors": 32,
+      "suspensions": 3,
+      "mepAvg": 2.8,
+      "mepTotal": 44.3
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "8163979739026",
+    "seasonStats": {
+      "matches": 25,
+      "goals": 0,
+      "shots": 0,
+      "shotPercentage": 0,
+      "assists": 4,
+      "technicalErrors": 5,
+      "suspensions": 0,
+      "mepAvg": 0,
+      "mepTotal": 1
+    },
+    "goalkeeperStats": {
+      "saves": 87,
+      "savePercentage": 28.8,
+      "goalsConceded": 215,
+      "shotsAgainst": 302
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "8163975351518",
+    "seasonStats": {
+      "matches": 23,
+      "goals": 39,
+      "shots": 50,
+      "shotPercentage": 78,
+      "assists": 60,
+      "technicalErrors": 34,
+      "suspensions": 6,
+      "mepAvg": 1.3,
+      "mepTotal": 29.3
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "8163979630702",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 26,
+      "shots": 30,
+      "shotPercentage": 86.7,
+      "assists": 7,
+      "technicalErrors": 4,
+      "suspensions": 4,
+      "mepAvg": 0.9,
+      "mepTotal": 22.4
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "8163976438181",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 85,
+      "shots": 106,
+      "shotPercentage": 80.2,
+      "assists": 15,
+      "technicalErrors": 11,
+      "suspensions": 2,
+      "mepAvg": 2.1,
+      "mepTotal": 55.8
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "8163978768276",
+    "seasonStats": {
+      "matches": 3,
+      "goals": 1,
+      "shots": 2,
+      "shotPercentage": 50,
+      "assists": 0,
+      "technicalErrors": 4,
+      "suspensions": 0,
+      "mepAvg": -0.1,
+      "mepTotal": -0.4
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "8163978808065",
+    "seasonStats": {
+      "matches": 8,
+      "goals": 19,
+      "shots": 25,
+      "shotPercentage": 76,
+      "assists": 24,
+      "technicalErrors": 10,
+      "suspensions": 1,
+      "mepAvg": 2.3,
+      "mepTotal": 18.2
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2248605526197",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 0,
+      "shotPercentage": 0,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0,
+      "mepTotal": -2.8
+    },
+    "goalkeeperStats": {
+      "saves": 1,
+      "savePercentage": 7.7,
+      "goalsConceded": 12,
+      "shotsAgainst": 13
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2248608208083",
+    "seasonStats": {
+      "matches": 8,
+      "goals": 9,
+      "shots": 19,
+      "shotPercentage": 47.4,
+      "assists": 7,
+      "technicalErrors": 7,
+      "suspensions": 0,
+      "mepAvg": 0.3,
+      "mepTotal": 2.1
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2248605551756",
+    "seasonStats": {
+      "matches": 21,
+      "goals": 33,
+      "shots": 58,
+      "shotPercentage": 56.9,
+      "assists": 4,
+      "technicalErrors": 8,
+      "suspensions": 1,
+      "mepAvg": 0.7,
+      "mepTotal": 14.2
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2248606882321",
+    "seasonStats": {
+      "matches": 22,
+      "goals": 13,
+      "shots": 18,
+      "shotPercentage": 72.2,
+      "assists": 1,
+      "technicalErrors": 7,
+      "suspensions": 2,
+      "mepAvg": 0.3,
+      "mepTotal": 6.3
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2248608808547",
+    "seasonStats": {
+      "matches": 22,
+      "goals": 0,
+      "shots": 0,
+      "shotPercentage": 0,
+      "assists": 2,
+      "technicalErrors": 2,
+      "suspensions": 0,
+      "mepAvg": 0,
+      "mepTotal": 0.7
+    },
+    "goalkeeperStats": {
+      "saves": 83,
+      "savePercentage": 28.7,
+      "goalsConceded": 206,
+      "shotsAgainst": 289
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2248606814454",
+    "seasonStats": {
+      "matches": 22,
+      "goals": 42,
+      "shots": 64,
+      "shotPercentage": 65.6,
+      "assists": 5,
+      "technicalErrors": 4,
+      "suspensions": 5,
+      "mepAvg": 0.9,
+      "mepTotal": 19.9
+    },
+    "goalkeeperStats": {
+      "saves": 0,
+      "savePercentage": 0,
+      "goalsConceded": 1,
+      "shotsAgainst": 1
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2248601843684",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 0,
+      "shots": 0,
+      "shotPercentage": 0,
+      "assists": 8,
+      "technicalErrors": 10,
+      "suspensions": 0,
+      "mepAvg": -0.5,
+      "mepTotal": -13.1
+    },
+    "goalkeeperStats": {
+      "saves": 198,
+      "savePercentage": 26.8,
+      "goalsConceded": 540,
+      "shotsAgainst": 738
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2248605337162",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 48,
+      "shots": 69,
+      "shotPercentage": 69.6,
+      "assists": 8,
+      "technicalErrors": 11,
+      "suspensions": 5,
+      "mepAvg": 1,
+      "mepTotal": 27
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2248606963710",
+    "seasonStats": {
+      "matches": 18,
+      "goals": 10,
+      "shots": 18,
+      "shotPercentage": 55.6,
+      "assists": 5,
+      "technicalErrors": 11,
+      "suspensions": 1,
+      "mepAvg": 0,
+      "mepTotal": 0.2
+    },
+    "goalkeeperStats": {
+      "saves": 0,
+      "savePercentage": 0,
+      "goalsConceded": 2,
+      "shotsAgainst": 2
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2248605342793",
+    "seasonStats": {
+      "matches": 3,
+      "goals": 12,
+      "shots": 12,
+      "shotPercentage": 100,
+      "assists": 0,
+      "technicalErrors": 1,
+      "suspensions": 0,
+      "mepAvg": 1.8,
+      "mepTotal": 5.3
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2248608154402",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 0,
+      "shotPercentage": 0,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0,
+      "mepTotal": -0.3
+    },
+    "goalkeeperStats": {
+      "saves": 0,
+      "savePercentage": 0,
+      "goalsConceded": 1,
+      "shotsAgainst": 1
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2248607230124",
+    "seasonStats": {
+      "matches": 22,
+      "goals": 27,
+      "shots": 47,
+      "shotPercentage": 57.4,
+      "assists": 72,
+      "technicalErrors": 49,
+      "suspensions": 4,
+      "mepAvg": 0.9,
+      "mepTotal": 20.1
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2248605117708",
+    "seasonStats": {
+      "matches": 23,
+      "goals": 43,
+      "shots": 69,
+      "shotPercentage": 62.3,
+      "assists": 39,
+      "technicalErrors": 36,
+      "suspensions": 5,
+      "mepAvg": 1.1,
+      "mepTotal": 24.7
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "5327887052787",
+    "seasonStats": {
+      "matches": 5,
+      "goals": 4,
+      "shots": 5,
+      "shotPercentage": 80,
+      "assists": 0,
+      "technicalErrors": 1,
+      "suspensions": 0,
+      "mepAvg": 0.5,
+      "mepTotal": 2.6
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "5327887451210",
+    "seasonStats": {
+      "matches": 12,
+      "goals": 68,
+      "shots": 96,
+      "shotPercentage": 70.8,
+      "assists": 34,
+      "technicalErrors": 33,
+      "suspensions": 4,
+      "mepAvg": 3.3,
+      "mepTotal": 39.8
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "5327887900637",
+    "seasonStats": {
+      "matches": 21,
+      "goals": 86,
+      "shots": 127,
+      "shotPercentage": 67.7,
+      "assists": 84,
+      "technicalErrors": 32,
+      "suspensions": 12,
+      "mepAvg": 2.6,
+      "mepTotal": 55.6
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "53278810382381",
+    "seasonStats": {
+      "matches": 25,
+      "goals": 9,
+      "shots": 11,
+      "shotPercentage": 81.8,
+      "assists": 16,
+      "technicalErrors": 6,
+      "suspensions": 0,
+      "mepAvg": 0.9,
+      "mepTotal": 23.3
+    },
+    "goalkeeperStats": {
+      "saves": 192,
+      "savePercentage": 30.8,
+      "goalsConceded": 431,
+      "shotsAgainst": 623
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "53278810382369",
+    "seasonStats": {
+      "matches": 15,
+      "goals": 23,
+      "shots": 32,
+      "shotPercentage": 71.9,
+      "assists": 27,
+      "technicalErrors": 14,
+      "suspensions": 1,
+      "mepAvg": 1.2,
+      "mepTotal": 18.1
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "5327887784340",
+    "seasonStats": {
+      "matches": 4,
+      "goals": 5,
+      "shots": 7,
+      "shotPercentage": 71.4,
+      "assists": 1,
+      "technicalErrors": 6,
+      "suspensions": 0,
+      "mepAvg": 0.6,
+      "mepTotal": 2.2
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "5327887785189",
+    "seasonStats": {
+      "matches": 12,
+      "goals": 16,
+      "shots": 25,
+      "shotPercentage": 64,
+      "assists": 10,
+      "technicalErrors": 8,
+      "suspensions": 0,
+      "mepAvg": 0.6,
+      "mepTotal": 7
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "5327887445822",
+    "seasonStats": {
+      "matches": 25,
+      "goals": 67,
+      "shots": 77,
+      "shotPercentage": 87,
+      "assists": 9,
+      "technicalErrors": 5,
+      "suspensions": 3,
+      "mepAvg": 1.9,
+      "mepTotal": 48.4
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "5327887693417",
+    "seasonStats": {
+      "matches": 21,
+      "goals": 52,
+      "shots": 70,
+      "shotPercentage": 74.3,
+      "assists": 4,
+      "technicalErrors": 10,
+      "suspensions": 1,
+      "mepAvg": 1.4,
+      "mepTotal": 30.1
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2243726155158",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 3,
+      "shots": 3,
+      "shotPercentage": 100,
+      "assists": 52,
+      "technicalErrors": 15,
+      "suspensions": 0,
+      "mepAvg": 0.6,
+      "mepTotal": 14.9
+    },
+    "goalkeeperStats": {
+      "saves": 243,
+      "savePercentage": 28.7,
+      "goalsConceded": 605,
+      "shotsAgainst": 848
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2243727812115",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 2,
+      "shots": 2,
+      "shotPercentage": 100,
+      "assists": 2,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0,
+      "mepTotal": 2.1
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2243729430271",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 109,
+      "shots": 161,
+      "shotPercentage": 67.7,
+      "assists": 132,
+      "technicalErrors": 49,
+      "suspensions": 3,
+      "mepAvg": 3.1,
+      "mepTotal": 81.4
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2243728375767",
+    "seasonStats": {
+      "matches": 25,
+      "goals": 90,
+      "shots": 120,
+      "shotPercentage": 75,
+      "assists": 186,
+      "technicalErrors": 58,
+      "suspensions": 6,
+      "mepAvg": 3.5,
+      "mepTotal": 86.4
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2243729243428",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 0,
+      "shotPercentage": 0,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0,
+      "mepTotal": 0
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2243728877813",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 135,
+      "shots": 189,
+      "shotPercentage": 71.4,
+      "assists": 39,
+      "technicalErrors": 21,
+      "suspensions": 15,
+      "mepAvg": 2.7,
+      "mepTotal": 69
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2243729200180",
+    "seasonStats": {
+      "matches": 22,
+      "goals": 52,
+      "shots": 83,
+      "shotPercentage": 62.7,
+      "assists": 47,
+      "technicalErrors": 24,
+      "suspensions": 5,
+      "mepAvg": 1.4,
+      "mepTotal": 29.9
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2243726043589",
+    "seasonStats": {
+      "matches": 17,
+      "goals": 48,
+      "shots": 67,
+      "shotPercentage": 71.6,
+      "assists": 10,
+      "technicalErrors": 7,
+      "suspensions": 3,
+      "mepAvg": 1.7,
+      "mepTotal": 28.3
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2243729336977",
+    "seasonStats": {
+      "matches": 25,
+      "goals": 47,
+      "shots": 63,
+      "shotPercentage": 74.6,
+      "assists": 9,
+      "technicalErrors": 5,
+      "suspensions": 5,
+      "mepAvg": 1.1,
+      "mepTotal": 28.1
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2243729211342",
+    "seasonStats": {
+      "matches": 20,
+      "goals": 25,
+      "shots": 37,
+      "shotPercentage": 67.6,
+      "assists": 2,
+      "technicalErrors": 3,
+      "suspensions": 0,
+      "mepAvg": 0.7,
+      "mepTotal": 13.5
+    },
+    "goalkeeperStats": {
+      "saves": 1,
+      "savePercentage": 100,
+      "goalsConceded": 0,
+      "shotsAgainst": 1
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2243728820165",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 67,
+      "shots": 81,
+      "shotPercentage": 82.7,
+      "assists": 19,
+      "technicalErrors": 11,
+      "suspensions": 14,
+      "mepAvg": 1.8,
+      "mepTotal": 48
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2243725016581",
+    "seasonStats": {
+      "matches": 24,
+      "goals": 20,
+      "shots": 24,
+      "shotPercentage": 83.3,
+      "assists": 4,
+      "technicalErrors": 6,
+      "suspensions": 4,
+      "mepAvg": 0.5,
+      "mepTotal": 12
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "4532757101512",
+    "seasonStats": {
+      "matches": 25,
+      "goals": 50,
+      "shots": 74,
+      "shotPercentage": 67.6,
+      "assists": 4,
+      "technicalErrors": 6,
+      "suspensions": 2,
+      "mepAvg": 1.1,
+      "mepTotal": 27.5
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "4532758871052",
+    "seasonStats": {
+      "matches": 15,
+      "goals": 21,
+      "shots": 26,
+      "shotPercentage": 80.8,
+      "assists": 13,
+      "technicalErrors": 12,
+      "suspensions": 2,
+      "mepAvg": 0.8,
+      "mepTotal": 12.1
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "4532755592265",
+    "seasonStats": {
+      "matches": 20,
+      "goals": 38,
+      "shots": 52,
+      "shotPercentage": 73.1,
+      "assists": 1,
+      "technicalErrors": 3,
+      "suspensions": 0,
+      "mepAvg": 1.1,
+      "mepTotal": 22.3
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "4532758194838",
+    "seasonStats": {
+      "matches": 24,
+      "goals": 54,
+      "shots": 71,
+      "shotPercentage": 76.1,
+      "assists": 9,
+      "technicalErrors": 7,
+      "suspensions": 2,
+      "mepAvg": 1.3,
+      "mepTotal": 31
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "4532757820157",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 41,
+      "shots": 83,
+      "shotPercentage": 49.4,
+      "assists": 45,
+      "technicalErrors": 24,
+      "suspensions": 3,
+      "mepAvg": 0.5,
+      "mepTotal": 12.8
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "4532757012581",
+    "seasonStats": {
+      "matches": 25,
+      "goals": 74,
+      "shots": 98,
+      "shotPercentage": 75.5,
+      "assists": 5,
+      "technicalErrors": 10,
+      "suspensions": 2,
+      "mepAvg": 1.7,
+      "mepTotal": 41.5
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "4532759206528",
+    "seasonStats": {
+      "matches": 25,
+      "goals": 135,
+      "shots": 180,
+      "shotPercentage": 75,
+      "assists": 105,
+      "technicalErrors": 42,
+      "suspensions": 5,
+      "mepAvg": 3.3,
+      "mepTotal": 81.9
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "4532758237023",
+    "seasonStats": {
+      "matches": 2,
+      "goals": 1,
+      "shots": 1,
+      "shotPercentage": 100,
+      "assists": 2,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0.5,
+      "mepTotal": 1
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "9852988546807",
+    "seasonStats": {
+      "matches": 13,
+      "goals": 13,
+      "shots": 22,
+      "shotPercentage": 59.1,
+      "assists": 0,
+      "technicalErrors": 7,
+      "suspensions": 3,
+      "mepAvg": 0.3,
+      "mepTotal": 3.8
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "9852987815299",
+    "seasonStats": {
+      "matches": 18,
+      "goals": 12,
+      "shots": 19,
+      "shotPercentage": 63.2,
+      "assists": 2,
+      "technicalErrors": 2,
+      "suspensions": 0,
+      "mepAvg": 0.4,
+      "mepTotal": 6.3
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "9852986956796",
+    "seasonStats": {
+      "matches": 18,
+      "goals": 24,
+      "shots": 24,
+      "shotPercentage": 100,
+      "assists": 2,
+      "technicalErrors": 6,
+      "suspensions": 14,
+      "mepAvg": 0.8,
+      "mepTotal": 13.5
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "9852988504385",
+    "seasonStats": {
+      "matches": 12,
+      "goals": 5,
+      "shots": 7,
+      "shotPercentage": 71.4,
+      "assists": 3,
+      "technicalErrors": 4,
+      "suspensions": 1,
+      "mepAvg": 0.1,
+      "mepTotal": 0.8
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "9852988223822",
+    "seasonStats": {
+      "matches": 19,
+      "goals": 2,
+      "shots": 4,
+      "shotPercentage": 50,
+      "assists": 9,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0.3,
+      "mepTotal": 5
+    },
+    "goalkeeperStats": {
+      "saves": 76,
+      "savePercentage": 29.1,
+      "goalsConceded": 185,
+      "shotsAgainst": 261
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "9852986766937",
+    "seasonStats": {
+      "matches": 20,
+      "goals": 25,
+      "shots": 29,
+      "shotPercentage": 86.2,
+      "assists": 4,
+      "technicalErrors": 6,
+      "suspensions": 4,
+      "mepAvg": 0.9,
+      "mepTotal": 17.7
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "98529810358626",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 133,
+      "shots": 198,
+      "shotPercentage": 67.2,
+      "assists": 129,
+      "technicalErrors": 62,
+      "suspensions": 0,
+      "mepAvg": 3.1,
+      "mepTotal": 79.6
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "9852989001827",
+    "seasonStats": {
+      "matches": 24,
+      "goals": 62,
+      "shots": 95,
+      "shotPercentage": 65.3,
+      "assists": 6,
+      "technicalErrors": 14,
+      "suspensions": 4,
+      "mepAvg": 1.3,
+      "mepTotal": 30
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "9852988015243",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 69,
+      "shots": 100,
+      "shotPercentage": 69,
+      "assists": 49,
+      "technicalErrors": 56,
+      "suspensions": 5,
+      "mepAvg": 1.5,
+      "mepTotal": 37.7
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239997055656",
+    "seasonStats": {
+      "matches": 2,
+      "goals": 1,
+      "shots": 1,
+      "shotPercentage": 100,
+      "assists": 4,
+      "technicalErrors": 2,
+      "suspensions": 0,
+      "mepAvg": 0.6,
+      "mepTotal": 1.2
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239996787302",
+    "seasonStats": {
+      "matches": 17,
+      "goals": 3,
+      "shots": 4,
+      "shotPercentage": 75,
+      "assists": 0,
+      "technicalErrors": 2,
+      "suspensions": 0,
+      "mepAvg": 0.1,
+      "mepTotal": 2.1
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239996792624",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 0,
+      "shots": 1,
+      "shotPercentage": 0,
+      "assists": 11,
+      "technicalErrors": 6,
+      "suspensions": 1,
+      "mepAvg": 1.2,
+      "mepTotal": 32.3
+    },
+    "goalkeeperStats": {
+      "saves": 275,
+      "savePercentage": 32,
+      "goalsConceded": 584,
+      "shotsAgainst": 859
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239998705346",
+    "seasonStats": {
+      "matches": 23,
+      "goals": 68,
+      "shots": 115,
+      "shotPercentage": 59.1,
+      "assists": 62,
+      "technicalErrors": 66,
+      "suspensions": 5,
+      "mepAvg": 1.6,
+      "mepTotal": 36.5
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239996914296",
+    "seasonStats": {
+      "matches": 22,
+      "goals": 0,
+      "shots": 0,
+      "shotPercentage": 0,
+      "assists": 2,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": -0.3,
+      "mepTotal": -6.3
+    },
+    "goalkeeperStats": {
+      "saves": 48,
+      "savePercentage": 25.1,
+      "goalsConceded": 143,
+      "shotsAgainst": 191
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239999822571",
+    "seasonStats": {
+      "matches": 23,
+      "goals": 29,
+      "shots": 60,
+      "shotPercentage": 48.3,
+      "assists": 2,
+      "technicalErrors": 11,
+      "suspensions": 2,
+      "mepAvg": 0.3,
+      "mepTotal": 6.8
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239996930059",
+    "seasonStats": {
+      "matches": 19,
+      "goals": 19,
+      "shots": 27,
+      "shotPercentage": 70.4,
+      "assists": 5,
+      "technicalErrors": 5,
+      "suspensions": 1,
+      "mepAvg": 0.6,
+      "mepTotal": 12
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239997531655",
+    "seasonStats": {
+      "matches": 6,
+      "goals": 4,
+      "shots": 10,
+      "shotPercentage": 40,
+      "assists": 0,
+      "technicalErrors": 4,
+      "suspensions": 0,
+      "mepAvg": 0,
+      "mepTotal": 0.1
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239999413597",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 62,
+      "shots": 109,
+      "shotPercentage": 56.9,
+      "assists": 5,
+      "technicalErrors": 7,
+      "suspensions": 3,
+      "mepAvg": 0.9,
+      "mepTotal": 24.4
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239996914304",
+    "seasonStats": {
+      "matches": 23,
+      "goals": 128,
+      "shots": 188,
+      "shotPercentage": 68.1,
+      "assists": 85,
+      "technicalErrors": 39,
+      "suspensions": 3,
+      "mepAvg": 2.8,
+      "mepTotal": 64.6
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239998155058",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 76,
+      "shots": 112,
+      "shotPercentage": 67.9,
+      "assists": 6,
+      "technicalErrors": 16,
+      "suspensions": 10,
+      "mepAvg": 1.6,
+      "mepTotal": 40.9
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239999022266",
+    "seasonStats": {
+      "matches": 4,
+      "goals": 1,
+      "shots": 3,
+      "shotPercentage": 33.3,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": -0.1,
+      "mepTotal": -0.3
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2245078229636",
+    "seasonStats": {
+      "matches": 12,
+      "goals": 19,
+      "shots": 33,
+      "shotPercentage": 57.6,
+      "assists": 12,
+      "technicalErrors": 19,
+      "suspensions": 2,
+      "mepAvg": 0.5,
+      "mepTotal": 5.7
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2245076224109",
+    "seasonStats": {
+      "matches": 3,
+      "goals": 5,
+      "shots": 6,
+      "shotPercentage": 83.3,
+      "assists": 1,
+      "technicalErrors": 0,
+      "suspensions": 1,
+      "mepAvg": 1.2,
+      "mepTotal": 3.5
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2245078937456",
+    "seasonStats": {
+      "matches": 25,
+      "goals": 82,
+      "shots": 101,
+      "shotPercentage": 81.2,
+      "assists": 4,
+      "technicalErrors": 17,
+      "suspensions": 11,
+      "mepAvg": 2.2,
+      "mepTotal": 53.9
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2245079196203",
+    "seasonStats": {
+      "matches": 24,
+      "goals": 48,
+      "shots": 84,
+      "shotPercentage": 57.1,
+      "assists": 27,
+      "technicalErrors": 33,
+      "suspensions": 2,
+      "mepAvg": 0.6,
+      "mepTotal": 14.5
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2245078943557",
+    "seasonStats": {
+      "matches": 24,
+      "goals": 0,
+      "shots": 0,
+      "shotPercentage": 0,
+      "assists": 6,
+      "technicalErrors": 1,
+      "suspensions": 0,
+      "mepAvg": -0.8,
+      "mepTotal": -19.5
+    },
+    "goalkeeperStats": {
+      "saves": 125,
+      "savePercentage": 24.6,
+      "goalsConceded": 383,
+      "shotsAgainst": 508
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2245076460402",
+    "seasonStats": {
+      "matches": 3,
+      "goals": 0,
+      "shots": 0,
+      "shotPercentage": 0,
+      "assists": 0,
+      "technicalErrors": 1,
+      "suspensions": 0,
+      "mepAvg": -0.1,
+      "mepTotal": -0.2
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2245077329126",
+    "seasonStats": {
+      "matches": 8,
+      "goals": 10,
+      "shots": 19,
+      "shotPercentage": 52.6,
+      "assists": 2,
+      "technicalErrors": 3,
+      "suspensions": 3,
+      "mepAvg": 0.4,
+      "mepTotal": 3.2
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2245076933161",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 92,
+      "shots": 115,
+      "shotPercentage": 80,
+      "assists": 85,
+      "technicalErrors": 51,
+      "suspensions": 10,
+      "mepAvg": 2.5,
+      "mepTotal": 66.1
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "22450710197090",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 0,
+      "shots": 0,
+      "shotPercentage": 0,
+      "assists": 1,
+      "technicalErrors": 4,
+      "suspensions": 0,
+      "mepAvg": -1,
+      "mepTotal": -26.2
+    },
+    "goalkeeperStats": {
+      "saves": 135,
+      "savePercentage": 24.2,
+      "goalsConceded": 422,
+      "shotsAgainst": 557
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2245078471849",
+    "seasonStats": {
+      "matches": 14,
+      "goals": 32,
+      "shots": 43,
+      "shotPercentage": 74.4,
+      "assists": 2,
+      "technicalErrors": 6,
+      "suspensions": 1,
+      "mepAvg": 1.2,
+      "mepTotal": 16.2
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2245078707925",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 1,
+      "shots": 1,
+      "shotPercentage": 100,
+      "assists": 0,
+      "technicalErrors": 1,
+      "suspensions": 0,
+      "mepAvg": 0,
+      "mepTotal": 0.6
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2245079043605",
+    "seasonStats": {
+      "matches": 25,
+      "goals": 50,
+      "shots": 68,
+      "shotPercentage": 73.5,
+      "assists": 3,
+      "technicalErrors": 15,
+      "suspensions": 3,
+      "mepAvg": 1.1,
+      "mepTotal": 26.7
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2245076956024",
+    "seasonStats": {
+      "matches": 5,
+      "goals": 3,
+      "shots": 5,
+      "shotPercentage": 60,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 1,
+      "mepAvg": 0,
+      "mepTotal": 0.2
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2245075198532",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 71,
+      "shots": 130,
+      "shotPercentage": 54.6,
+      "assists": 60,
+      "technicalErrors": 53,
+      "suspensions": 1,
+      "mepAvg": 1.2,
+      "mepTotal": 31.9
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239857831265",
+    "seasonStats": {
+      "matches": 16,
+      "goals": 17,
+      "shots": 25,
+      "shotPercentage": 68,
+      "assists": 7,
+      "technicalErrors": 8,
+      "suspensions": 0,
+      "mepAvg": 0.6,
+      "mepTotal": 9.3
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239857720634",
+    "seasonStats": {
+      "matches": 20,
+      "goals": 0,
+      "shots": 0,
+      "shotPercentage": 0,
+      "assists": 10,
+      "technicalErrors": 2,
+      "suspensions": 0,
+      "mepAvg": 0.5,
+      "mepTotal": 9.8
+    },
+    "goalkeeperStats": {
+      "saves": 108,
+      "savePercentage": 30.5,
+      "goalsConceded": 246,
+      "shotsAgainst": 354
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239858733817",
+    "seasonStats": {
+      "matches": 5,
+      "goals": 2,
+      "shots": 3,
+      "shotPercentage": 66.7,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0.2,
+      "mepTotal": 1.2
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239858711766",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 43,
+      "shots": 74,
+      "shotPercentage": 58.1,
+      "assists": 78,
+      "technicalErrors": 60,
+      "suspensions": 2,
+      "mepAvg": 1.3,
+      "mepTotal": 33.3
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239858823383",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 95,
+      "shots": 134,
+      "shotPercentage": 70.9,
+      "assists": 9,
+      "technicalErrors": 19,
+      "suspensions": 4,
+      "mepAvg": 2,
+      "mepTotal": 52.7
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239859841766",
+    "seasonStats": {
+      "matches": 6,
+      "goals": 24,
+      "shots": 40,
+      "shotPercentage": 60,
+      "assists": 12,
+      "technicalErrors": 16,
+      "suspensions": 2,
+      "mepAvg": 1.7,
+      "mepTotal": 9.9
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239856203229",
+    "seasonStats": {
+      "matches": 13,
+      "goals": 30,
+      "shots": 36,
+      "shotPercentage": 83.3,
+      "assists": 3,
+      "technicalErrors": 12,
+      "suspensions": 5,
+      "mepAvg": 1.3,
+      "mepTotal": 16.6
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239859006800",
+    "seasonStats": {
+      "matches": 24,
+      "goals": 78,
+      "shots": 132,
+      "shotPercentage": 59.1,
+      "assists": 96,
+      "technicalErrors": 34,
+      "suspensions": 1,
+      "mepAvg": 2.2,
+      "mepTotal": 52.6
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239856942508",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 111,
+      "shots": 174,
+      "shotPercentage": 63.8,
+      "assists": 96,
+      "technicalErrors": 38,
+      "suspensions": 11,
+      "mepAvg": 2.7,
+      "mepTotal": 69.8
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239854437777",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 108,
+      "shots": 158,
+      "shotPercentage": 68.4,
+      "assists": 9,
+      "technicalErrors": 10,
+      "suspensions": 0,
+      "mepAvg": 1.9,
+      "mepTotal": 48.1
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239857233091",
+    "seasonStats": {
+      "matches": 22,
+      "goals": 95,
+      "shots": 137,
+      "shotPercentage": 69.3,
+      "assists": 86,
+      "technicalErrors": 42,
+      "suspensions": 1,
+      "mepAvg": 2.9,
+      "mepTotal": 64.3
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2239856074641",
+    "seasonStats": {
+      "matches": 22,
+      "goals": 0,
+      "shots": 0,
+      "shotPercentage": 0,
+      "assists": 4,
+      "technicalErrors": 2,
+      "suspensions": 0,
+      "mepAvg": 0.9,
+      "mepTotal": 20.7
+    },
+    "goalkeeperStats": {
+      "saves": 193,
+      "savePercentage": 31.7,
+      "goalsConceded": 415,
+      "shotsAgainst": 608
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "22398510041223",
+    "seasonStats": {
+      "matches": 10,
+      "goals": 17,
+      "shots": 22,
+      "shotPercentage": 77.3,
+      "assists": 20,
+      "technicalErrors": 4,
+      "suspensions": 1,
+      "mepAvg": 1.6,
+      "mepTotal": 15.7
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "9288367433406",
+    "seasonStats": {
+      "matches": 26,
+      "goals": 104,
+      "shots": 124,
+      "shotPercentage": 83.9,
+      "assists": 12,
+      "technicalErrors": 16,
+      "suspensions": 11,
+      "mepAvg": 2.8,
+      "mepTotal": 74
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "9288368158679",
+    "seasonStats": {
+      "matches": 5,
+      "goals": 16,
+      "shots": 22,
+      "shotPercentage": 72.7,
+      "assists": 4,
+      "technicalErrors": 7,
+      "suspensions": 1,
+      "mepAvg": 1.4,
+      "mepTotal": 6.8
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "9288368171349",
+    "seasonStats": {
+      "matches": 24,
+      "goals": 78,
+      "shots": 113,
+      "shotPercentage": 69,
+      "assists": 15,
+      "technicalErrors": 21,
+      "suspensions": 5,
+      "mepAvg": 1.4,
+      "mepTotal": 32.9
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "9288365720821",
+    "seasonStats": {
+      "matches": 6,
+      "goals": 6,
+      "shots": 7,
+      "shotPercentage": 85.7,
+      "assists": 1,
+      "technicalErrors": 1,
+      "suspensions": 0,
+      "mepAvg": 0.7,
+      "mepTotal": 3.9
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "9288365856614",
+    "seasonStats": {
+      "matches": 21,
+      "goals": 75,
+      "shots": 126,
+      "shotPercentage": 59.5,
+      "assists": 60,
+      "technicalErrors": 53,
+      "suspensions": 9,
+      "mepAvg": 1.8,
+      "mepTotal": 38.1
+    },
+    "recentMatches": []
+  },
+  {
+    "playerId": "2241747138609",
+    "seasonStats": {
+      "matches": 7,
+      "goals": 4,
+      "shots": 7,
+      "shotPercentage": 57.1,
+      "assists": 10,
+      "technicalErrors": 6,
+      "suspensions": 1,
+      "mepAvg": 0.4,
+      "mepTotal": 2.6
+    },
+    "recentMatches": []
+  }
+]
