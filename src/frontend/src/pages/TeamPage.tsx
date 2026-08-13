@@ -15,7 +15,7 @@ import {
   Users,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { MatchCard } from "../components/MatchCard";
 import { PositionBadge } from "../components/PositionBadge";
 import {
@@ -91,6 +91,8 @@ function RosterPlayerCard({
 
   const isMutating = followMutation.isPending || unfollowMutation.isPending;
   const following = isFollowing ?? false;
+  const imageUrl = resolveImageUrl(player.imageUrl);
+  const [imageFailed, setImageFailed] = useState(false);
 
   return (
     <Link
@@ -102,16 +104,21 @@ function RosterPlayerCard({
     >
       {/* Poster card */}
       <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden bg-muted">
-        {resolveImageUrl(player.imageUrl) ? (
+        <div
+          className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-muted to-muted/60"
+          aria-hidden="true"
+        >
+          <User className="size-14 text-muted-foreground/40" />
+        </div>
+        {imageUrl && !imageFailed && (
           <img
-            src={resolveImageUrl(player.imageUrl)}
-            alt={player.name}
+            src={imageUrl}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            onError={() => setImageFailed(true)}
             className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-muted to-muted/60">
-            <User className="size-14 text-muted-foreground/40" />
-          </div>
         )}
 
         {/* Gradient overlay */}
@@ -433,6 +440,7 @@ export default function TeamPage() {
           teamId={team.id}
           homeTeamName={homeTeamName}
           awayTeamName={awayTeamName}
+          opponentLink={{ season: seasonId, league: leagueId }}
         />
       )}
 
