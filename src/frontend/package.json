@@ -6,11 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "node scripts/enrich-match-history.mjs && node scripts/copy-stats-to-public.mjs && node scripts/patch-national-team-profile.mjs && vite build && node scripts/generate-player-previews.mjs && pnpm copy:env",
-    "copy:env": "cp env.json dist/",
+    "copy:env": "node scripts/copy-env.mjs",
     "typecheck": "tsc --noEmit",
     "check": "biome check src",
     "fix": "biome check --write src",
-    "sync:player-images": "node scripts/sync-player-images.mjs"
+    "generate:player-card-images": "node scripts/generate-player-card-images.mjs",
+    "sync:player-images": "node scripts/sync-player-images.mjs && node scripts/generate-player-card-images.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.0",
@@ -24,6 +25,7 @@
     "dotenv": "^16.5.0",
     "dotenv-cli": "^8.0.0",
     "postcss": "^8.4.41",
+    "sharp": "^0.34.5",
     "tailwindcss": "^3.4.17",
     "@tailwindcss/typography": "0.5.10",
     "tailwindcss-animate": "^1.0.7",

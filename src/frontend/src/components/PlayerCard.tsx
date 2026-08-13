@@ -7,7 +7,7 @@ import { getNationalTeamInfo } from "../data/nationalTeamPlayers";
 import type { Player } from "../types/handball";
 import {
   resolveImageUrl,
-  resolvePlayerCardImageUrl,
+  resolvePlayerCardImageSources,
 } from "../utils/playerImages";
 import { PositionBadge } from "./PositionBadge";
 
@@ -112,10 +112,10 @@ export function PlayerCard({
   const [imageFailed, setImageFailed] = useState(false);
   const [useOriginalImage, setUseOriginalImage] = useState(false);
   const originalImageUrl = resolveImageUrl(player.imageUrl);
-  const cardImageUrl = resolvePlayerCardImageUrl(player.imageUrl);
+  const cardImage = resolvePlayerCardImageSources(player.imageUrl);
   const displayedImageUrl = useOriginalImage
     ? originalImageUrl
-    : (cardImageUrl ?? originalImageUrl);
+    : (cardImage?.src ?? originalImageUrl);
 
   const displayGoals = latestGoals ?? goals;
   const genericStats = statItems?.filter((item) => item.value !== "") ?? [];
@@ -178,14 +178,7 @@ export function PlayerCard({
         {displayedImageUrl && !imageFailed && (
           <img
             src={displayedImageUrl}
-            srcSet={
-              !useOriginalImage &&
-              cardImageUrl &&
-              originalImageUrl &&
-              cardImageUrl !== originalImageUrl
-                ? `${cardImageUrl} 200w, ${originalImageUrl} 800w`
-                : undefined
-            }
+            srcSet={!useOriginalImage ? cardImage?.srcSet : undefined}
             sizes="(max-width: 640px) calc(50vw - 24px), 310px"
             alt={player.name}
             loading={imagePriority ? "eager" : "lazy"}

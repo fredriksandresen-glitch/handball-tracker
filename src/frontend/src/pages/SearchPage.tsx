@@ -13,15 +13,11 @@ import {
   getStaticPlayers,
   getStaticProfile,
   getStaticTeams,
-  mapClawdbotMatchStats,
-  mapClawdbotSeasonStats,
   searchStaticPlayers,
-  type EnrichedPlayerMatchStats,
 } from "../services/clawdbotPlayerProfile";
 import {
   POSITION_LABELS,
   type Player,
-  type PlayerSeasonStats,
   type PositionFilter,
 } from "../types/handball";
 import { enrichPlayersWithImages } from "../utils/playerImages";
@@ -54,7 +50,7 @@ function getPositionValue(player: Player) {
 }
 
 type PlayerSearchInsight = {
-  seasonStats?: PlayerSeasonStats;
+  seasonStats?: { mepAvg?: number };
   sparkValues: number[];
   formAvg?: number;
   latestMep?: number;
@@ -64,14 +60,6 @@ type PlayerSearchInsight = {
   latestSaves?: number;
   latestSavePct?: number;
 };
-
-function getMatchDate(match: EnrichedPlayerMatchStats) {
-  return match.date ?? match.matchId.toString();
-}
-
-function asNumber(value: bigint | undefined) {
-  return value === undefined ? undefined : Number(value);
-}
 
 const PLAYER_INSIGHT_CACHE = new Map<string, PlayerSearchInsight>();
 const INSIGHT_BATCH_SIZE = 2;
@@ -90,19 +78,21 @@ function getPlayerSearchInsight(player: Player): PlayerSearchInsight {
     return emptyInsight;
   }
 
-  const seasonStats = mapClawdbotSeasonStats(profile);
-  const mepMatches = (mapClawdbotMatchStats(profile) as EnrichedPlayerMatchStats[])
+  const seasonStats = profile.seasonStats;
+  const mepMatches = profile.recentMatches
     .filter((match) => typeof match.mep === "number")
-    .sort((a, b) => getMatchDate(a).localeCompare(getMatchDate(b)))
+    .sort((a, b) =>
+      (a.date ?? a.matchId).localeCompare(b.date ?? b.matchId),
+    )
     .slice(-5);
   const sparkValues = mepMatches.map((match) => match.mep ?? 0);
   const latestMatch = mepMatches.at(-1);
   const latestMep = sparkValues.at(-1);
   const formAvg = sparkValues.length
     ? sparkValues.reduce((sum, value) => sum + value, 0) / sparkValues.length
-    : seasonStats.mepAvg;
-  const goalsPerGame = seasonStats.goalsPerGame ?? 0;
-  const matches = Number(seasonStats.matchesPlayed);
+    : (seasonStats.mepAvg ?? undefined);
+  const matches = seasonStats.matches ?? 0;
+  const goalsPerGame = matches > 0 ? (seasonStats.goals ?? 0) / matches : 0;
   const hotScore =
     (formAvg ?? 0) * 12 +
     (seasonStats.mepAvg ?? 0) * 5 +
@@ -110,15 +100,15 @@ function getPlayerSearchInsight(player: Player): PlayerSearchInsight {
     Math.min(matches, 26) / 10;
 
   const insight = {
-    seasonStats,
+    seasonStats: { mepAvg: seasonStats.mepAvg ?? undefined },
     sparkValues,
     formAvg,
     latestMep,
     hotScore,
-    totalGoals: asNumber(seasonStats.totalGoals),
-    latestGoals: latestMatch?.goals === undefined ? undefined : Number(latestMatch.goals),
-    latestSaves: latestMatch?.saves === undefined ? undefined : Number(latestMatch.saves),
-    latestSavePct: latestMatch?.savePct,
+    totalGoals: seasonStats.goals ?? undefined,
+    latestGoals: latestMatch?.goals ?? undefined,
+    latestSaves: latestMatch?.saves ?? undefined,
+    latestSavePct: latestMatch?.savePercentage ?? undefined,
   };
   PLAYER_INSIGHT_CACHE.set(cacheKey, insight);
   return insight;
@@ -188,7 +178,7 @@ export default function SearchPage() {
   const [inputValue, setInputValue] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [positionFilter, setPositionFilter] = useState<PositionFilter>("all");
-  const [sortMode, setSortMode] = useState<SortMode>("hot");
+  const [sortMode] = useState<SortMode>("hot");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const allPlayers = useMemo(

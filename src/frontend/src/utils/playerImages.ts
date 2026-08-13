@@ -1,7 +1,12 @@
-import type { Player } from "../types/handball";
+import playerCardImageManifest from "../data/playerCardImageManifest.json";
 import playerImageManifest from "../data/playerImageManifest.json";
+import type { Player } from "../types/handball";
 
 const IMAGE_MANIFEST = playerImageManifest as Record<string, string>;
+const CARD_IMAGE_MANIFEST = playerCardImageManifest as Record<
+  string,
+  { "400": string; "720": string }
+>;
 const BROKEN_REMOTE_IMAGE_URLS = new Set([
   "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ingeborg-Rolseth-Holt-Gjerpen-Skien.png",
   "https://nthapi.webcore.no/wp-content/uploads/2026/05/Janne-Havelsrud-Eklo-Byasen-Elite.png",
@@ -143,4 +148,26 @@ export function resolvePlayerCardImageUrl(
   }
 
   return resolveImageUrl(url);
+}
+
+/**
+ * Returns responsive, high-quality card images while keeping the original
+ * resolution available for player profiles and the image lightbox.
+ */
+export function resolvePlayerCardImageSources(
+  url: string | null | undefined,
+): { src: string; srcSet?: string } | undefined {
+  const resolved = resolveImageUrl(url);
+  if (!resolved) return undefined;
+
+  const localSources = CARD_IMAGE_MANIFEST[resolved];
+  if (localSources) {
+    return {
+      src: localSources["400"],
+      srcSet: `${localSources["400"]} 400w, ${localSources["720"]} 720w`,
+    };
+  }
+
+  const cardUrl = resolvePlayerCardImageUrl(url);
+  return cardUrl ? { src: cardUrl } : undefined;
 }

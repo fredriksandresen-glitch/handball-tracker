@@ -120,7 +120,7 @@ dfx canister status frontend --network "$NETWORK"
 
 pushd src/frontend >/dev/null
 start_heartbeat "pnpm install"
-pnpm install
+pnpm install --frozen-lockfile --prefer-offline
 stop_heartbeat
 
 start_heartbeat "frontend-build"
@@ -143,6 +143,8 @@ du -sh src/frontend/dist
 echo "Hovedfil: $INDEX_ASSET"
 
 start_heartbeat "dfx asset-installering"
+# Asset canisters compare content hashes and only upload changed files. The
+# original player photos stay in place when only JavaScript/CSS has changed.
 dfx build frontend --network "$NETWORK"
 dfx canister install frontend \
   --network "$NETWORK" \
