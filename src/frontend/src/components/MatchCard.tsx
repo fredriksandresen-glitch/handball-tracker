@@ -1,5 +1,7 @@
 import { cn } from "@/lib/utils";
-import { Clock, ExternalLink, Home, MapPin } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { ArrowRight, Clock, ExternalLink, Home, MapPin } from "lucide-react";
+import type { LeagueId, SeasonId } from "../data/seasons";
 import { formatMatchDate, getCountdown } from "../services/handballService";
 import type { Match } from "../types/handball";
 import { MatchStatus } from "../types/handball";
@@ -11,6 +13,10 @@ interface Props {
   awayTeamName?: string;
   className?: string;
   showCountdown?: boolean;
+  opponentLink?: {
+    season: SeasonId;
+    league: LeagueId;
+  };
 }
 
 export function MatchCard({
@@ -20,12 +26,18 @@ export function MatchCard({
   awayTeamName,
   className,
   showCountdown = true,
+  opponentLink,
 }: Props) {
   const isHome = teamId !== undefined && match.homeTeamId === teamId;
   const isAway = teamId !== undefined && match.awayTeamId === teamId;
   const isUpcoming = match.status === MatchStatus.Upcoming;
 
   const opponent = isHome ? awayTeamName : isAway ? homeTeamName : null;
+  const opponentTeamId = isHome
+    ? match.awayTeamId
+    : isAway
+      ? match.homeTeamId
+      : null;
   const locationLabel = isHome ? "HJEMME" : isAway ? "BORTE" : null;
 
   return (
@@ -50,11 +62,25 @@ export function MatchCard({
       </div>
 
       <div className="flex items-center justify-between gap-2">
-        <p className="font-display font-bold text-foreground text-base truncate flex-1 min-w-0">
-          {opponent
-            ? `vs ${opponent}`
-            : `${homeTeamName ?? "?"} — ${awayTeamName ?? "?"}`}
-        </p>
+        {opponent && opponentTeamId !== null && opponentLink ? (
+          <Link
+            to="/team/$id"
+            params={{ id: opponentTeamId.toString() }}
+            search={opponentLink}
+            className="group/opponent flex flex-1 min-w-0 items-center gap-1.5 font-display font-bold text-foreground text-base hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
+            aria-label={`Gå til ${opponent}`}
+            data-ocid="match-opponent-link"
+          >
+            <span className="truncate">vs {opponent}</span>
+            <ArrowRight className="size-4 shrink-0 transition-transform group-hover/opponent:translate-x-0.5" />
+          </Link>
+        ) : (
+          <p className="font-display font-bold text-foreground text-base truncate flex-1 min-w-0">
+            {opponent
+              ? `vs ${opponent}`
+              : `${homeTeamName ?? "?"} — ${awayTeamName ?? "?"}`}
+          </p>
+        )}
         {isUpcoming && showCountdown && (
           <span className="text-primary font-display font-bold text-sm flex-shrink-0">
             {getCountdown(match.startTime)}
