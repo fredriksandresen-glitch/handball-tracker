@@ -1,5 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useSelectedLeague } from "../components/LeagueSelect";
 import { SeasonSelect, useSelectedSeason } from "../components/SeasonSelect";
 import { cn } from "@/lib/utils";
@@ -9,6 +16,7 @@ import {
   ArrowRight,
   CheckCheck,
   Layers,
+  ListFilter,
   Shield,
   Trophy,
   User,
@@ -39,7 +47,12 @@ import {
   type LeagueId,
   type SeasonId,
 } from "../data/seasons";
-import { getStaticTeamLeagueId } from "../services/clawdbotPlayerProfile";
+import {
+  getStaticProfile,
+  getStaticTeamLeagueId,
+  mapClawdbotMatchStats,
+  mapClawdbotSeasonStats,
+} from "../services/clawdbotPlayerProfile";
 import type { Player } from "../types/handball";
 import { Position } from "../types/handball";
 
@@ -51,17 +64,98 @@ const POSITION_GROUPS = [
   { keys: [Position.Linje], label: "Linjespillere" },
 ] as const;
 
+type RosterSort =
+  | "position"
+  | "form"
+  | "mep"
+  | "goals"
+  | "assists"
+  | "twoMin";
+
+type RosterMetricKey = Exclude<RosterSort, "position">;
+
+type RosterMetrics = Record<RosterMetricKey, number | undefined>;
+
+const ROSTER_SORT_OPTIONS: { value: RosterSort; label: string }[] = [
+  { value: "position", label: "Posisjon" },
+  { value: "form", label: "Best form" },
+  { value: "mep", label: "Sesong-MEP" },
+  { value: "goals", label: "Mål" },
+  { value: "assists", label: "Assists" },
+  { value: "twoMin", label: "2 minutter" },
+];
+
+const ROSTER_METRIC_LABELS: Record<RosterMetricKey, string> = {
+  form: "MEP siste 5",
+  mep: "MEP total",
+  goals: "Mål",
+  assists: "Assists",
+  twoMin: "2 min",
+};
+
+function toNumber(value: bigint | undefined) {
+  return value === undefined ? undefined : Number(value);
+}
+
+function average(values: number[]) {
+  if (!values.length) return undefined;
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function getRosterMetrics(player: Player, season: SeasonId): RosterMetrics {
+  const profile = getStaticProfile(player.id, season);
+  if (!profile) {
+    return {
+      form: undefined,
+      mep: undefined,
+      goals: undefined,
+      assists: undefined,
+      twoMin: undefined,
+    };
+  }
+
+  const seasonStats = mapClawdbotSeasonStats(profile);
+  const recentMep = mapClawdbotMatchStats(profile)
+    .filter((match) => typeof match.mep === "number")
+    .sort((a, b) => {
+      const aKey = a.date ?? a.matchId.toString();
+      const bKey = b.date ?? b.matchId.toString();
+      return aKey.localeCompare(bKey);
+    })
+    .slice(-5)
+    .map((match) => match.mep as number);
+
+  return {
+    form: average(recentMep) ?? seasonStats.mepAvg,
+    mep: seasonStats.mepTotal,
+    goals: toNumber(seasonStats.totalGoals),
+    assists: toNumber(seasonStats.totalAssists),
+    twoMin: toNumber(seasonStats.totalTwoMin),
+  };
+}
+
+function formatRosterMetric(sort: RosterMetricKey, value: number | undefined) {
+  if (value === undefined || Number.isNaN(value)) return "-";
+  if (sort === "form" || sort === "mep") return value.toFixed(1);
+  return Math.round(value).toString();
+}
+
 // ─── Grid card with stats + follow ────────────────────────────────────────────
 function RosterPlayerCard({
   player,
   teamName,
   season,
   league,
+  rankingMetric,
 }: {
   player: Player;
   teamName?: string;
   season: SeasonId;
   league: LeagueId;
+  rankingMetric?: {
+    label: string;
+    value: string;
+  };
 }) {
   const { data: isFollowing } = useIsFollowing(player.id);
   const followMutation = useFollowPlayer();
@@ -174,8 +268,20 @@ function RosterPlayerCard({
             </p>
           )}
 
-          {/* Last match stats */}
-          {(lastGoals !== null || lastSaves !== null || (lastMins !== null && lastMins > 0)) && (
+          {/* Selected ranking metric or last match stats */}
+          {rankingMetric ? (
+            <div className="mt-2 pt-2 border-t border-white/15">
+              <span className="font-display font-black text-base leading-none text-primary">
+                {rankingMetric.value}
+              </span>
+              <p className="text-[9px] text-white/50 uppercase tracking-wide mt-0.5">
+                {rankingMetric.label}
+              </p>
+            </div>
+          ) : (
+            (lastGoals !== null ||
+              lastSaves !== null ||
+              (lastMins !== null && lastMins > 0)) && (
             <div className="flex items-center gap-3 mt-2 pt-2 border-t border-white/15">
               {keeper && lastSaves !== null && (
                 <div>
@@ -202,6 +308,7 @@ function RosterPlayerCard({
                 </div>
               )}
             </div>
+            )
           )}
         </div>
       </div>
@@ -236,6 +343,7 @@ export default function TeamPage() {
   const { data: allTeams = [] } = useTeams(seasonId, leagueId);
   const { data: followedPlayers = [] } = useFollowedPlayers();
   const followPlayer = useFollowPlayer();
+  const [rosterSort, setRosterSort] = useState<RosterSort>("position");
 
   const followedIds = useMemo(
     () => new Set(followedPlayers.map((p) => p.id.toString())),
@@ -265,6 +373,14 @@ export default function TeamPage() {
     for (const p of unfollowed) followPlayer.mutate(p.id);
   }
 
+  const playerMetrics = useMemo(() => {
+    const metrics = new Map<string, RosterMetrics>();
+    for (const player of players) {
+      metrics.set(player.id.toString(), getRosterMetrics(player, seasonId));
+    }
+    return metrics;
+  }, [players, seasonId]);
+
   const groupedPlayers = useMemo(
     () =>
       POSITION_GROUPS.map((group) => ({
@@ -275,6 +391,20 @@ export default function TeamPage() {
       })).filter((g) => g.players.length > 0),
     [players],
   );
+
+  const rankedPlayers = useMemo(() => {
+    if (rosterSort === "position") return players;
+    return [...players].sort((a, b) => {
+      const aValue = playerMetrics.get(a.id.toString())?.[rosterSort];
+      const bValue = playerMetrics.get(b.id.toString())?.[rosterSort];
+      if (aValue === undefined && bValue !== undefined) return 1;
+      if (aValue !== undefined && bValue === undefined) return -1;
+      return (
+        (bValue ?? 0) - (aValue ?? 0) ||
+        a.name.localeCompare(b.name, "nb")
+      );
+    });
+  }, [playerMetrics, players, rosterSort]);
 
   // ─── Loading state ───────────────────────────────────────────────────────
   if (loadingTeam || loadingPlayers) {
@@ -447,72 +577,144 @@ export default function TeamPage() {
       {/* ── Roster ── */}
       {players.length > 0 ? (
         <div className="space-y-5" data-ocid="team-roster">
-          {/* Follow-all row */}
-          <div className="flex items-center justify-between bg-card border border-border rounded-xl px-4 py-3">
-            <div className="flex items-center gap-2">
-              <Users className="size-4 text-muted-foreground" />
-              <span className="text-sm font-display font-semibold text-foreground">
-                {players.length} spillere
-              </span>
+          {/* Roster controls */}
+          <div className="bg-card border border-border rounded-xl px-4 py-3 space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <Users className="size-4 text-muted-foreground" />
+                <span className="text-sm font-display font-semibold text-foreground">
+                  {players.length} spillere
+                </span>
+              </div>
+              <Button
+                size="sm"
+                variant={allFollowed ? "outline" : "default"}
+                disabled={allFollowed || followPlayer.isPending}
+                onClick={handleFollowAll}
+                className={cn(
+                  "h-8 px-4 rounded-full text-xs font-display font-bold gap-1.5",
+                  allFollowed
+                    ? "border-primary/40 text-primary"
+                    : "bg-primary text-primary-foreground hover:bg-primary/90",
+                )}
+                data-ocid="team-follow-all-btn"
+              >
+                {allFollowed ? (
+                  <>
+                    <CheckCheck className="size-3.5" />
+                    Følger alle
+                  </>
+                ) : (
+                  <>
+                    <Users className="size-3.5" />
+                    Følg alle
+                  </>
+                )}
+              </Button>
             </div>
-            <Button
-              size="sm"
-              variant={allFollowed ? "outline" : "default"}
-              disabled={allFollowed || followPlayer.isPending}
-              onClick={handleFollowAll}
-              className={cn(
-                "h-8 px-4 rounded-full text-xs font-display font-bold gap-1.5",
-                allFollowed
-                  ? "border-primary/40 text-primary"
-                  : "bg-primary text-primary-foreground hover:bg-primary/90",
-              )}
-              data-ocid="team-follow-all-btn"
-            >
-              {allFollowed ? (
-                <>
-                  <CheckCheck className="size-3.5" />
-                  Følger alle
-                </>
-              ) : (
-                <>
-                  <Users className="size-3.5" />
-                  Følg alle
-                </>
-              )}
-            </Button>
+            <div className="flex items-center gap-2 pt-3 border-t border-border">
+              <ListFilter className="size-4 text-muted-foreground" />
+              <span className="text-xs font-display font-bold text-muted-foreground">
+                Sorter etter
+              </span>
+              <Select
+                value={rosterSort}
+                onValueChange={(value) => setRosterSort(value as RosterSort)}
+              >
+                <SelectTrigger
+                  size="sm"
+                  className="ml-auto w-[148px] bg-background"
+                  aria-label="Sorter spillerstall"
+                  data-ocid="roster-sort-select"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {ROSTER_SORT_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
-          {/* Grouped position sections */}
-          {groupedPlayers.map((group, gi) => (
-            <section key={group.label} data-ocid="team-position-group">
+          {/* Position groups or a single ranked roster */}
+          {rosterSort === "position" ? (
+            groupedPlayers.map((group, gi) => (
+              <section key={group.label} data-ocid="team-position-group">
+                <div className="flex items-center gap-2 mb-3 px-0.5">
+                  <Layers className="size-3.5 text-muted-foreground flex-shrink-0" />
+                  <h3 className="text-[11px] font-display font-bold uppercase tracking-widest text-muted-foreground">
+                    {group.label}
+                  </h3>
+                  <span className="ml-auto text-[10px] text-muted-foreground/60 font-body">
+                    {group.players.length}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {group.players.map((player, i) => (
+                    <motion.div
+                      key={player.id.toString()}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: gi * 0.05 + i * 0.04, duration: 0.25 }}
+                    >
+                      <RosterPlayerCard
+                        player={player}
+                        teamName={team.name}
+                        season={seasonId}
+                        league={leagueId}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
+              </section>
+            ))
+          ) : (
+            <section data-ocid="team-ranked-roster">
               <div className="flex items-center gap-2 mb-3 px-0.5">
-                <Layers className="size-3.5 text-muted-foreground flex-shrink-0" />
+                <ListFilter className="size-3.5 text-muted-foreground flex-shrink-0" />
                 <h3 className="text-[11px] font-display font-bold uppercase tracking-widest text-muted-foreground">
-                  {group.label}
+                  Rangert etter{" "}
+                  {ROSTER_SORT_OPTIONS.find((option) => option.value === rosterSort)
+                    ?.label}
                 </h3>
                 <span className="ml-auto text-[10px] text-muted-foreground/60 font-body">
-                  {group.players.length}
+                  {rankedPlayers.length}
                 </span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {group.players.map((player, i) => (
-                  <motion.div
-                    key={player.id.toString()}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: gi * 0.05 + i * 0.04, duration: 0.25 }}
-                  >
-                    <RosterPlayerCard
-                      player={player}
-                      teamName={team.name}
-                      season={seasonId}
-                      league={leagueId}
-                    />
-                  </motion.div>
-                ))}
+                {rankedPlayers.map((player, index) => {
+                  const value =
+                    playerMetrics.get(player.id.toString())?.[rosterSort];
+                  return (
+                    <motion.div
+                      key={player.id.toString()}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{
+                        delay: Math.min(index * 0.03, 0.3),
+                        duration: 0.25,
+                      }}
+                    >
+                      <RosterPlayerCard
+                        player={player}
+                        teamName={team.name}
+                        season={seasonId}
+                        league={leagueId}
+                        rankingMetric={{
+                          label: ROSTER_METRIC_LABELS[rosterSort],
+                          value: formatRosterMetric(rosterSort, value),
+                        }}
+                      />
+                    </motion.div>
+                  );
+                })}
               </div>
             </section>
-          ))}
+          )}
         </div>
       ) : (
         /* Empty state */
