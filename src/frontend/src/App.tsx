@@ -9,15 +9,15 @@ import type { ReactNode } from "react";
 import { Suspense, lazy } from "react";
 import { Layout } from "./components/Layout";
 import { SkeletonCard } from "./components/SkeletonCard";
-import HomePage from "./pages/HomePage";
 import {
-  isLeagueId,
-  isSeasonId,
   type LeagueId,
   type SeasonId,
+  isLeagueId,
+  isSeasonId,
 } from "./data/seasons";
 
 const BackendProvider = lazy(() => import("./components/BackendProvider"));
+const HomePage = lazy(() => import("./pages/HomePage"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
 const TeamsPage = lazy(() => import("./pages/TeamsPage"));
 const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));

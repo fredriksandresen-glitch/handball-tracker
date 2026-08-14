@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { POSITION_COLORS, POSITION_LABELS } from "../types/handball";
+import { POSITION_COLORS, POSITION_LABELS } from "../data/positionMetadata";
 
 interface Props {
   position: string;
