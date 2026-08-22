@@ -8,7 +8,7 @@ import Runtime "mo:core/Runtime";
 mixin (state : HandballLib.State) {
 
   func requireAuthenticated(caller : Principal) {
-    if (Principal.isAnonymous(caller)) {
+    if (caller.isAnonymous()) {
       Runtime.trap("Authentication required");
     };
   };
