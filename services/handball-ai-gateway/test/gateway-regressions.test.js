@@ -5,11 +5,14 @@ const test = require("node:test");
 
 const {
   extractClubFromQuestion,
+  extractRequestedMatchCount,
   findPreviousBestFormQuestion,
   findPlayerFromConversation,
   findPlayerByTokens,
   fuzzyMatchTeamName,
+  isBestFormQuestion,
   isGroupTeamContextFollowUp,
+  isPreviousSeasonFormFollowUp,
   isPlayerFollowUpQuestion,
   resolveSeason,
 } = require("../lib/queryUnderstanding");
@@ -208,4 +211,31 @@ test("resolves a group follow-up and compares form with final standings", () => 
     comparison.candidates.map((player) => player.standing.rank),
     [12, 3, 4, 1, 7],
   );
+});
+
+test("understands direct and conversational best-form variants", () => {
+  const firstQuestion = "Hvem er i best form de siste fem kampene?";
+  const retryQuestion = "hva med forrige sesong?";
+  const explicitQuestion =
+    "hvem var de 5 beste spillerne forrige sesong basert på form for de 5 siste kampene?";
+  const conversation = [
+    { role: "user", content: firstQuestion },
+    {
+      role: "assistant",
+      content: "Jeg fant ikke nok kampdata for 2026-27.",
+    },
+  ];
+
+  assert.equal(isBestFormQuestion(firstQuestion), true);
+  assert.equal(isBestFormQuestion(explicitQuestion), true);
+  assert.equal(isPreviousSeasonFormFollowUp(retryQuestion), true);
+  assert.equal(findPreviousBestFormQuestion(conversation), firstQuestion);
+  assert.equal(extractRequestedMatchCount(firstQuestion), 5);
+  assert.equal(extractRequestedMatchCount("de siste tre kampene"), 3);
+  assert.equal(resolveSeason(retryQuestion, "2026-27"), "2025-26");
+  assert.equal(resolveSeason(explicitQuestion, "2026-27"), "2025-26");
+
+  const analysis = analyzeBestForm(dataset.allMatches, "2025-26", 5);
+  assert.equal(analysis.topPlayer.playerName, "Sarah Deari Solheim");
+  assert.equal(analysis.rankings.slice(0, 5).length, 5);
 });

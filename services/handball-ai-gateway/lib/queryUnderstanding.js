@@ -123,6 +123,50 @@ function isGroupTeamContextFollowUp(question) {
   return referencesGroup && asksForTeamContext;
 }
 
+function isBestFormQuestion(question) {
+  const normalized = normalizeText(question);
+  return (
+    /\bform\b/.test(normalized) &&
+    /\b(best(?:e)?|topp)\b/.test(normalized) &&
+    /\b(siste|kamp(?:en|ene)?)\b/.test(normalized)
+  );
+}
+
+function isPreviousSeasonFormFollowUp(question) {
+  const normalized = normalizeText(question);
+  return (
+    /\b(forr?i?g(?:e|ie) sesong|i fjor|fjoraar(?:et|ssesongen)?)\b/.test(
+      normalized,
+    ) &&
+    /^(hva med|og|men|samme for|vis)\b/.test(normalized)
+  );
+}
+
+function extractRequestedMatchCount(question, fallback = 5) {
+  const normalized = normalizeText(question);
+  const digitMatch = normalized.match(/\b(\d+)\s+siste\b/);
+  if (digitMatch) return Number(digitMatch[1]);
+
+  const numberWords = {
+    en: 1,
+    ett: 1,
+    to: 2,
+    tre: 3,
+    fire: 4,
+    fem: 5,
+    seks: 6,
+    sju: 7,
+    syv: 7,
+    aatte: 8,
+    ni: 9,
+    ti: 10,
+  };
+  const wordMatch = normalized.match(
+    /\bsiste\s+(en|ett|to|tre|fire|fem|seks|sju|syv|aatte|ni|ti)\b/,
+  );
+  return wordMatch ? numberWords[wordMatch[1]] : fallback;
+}
+
 function findPreviousBestFormQuestion(conversation) {
   if (!Array.isArray(conversation)) return null;
 
@@ -131,8 +175,7 @@ function findPreviousBestFormQuestion(conversation) {
     if (message?.role !== "user" || typeof message.content !== "string") {
       continue;
     }
-    const normalized = normalizeText(message.content);
-    if (/\bbest(?:e)? form\b/.test(normalized)) return message.content;
+    if (isBestFormQuestion(message.content)) return message.content;
   }
 
   return null;
@@ -197,11 +240,14 @@ function resolveSeason(question, contextSeason) {
 
 module.exports = {
   extractClubFromQuestion,
+  extractRequestedMatchCount,
   findPreviousBestFormQuestion,
   findPlayerFromConversation,
   findPlayerByTokens,
   fuzzyMatchTeamName,
+  isBestFormQuestion,
   isGroupTeamContextFollowUp,
+  isPreviousSeasonFormFollowUp,
   levenshteinDistance,
   normalizeText,
   isPlayerFollowUpQuestion,

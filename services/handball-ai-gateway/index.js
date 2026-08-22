@@ -9,11 +9,14 @@ const path = require('path');
 require('dotenv').config();
 const {
   extractClubFromQuestion,
+  extractRequestedMatchCount,
   findPreviousBestFormQuestion,
   findPlayerFromConversation,
   findPlayerByTokens,
   fuzzyMatchTeamName,
+  isBestFormQuestion,
   isGroupTeamContextFollowUp,
+  isPreviousSeasonFormFollowUp,
   normalizeText,
   isPlayerFollowUpQuestion,
   resolveSeason,
@@ -617,14 +620,18 @@ app.post('/v1/handball/chat', async (req, res) => {
     // ─── Extract potential club from question ───────────────────────────
     const extractedClub = extractClubFromQuestion(question);
     const normalizedSearchQuestion = normalizeText(question);
-    const isBestFormQuestion =
-      /\bbest(?:e)? form\b/.test(normalizedSearchQuestion) &&
-      /\bsiste\b|\bform\b/.test(normalizedSearchQuestion);
+    const directBestFormQuestion = isBestFormQuestion(question);
+    const previousBestFormRetry = isPreviousSeasonFormFollowUp(question)
+      ? findPreviousBestFormQuestion(conversation)
+      : null;
+    const effectiveBestFormQuestion = directBestFormQuestion
+      ? question
+      : previousBestFormRetry;
     const requestedMatchCount = Math.min(
       10,
       Math.max(
         1,
-        Number(normalizedSearchQuestion.match(/\b(\d+)\s+siste\b/)?.[1] ?? 5),
+        extractRequestedMatchCount(effectiveBestFormQuestion, 5),
       ),
     );
     const previousBestFormQuestion = isGroupTeamContextFollowUp(question)
@@ -644,7 +651,7 @@ app.post('/v1/handball/chat', async (req, res) => {
       const previousNormalized = normalizeText(previousBestFormQuestion);
       const previousMatchCount = Math.min(
         10,
-        Math.max(1, Number(previousNormalized.match(/\b(\d+)\s+siste\b/)?.[1] ?? 5)),
+        Math.max(1, extractRequestedMatchCount(previousNormalized, 5)),
       );
       const formAnalysis = analyzeBestForm(allMatches, previousSeason, previousMatchCount);
       const comparison = compareFormWithStandings(
@@ -682,20 +689,23 @@ app.post('/v1/handball/chat', async (req, res) => {
         observedAt: new Date().toISOString()
       });
       deterministicAnswer = buildTeamContextFormAnswer(comparison);
-    } else if (isBestFormQuestion) {
+    } else if (effectiveBestFormQuestion) {
       analysisMode = 'deterministic-best-form';
+      const formSeason = previousBestFormRetry
+        ? resolveSeason(question, context && context.season ? context.season : null)
+        : requestedSeason;
       const analysis = analyzeBestForm(
         allMatches,
-        requestedSeason,
+        formSeason,
         requestedMatchCount,
       );
 
       if (!analysis.found) {
         return res.json({
           id: requestId,
-          answer: `Jeg fant ikke nok kampdata til å rangere form over ${requestedMatchCount} kamper i ${requestedSeason}.`,
+          answer: `Jeg fant ikke nok kampdata til å rangere form over ${requestedMatchCount} kamper i ${formSeason}.`,
           status: 'insufficient-data', evidence: [], sources: [],
-          missingData: [`Minst ${requestedMatchCount} kamper per spiller i ${requestedSeason}`],
+          missingData: [`Minst ${requestedMatchCount} kamper per spiller i ${formSeason}`],
           followUpQuestions: ['Vil du prøve en annen sesong eller færre kamper?']
         });
       }
