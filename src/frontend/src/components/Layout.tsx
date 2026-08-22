@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Link, useRouterState, useSearch } from "@tanstack/react-router";
-import { Home, Moon, Search, Sun, Trophy, Users } from "lucide-react";
+import { Bot, Home, Moon, Search, Sun, Trophy, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   CURRENT_SEASON_ID,
@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   { to: "/search", label: "Søk", icon: Search, ocid: "nav-sok" },
   { to: "/teams", label: "Lag", icon: Users, ocid: "nav-lag" },
   { to: "/favorites", label: "Toppliste", icon: Trophy, ocid: "nav-toppliste" },
+  { to: "/ai-chat", label: "AI", icon: Bot, ocid: "nav-ai" },
 ] as const;
 
 type ThemeMode = "light" | "dark";

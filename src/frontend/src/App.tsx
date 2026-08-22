@@ -23,6 +23,7 @@ const TeamsPage = lazy(() => import("./pages/TeamsPage"));
 const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
 const PlayerPage = lazy(() => import("./pages/PlayerPage"));
 const TeamPage = lazy(() => import("./pages/TeamPage"));
+const AiChatPage = lazy(() => import("./pages/AiChatPage"));
 
 function PageLoader() {
   return (
@@ -100,6 +101,15 @@ const teamRoute = createRoute({
     </BackendBoundary>
   ),
 });
+const aiChatRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/ai-chat",
+  component: () => (
+    <BackendBoundary>
+      <AiChatPage />
+    </BackendBoundary>
+  ),
+});
 
 const routeTree = rootRoute.addChildren([
   homeRoute,
@@ -108,6 +118,7 @@ const routeTree = rootRoute.addChildren([
   favoritesRoute,
   playerRoute,
   teamRoute,
+  aiChatRoute,
 ]);
 
 const router = createRouter({ routeTree, defaultPreload: "intent" });
