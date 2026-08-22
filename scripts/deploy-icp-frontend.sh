@@ -2,9 +2,10 @@
 set -Eeuo pipefail
 
 FRONTEND_CANISTER_ID="hrzvs-liaaa-aaaap-qusna-cai"
-EXPECTED_BRANCH="${EXPECTED_BRANCH:-codex/search-responsiveness}"
+EXPECTED_BRANCH="${EXPECTED_BRANCH:-}"
 EXPECTED_COMMIT="${EXPECTED_COMMIT:-}"
 NETWORK="${NETWORK:-ic}"
+BUILD_MODE="${BUILD_MODE:-quick}"
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 LOG_FILE="${TMPDIR:-/tmp}/handball-icp-frontend-deploy.log"
 HEARTBEAT_PID=""
@@ -56,6 +57,11 @@ require_command pnpm
 require_command dfx
 require_command curl
 
+if [[ "$BUILD_MODE" != "quick" && "$BUILD_MODE" != "full" ]]; then
+  echo "BUILD_MODE må være 'quick' eller 'full'."
+  exit 1
+fi
+
 [[ -n "$REPO_ROOT" ]] || {
   echo "Kjør skriptet inne i GitHub-repoet."
   exit 1
@@ -77,7 +83,7 @@ fi
   exit 1
 }
 
-if [[ -n "$ACTUAL_BRANCH" && "$ACTUAL_BRANCH" != "$EXPECTED_BRANCH" ]]; then
+if [[ -n "$EXPECTED_BRANCH" && -n "$ACTUAL_BRANCH" && "$ACTUAL_BRANCH" != "$EXPECTED_BRANCH" ]]; then
   echo "Feil branch. Forventet $EXPECTED_BRANCH, faktisk $ACTUAL_BRANCH."
   exit 1
 fi
@@ -89,12 +95,14 @@ echo "Deploy-kilde:"
 git log -1 --oneline
 echo "dfx: $(dfx --version)"
 echo "pnpm: $(pnpm --version)"
+echo "Build-modus: $BUILD_MODE"
 
 cat > dfx.json <<'EOF'
 {
   "canisters": {
     "frontend": {
       "type": "assets",
+      "build": [],
       "source": ["src/frontend/dist"]
     }
   },
@@ -123,8 +131,12 @@ start_heartbeat "pnpm install"
 pnpm install --frozen-lockfile --prefer-offline
 stop_heartbeat
 
-start_heartbeat "frontend-build"
-pnpm run build
+start_heartbeat "frontend-build ($BUILD_MODE)"
+if [[ "$BUILD_MODE" == "quick" ]]; then
+  pnpm run build:quick
+else
+  pnpm run build
+fi
 stop_heartbeat
 popd >/dev/null
 
@@ -134,6 +146,21 @@ test -f src/frontend/dist/robots.txt
 
 grep -q 'initial-app-shell' src/frontend/dist/index.html
 
+SOURCE_PLAYER_IMAGE_COUNT="$(find src/frontend/public/assets/player-images -type f | wc -l | tr -d ' ')"
+DIST_PLAYER_IMAGE_COUNT="$(find src/frontend/dist/assets/player-images -type f | wc -l | tr -d ' ')"
+SOURCE_CARD_IMAGE_COUNT="$(find src/frontend/public/assets/player-card-images -type f | wc -l | tr -d ' ')"
+DIST_CARD_IMAGE_COUNT="$(find src/frontend/dist/assets/player-card-images -type f | wc -l | tr -d ' ')"
+
+[[ "$SOURCE_PLAYER_IMAGE_COUNT" -gt 0 ]]
+[[ "$SOURCE_PLAYER_IMAGE_COUNT" == "$DIST_PLAYER_IMAGE_COUNT" ]] || {
+  echo "Originalbilder mangler i dist: kilde=$SOURCE_PLAYER_IMAGE_COUNT dist=$DIST_PLAYER_IMAGE_COUNT"
+  exit 1
+}
+[[ "$SOURCE_CARD_IMAGE_COUNT" == "$DIST_CARD_IMAGE_COUNT" ]] || {
+  echo "Kortbilder mangler i dist: kilde=$SOURCE_CARD_IMAGE_COUNT dist=$DIST_CARD_IMAGE_COUNT"
+  exit 1
+}
+
 INDEX_ASSET_PATH="$(find src/frontend/dist/assets -maxdepth 1 -type f -name 'index-*.js' | head -n 1)"
 [[ -n "$INDEX_ASSET_PATH" ]]
 INDEX_ASSET="$(basename "$INDEX_ASSET_PATH")"
@@ -141,10 +168,12 @@ INDEX_ASSET="$(basename "$INDEX_ASSET_PATH")"
 echo "Build klar:"
 du -sh src/frontend/dist
 echo "Hovedfil: $INDEX_ASSET"
+echo "Originalbilder bevart: $DIST_PLAYER_IMAGE_COUNT"
+echo "Kortbilder bevart: $DIST_CARD_IMAGE_COUNT"
 
 start_heartbeat "dfx asset-installering"
-# Asset canisters compare content hashes and only upload changed files. The
-# original player photos stay in place when only JavaScript/CSS has changed.
+# --no-asset-upgrade keeps the existing asset-canister Wasm and synchronizes
+# files by content hash. Unchanged photos remain installed and are not uploaded.
 dfx build frontend --network "$NETWORK"
 dfx canister install frontend \
   --network "$NETWORK" \
@@ -166,4 +195,5 @@ echo "DEPLOY FULLFØRT"
 echo "Commit: $ACTUAL_COMMIT"
 echo "Frontend: $LIVE_URL/"
 echo "Publisert hovedfil: $INDEX_ASSET"
+echo "Build-modus: $BUILD_MODE"
 echo "Kun frontend-canisteren ble behandlet."

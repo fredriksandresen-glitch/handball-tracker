@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "node scripts/enrich-match-history.mjs && node scripts/copy-stats-to-public.mjs && node scripts/patch-national-team-profile.mjs && node scripts/generate-search-player-index.mjs && vite build && node scripts/generate-player-previews.mjs && pnpm copy:env",
+    "build:quick": "node scripts/copy-stats-to-public.mjs && node scripts/patch-national-team-profile.mjs && node scripts/generate-search-player-index.mjs && vite build && node scripts/generate-player-previews.mjs && pnpm copy:env",
     "copy:env": "node scripts/copy-env.mjs",
     "typecheck": "tsc --noEmit",
     "check": "biome check src",
