@@ -1,0 +1,22 @@
+{
+  "name": "handball-ai-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@dfinity/agent": "^3.4.3",
+    "@dfinity/candid": "^3.4.3",
+    "@dfinity/principal": "^3.4.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.6.2",
+    "node-fetch": "^2.7.0"
+  }
+}
