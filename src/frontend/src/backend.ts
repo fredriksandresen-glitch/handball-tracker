@@ -217,6 +217,7 @@ export interface backendInterface {
         statsSource: string;
     }>;
     getFeedEvents(): Promise<Array<FeedEvent>>;
+    getFollowedPlayerIds(): Promise<Array<bigint>>;
     getFollowedPlayers(): Promise<Array<Player>>;
     getMatches(): Promise<Array<Match>>;
     getNextMatchForTeam(teamId: bigint): Promise<Match | null>;
@@ -302,6 +303,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.getFeedEvents();
             return from_candid_vec_n6(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getFollowedPlayerIds(): Promise<Array<bigint>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getFollowedPlayerIds();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getFollowedPlayerIds();
+            return result;
         }
     }
     async getFollowedPlayers(): Promise<Array<Player>> {

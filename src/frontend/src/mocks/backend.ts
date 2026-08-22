@@ -363,6 +363,7 @@ export const mockBackend: backendInterface = {
   followPlayer: async (playerId: bigint) => { following.add(playerId); },
   unfollowPlayer: async (playerId: bigint) => { following.delete(playerId); },
   isFollowing: async (playerId: bigint) => following.has(playerId),
+  getFollowedPlayerIds: async () => Array.from(following),
   getFollowedPlayers: async () => players.filter(p => following.has(p.id)),
   getFeedEvents: async () => feedEvents,
   getPlayers: async () => players,

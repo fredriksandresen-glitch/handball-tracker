@@ -135,6 +135,7 @@ export interface _SERVICE {
     }
   >,
   'getFeedEvents' : ActorMethod<[], Array<FeedEvent>>,
+  'getFollowedPlayerIds' : ActorMethod<[], Array<bigint>>,
   'getFollowedPlayers' : ActorMethod<[], Array<Player>>,
   'getMatches' : ActorMethod<[], Array<Match>>,
   'getNextMatchForTeam' : ActorMethod<[bigint], [] | [Match]>,

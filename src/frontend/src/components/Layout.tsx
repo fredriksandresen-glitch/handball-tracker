@@ -7,6 +7,7 @@ import {
   normalizeLeagueId,
   normalizeSeasonId,
 } from "../data/seasons";
+import { AccountControl } from "./AccountControl";
 
 const NAV_ITEMS = [
   { to: "/", label: "Hjem", icon: Home, ocid: "nav-hjem" },
@@ -105,6 +106,7 @@ export function Layout({ children, title, headerRight }: Props) {
 
           <div className="flex items-center gap-2">
             {headerRight}
+            <AccountControl />
             <ThemeToggle />
           </div>
         </div>

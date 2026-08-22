@@ -135,6 +135,7 @@ export interface backendInterface {
         statsSource: string;
     }>;
     getFeedEvents(): Promise<Array<FeedEvent>>;
+    getFollowedPlayerIds(): Promise<Array<bigint>>;
     getFollowedPlayers(): Promise<Array<Player>>;
     getMatches(): Promise<Array<Match>>;
     getNextMatchForTeam(teamId: bigint): Promise<Match | null>;

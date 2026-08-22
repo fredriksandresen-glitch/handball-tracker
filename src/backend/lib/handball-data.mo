@@ -89,12 +89,17 @@ module {
   };
 
   public func getFollowedPlayers(state : State, userId : Principal) : [Types.Player] {
-    let followedIds = state.follows
-      .filter(func(f) { Principal.equal(f.userId, userId) })
-      .map<Types.Follow, Nat>(func(f) { f.playerId });
+    let followedIds = getFollowedPlayerIds(state, userId);
     state.players.filter(func(p) {
       followedIds.find(func(id) { id == p.id }) != null
     }).toArray();
+  };
+
+  public func getFollowedPlayerIds(state : State, userId : Principal) : [Nat] {
+    state.follows
+      .filter(func(f) { Principal.equal(f.userId, userId) })
+      .map<Types.Follow, Nat>(func(f) { f.playerId })
+      .toArray();
   };
 
   public func getFeedEvents(state : State, userId : Principal) : [Types.FeedEvent] {

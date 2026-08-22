@@ -137,6 +137,7 @@ service : {
       teamCount: nat;
     }) query;
   getFeedEvents: () -> (vec FeedEvent) query;
+  getFollowedPlayerIds: () -> (vec nat) query;
   getFollowedPlayers: () -> (vec Player) query;
   getMatches: () -> (vec Match) query;
   getNextMatchForTeam: (teamId: nat) -> (opt Match) query;

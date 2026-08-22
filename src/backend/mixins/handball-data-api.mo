@@ -2,8 +2,16 @@ import Types "../types/handball-data";
 import HandballLib "../lib/handball-data";
 import List "mo:core/List";
 import Map "mo:core/Map";
+import Principal "mo:core/Principal";
+import Runtime "mo:core/Runtime";
 
 mixin (state : HandballLib.State) {
+
+  func requireAuthenticated(caller : Principal) {
+    if (Principal.isAnonymous(caller)) {
+      Runtime.trap("Authentication required");
+    };
+  };
 
   public query func getTeams() : async [Types.Team] {
     HandballLib.getTeams(state);
@@ -46,12 +54,19 @@ mixin (state : HandballLib.State) {
   };
 
   public query ({ caller }) func getFollowedPlayers() : async [Types.Player] {
+    requireAuthenticated(caller);
     HandballLib.getFollowedPlayers(state, caller);
+  };
+
+  public query ({ caller }) func getFollowedPlayerIds() : async [Nat] {
+    requireAuthenticated(caller);
+    HandballLib.getFollowedPlayerIds(state, caller);
   };
 
   // Auto-follows demo players (IDs 3, 14, 68) for first-time users.
   // Safe to call repeatedly — followPlayer is idempotent.
   public shared ({ caller }) func initUserFollows() : async () {
+    requireAuthenticated(caller);
     let followed = HandballLib.getFollowedPlayers(state, caller);
     if (followed.size() == 0) {
       for (pid in [3, 14, 68].values()) {
@@ -61,20 +76,24 @@ mixin (state : HandballLib.State) {
   };
 
   public query ({ caller }) func getFeedEvents() : async [Types.FeedEvent] {
+    requireAuthenticated(caller);
     HandballLib.getFeedEvents(state, caller);
   };
 
   public shared ({ caller }) func followPlayer(playerId : Nat) : async () {
+    requireAuthenticated(caller);
     HandballLib.followPlayer(state, caller, playerId);
   };
 
   public shared ({ caller }) func unfollowPlayer(playerId : Nat) : async () {
+    requireAuthenticated(caller);
     HandballLib.unfollowPlayer(state, caller, playerId);
   };
 
   public query ({ caller }) func isFollowing(playerId : Nat) : async Bool {
-    let followed = HandballLib.getFollowedPlayers(state, caller);
-    switch (followed.find(func(p) { p.id == playerId })) {
+    requireAuthenticated(caller);
+    let followedIds = HandballLib.getFollowedPlayerIds(state, caller);
+    switch (followedIds.find(func(id) { id == playerId })) {
       case (?_) true;
       case null false;
     };
