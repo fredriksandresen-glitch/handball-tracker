@@ -22,7 +22,10 @@ const statFiles = [
   "folloPlayerStats.json",
   "storhamarPlayerStats.json",
   "tertnesPlayerStats.json",
+  "firstDivision2526PlayerStats.json",
 ];
+
+const fullHistoryFiles = ["firstDivision2526FullPlayerStats.json"];
 
 await mkdir(publicDataRoot, { recursive: true });
 await mkdir(publicPlayerStatsRoot, { recursive: true });
@@ -33,4 +36,11 @@ for (const file of statFiles) {
   await copyFile(source, path.join(publicPlayerStatsRoot, file));
 }
 
-console.log(`Copied ${statFiles.length} player stat files to public/data and public/data/player-stats.`);
+for (const file of fullHistoryFiles) {
+  const source = path.join(dataRoot, file);
+  await copyFile(source, path.join(publicPlayerStatsRoot, file));
+}
+
+console.log(
+  `Copied ${statFiles.length} compact and ${fullHistoryFiles.length} full-history stat files.`,
+);

@@ -60,6 +60,16 @@ Testene dekker:
 Den publiserte asset-statistikken er autoritativ for svar som skal samsvare med
 appen. Den eldre Motoko-seeden kan inneholde andre summer.
 
+Historisk 1. divisjon 2025/26 ligger i
+`player-stats/firstDivision2526FullPlayerStats.json`. Filen inneholder 14 lag,
+316 spilleroppføringer og kamp-for-kamp-data. Den kompakte
+`firstDivision2526PlayerStats.json` brukes fortsatt av frontend, slik at
+fullhistorikken ikke pakkes inn i appens hoved-JavaScript-fil.
+
+Kjør `pnpm sync:first-division-2526` i `src/frontend` bare når den historiske
+kilden skal oppdateres. En vanlig quick-build kopierer den versjonskontrollerte
+fullfilen til `dist` uten å hente data på nytt.
+
 Kopier `src/frontend/src/data/leagueStandingsArchive.json` til
 `services/handball-ai-gateway/data/leagueStandingsArchive.json` i den kjørende
 gateway-mappen. Gatewayen bruker denne samme tabellfilen som frontend ved

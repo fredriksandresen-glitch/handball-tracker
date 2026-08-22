@@ -28,6 +28,7 @@ const {
   buildStatsDataset,
   compareFormWithStandings,
   findBestMatchForPlayer,
+  findSeasonSegment,
   summarizePlayerPerformance,
 } = require('./lib/statsDataset');
 
@@ -264,7 +265,9 @@ function buildTeamContextFormAnswer(comparison) {
 function buildJsonPlayerStatsAnswer(player, requestedSeason) {
   const stats = player.seasonStats;
   const statsSeason = player.season;
-  let answer = `${player.name} representerte ${player.seasonTeamName} i ${statsSeason}.\n\n`;
+  const segments = player.seasonSegments ?? [];
+  const clubNames = segments.map((segment) => segment.teamName);
+  let answer = `${player.name} representerte ${clubNames.join(' og ') || player.seasonTeamName} i ${statsSeason}.\n\n`;
 
   if (requestedSeason !== statsSeason) {
     answer += `Det finnes ennå ingen kampstatistikk for ${requestedSeason}. `;
@@ -273,6 +276,13 @@ function buildJsonPlayerStatsAnswer(player, requestedSeason) {
     answer += `Sesongstatistikk ${statsSeason}:\n`;
   }
 
+  for (const segment of segments) {
+    const segmentStats = segment.seasonStats ?? {};
+    answer += `- ${segment.teamName}: ${segmentStats.matches ?? 0} kamper, ${segmentStats.goals ?? 0} mål, ${segmentStats.assists ?? 0} assist, MEP ${segmentStats.mepTotal ?? 0}\n`;
+  }
+  if (segments.length > 1) {
+    answer += `\nTotalt for sesongen:\n`;
+  }
   answer += `- Kamper: ${stats.matches ?? 0}\n`;
   answer += `- Mål: ${stats.goals ?? 0}\n`;
   answer += `- Assist: ${stats.assists ?? 0}\n`;
@@ -287,40 +297,44 @@ function positionLabel(position) {
     VenstreKant: 'venstrekanter',
     HoyreKant: 'høyrekanter',
     Bakspiller: 'bakspillere',
-    Linjespiller: 'linjespillere',
+    Linje: 'linjespillere',
     Keeper: 'keepere',
   };
   return labels[position] ?? 'spillere i samme posisjon';
 }
 
-function buildDetailedPlayerSummary(player, performance, requestedSeason, isTransferQuestion) {
+function segmentLeagueLabel(segment) {
+  return segment.league === 'first-division' ? '1. divisjon' : 'Eliteserien';
+}
+
+function buildDetailedPlayerSummary(player, performance, requestedSeason, isTransferQuestion, segmentPerformances = []) {
   const stats = performance.seasonStats;
-  const peer = performance.peerComparison;
-  const best = performance.bestMatch;
-  let answer = `${player.name} hadde en ujevn rolle for ${player.seasonTeamName} i ${player.season}. `;
-  answer += `Hun var registrert i ${stats.matches ?? performance.matches} kamper og spilte totalt ${performance.totalPlayTime}, `;
-  answer += `i snitt ${performance.averagePlayTime} per kamp. Spilletiden varierte fra ${performance.shortestPlayTime} til ${performance.longestPlayTime}, `;
-  answer += `og hun spilte minst 50 minutter i ${performance.matchesAtLeast50Minutes} kamper.\n\n`;
+  let answer = `${player.name} spilte for ${segmentPerformances.map(({ segment }) => segment.teamName).join(' og ') || player.seasonTeamName} i ${player.season}. `;
+  const loan = segmentPerformances.find(({ segment }) => segment.spellType === 'loan');
+  if (loan) answer += `${loan.segment.teamName}-perioden var et utlån. `;
+  answer += `Totalt er hun registrert med ${stats.matches ?? performance.matches} kamper og ${performance.totalPlayTime} spilletid.\n`;
 
-  answer += `Dokumenterte sesongtall:\n`;
-  answer += `- ${stats.goals ?? 0} mål på ${stats.shots ?? 0} skudd (${stats.shotPercentage ?? 0}%)\n`;
-  answer += `- ${stats.assists ?? 0} assist og ${performance.technicalErrors} tekniske feil\n`;
-  answer += `- ${performance.suspensions} 2-minuttersutvisning, ${performance.warnings} registrerte gule kort/advarsler og ${performance.redCards} røde kort\n`;
-  answer += `- Samlet MEP ${stats.mepTotal ?? 0}, snitt MEP ${stats.mepAvg ?? 0}\n`;
-
-  if (best) {
-    answer += `\nBeste registrerte kamp var ${best.homeAway === 'home' ? 'hjemme' : 'borte'} mot ${best.opponent} ${best.date}: `;
-    answer += `MEP ${best.mep}, ${best.goals} mål, ${best.assists} assist, `;
-    answer += `${best.shots} skudd og ${best.playTime} spilletid.\n`;
+  for (const { segment, performance: segmentPerformance } of segmentPerformances) {
+    const segmentStats = segmentPerformance.seasonStats;
+    const peer = segmentPerformance.peerComparison;
+    const best = segmentPerformance.bestMatch;
+    answer += `\n${segment.teamName}, ${segmentLeagueLabel(segment)}:\n`;
+    answer += `- ${segmentStats.matches ?? segmentPerformance.matches} kamper, ${segmentPerformance.totalPlayTime} totalt og ${segmentPerformance.averagePlayTime} i snitt\n`;
+    answer += `- ${segmentStats.goals ?? 0} mål på ${segmentStats.shots ?? 0} skudd (${segmentStats.shotPercentage ?? 0}%), ${segmentStats.assists ?? 0} assist\n`;
+    const suspensionLabel = segmentPerformance.suspensions === 1
+      ? 'utvisning'
+      : 'utvisninger';
+    answer += `- ${segmentPerformance.technicalErrors} tekniske feil, ${segmentPerformance.suspensions} ${suspensionLabel} og samlet MEP ${segmentStats.mepTotal ?? 0}\n`;
+    if (best) {
+      answer += `- Beste kamp: ${best.homeAway === 'home' ? 'hjemme' : 'borte'} mot ${best.opponent} ${best.date}, MEP ${best.mep}, ${best.goals} mål på ${best.shots} skudd\n`;
+    }
+    if (peer.mepTotal && peer.shotPercentage && peer.goalsPerMatch) {
+      answer += `- Blant ${positionLabel(peer.position)} med minst ${peer.minimumMatches} kamper i samme divisjon: MEP-plass ${peer.mepTotal.rank}/${peer.mepTotal.total}, mål per kamp ${peer.goalsPerMatch.rank}/${peer.goalsPerMatch.total}, skuddprosent ${peer.shotPercentage.rank}/${peer.shotPercentage.total}\n`;
+    }
   }
 
-  if (peer.mepTotal && peer.shotPercentage && peer.goalsPerMatch) {
-    const peers = positionLabel(peer.position);
-    answer += `\nSammenlignet med ${peers} med minst ${peer.minimumMatches} kamper:\n`;
-    answer += `- Samlet MEP: plass ${peer.mepTotal.rank} av ${peer.mepTotal.total}\n`;
-    answer += `- Mål per kamp: plass ${peer.goalsPerMatch.rank} av ${peer.goalsPerMatch.total}\n`;
-    answer += `- Skuddprosent: plass ${peer.shotPercentage.rank} av ${peer.shotPercentage.total}\n`;
-    answer += `Dette peker mot et lavt offensivt bidrag sammenlignet med posisjonskollegene, men åtte kamper er et begrenset grunnlag.\n`;
+  if (segmentPerformances.length > 1) {
+    answer += `\nSamlet 2025/26: ${stats.goals ?? 0} mål på ${stats.shots ?? 0} skudd (${stats.shotPercentage ?? 0}%), ${stats.assists ?? 0} assist og MEP ${stats.mepTotal ?? 0}.\n`;
   }
 
   if (requestedSeason !== player.season) {
@@ -328,10 +342,18 @@ function buildDetailedPlayerSummary(player, performance, requestedSeason, isTran
   }
 
   if (isTransferQuestion && player.currentTeamName) {
-    answer += `\n\nVurdering av overgangen til ${player.currentTeamName}:\n`;
-    answer += `Aker spiller i 1. divisjon i 2026-27, mens disse tallene kommer fra eliteserien med Fjellhammer. `;
-    answer += `Ut fra den ujevne rollen og de lave offensive nøkkeltallene kan et nivå ned være en fornuftig mulighet til å få en mer stabil rolle, flere avslutninger og større ansvar. `;
-    answer += `Det er en forsiktig sportslig vurdering, ikke et dokumentert resultat. Vi mangler fortsatt rolleplanen hennes i Aker og kampdata fra 2026-27, så det er for tidlig å slå fast at overgangen blir vellykket.`;
+    answer += `\nVurdering av overgangen til ${player.currentTeamName}:\n`;
+    const elite = segmentPerformances.find(({ segment }) => segment.league === 'elite');
+    const firstDivision = segmentPerformances.find(({ segment }) => segment.league === 'first-division');
+    if (elite && firstDivision) {
+      const eliteStats = elite.performance.seasonStats;
+      const firstStats = firstDivision.performance.seasonStats;
+      answer += `Utlånet gir et bedre sammenligningsgrunnlag enn Fjellhammer-tallene alene. I eliteserien hadde hun ${eliteStats.goals ?? 0} mål og MEP ${eliteStats.mepTotal ?? 0} på ${eliteStats.matches ?? 0} kamper; for Kjelsås i 1. divisjon hadde hun ${firstStats.goals ?? 0} mål, ${firstStats.shotPercentage ?? 0}% uttelling og MEP ${firstStats.mepTotal ?? 0} på ${firstStats.matches ?? 0} kamper. `;
+      answer += `Det tyder på at hun fikk en større og mer produktiv rolle på nivået Aker spiller på. Derfor framstår overgangen som sportslig fornuftig dersom målet er mer ansvar og jevn spilletid. `;
+    } else {
+      answer += `En overgang til 1. divisjon kan gi mer spilletid og større ansvar. `;
+    }
+    answer += `Dette er fortsatt en forsiktig vurdering basert på et begrenset antall kamper. Vi mangler rolleplanen i Aker og kampdata fra 2026-27, så utfallet kan ikke fastslås ennå.`;
   }
 
   return answer;
@@ -597,6 +619,9 @@ app.post('/v1/handball/chat', async (req, res) => {
     }
 
     const requestedSeason = resolveSeason(question, context && context.season ? context.season : null);
+    const requestedLeague = context?.league === 'first-division'
+      ? 'first-division'
+      : 'elite';
     const normalizedQuestion = question.toLowerCase();
 
     // Load JSON stats
@@ -653,7 +678,12 @@ app.post('/v1/handball/chat', async (req, res) => {
         10,
         Math.max(1, extractRequestedMatchCount(previousNormalized, 5)),
       );
-      const formAnalysis = analyzeBestForm(allMatches, previousSeason, previousMatchCount);
+      const formAnalysis = analyzeBestForm(
+        allMatches,
+        previousSeason,
+        previousMatchCount,
+        requestedLeague,
+      );
       const comparison = compareFormWithStandings(
         formAnalysis,
         previousSeason === '2025-26' ? archiveStandings : [],
@@ -698,6 +728,7 @@ app.post('/v1/handball/chat', async (req, res) => {
         allMatches,
         formSeason,
         requestedMatchCount,
+        requestedLeague,
       );
 
       if (!analysis.found) {
@@ -800,7 +831,11 @@ app.post('/v1/handball/chat', async (req, res) => {
         if (isBestMatchQuestion && extractedClub) {
           analysisMode = 'deterministic-best-match';
           const seasonTeamNames = [...new Set(
-            jsonPlayers.map(player => player.seasonTeamName).filter(Boolean)
+            jsonPlayers.flatMap(player =>
+              player.seasonTeamNames?.length
+                ? player.seasonTeamNames
+                : [player.seasonTeamName],
+            ).filter(Boolean)
           )];
           const previousTeamName = fuzzyMatchTeamName(extractedClub, seasonTeamNames);
           const bestMatch = previousTeamName
@@ -817,7 +852,10 @@ app.post('/v1/handball/chat', async (req, res) => {
             });
           }
 
-          const seasonStatsData = jsonPlayerData ? jsonPlayerData.seasonStats : null;
+          const seasonSegment = jsonPlayerData
+            ? findSeasonSegment(jsonPlayerData, previousTeamName)
+            : null;
+          const seasonStatsData = seasonSegment?.seasonStats ?? null;
           const currentTeamName = jsonPlayerData?.currentTeamName &&
             normalizeText(jsonPlayerData.currentTeamName) !== normalizeText(previousTeamName)
             ? jsonPlayerData.currentTeamName
@@ -842,7 +880,7 @@ app.post('/v1/handball/chat', async (req, res) => {
           }
           sources.push({
             label: `Kampstatistikk fra ${dataSource === 'icp-asset-canister' ? 'ICP asset-canister' : 'lokal cache'}`,
-            method: `player-stats/${jsonPlayerData?.sourceFile || '*PlayerStats.json'}`,
+            method: `player-stats/${seasonSegment?.sourceFile || jsonPlayerData?.sourceFile || '*PlayerStats.json'}`,
             entityIds: [playerId],
             observedAt: new Date().toISOString()
           });
@@ -859,22 +897,32 @@ app.post('/v1/handball/chat', async (req, res) => {
         } else if (jsonPlayerData?.seasonStats && isDetailedQuestion) {
           analysisMode = 'deterministic-detailed-player-summary';
           const performance = summarizePlayerPerformance(jsonPlayerData, playersById);
+          const segmentPerformances = (jsonPlayerData.seasonSegments ?? []).map(
+            (segment) => ({
+              segment,
+              performance: summarizePlayerPerformance(
+                jsonPlayerData,
+                playersById,
+                { teamName: segment.teamName, league: segment.league },
+              ),
+            }),
+          );
           const stats = jsonPlayerData.seasonStats;
           evidence.push({
             label: `Detaljert sesongstatistikk ${jsonPlayerData.season}`,
             value: `${stats.matches ?? 0} kamper, ${performance.totalPlayTime} spilletid, MEP ${stats.mepTotal ?? 0}`,
             playerId
           });
-          if (performance.peerComparison.mepTotal) {
+          for (const { segment, performance: segmentPerformance } of segmentPerformances) {
             evidence.push({
-              label: `Sammenligning med ${positionLabel(jsonPlayerData.position)}`,
-              value: `MEP-plass ${performance.peerComparison.mepTotal.rank} av ${performance.peerComparison.mepTotal.total}, minst 5 kamper`,
-              playerId
+              label: `${segment.teamName}, ${segmentLeagueLabel(segment)}`,
+              value: `${segmentPerformance.seasonStats.matches ?? 0} kamper, ${segmentPerformance.seasonStats.goals ?? 0} mål, MEP ${segmentPerformance.seasonStats.mepTotal ?? 0}`,
+              playerId,
             });
           }
           sources.push({
             label: `Kamp- og sesongstatistikk fra ${dataSource === 'icp-asset-canister' ? 'ICP asset-canister' : 'lokal cache'}`,
-            method: `player-stats/${jsonPlayerData.sourceFile}`,
+            method: `player-stats/${jsonPlayerData.sourceFiles.join(',')}`,
             entityIds: [playerId],
             observedAt: new Date().toISOString()
           });
@@ -883,6 +931,7 @@ app.post('/v1/handball/chat', async (req, res) => {
             performance,
             requestedSeason,
             isTransferQuestion,
+            segmentPerformances,
           );
         } else if (jsonPlayerData?.seasonStats) {
           analysisMode = 'deterministic-player-stats';

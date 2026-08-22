@@ -14,7 +14,8 @@
     "generate:player-card-images": "node scripts/generate-player-card-images.mjs",
     "sync:player-identities": "node scripts/sync-player-identities.mjs",
     "check:player-identities": "node scripts/sync-player-identities.mjs --check",
-    "sync:player-images": "node scripts/sync-player-images.mjs && node scripts/generate-player-card-images.mjs"
+    "sync:player-images": "node scripts/sync-player-images.mjs && node scripts/generate-player-card-images.mjs",
+    "sync:first-division-2526": "node scripts/sync-first-division-2526-stats.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.0",

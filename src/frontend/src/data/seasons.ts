@@ -84,7 +84,22 @@ const TEAM_NAMES_BY_SEASON_AND_LEAGUE: Record<
       "Haslum",
       "Ravens",
     ],
-    [FIRST_DIVISION_LEAGUE_ID]: ["Aker Topphåndball", "Kjelsås", "Volda", "Levanger", "Åsane", "Trondheim", "Gjøvik", "Ravens", "Stavanger", "Bækkelaget", "Haslum", "Fyllingen"],
+    [FIRST_DIVISION_LEAGUE_ID]: [
+      "Aker Topphåndball",
+      "Bækkelaget",
+      "Flint",
+      "Gjøvik",
+      "Glassverket",
+      "Kjelsås",
+      "Levanger",
+      "Pors",
+      "Stavanger",
+      "Storhamar Rekrutt",
+      "Trondheim",
+      "Utleira",
+      "Volda",
+      "Åsane",
+    ],
   },
 };
 

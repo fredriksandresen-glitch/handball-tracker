@@ -163,22 +163,59 @@ test("resolves a pronoun follow-up to Linnea from conversation history", () => {
 test("summarizes Linnea's playing time, discipline and position comparison", () => {
   const linnea = dataset.playersById["22398210032285"];
   const summary = summarizePlayerPerformance(linnea, dataset.playersById);
+  const fjellhammer = summarizePlayerPerformance(
+    linnea,
+    dataset.playersById,
+    { teamName: "Fjellhammer", league: "elite" },
+  );
+  const kjelsaas = summarizePlayerPerformance(
+    linnea,
+    dataset.playersById,
+    { teamName: "Kjelsås", league: "first-division" },
+  );
 
   assert.equal(linnea.position, "VenstreKant");
-  assert.equal(summary.totalPlayTime, "04:31:37");
-  assert.equal(summary.averagePlayTime, "00:33:57");
-  assert.equal(summary.matchesAtLeast50Minutes, 3);
-  assert.equal(summary.technicalErrors, 3);
+  assert.equal(linnea.seasonSegments.length, 2);
+  assert.equal(summary.totalPlayTime, "11:06:25");
+  assert.equal(summary.averagePlayTime, "00:44:26");
+  assert.equal(summary.matchesAtLeast50Minutes, 9);
+  assert.equal(summary.technicalErrors, 5);
   assert.equal(summary.suspensions, 1);
   assert.equal(summary.warnings, 0);
   assert.equal(summary.redCards, 0);
-  assert.equal(summary.bestMatch.opponent, "Sola");
-  assert.deepEqual(summary.peerComparison.mepTotal, {
+  assert.equal(summary.bestMatch.opponent, "Gjøvik");
+  assert.equal(summary.bestMatch.goals, 8);
+  assert.equal(summary.seasonStats.goals, 20);
+  assert.equal(fjellhammer.seasonStats.goals, 2);
+  assert.equal(kjelsaas.seasonStats.goals, 18);
+  assert.equal(kjelsaas.seasonStats.shotPercentage, 62.1);
+  assert.equal(kjelsaas.bestMatch.mep, 6.4);
+  assert.deepEqual(fjellhammer.peerComparison.mepTotal, {
     rank: 26,
     total: 27,
     value: 0.3,
   });
-  assert.equal(summary.peerComparison.shotPercentage.rank, 26);
+  assert.equal(fjellhammer.peerComparison.shotPercentage.rank, 26);
+});
+
+test("ranks first-division form separately from elite form", () => {
+  const analysis = analyzeBestForm(
+    dataset.allMatches,
+    "2025-26",
+    5,
+    "first-division",
+  );
+
+  assert.equal(analysis.found, true);
+  assert.equal(analysis.topPlayer.recentMatches.length, 5);
+  assert.equal(
+    analysis.rankings.every((player) =>
+      player.recentMatches.every(
+        (match) => match.league === "first-division",
+      ),
+    ),
+    true,
+  );
 });
 
 test("resolves a group follow-up and compares form with final standings", () => {

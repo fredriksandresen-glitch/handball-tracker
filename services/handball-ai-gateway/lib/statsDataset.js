@@ -14,40 +14,159 @@ const STAT_DATASETS = [
   ["folloPlayerStats.json", "Follo Damer"],
   ["storhamarPlayerStats.json", "Storhamar"],
   ["tertnesPlayerStats.json", "Tertnes"],
-].map(([file, teamName]) => ({ file, teamName, season: "2025-26" }));
+].map(([file, teamName]) => ({
+  file,
+  teamName,
+  league: "elite",
+  season: "2025-26",
+}));
+
+STAT_DATASETS.push({
+  file: "firstDivision2526FullPlayerStats.json",
+  teamName: null,
+  league: "first-division",
+  season: "2025-26",
+});
+
+function round1(value) {
+  return Math.round(value * 10) / 10;
+}
+
+function aggregateSeasonStats(segments) {
+  const totals = segments.reduce(
+    (sum, segment) => {
+      const stats = segment.seasonStats ?? {};
+      for (const field of [
+        "matches",
+        "goals",
+        "shots",
+        "assists",
+        "technicalErrors",
+        "suspensions",
+        "mepTotal",
+      ]) {
+        sum[field] += Number(stats[field] ?? 0);
+      }
+      return sum;
+    },
+    {
+      matches: 0,
+      goals: 0,
+      shots: 0,
+      assists: 0,
+      technicalErrors: 0,
+      suspensions: 0,
+      mepTotal: 0,
+    },
+  );
+
+  totals.mepTotal = round1(totals.mepTotal);
+  return {
+    ...totals,
+    shotPercentage:
+      totals.shots > 0 ? round1((totals.goals / totals.shots) * 100) : 0,
+    mepAvg:
+      totals.matches > 0 ? round1(totals.mepTotal / totals.matches) : 0,
+  };
+}
+
+function normalizeDatasetPosition(position) {
+  const value = normalizeText(position);
+  if (value.includes("keeper") || value.includes("malvakt")) return "Keeper";
+  if (value.includes("kant") && value.includes("venstre")) return "VenstreKant";
+  if (value.includes("kant") && value.includes("hoyre")) return "HoyreKant";
+  if (value.includes("linje") || value.includes("strek")) return "Linje";
+  return value ? "Bakspiller" : null;
+}
 
 function buildStatsDataset(searchIndex, loadedFiles) {
   const playerIndex = new Map(
     searchIndex.map((player) => [String(player.id), player]),
   );
-  const playersById = {};
+  const canonicalByExternalId = new Map();
+  for (const { data } of loadedFiles) {
+    if (!Array.isArray(data)) continue;
+    for (const playerStats of data) {
+      if (!playerStats.canonicalId) continue;
+      canonicalByExternalId.set(
+        String(playerStats.playerId),
+        String(playerStats.canonicalId),
+      );
+      if (playerStats.canonicalPlayerId) {
+        canonicalByExternalId.set(
+          String(playerStats.canonicalPlayerId),
+          String(playerStats.canonicalId),
+        );
+      }
+    }
+  }
+
+  const playersByCanonicalId = new Map();
   const allMatches = [];
 
-  for (const { data, file, season, teamName } of loadedFiles) {
+  for (const { data, file, league, season, teamName } of loadedFiles) {
     if (!Array.isArray(data)) continue;
 
     for (const playerStats of data) {
-      const playerId = String(playerStats.playerId);
-      const indexedPlayer = playerIndex.get(playerId);
-      const player = playersById[playerId] ?? {
-        playerId,
-        name: indexedPlayer?.name ?? "Ukjent",
+      const externalPlayerId = String(playerStats.playerId);
+      const canonicalId =
+        String(playerStats.canonicalId ?? "") ||
+        canonicalByExternalId.get(externalPlayerId) ||
+        externalPlayerId;
+      const preferredPlayerId = String(
+        playerStats.canonicalPlayerId ?? externalPlayerId,
+      );
+      const indexedPlayer =
+        playerIndex.get(preferredPlayerId) ?? playerIndex.get(externalPlayerId);
+      const segmentTeamName = playerStats.teamName ?? teamName;
+      if (!segmentTeamName) continue;
+      const player = playersByCanonicalId.get(canonicalId) ?? {
+        playerId: preferredPlayerId,
+        canonicalId,
+        externalIds: [],
+        name: indexedPlayer?.name ?? playerStats.playerName ?? "Ukjent",
         currentTeamName: indexedPlayer?.teamName ?? null,
-        position: indexedPlayer?.position ?? null,
-        seasonTeamName: teamName,
+        position:
+          indexedPlayer?.position ??
+          normalizeDatasetPosition(playerStats.position),
+        seasonTeamName: segmentTeamName,
+        seasonTeamNames: [],
         season,
         sourceFile: file,
+        sourceFiles: [],
         matches: [],
+        seasonSegments: [],
+        seasonStats: null,
+      };
+
+      if (!player.externalIds.includes(externalPlayerId)) {
+        player.externalIds.push(externalPlayerId);
+      }
+      if (!player.seasonTeamNames.includes(segmentTeamName)) {
+        player.seasonTeamNames.push(segmentTeamName);
+      }
+      if (!player.sourceFiles.includes(file)) player.sourceFiles.push(file);
+
+      const segment = {
+        externalPlayerId,
+        teamName: segmentTeamName,
+        league: playerStats.league ?? league ?? null,
+        season: playerStats.season ?? season,
+        sourceFile: file,
         seasonStats: playerStats.seasonStats ?? null,
+        spellType: playerStats.spellType ?? null,
+        matches: [],
       };
 
       for (const match of playerStats.recentMatches ?? []) {
         const normalizedMatch = {
           ...match,
-          playerId,
+          playerId: player.playerId,
+          externalPlayerId,
           playerName: player.name,
-          playerTeam: teamName,
-          season,
+          playerTeam: segmentTeamName,
+          league: segment.league,
+          season: segment.season,
           sourceFile: file,
           goals: match.goals ?? 0,
           assists: match.assists ?? 0,
@@ -59,11 +178,19 @@ function buildStatsDataset(searchIndex, loadedFiles) {
           redCards: match.redCards ?? 0,
         };
         player.matches.push(normalizedMatch);
+        segment.matches.push(normalizedMatch);
         allMatches.push(normalizedMatch);
       }
 
-      playersById[playerId] = player;
+      player.seasonSegments.push(segment);
+      playersByCanonicalId.set(canonicalId, player);
     }
+  }
+
+  const playersById = {};
+  for (const player of playersByCanonicalId.values()) {
+    player.seasonStats = aggregateSeasonStats(player.seasonSegments);
+    playersById[player.playerId] = player;
   }
 
   return { allMatches, playersById };
@@ -104,9 +231,27 @@ function competitionRank(players, playerId, readMetric) {
   return { rank, total: sorted.length, value: playerValue };
 }
 
-function summarizePlayerPerformance(player, playersById) {
-  const matches = player?.matches ?? [];
-  const seasonStats = player?.seasonStats ?? {};
+function scopedSegments(player, options = {}) {
+  const segments = player?.seasonSegments ?? [];
+  if (segments.length === 0) return [];
+  return segments.filter(
+    (segment) =>
+      (!options.teamName ||
+        normalizeText(segment.teamName) === normalizeText(options.teamName)) &&
+      (!options.league || segment.league === options.league),
+  );
+}
+
+function summarizePlayerPerformance(player, playersById, options = {}) {
+  const selectedSegments = scopedSegments(player, options);
+  const matches =
+    selectedSegments.length > 0
+      ? selectedSegments.flatMap((segment) => segment.matches ?? [])
+      : (player?.matches ?? []);
+  const seasonStats =
+    selectedSegments.length > 0
+      ? aggregateSeasonStats(selectedSegments)
+      : (player?.seasonStats ?? {});
   const totalPlayTimeSeconds = matches.reduce(
     (sum, match) => sum + parsePlayTimeSeconds(match.playTime),
     0,
@@ -118,11 +263,26 @@ function summarizePlayerPerformance(player, playersById) {
     (left, right) =>
       parsePlayTimeSeconds(right.playTime) - parsePlayTimeSeconds(left.playTime),
   );
-  const eligiblePeers = Object.values(playersById).filter(
-    (candidate) =>
-      candidate.position === player.position &&
-      Number(candidate.seasonStats?.matches ?? 0) >= 5,
-  );
+  const eligiblePeers = Object.values(playersById)
+    .map((candidate) => {
+      const candidateSegments = scopedSegments(candidate, {
+        league: options.league,
+      });
+      if (options.league && candidateSegments.length === 0) return null;
+      return {
+        ...candidate,
+        seasonStats:
+          candidateSegments.length > 0
+            ? aggregateSeasonStats(candidateSegments)
+            : candidate.seasonStats,
+      };
+    })
+    .filter(
+      (candidate) =>
+        candidate &&
+        candidate.position === player.position &&
+        Number(candidate.seasonStats?.matches ?? 0) >= 5,
+    );
 
   return {
     matches: matches.length,
@@ -168,6 +328,15 @@ function summarizePlayerPerformance(player, playersById) {
     },
     seasonStats,
   };
+}
+
+function findSeasonSegment(player, teamName) {
+  return (
+    player?.seasonSegments?.find(
+      (segment) =>
+        normalizeText(segment.teamName) === normalizeText(teamName),
+    ) ?? null
+  );
 }
 
 function analyzeBestAgainstTeam(opponentTeam, allMatches) {
@@ -220,11 +389,17 @@ function analyzeBestAgainstTeam(opponentTeam, allMatches) {
   };
 }
 
-function analyzeBestForm(allMatches, season, matchCount = 5) {
+function analyzeBestForm(
+  allMatches,
+  season,
+  matchCount = 5,
+  league = "elite",
+) {
   const matchesByPlayer = new Map();
 
   for (const match of allMatches) {
     if (season && match.season !== season) continue;
+    if (league && match.league !== league) continue;
     const playerMatches = matchesByPlayer.get(match.playerId) ?? [];
     playerMatches.push(match);
     matchesByPlayer.set(match.playerId, playerMatches);
@@ -317,6 +492,7 @@ module.exports = {
   buildStatsDataset,
   compareFormWithStandings,
   findBestMatchForPlayer,
+  findSeasonSegment,
   formatPlayTime,
   parsePlayTimeSeconds,
   summarizePlayerPerformance,
