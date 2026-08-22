@@ -80,6 +80,23 @@ function slugify(value: string) {
     .replace(/^-|-$/g, "");
 }
 
+function normalizeSearchValue(value: string) {
+  return value
+    .toLocaleLowerCase("nb")
+    .normalize("NFD")
+    .replace(/\p{M}+/gu, "")
+    .replace(/[^a-z0-9æøå]+/gi, " ")
+    .trim();
+}
+
+function matchesSearchQuery(searchText: string, query: string) {
+  const searchableTokens = normalizeSearchValue(searchText).split(/\s+/);
+  const queryTokens = normalizeSearchValue(query).split(/\s+/).filter(Boolean);
+  return queryTokens.every((queryToken) =>
+    searchableTokens.some((token) => token.startsWith(queryToken)),
+  );
+}
+
 function loadSearchPlayers() {
   searchPlayersPromise ??= fetch("/data/search-player-index.json").then(
     async (response) => {
@@ -198,9 +215,10 @@ export default function SearchPage() {
   ).size;
 
   const hasQuery = debouncedQuery.trim() !== "";
-  const normalizedQuery = debouncedQuery.trim().toLocaleLowerCase("nb");
   const sourcePlayers = hasQuery
-    ? allPlayers.filter((player) => player.searchText.includes(normalizedQuery))
+    ? allPlayers.filter((player) =>
+        matchesSearchQuery(player.searchText, debouncedQuery),
+      )
     : allPlayers;
 
   const filteredResults =

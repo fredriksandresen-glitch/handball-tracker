@@ -12,6 +12,7 @@ const {
 const {
   STAT_DATASETS,
   analyzeBestAgainstTeam,
+  analyzeBestForm,
   buildStatsDataset,
   findBestMatchForPlayer,
 } = require("../lib/statsDataset");
@@ -103,4 +104,18 @@ test("keeps both Fjellhammer best-player spellings deterministic", () => {
     fuzzyMatchTeamName("fjellhammar", ["Fjellhammer"]),
     "Fjellhammer",
   );
+});
+
+test("ranks the final five matches from the previous season", () => {
+  const question = "hvem var i best form de 5 siste kampene forrgie sesong?";
+  const season = resolveSeason(question, "2026-27");
+  const analysis = analyzeBestForm(dataset.allMatches, season, 5);
+
+  assert.equal(season, "2025-26");
+  assert.equal(analysis.found, true);
+  assert.equal(analysis.topPlayer.playerId, "2239828059504");
+  assert.equal(analysis.topPlayer.playerName, "Sarah Deari Solheim");
+  assert.equal(analysis.topPlayer.avgMep, 5.74);
+  assert.equal(analysis.topPlayer.totalMep, 28.7);
+  assert.equal(analysis.topPlayer.totalGoals, 42);
 });

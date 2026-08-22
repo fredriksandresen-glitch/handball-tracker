@@ -116,6 +116,56 @@ function analyzeBestAgainstTeam(opponentTeam, allMatches) {
   };
 }
 
+function analyzeBestForm(allMatches, season, matchCount = 5) {
+  const matchesByPlayer = new Map();
+
+  for (const match of allMatches) {
+    if (season && match.season !== season) continue;
+    const playerMatches = matchesByPlayer.get(match.playerId) ?? [];
+    playerMatches.push(match);
+    matchesByPlayer.set(match.playerId, playerMatches);
+  }
+
+  const rankings = [];
+  for (const [playerId, matches] of matchesByPlayer) {
+    const recentMatches = [...matches]
+      .sort((left, right) =>
+        String(left.date ?? left.matchId).localeCompare(
+          String(right.date ?? right.matchId),
+        ),
+      )
+      .slice(-matchCount);
+    if (recentMatches.length < matchCount) continue;
+
+    const totalMep = recentMatches.reduce((sum, match) => sum + match.mep, 0);
+    const latestMatch = recentMatches.at(-1);
+    rankings.push({
+      playerId,
+      playerName: latestMatch.playerName,
+      playerTeam: latestMatch.playerTeam,
+      matches: recentMatches.length,
+      totalMep: Math.round(totalMep * 10) / 10,
+      avgMep: Math.round((totalMep / recentMatches.length) * 100) / 100,
+      totalGoals: recentMatches.reduce((sum, match) => sum + match.goals, 0),
+      totalAssists: recentMatches.reduce((sum, match) => sum + match.assists, 0),
+      recentMatches,
+    });
+  }
+
+  rankings.sort(
+    (left, right) =>
+      right.avgMep - left.avgMep || right.totalMep - left.totalMep,
+  );
+
+  return {
+    found: rankings.length > 0,
+    season,
+    matchCount,
+    rankings: rankings.slice(0, 10),
+    topPlayer: rankings[0] ?? null,
+  };
+}
+
 function findBestMatchForPlayer(playerId, clubName, allMatches) {
   return (
     allMatches
@@ -131,6 +181,7 @@ function findBestMatchForPlayer(playerId, clubName, allMatches) {
 module.exports = {
   STAT_DATASETS,
   analyzeBestAgainstTeam,
+  analyzeBestForm,
   buildStatsDataset,
   findBestMatchForPlayer,
 };

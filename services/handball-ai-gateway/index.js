@@ -17,6 +17,7 @@ const {
 const {
   STAT_DATASETS,
   analyzeBestAgainstTeam,
+  analyzeBestForm,
   buildStatsDataset,
   findBestMatchForPlayer,
 } = require('./lib/statsDataset');
@@ -190,6 +191,24 @@ function buildPlayerStatsAnswer(player, stat, teams, requestedSeason) {
   if (stat.goalsPerGame) {
     answer += `- Mål per kamp: ${Math.round(unwrapOptField(stat.goalsPerGame) * 100) / 100}\n`;
   }
+  return answer;
+}
+
+function buildBestFormAnswer(analysis) {
+  const top = analysis.topPlayer;
+  const runnersUp = analysis.rankings.slice(1, 5);
+  let answer = `${top.playerName} (${top.playerTeam}) var i best form over de ${analysis.matchCount} siste kampene i ${analysis.season}. `;
+  answer += `Hun hadde snitt MEP ${top.avgMep}, samlet MEP ${top.totalMep}, ${top.totalGoals} mål og ${top.totalAssists} assist.\n\n`;
+
+  if (runnersUp.length > 0) {
+    answer += 'Topp 5 basert på snitt MEP:\n';
+    answer += `1. ${top.playerName} (${top.playerTeam}): ${top.avgMep}\n`;
+    runnersUp.forEach((player, index) => {
+      answer += `${index + 2}. ${player.playerName} (${player.playerTeam}): ${player.avgMep}\n`;
+    });
+  }
+
+  answer += `\nBare spillere med minst ${analysis.matchCount} registrerte kamper i perioden er med. Form er målt som gjennomsnittlig MEP.`;
   return answer;
 }
 
@@ -496,12 +515,54 @@ app.post('/v1/handball/chat', async (req, res) => {
 
     // ─── Extract potential club from question ───────────────────────────
     const extractedClub = extractClubFromQuestion(question);
+    const normalizedSearchQuestion = normalizeText(question);
+    const isBestFormQuestion =
+      /\bbest(?:e)? form\b/.test(normalizedSearchQuestion) &&
+      /\bsiste\b|\bform\b/.test(normalizedSearchQuestion);
+    const requestedMatchCount = Math.min(
+      10,
+      Math.max(
+        1,
+        Number(normalizedSearchQuestion.match(/\b(\d+)\s+siste\b/)?.[1] ?? 5),
+      ),
+    );
 
     // ─── Check for "best against team" (motstander) ─────────────────────
     const bestAgainstMatch = normalizedQuestion.match(/\bbest\b.*\bmot\b\s+([\wæøåäöü\s-]+?)(?:\s+i\s+(?:fjor|år)|\s+forrige|\s+sist|\s+siste|\s+sesong|$)/i) ||
                               normalizedQuestion.match(/\bspilte\b.*\bbest\b.*\bmot\b\s+([\wæøåäöü\s-]+?)(?:\s+i\s+(?:fjor|år)|\s+forrige|\s+sist|\s+siste|\s+sesong|$)/i);
 
-    if (bestAgainstMatch && !normalizedQuestion.includes(' for ')) {
+    if (isBestFormQuestion) {
+      analysisMode = 'deterministic-best-form';
+      const analysis = analyzeBestForm(
+        allMatches,
+        requestedSeason,
+        requestedMatchCount,
+      );
+
+      if (!analysis.found) {
+        return res.json({
+          id: requestId,
+          answer: `Jeg fant ikke nok kampdata til å rangere form over ${requestedMatchCount} kamper i ${requestedSeason}.`,
+          status: 'insufficient-data', evidence: [], sources: [],
+          missingData: [`Minst ${requestedMatchCount} kamper per spiller i ${requestedSeason}`],
+          followUpQuestions: ['Vil du prøve en annen sesong eller færre kamper?']
+        });
+      }
+
+      const top = analysis.topPlayer;
+      evidence.push({
+        label: `Best form, siste ${requestedMatchCount} kamper`,
+        value: `${top.playerName}: snitt MEP ${top.avgMep}, ${top.totalGoals} mål`,
+        playerId: top.playerId
+      });
+      sources.push({
+        label: `Kampstatistikk fra ${dataSource === 'icp-asset-canister' ? 'ICP asset-canister' : 'lokal cache'}`,
+        method: 'player-stats/*PlayerStats.json',
+        entityIds: analysis.rankings.slice(0, 5).map(player => player.playerId),
+        observedAt: new Date().toISOString()
+      });
+      deterministicAnswer = buildBestFormAnswer(analysis);
+    } else if (bestAgainstMatch && !normalizedQuestion.includes(' for ')) {
       analysisMode = 'deterministic-best-against';
       const rawOpponent = bestAgainstMatch[1].replace(/\s*(i fjor|forrige|sist|siste|sesong)\s*$/i, '').trim();
       const teamNames = [...new Set(allMatches.map(m => m.opponent))];

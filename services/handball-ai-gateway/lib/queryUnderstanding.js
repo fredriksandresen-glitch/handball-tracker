@@ -138,7 +138,7 @@ function resolveSeason(question, contextSeason) {
 
   if (
     contextSeason === "2026-27" &&
-    /\bi fjor\b|\bforrige sesong\b|\bsist(?:e)? sesong\b|\bfjorårets?\b/.test(
+    /\bi fjor\b|\bforr?i?g(?:e|ie) sesong\b|\bsist(?:e)? sesong\b|\bfjorårets?\b/.test(
       normalized,
     )
   ) {

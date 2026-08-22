@@ -52,9 +52,21 @@ type CardStat = {
   emphasis?: boolean;
 };
 
-function PlayerImageFallback({ initials }: { initials: string }) {
+function PlayerImageFallback({
+  initials,
+  preserveBackground = false,
+}: {
+  initials: string;
+  preserveBackground?: boolean;
+}) {
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-200 via-slate-300 to-slate-500 dark:from-slate-800 dark:via-slate-700 dark:to-slate-950">
+    <div
+      className={cn(
+        "absolute inset-0 flex items-center justify-center",
+        !preserveBackground &&
+          "bg-gradient-to-br from-slate-200 via-slate-300 to-slate-500 dark:from-slate-800 dark:via-slate-700 dark:to-slate-950",
+      )}
+    >
       <div className="relative flex flex-col items-center justify-center opacity-55">
         <div className="size-16 rounded-full bg-white/45 dark:bg-white/15 border border-white/40" />
         <div className="mt-2 h-24 w-28 rounded-t-full bg-white/35 dark:bg-white/12 border border-white/25" />
@@ -173,7 +185,10 @@ export function PlayerCard({
           </div>
         )}
 
-        <PlayerImageFallback initials={initials} />
+        <PlayerImageFallback
+          initials={initials}
+          preserveBackground={nationalTeam?.countryCode === "FI"}
+        />
 
         {displayedImageUrl && !imageFailed && (
           <img
