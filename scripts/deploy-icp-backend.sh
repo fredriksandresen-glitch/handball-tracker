@@ -139,6 +139,9 @@ stop_heartbeat
 echo "Verifiserer backend-canisteren:"
 dfx canister status backend --network "$NETWORK"
 
+# Keep the dedicated deploy checkout clean for a following frontend deploy.
+git restore --worktree -- src/backend/dist
+
 echo "DEPLOY FULLFØRT"
 echo "Commit: $ACTUAL_COMMIT"
 echo "Backend: $BACKEND_CANISTER_ID"
