@@ -17,7 +17,12 @@ node index.js
 
 ## Nødvendige miljøvariabelnavn
 - `MOONSHOT_API_KEY` (obligatorisk)
+- `MOONSHOT_MODEL` (valgfritt, default `kimi-k3`)
 - `PORT` (valgfritt, default 3000)
+- `ICP_ASSET_BASE_URL` (valgfritt)
+- `ICP_BACKEND_CANISTER_ID` (valgfritt)
+- `ICP_HOST` (valgfritt)
+- `ALLOWED_ORIGINS` (valgfri, kommaseparert liste)
 
 ## Offentlig endpoint-path
 ```
@@ -36,10 +41,23 @@ GET  /health
 355acf22cf0b26c8bb3120498f44a361b8430ac3fbd74ef7c2448807caa84671
 ```
 
-## Kjente regresjoner
-- **Camilla Herrem-spørsmålet feiler**: "Hvor mange mål hadde Camilla Herrem i 2025/26?" gir insufficient-data selv om data finnes i ICP canisteren. Spilleren finnes ikke i JSON-stats fra asset-canisteren.
-- **Linnea Aula-spørsmålet resolves feilaktig**: "hva var Linnea aulas beste kamp for fjellhammar i fjor?" resolves til Ada Aalstad i stedet for Linnea Isabel Ingeborg Aula.
-- **Tidligere fungerende test A og B**: "Hvem spilte best mot Fjellhammer i fjor?" og "Hvem spiller spilte best mot fjellhammar i fjor?" fungerer korrekt med deterministisk analyse og modelCalled=false.
+## Regresjonstester
+
+Kjør før utrulling:
+
+```bash
+npm test
+npm run check
+```
+
+Testene dekker:
+
+- begge stavemåtene av Fjellhammer-spørsmålet
+- Camilla Herrems sesongstatistikk fra appens publiserte datasett
+- Linnea Aula med kortnavn, genitiv, tidligere klubb og overgang til Aker
+
+Den publiserte asset-statistikken er autoritativ for svar som skal samsvare med
+appen. Den eldre Motoko-seeden kan inneholde andre summer.
 
 ## Ingen secret-verdier
 Denne handoff-pakken inneholder ingen API-nøkler, tokens eller passord. Alle secrets hentes fra miljøvariabler ved runtime.

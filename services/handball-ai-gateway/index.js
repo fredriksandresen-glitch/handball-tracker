@@ -7,6 +7,19 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
+const {
+  extractClubFromQuestion,
+  findPlayerByTokens,
+  fuzzyMatchTeamName,
+  normalizeText,
+  resolveSeason,
+} = require('./lib/queryUnderstanding');
+const {
+  STAT_DATASETS,
+  analyzeBestAgainstTeam,
+  buildStatsDataset,
+  findBestMatchForPlayer,
+} = require('./lib/statsDataset');
 
 // ─── Candid Opt / BigInt helpers ───────────────────────────────────────────
 
@@ -16,8 +29,9 @@ function unwrapCandidOpt(value) {
 }
 
 function unwrapOptField(value) {
-  if (!Array.isArray(value) || value.length === 0) return null;
-  const v = value[0];
+  if (Array.isArray(value) && value.length === 0) return null;
+  const v = Array.isArray(value) ? value[0] : value;
+  if (v === null || v === undefined) return null;
   if (typeof v === 'bigint') {
     return v <= Number.MAX_SAFE_INTEGER ? Number(v) : String(v);
   }
@@ -30,151 +44,10 @@ function fmtEvidence(value) {
   return String(value);
 }
 
-// ─── Text normalization ────────────────────────────────────────────────────
-
-function normalizeText(text) {
-  return text
-    .toLowerCase()
-    .replace(/[æä]/g, 'ae')
-    .replace(/[øö]/g, 'oe')
-    .replace(/[å]/g, 'aa')
-    .replace(/[\s-]+/g, ' ')
-    .trim();
-}
-
-function stripGenitive(text) {
-  // Remove trailing 's (genitive) for matching
-  return text.replace(/['’]s\b/g, '').replace(/s\b/g, '');
-}
-
-function tokenize(text) {
-  return normalizeText(text).split(/\s+/).filter(t => t.length >= 2);
-}
-
-function levenshteinDistance(a, b) {
-  const matrix = [];
-  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
-  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-  for (let i = 1; i <= b.length; i++) {
-    for (let j = 1; j <= a.length; j++) {
-      matrix[i][j] = b[i - 1] === a[j - 1]
-        ? matrix[i - 1][j - 1]
-        : Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);
-    }
-  }
-  return matrix[b.length][a.length];
-}
-
-// ─── Robust player lookup ──────────────────────────────────────────────────
-
-function findPlayerByTokens(question, players) {
-  const qTokens = tokenize(question);
-  const qNormalized = normalizeText(question);
-  const qNoGen = stripGenitive(qNormalized);
-
-  let bestMatch = null;
-  let bestScore = -1;
-
-  for (const player of players) {
-    const name = player.name;
-    const nameTokens = tokenize(name);
-    const nameNormalized = normalizeText(name);
-    const nameNoGen = stripGenitive(nameNormalized);
-
-    // Score 1: Exact match (case insensitive)
-    if (qNormalized.includes(nameNormalized)) {
-      return player;
-    }
-
-    // Score 2: Match without genitive
-    if (qNormalized.includes(nameNoGen) || qNoGen.includes(nameNoGen)) {
-      return player;
-    }
-
-    // Score 3: Token overlap - require at least 2 tokens to match for multi-word names
-    const matchedTokens = nameTokens.filter(nt =>
-      qTokens.some(qt => qt.includes(nt) || nt.includes(qt) || levenshteinDistance(qt, nt) <= 1)
-    );
-
-    // Skip if not enough tokens match (require at least 2 for 3+ token names, or all for 2-token names)
-    const minRequired = nameTokens.length >= 3 ? 2 : nameTokens.length;
-    if (matchedTokens.length < minRequired) continue;
-
-    const tokenScore = matchedTokens.length / nameTokens.length;
-
-    // Score 4: Fuzzy similarity on full name
-    const dist = levenshteinDistance(qNormalized, nameNormalized);
-    const maxLen = Math.max(qNormalized.length, nameNormalized.length);
-    const fuzzyScore = maxLen > 0 ? 1 - dist / maxLen : 0;
-
-    // Combine scores - prioritize token matches
-    let score = tokenScore * 0.8 + fuzzyScore * 0.2;
-
-    // Bonus: if all matched tokens are significant (first and last name), boost score
-    if (matchedTokens.length >= 2) {
-      score += 0.2;
-    }
-
-    if (score > 0.5 && score > bestScore) {
-      bestScore = score;
-      bestMatch = player;
-    }
-  }
-
-  return bestMatch;
-}
-
-function fuzzyMatchTeamName(input, teamNames) {
-  const normalizedInput = normalizeText(input);
-  let bestMatch = null;
-  let bestScore = Infinity;
-
-  for (const name of teamNames) {
-    const normalizedName = normalizeText(name);
-    if (normalizedName === normalizedInput) return name;
-    if (normalizedName.includes(normalizedInput) || normalizedInput.includes(normalizedName)) {
-      return name;
-    }
-    const dist = levenshteinDistance(normalizedInput, normalizedName);
-    const maxLen = Math.max(normalizedInput.length, normalizedName.length);
-    const similarity = 1 - dist / maxLen;
-    if (similarity > 0.7 && dist < bestScore) {
-      bestScore = dist;
-      bestMatch = name;
-    }
-  }
-  return bestMatch;
-}
-
-// ─── Extract club from question ────────────────────────────────────────────
-
-function extractClubFromQuestion(question) {
-  const normalized = question.toLowerCase();
-
-  // Patterns for "playing FOR a club"
-  const forPatterns = [
-    /\bfor\s+([\wæøåäöü\s-]+?)(?:\s+i\s+|\s+eller\s+|\s+\?|$)/i,
-    /\bi\s+([\wæøåäöü\s-]+?)\b/i,
-    /\bspilte\s+(?:for|i)\s+([\wæøåäöü\s-]+?)(?:\s+|\?|$)/i,
-    /\bda\s+hun\s+spilte\s+(?:for|i)\s+([\wæøåäöü\s-]+?)(?:\s+|\?|$)/i,
-  ];
-
-  for (const pattern of forPatterns) {
-    const match = normalized.match(pattern);
-    if (match) {
-      const club = match[1].trim();
-      // Exclude common non-club words
-      if (!/\b(fjor|år|sesong|kamp|mål|assist|skudd|mep)\b/i.test(club)) {
-        return club;
-      }
-    }
-  }
-  return null;
-}
-
 // ─── JSON Stats Data Loader ────────────────────────────────────────────────
 
-const ICP_ASSET_BASE = 'https://hrzvs-liaaa-aaaap-qusna-cai.icp0.io/data';
+const ICP_ASSET_BASE = process.env.ICP_ASSET_BASE_URL ||
+  'https://hrzvs-liaaa-aaaap-qusna-cai.icp0.io/data';
 const LOCAL_STATS_DIR = '/tmp/handball-icp-deploy-cache/src/frontend/public/data/player-stats';
 const LOCAL_SEARCH_INDEX = '/tmp/handball-icp-deploy-cache/src/frontend/public/data/search-player-index.json';
 
@@ -184,6 +57,7 @@ let jsonStatsCache = {
   source: null,
   timestamp: 0
 };
+let jsonStatsLoadPromise = null;
 const JSON_CACHE_TTL_MS = 5 * 60 * 1000;
 
 async function fetchJson(url, timeoutMs = 15000) {
@@ -202,91 +76,37 @@ async function fetchJson(url, timeoutMs = 15000) {
 
 async function loadJsonStatsFromICP() {
   const searchIndex = await fetchJson(`${ICP_ASSET_BASE}/search-player-index.json`);
-  if (!searchIndex) return null;
+  if (!Array.isArray(searchIndex)) return null;
 
-  const playerIdToName = {};
-  for (const p of searchIndex) {
-    playerIdToName[p.id] = { name: p.name, teamName: p.teamName };
-  }
-
-  const playersById = {};
-  const allMatches = [];
-
-  const teamNames = [...new Set(searchIndex.map(p => p.teamName).filter(Boolean))];
-  const teamFiles = teamNames.map(t => {
-    const normalized = normalizeText(t).replace(/\s+/g, '');
-    return `${normalized}PlayerStats.json`;
-  });
-
-  for (const file of teamFiles) {
-    const data = await fetchJson(`${ICP_ASSET_BASE}/player-stats/${file}`);
-    if (!data) continue;
-    for (const player of data) {
-      const pid = player.playerId;
-      const playerInfo = playerIdToName[pid] || { name: 'Ukjent', teamName: 'Ukjent' };
-      if (!playersById[pid]) {
-        playersById[pid] = { playerId: pid, name: playerInfo.name, teamName: playerInfo.teamName, matches: [], seasonStats: player.seasonStats || null };
-      }
-      for (const match of player.recentMatches || []) {
-        const rec = {
-          playerId: pid, playerName: playerInfo.name, playerTeam: playerInfo.teamName,
-          date: match.date, opponent: match.opponent, homeAway: match.homeAway,
-          goals: match.goals || 0, assists: match.assists || 0, shots: match.shots || 0,
-          mep: match.mep || 0, shotPercentage: match.shotPercentage || 0, playTime: match.playTime || '00:00:00',
-          technicalErrors: match.technicalErrors || 0, suspensions: match.suspensions || 0
-        };
-        playersById[pid].matches.push(rec);
-        allMatches.push(rec);
-      }
-    }
-  }
-
-  return { playersById, allMatches, source: 'icp-asset-canister' };
+  const loadedFiles = await Promise.all(
+    STAT_DATASETS.map(async (dataset) => ({
+      ...dataset,
+      data: await fetchJson(`${ICP_ASSET_BASE}/player-stats/${dataset.file}`),
+    })),
+  );
+  const dataset = buildStatsDataset(searchIndex, loadedFiles);
+  return { ...dataset, source: 'icp-asset-canister' };
 }
 
 async function loadJsonStatsFromLocal() {
-  const playersById = {};
-  const allMatches = [];
-
   try {
-    let searchIndex = [];
-    if (fs.existsSync(LOCAL_SEARCH_INDEX)) {
-      searchIndex = JSON.parse(fs.readFileSync(LOCAL_SEARCH_INDEX, 'utf8'));
-    }
-    const playerIdToName = {};
-    for (const p of searchIndex) {
-      playerIdToName[p.id] = { name: p.name, teamName: p.teamName };
-    }
-
-    if (fs.existsSync(LOCAL_STATS_DIR)) {
-      const files = fs.readdirSync(LOCAL_STATS_DIR).filter(f => f.endsWith('PlayerStats.json'));
-      for (const file of files) {
-        const data = JSON.parse(fs.readFileSync(path.join(LOCAL_STATS_DIR, file), 'utf8'));
-        for (const player of data) {
-          const pid = player.playerId;
-          const playerInfo = playerIdToName[pid] || { name: 'Ukjent', teamName: 'Ukjent' };
-          if (!playersById[pid]) {
-            playersById[pid] = { playerId: pid, name: playerInfo.name, teamName: playerInfo.teamName, matches: [], seasonStats: player.seasonStats || null };
-          }
-          for (const match of player.recentMatches || []) {
-            const rec = {
-              playerId: pid, playerName: playerInfo.name, playerTeam: playerInfo.teamName,
-              date: match.date, opponent: match.opponent, homeAway: match.homeAway,
-              goals: match.goals || 0, assists: match.assists || 0, shots: match.shots || 0,
-              mep: match.mep || 0, shotPercentage: match.shotPercentage || 0, playTime: match.playTime || '00:00:00',
-              technicalErrors: match.technicalErrors || 0, suspensions: match.suspensions || 0
-            };
-            playersById[pid].matches.push(rec);
-            allMatches.push(rec);
-          }
-        }
-      }
-    }
+    if (!fs.existsSync(LOCAL_SEARCH_INDEX)) return null;
+    const searchIndex = JSON.parse(fs.readFileSync(LOCAL_SEARCH_INDEX, 'utf8'));
+    const loadedFiles = STAT_DATASETS.map((dataset) => {
+      const filePath = path.join(LOCAL_STATS_DIR, dataset.file);
+      return {
+        ...dataset,
+        data: fs.existsSync(filePath)
+          ? JSON.parse(fs.readFileSync(filePath, 'utf8'))
+          : null,
+      };
+    });
+    const dataset = buildStatsDataset(searchIndex, loadedFiles);
+    return { ...dataset, source: 'local-deploy-cache' };
   } catch (err) {
     console.error('Local fallback failed:', err.message);
+    return null;
   }
-
-  return { playersById, allMatches, source: 'local-deploy-cache' };
 }
 
 async function loadJsonStats() {
@@ -294,92 +114,28 @@ async function loadJsonStats() {
   if (now - jsonStatsCache.timestamp < JSON_CACHE_TTL_MS && jsonStatsCache.playersById) {
     return jsonStatsCache;
   }
+  if (jsonStatsLoadPromise) return jsonStatsLoadPromise;
 
-  let result = await loadJsonStatsFromICP();
-  if (!result || Object.keys(result.playersById).length === 0) {
-    console.log('[stats] ICP asset canister unavailable, using local fallback');
-    result = await loadJsonStatsFromLocal();
-  } else {
-    console.log('[stats] Loaded from ICP asset canister');
-  }
-
-  jsonStatsCache = { ...result, timestamp: now };
-  return jsonStatsCache;
-}
-
-function resolveSeason(question, contextSeason) {
-  const normalized = question.toLowerCase();
-  const seasonPatterns = [
-    { pattern: /2025[-/]26|2025\/26/, season: '2025-26' },
-    { pattern: /2026[-/]27|2026\/27/, season: '2026-27' },
-    { pattern: /2024[-/]25|2024\/25/, season: '2024-25' }
-  ];
-  for (const { pattern, season } of seasonPatterns) {
-    if (pattern.test(normalized)) return season;
-  }
-  if (contextSeason === '2026-27') {
-    if (/\bi fjor\b|\bforrige sesong\b|\bsist sesong\b|\bsiste sesong\b|\bi fjorårets?\b/.test(normalized)) {
-      return '2025-26';
+  jsonStatsLoadPromise = (async () => {
+    let result = await loadJsonStatsFromICP();
+    if (!result || Object.keys(result.playersById).length === 0) {
+      console.log('[stats] ICP asset canister unavailable, using local fallback');
+      result = await loadJsonStatsFromLocal();
+    } else {
+      console.log('[stats] Loaded from ICP asset canister');
     }
+
+    jsonStatsCache = result
+      ? { ...result, timestamp: Date.now() }
+      : { playersById: {}, allMatches: [], source: 'none', timestamp: Date.now() };
+    return jsonStatsCache;
+  })();
+
+  try {
+    return await jsonStatsLoadPromise;
+  } finally {
+    jsonStatsLoadPromise = null;
   }
-  return contextSeason || '2025-26';
-}
-
-// ─── Analysis functions ────────────────────────────────────────────────────
-
-function analyzeBestAgainstTeam(opponentTeam, allMatches) {
-  const relevantMatches = allMatches.filter(m =>
-    normalizeText(m.opponent) === normalizeText(opponentTeam)
-  );
-  if (relevantMatches.length === 0) {
-    return { found: false, reason: `Ingen kamper mot ${opponentTeam} funnet i datasettet.` };
-  }
-
-  const playerStats = {};
-  for (const match of relevantMatches) {
-    const pid = match.playerId;
-    if (!playerStats[pid]) {
-      playerStats[pid] = {
-        playerId: pid, playerName: match.playerName, playerTeam: match.playerTeam,
-        matches: 0, totalMep: 0, totalGoals: 0, totalAssists: 0, totalShots: 0
-      };
-    }
-    playerStats[pid].matches++;
-    playerStats[pid].totalMep += match.mep;
-    playerStats[pid].totalGoals += match.goals;
-    playerStats[pid].totalAssists += match.assists;
-    playerStats[pid].totalShots += match.shots;
-  }
-
-  const rankings = Object.values(playerStats).map(p => ({
-    ...p,
-    avgMep: p.matches > 0 ? Math.round((p.totalMep / p.matches) * 100) / 100 : 0
-  }));
-  rankings.sort((a, b) => b.totalMep - a.totalMep);
-
-  return {
-    found: true, opponentTeam, totalMatches: relevantMatches.length,
-    rankings: rankings.slice(0, 10), topPlayer: rankings[0] || null
-  };
-}
-
-function findBestMatchForPlayer(playerId, clubName, allMatches) {
-  let playerMatches = allMatches.filter(m => m.playerId === playerId);
-
-  if (clubName) {
-    // Filter to matches where player represented this club
-    playerMatches = playerMatches.filter(m =>
-      normalizeText(m.playerTeam) === normalizeText(clubName)
-    );
-  }
-
-  if (playerMatches.length === 0) {
-    return null;
-  }
-
-  // Sort by MEP descending
-  playerMatches.sort((a, b) => b.mep - a.mep);
-  return playerMatches[0];
 }
 
 // ─── Deterministic answer builders ─────────────────────────────────────────
@@ -437,7 +193,28 @@ function buildPlayerStatsAnswer(player, stat, teams, requestedSeason) {
   return answer;
 }
 
-function buildBestMatchAnswer(playerName, bestMatch, seasonStats, currentTeamName, previousTeamName, isTransferQuestion) {
+function buildJsonPlayerStatsAnswer(player, requestedSeason) {
+  const stats = player.seasonStats;
+  const statsSeason = player.season;
+  let answer = `${player.name} representerte ${player.seasonTeamName} i ${statsSeason}.\n\n`;
+
+  if (requestedSeason !== statsSeason) {
+    answer += `Det finnes ennå ingen kampstatistikk for ${requestedSeason}. `;
+    answer += `Siste tilgjengelige sesong er ${statsSeason}:\n`;
+  } else {
+    answer += `Sesongstatistikk ${statsSeason}:\n`;
+  }
+
+  answer += `- Kamper: ${stats.matches ?? 0}\n`;
+  answer += `- Mål: ${stats.goals ?? 0}\n`;
+  answer += `- Assist: ${stats.assists ?? 0}\n`;
+  answer += `- Skudd: ${stats.shots ?? 0}\n`;
+  answer += `- Målprosent: ${stats.shotPercentage ?? 0}%\n`;
+  answer += `- Samlet MEP: ${stats.mepTotal ?? 0}\n`;
+  return answer;
+}
+
+function buildBestMatchAnswer(playerName, bestMatch, seasonStats, statsSeason, currentTeamName, previousTeamName, isTransferQuestion) {
   let answer = '';
 
   // Part 1: Best match
@@ -458,7 +235,7 @@ function buildBestMatchAnswer(playerName, bestMatch, seasonStats, currentTeamNam
   // Part 2: Season stats
   if (seasonStats) {
     const ss = typeof seasonStats === 'object' && !Array.isArray(seasonStats) ? seasonStats : {};
-    answer += `\nSesongstatistikk for ${previousTeamName} (2025-26):\n`;
+    answer += `\nSesongstatistikk for ${previousTeamName} (${statsSeason}):\n`;
     answer += `- Kamper: ${ss.matches || 'N/A'}\n`;
     answer += `- Mål: ${ss.goals || 0}\n`;
     answer += `- Skudd: ${ss.shots || 0}${ss.shotPercentage ? ' (' + ss.shotPercentage + '%)' : ''}\n`;
@@ -523,7 +300,7 @@ async function callAiModel(systemPrompt, userPrompt) {
       'Authorization': `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: 'kimi-k3',
+      model: process.env.MOONSHOT_MODEL || 'kimi-k3',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
@@ -548,13 +325,19 @@ async function callAiModel(systemPrompt, userPrompt) {
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.set('trust proxy', 1);
 
-const ALLOWED_ORIGINS = [
+const DEFAULT_ALLOWED_ORIGINS = [
   'https://hrzvs-liaaa-aaaap-qusna-cai.icp0.io',
   'https://hrzvs-liaaa-aaaap-qusna-cai.raw.icp0.io',
   'http://localhost:5173',
-  'http://localhost:3000'
+  'http://127.0.0.1:5173',
+  'http://localhost:4173',
+  'http://127.0.0.1:4173'
 ];
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim()).filter(Boolean)
+  : DEFAULT_ALLOWED_ORIGINS;
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -584,16 +367,16 @@ const limiter = rateLimit({
   windowMs: 1 * 60 * 1000,
   max: 30,
   standardHeaders: true,
-  legacyHeaders: false,
-  keyGenerator: (req) => req.ip || 'unknown'
+  legacyHeaders: false
 });
 app.use(limiter);
 
 app.use(express.json({ limit: '32kb' }));
 
 // ICP Backend setup
-const BACKEND_CANISTER_ID = 'lj6bx-dyaaa-aaaap-qumhq-cai';
-const ICP_HOST = 'https://icp-api.io';
+const BACKEND_CANISTER_ID = process.env.ICP_BACKEND_CANISTER_ID ||
+  'lj6bx-dyaaa-aaaap-qumhq-cai';
+const ICP_HOST = process.env.ICP_HOST || 'https://icp-api.io';
 
 const idlFactory = ({ IDL }) => {
   const Position = IDL.Variant({
@@ -757,60 +540,45 @@ app.post('/v1/handball/chat', async (req, res) => {
 
       deterministicAnswer = buildBestAgainstAnswer(analysis);
     } else {
-      // ─── Player lookup (with robust token matching) ───────────────────
+      // ─── Player lookup ────────────────────────────────────────────────
       analysisMode = 'player-lookup';
       let targetPlayer = null;
+      const jsonPlayers = Object.values(playersById).map(player => ({
+        ...player,
+        id: player.playerId
+      }));
 
       // Try entity hints first
       if (context && context.entities) {
         for (const entity of context.entities) {
           if (entity.type === 'player' && entity.id) {
-            targetPlayer = players.find(p => String(p.id) === String(entity.id));
+            targetPlayer = jsonPlayers.find(player => String(player.id) === String(entity.id)) ||
+              players.find(player => String(player.id) === String(entity.id));
+            if (targetPlayer) break;
           }
         }
       }
 
-      // Robust token-based matching
       const isBestMatchQuestion = /\bbeste\s+kamp\b|\bbest\s+kamp\b/i.test(question);
-
       if (!targetPlayer) {
-        // For "best match for club" questions, search ONLY in JSON stats (not ICP)
-        if (isBestMatchQuestion && extractedClub && playersById && Object.keys(playersById).length > 0) {
-          console.log('[DEBUG] isBestMatchQuestion=true, extractedClub=' + extractedClub + ', playersById count=' + Object.keys(playersById).length);
-          const jsonPlayersList = Object.values(playersById).map(jp => ({ name: jp.name, id: jp.playerId }));
-          console.log('[DEBUG] jsonPlayersList has', jsonPlayersList.length, 'players');
-          console.log('[DEBUG] Linnea in list:', jsonPlayersList.find(p => p.name.includes('Linnea')));
-          const jsonMatch = findPlayerByTokens(question, jsonPlayersList);
-          console.log('[DEBUG] findPlayerByTokens result:', jsonMatch ? jsonMatch.name : 'null');
-          if (jsonMatch) {
-            targetPlayer = { id: jsonMatch.id, name: jsonMatch.name, teamId: 0, position: { Bakspiller: null }, slug: '', isActive: true };
-          }
-        }
-        // For other questions, search JSON stats first, then ICP
-        else if (playersById && Object.keys(playersById).length > 0) {
-          const jsonPlayersList = Object.values(playersById).map(jp => ({ name: jp.name, id: jp.playerId }));
-          const jsonMatch = findPlayerByTokens(question, jsonPlayersList);
-          if (jsonMatch) {
-            targetPlayer = { id: jsonMatch.id, name: jsonMatch.name, teamId: 0, position: { Bakspiller: null }, slug: '', isActive: true };
-          }
-          // Fallback to ICP players if no JSON match
-          if (!targetPlayer) {
-            targetPlayer = findPlayerByTokens(question, players);
-          }
-        } else {
-          targetPlayer = findPlayerByTokens(question, players);
-        }
+        targetPlayer = findPlayerByTokens(question, jsonPlayers) ||
+          findPlayerByTokens(question, players);
       }
 
       if (targetPlayer) {
         const isTransferQuestion = /\bbytte\b|\bovergang\b|\baker\b/i.test(question);
+        const playerId = String(targetPlayer.id);
+        const jsonPlayerData = playersById[playerId] || null;
 
         if (isBestMatchQuestion && extractedClub) {
           analysisMode = 'deterministic-best-match';
-
-          // Find best match for this player in the specified club
-          const playerId = String(targetPlayer.id);
-          const bestMatch = findBestMatchForPlayer(playerId, extractedClub, allMatches);
+          const seasonTeamNames = [...new Set(
+            jsonPlayers.map(player => player.seasonTeamName).filter(Boolean)
+          )];
+          const previousTeamName = fuzzyMatchTeamName(extractedClub, seasonTeamNames);
+          const bestMatch = previousTeamName
+            ? findBestMatchForPlayer(playerId, previousTeamName, allMatches)
+            : null;
 
           if (!bestMatch) {
             return res.json({
@@ -822,29 +590,11 @@ app.post('/v1/handball/chat', async (req, res) => {
             });
           }
 
-          // Get season stats from JSON data
-          const jsonPlayerData = playersById[playerId];
           const seasonStatsData = jsonPlayerData ? jsonPlayerData.seasonStats : null;
-
-          // Determine current team from search index or ICP
-          let currentTeamName = null;
-          let previousTeamName = extractedClub;
-
-          // Try to find current team from ICP data
-          const playerFromICP = players.find(p => String(p.id) === playerId);
-          if (playerFromICP) {
-            const team = teams.find(t => t.id === playerFromICP.teamId);
-            if (team) currentTeamName = team.name;
-          }
-
-          // Fallback to JSON data for team info
-          if (!currentTeamName && jsonPlayerData) {
-            currentTeamName = jsonPlayerData.teamName;
-            if (currentTeamName === previousTeamName) {
-              // Player hasn't moved, no transfer to evaluate
-              currentTeamName = null;
-            }
-          }
+          const currentTeamName = jsonPlayerData?.currentTeamName &&
+            normalizeText(jsonPlayerData.currentTeamName) !== normalizeText(previousTeamName)
+            ? jsonPlayerData.currentTeamName
+            : null;
 
           evidence.push({
             label: `Beste kamp for ${previousTeamName}`,
@@ -852,13 +602,20 @@ app.post('/v1/handball/chat', async (req, res) => {
             playerId: playerId
           });
           evidence.push({
-            label: 'Sesongstatistikk',
-            value: `${seasonStatsData ? (seasonStatsData.matches || 'N/A') + ' kamper' : 'N/A'}`,
+            label: 'Kampbidrag',
+            value: `${bestMatch.goals} mål, ${bestMatch.assists} assist, ${bestMatch.playTime}`,
             playerId: playerId
           });
+          if (seasonStatsData) {
+            evidence.push({
+              label: `Sesong ${jsonPlayerData.season}`,
+              value: `${seasonStatsData.matches ?? 0} kamper, ${seasonStatsData.goals ?? 0} mål`,
+              playerId: playerId
+            });
+          }
           sources.push({
             label: `Kampstatistikk fra ${dataSource === 'icp-asset-canister' ? 'ICP asset-canister' : 'lokal cache'}`,
-            method: 'player-stats/*PlayerStats.json',
+            method: `player-stats/${jsonPlayerData?.sourceFile || '*PlayerStats.json'}`,
             entityIds: [playerId],
             observedAt: new Date().toISOString()
           });
@@ -867,12 +624,27 @@ app.post('/v1/handball/chat', async (req, res) => {
             targetPlayer.name,
             bestMatch,
             seasonStatsData,
+            jsonPlayerData?.season || requestedSeason,
             currentTeamName,
             previousTeamName,
             isTransferQuestion
           );
+        } else if (jsonPlayerData?.seasonStats) {
+          analysisMode = 'deterministic-player-stats';
+          const stats = jsonPlayerData.seasonStats;
+          evidence.push({
+            label: `Sesongstatistikk ${jsonPlayerData.season}`,
+            value: `${stats.goals ?? 0} mål, ${stats.assists ?? 0} assist, ${stats.shots ?? 0} skudd`,
+            playerId
+          });
+          sources.push({
+            label: `Sesongstatistikk fra ${dataSource === 'icp-asset-canister' ? 'ICP asset-canister' : 'lokal cache'}`,
+            method: `player-stats/${jsonPlayerData.sourceFile}`,
+            entityIds: [playerId],
+            observedAt: new Date().toISOString()
+          });
+          deterministicAnswer = buildJsonPlayerStatsAnswer(jsonPlayerData, requestedSeason);
         } else {
-          // Regular player stats lookup
           let playerSeasonStat = null;
           try {
             const raw = await backend.getPlayerSeasonStats(targetPlayer.id);
@@ -966,6 +738,16 @@ Ikke finn på tall som ikke finnes i dataene.`;
   }
 });
 
+app.use((error, _req, res, next) => {
+  if (error?.message === 'Not allowed by CORS') {
+    return res.status(403).json({ error: 'Origin not allowed' });
+  }
+  return next(error);
+});
+
 app.listen(PORT, '127.0.0.1', () => {
   console.log(`Handball AI service listening on port ${PORT}`);
+  void Promise.all([loadJsonStats(), refreshCache()]).catch(error => {
+    console.error('Initial cache warmup failed:', error.message);
+  });
 });
