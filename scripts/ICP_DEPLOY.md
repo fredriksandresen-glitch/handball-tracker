@@ -15,6 +15,21 @@ Use the default quick build. It skips the slow network enrichment step, keeps
 all original and responsive player images in the asset set, and relies on the
 asset canister's content hashes so unchanged images are not uploaded.
 
+The production frontend requires the public AI gateway URL. The build writes
+it to `dist/env.json`, which the app loads at runtime:
+
+```bash
+export VITE_AI_CHAT_MODE=live
+export VITE_CLAWDBOT_AI_URL="https://your-gateway.example/v1/handball/chat"
+export VITE_AI_CHAT_REQUEST_TIMEOUT_MS=45000
+export VITE_ICP_NETWORK=ic
+export VITE_ICP_BACKEND_CANISTER_ID=lj6bx-dyaaa-aaaap-qumhq-cai
+```
+
+The deploy script stops before installation if live mode has no public HTTPS
+endpoint. Verify `src/frontend/dist/env.json` instead of searching minified
+JavaScript for the configured URL.
+
 ```bash
 EXPECTED_COMMIT=<full-commit-sha> \
 EXPECTED_BRANCH=<branch> \

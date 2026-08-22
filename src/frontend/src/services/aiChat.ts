@@ -1,13 +1,15 @@
 import type { LeagueId, SeasonId } from "../data/seasons";
+import {
+  loadRuntimeConfig,
+  type RuntimeConfig,
+} from "./runtimeConfig";
 
-const DEFAULT_TIMEOUT_MS = 45_000;
 const MAX_CONVERSATION_MESSAGES = 8;
 const MAX_CONTEXT_MESSAGE_LENGTH = 600;
 const MAX_QUESTION_LENGTH = 1_000;
 
 export type AiChatRole = "user" | "assistant";
 export type AiChatAnswerStatus = "answered" | "insufficient-data";
-export type AiChatMode = "auto" | "live" | "mock";
 
 export type AiChatConversationMessage = {
   role: AiChatRole;
@@ -148,23 +150,6 @@ async function resolveEntities(question: string): Promise<AiChatEntity[]> {
   return entities;
 }
 
-function configuredMode(): AiChatMode {
-  const value = String(import.meta.env.VITE_AI_CHAT_MODE ?? "auto");
-  return value === "live" || value === "mock" ? value : "auto";
-}
-
-function configuredEndpoint() {
-  const value = String(import.meta.env.VITE_CLAWDBOT_AI_URL ?? "").trim();
-  return value || undefined;
-}
-
-function requestTimeoutMs() {
-  const configured = Number(import.meta.env.VITE_AI_CHAT_REQUEST_TIMEOUT_MS);
-  return Number.isFinite(configured) && configured >= 5_000
-    ? configured
-    : DEFAULT_TIMEOUT_MS;
-}
-
 function trimConversation(
   conversation: AiChatConversationMessage[],
 ): AiChatConversationMessage[] {
@@ -177,6 +162,7 @@ function trimConversation(
 function createRequest(
   input: AskAiChatInput,
   entities: AiChatEntity[],
+  runtimeConfig: RuntimeConfig,
 ): AiChatRequest {
   return {
     version: 1,
@@ -192,10 +178,8 @@ function createRequest(
     },
     dataAccess: {
       provider: "icp",
-      network: String(import.meta.env.VITE_ICP_NETWORK ?? "ic"),
-      backendCanisterId:
-        String(import.meta.env.VITE_ICP_BACKEND_CANISTER_ID ?? "").trim() ||
-        undefined,
+      network: runtimeConfig.icpNetwork,
+      backendCanisterId: runtimeConfig.backendCanisterId,
       allowedQueries: [
         "getPlayers",
         "getPlayer",
@@ -327,11 +311,12 @@ function parseResponse(value: unknown): AiChatResponse {
 async function sendLiveRequest(
   endpoint: string,
   request: AiChatRequest,
+  timeoutMs: number,
 ): Promise<AiChatResponse> {
   const controller = new AbortController();
   const timeoutId = window.setTimeout(
     () => controller.abort(),
-    requestTimeoutMs(),
+    timeoutMs,
   );
 
   try {
@@ -365,8 +350,9 @@ export async function askAiChat(
   const question = input.question.trim();
   if (!question) throw new Error("Skriv et spørsmål først.");
 
-  const endpoint = configuredEndpoint();
-  const mode = configuredMode();
+  const runtimeConfig = await loadRuntimeConfig();
+  const endpoint = runtimeConfig.aiChatUrl;
+  const mode = runtimeConfig.aiChatMode;
   if (mode === "mock" || (!endpoint && mode === "auto")) {
     return mockResponse();
   }
@@ -375,5 +361,9 @@ export async function askAiChat(
   }
 
   const entities = await resolveEntities(question);
-  return sendLiveRequest(endpoint, createRequest(input, entities));
+  return sendLiveRequest(
+    endpoint,
+    createRequest(input, entities, runtimeConfig),
+    runtimeConfig.aiChatRequestTimeoutMs,
+  );
 }
