@@ -23,6 +23,7 @@ node index.js
 - `ICP_BACKEND_CANISTER_ID` (valgfritt)
 - `ICP_HOST` (valgfritt)
 - `ALLOWED_ORIGINS` (valgfri, kommaseparert liste)
+- `ARCHIVE_STANDINGS_FILE` (valgfri sti til `leagueStandingsArchive.json`)
 
 ## Offentlig endpoint-path
 ```
@@ -58,6 +59,11 @@ Testene dekker:
 
 Den publiserte asset-statistikken er autoritativ for svar som skal samsvare med
 appen. Den eldre Motoko-seeden kan inneholde andre summer.
+
+Kopier `src/frontend/src/data/leagueStandingsArchive.json` til
+`services/handball-ai-gateway/data/leagueStandingsArchive.json` i den kjørende
+gateway-mappen. Gatewayen bruker denne samme tabellfilen som frontend ved
+sammenligninger mellom spillerform og historisk lagplassering.
 
 ## Ingen secret-verdier
 Denne handoff-pakken inneholder ingen API-nøkler, tokens eller passord. Alle secrets hentes fra miljøvariabler ved runtime.

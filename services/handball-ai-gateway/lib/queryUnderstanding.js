@@ -112,6 +112,32 @@ function findPlayerFromConversation(conversation, players) {
   return null;
 }
 
+function isGroupTeamContextFollowUp(question) {
+  const normalized = normalizeText(question);
+  const referencesGroup = /\b(hvem av de|hvem av dem|hvem av disse|av de|av dem|disse spillerne)\b/.test(
+    normalized,
+  );
+  const asksForTeamContext = /\b(imponerende|lag(?:et|ets|ene|plassering)|tabellplassering)\b/.test(
+    normalized,
+  );
+  return referencesGroup && asksForTeamContext;
+}
+
+function findPreviousBestFormQuestion(conversation) {
+  if (!Array.isArray(conversation)) return null;
+
+  for (let index = conversation.length - 1; index >= 0; index -= 1) {
+    const message = conversation[index];
+    if (message?.role !== "user" || typeof message.content !== "string") {
+      continue;
+    }
+    const normalized = normalizeText(message.content);
+    if (/\bbest(?:e)? form\b/.test(normalized)) return message.content;
+  }
+
+  return null;
+}
+
 function fuzzyMatchTeamName(input, teamNames) {
   const normalizedInput = normalizeText(input);
   if (!normalizedInput) return null;
@@ -171,9 +197,11 @@ function resolveSeason(question, contextSeason) {
 
 module.exports = {
   extractClubFromQuestion,
+  findPreviousBestFormQuestion,
   findPlayerFromConversation,
   findPlayerByTokens,
   fuzzyMatchTeamName,
+  isGroupTeamContextFollowUp,
   levenshteinDistance,
   normalizeText,
   isPlayerFollowUpQuestion,

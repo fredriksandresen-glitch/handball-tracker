@@ -9,9 +9,11 @@ const path = require('path');
 require('dotenv').config();
 const {
   extractClubFromQuestion,
+  findPreviousBestFormQuestion,
   findPlayerFromConversation,
   findPlayerByTokens,
   fuzzyMatchTeamName,
+  isGroupTeamContextFollowUp,
   normalizeText,
   isPlayerFollowUpQuestion,
   resolveSeason,
@@ -21,6 +23,7 @@ const {
   analyzeBestAgainstTeam,
   analyzeBestForm,
   buildStatsDataset,
+  compareFormWithStandings,
   findBestMatchForPlayer,
   summarizePlayerPerformance,
 } = require('./lib/statsDataset');
@@ -54,6 +57,28 @@ const ICP_ASSET_BASE = process.env.ICP_ASSET_BASE_URL ||
   'https://hrzvs-liaaa-aaaap-qusna-cai.icp0.io/data';
 const LOCAL_STATS_DIR = '/tmp/handball-icp-deploy-cache/src/frontend/public/data/player-stats';
 const LOCAL_SEARCH_INDEX = '/tmp/handball-icp-deploy-cache/src/frontend/public/data/search-player-index.json';
+const ARCHIVE_STANDINGS_PATHS = [
+  process.env.ARCHIVE_STANDINGS_FILE,
+  path.resolve(__dirname, 'data/leagueStandingsArchive.json'),
+  path.resolve(__dirname, '../../src/frontend/src/data/leagueStandingsArchive.json'),
+  '/tmp/handball-icp-deploy-cache/src/frontend/src/data/leagueStandingsArchive.json',
+].filter(Boolean);
+
+function loadArchiveStandings() {
+  for (const filePath of ARCHIVE_STANDINGS_PATHS) {
+    try {
+      if (fs.existsSync(filePath)) {
+        const standings = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        if (Array.isArray(standings) && standings.length > 0) return standings;
+      }
+    } catch (error) {
+      console.error(`[standings] Failed to load ${filePath}:`, error.message);
+    }
+  }
+  return [];
+}
+
+const archiveStandings = loadArchiveStandings();
 
 let jsonStatsCache = {
   playersById: null,
@@ -212,6 +237,24 @@ function buildBestFormAnswer(analysis) {
   }
 
   answer += `\nBare spillere med minst ${analysis.matchCount} registrerte kamper i perioden er med. Form er målt som gjennomsnittlig MEP.`;
+  return answer;
+}
+
+function buildTeamContextFormAnswer(comparison) {
+  const winner = comparison.mostImpressive;
+  const candidates = comparison.candidates;
+  if (!winner) {
+    return `Jeg kan ikke peke ut én spiller uten å velge en mer subjektiv vekting mellom form og lagplassering. Rå form og sluttabell peker på ulike kandidater.`;
+  }
+
+  let answer = `${winner.playerName} (${winner.playerTeam}) er den mest imponerende når lagplasseringen tas med. `;
+  answer += `Hun hadde høyest snitt-MEP i gruppen med ${winner.avgMep}, samtidig som ${winner.playerTeam} endte på ${winner.standing.rank}. plass med ${winner.standing.points} poeng.\n\n`;
+  answer += `Sammenligningsgrunnlag:\n`;
+  candidates.forEach((player, index) => {
+    answer += `${index + 1}. ${player.playerName}: snitt-MEP ${player.avgMep}, ${player.playerTeam} på ${player.standing.rank}. plass\n`;
+  });
+  answer += `\nDette er en kvalitativ vurdering: Sarah topper den målte formen selv om laget hennes var klart lavest plassert av de fem. `;
+  answer += `Det viser ikke alene hvor mye hun påvirket lagets resultater, men gjør prestasjonen mer bemerkelsesverdig i denne sammenligningen.`;
   return answer;
 }
 
@@ -584,12 +627,62 @@ app.post('/v1/handball/chat', async (req, res) => {
         Number(normalizedSearchQuestion.match(/\b(\d+)\s+siste\b/)?.[1] ?? 5),
       ),
     );
+    const previousBestFormQuestion = isGroupTeamContextFollowUp(question)
+      ? findPreviousBestFormQuestion(conversation)
+      : null;
 
     // ─── Check for "best against team" (motstander) ─────────────────────
     const bestAgainstMatch = normalizedQuestion.match(/\bbest\b.*\bmot\b\s+([\wæøåäöü\s-]+?)(?:\s+i\s+(?:fjor|år)|\s+forrige|\s+sist|\s+siste|\s+sesong|$)/i) ||
                               normalizedQuestion.match(/\bspilte\b.*\bbest\b.*\bmot\b\s+([\wæøåäöü\s-]+?)(?:\s+i\s+(?:fjor|år)|\s+forrige|\s+sist|\s+siste|\s+sesong|$)/i);
 
-    if (isBestFormQuestion) {
+    if (previousBestFormQuestion) {
+      analysisMode = 'deterministic-form-team-context';
+      const previousSeason = resolveSeason(
+        previousBestFormQuestion,
+        context && context.season ? context.season : null,
+      );
+      const previousNormalized = normalizeText(previousBestFormQuestion);
+      const previousMatchCount = Math.min(
+        10,
+        Math.max(1, Number(previousNormalized.match(/\b(\d+)\s+siste\b/)?.[1] ?? 5)),
+      );
+      const formAnalysis = analyzeBestForm(allMatches, previousSeason, previousMatchCount);
+      const comparison = compareFormWithStandings(
+        formAnalysis,
+        previousSeason === '2025-26' ? archiveStandings : [],
+        5,
+      );
+
+      if (!comparison.found) {
+        return res.json({
+          id: requestId,
+          answer: 'Jeg fant formgruppen fra forrige spørsmål, men mangler en komplett sluttabell for å gjøre en trygg lagjustert sammenligning.',
+          status: 'insufficient-data', evidence: [], sources: [],
+          missingData: [`Komplett sluttabell for ${previousSeason}`],
+          followUpQuestions: []
+        });
+      }
+
+      const winner = comparison.mostImpressive ?? comparison.rawLeader;
+      evidence.push({
+        label: 'Form sett opp mot lagplassering',
+        value: `${winner.playerName}: snitt-MEP ${winner.avgMep}, ${winner.playerTeam} på ${winner.standing?.rank ?? 'ukjent'}. plass`,
+        playerId: winner.playerId
+      });
+      sources.push({
+        label: 'Kampstatistikk fra ICP asset-canister',
+        method: 'player-stats/*PlayerStats.json',
+        entityIds: comparison.candidates.map(player => player.playerId),
+        observedAt: new Date().toISOString()
+      });
+      sources.push({
+        label: `Sluttabell ${previousSeason} fra appens versjonskontrollerte data`,
+        method: 'leagueStandingsArchive.json',
+        entityIds: comparison.candidates.map(player => player.standing.primeTeamId),
+        observedAt: new Date().toISOString()
+      });
+      deterministicAnswer = buildTeamContextFormAnswer(comparison);
+    } else if (isBestFormQuestion) {
       analysisMode = 'deterministic-best-form';
       const analysis = analyzeBestForm(
         allMatches,

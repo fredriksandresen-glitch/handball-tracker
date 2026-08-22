@@ -270,6 +270,34 @@ function analyzeBestForm(allMatches, season, matchCount = 5) {
   };
 }
 
+function compareFormWithStandings(formAnalysis, standings, limit = 5) {
+  const standingByTeam = new Map(
+    standings.map((standing) => [normalizeText(standing.name), standing]),
+  );
+  const candidates = formAnalysis.rankings.slice(0, limit).map((player) => ({
+    ...player,
+    standing: standingByTeam.get(normalizeText(player.playerTeam)) ?? null,
+  }));
+  const candidatesWithStanding = candidates.filter((player) => player.standing);
+  const rawLeader = candidates[0] ?? null;
+  const lowestPlacedTeamPlayer = [...candidatesWithStanding].sort(
+    (left, right) =>
+      right.standing.rank - left.standing.rank || right.avgMep - left.avgMep,
+  )[0] ?? null;
+
+  return {
+    found: candidates.length > 0 && candidatesWithStanding.length === candidates.length,
+    candidates,
+    rawLeader,
+    mostImpressive:
+      rawLeader?.playerId === lowestPlacedTeamPlayer?.playerId
+        ? rawLeader
+        : null,
+    season: formAnalysis.season,
+    matchCount: formAnalysis.matchCount,
+  };
+}
+
 function findBestMatchForPlayer(playerId, clubName, allMatches) {
   return (
     allMatches
@@ -287,6 +315,7 @@ module.exports = {
   analyzeBestAgainstTeam,
   analyzeBestForm,
   buildStatsDataset,
+  compareFormWithStandings,
   findBestMatchForPlayer,
   formatPlayTime,
   parsePlayTimeSeconds,

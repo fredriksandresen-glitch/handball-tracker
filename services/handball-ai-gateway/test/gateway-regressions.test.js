@@ -5,9 +5,11 @@ const test = require("node:test");
 
 const {
   extractClubFromQuestion,
+  findPreviousBestFormQuestion,
   findPlayerFromConversation,
   findPlayerByTokens,
   fuzzyMatchTeamName,
+  isGroupTeamContextFollowUp,
   isPlayerFollowUpQuestion,
   resolveSeason,
 } = require("../lib/queryUnderstanding");
@@ -16,6 +18,7 @@ const {
   analyzeBestAgainstTeam,
   analyzeBestForm,
   buildStatsDataset,
+  compareFormWithStandings,
   findBestMatchForPlayer,
   summarizePlayerPerformance,
 } = require("../lib/statsDataset");
@@ -47,6 +50,12 @@ const loadedFiles = STAT_DATASETS.map((dataset) => ({
 }));
 const dataset = buildStatsDataset(searchIndex, loadedFiles);
 const players = Object.values(dataset.playersById);
+const archiveStandings = JSON.parse(
+  fs.readFileSync(
+    path.resolve(frontendData, "../../src/data/leagueStandingsArchive.json"),
+    "utf8",
+  ),
+);
 
 test("resolves Camilla Herrem and keeps her 2025/26 statistics", () => {
   const player = findPlayerByTokens(
@@ -167,4 +176,36 @@ test("summarizes Linnea's playing time, discipline and position comparison", () 
     value: 0.3,
   });
   assert.equal(summary.peerComparison.shotPercentage.rank, 26);
+});
+
+test("resolves a group follow-up and compares form with final standings", () => {
+  const conversation = [
+    {
+      role: "user",
+      content: "Hvem var i best form siste 5 kampene forrige sesong?",
+    },
+    {
+      role: "assistant",
+      content: "Sarah Deari Solheim toppet en liste på fem spillere.",
+    },
+  ];
+  const followUp =
+    "hvem av de er mest imponerende med tanke på laget de spiller for?";
+  const previousQuestion = findPreviousBestFormQuestion(conversation);
+  const form = analyzeBestForm(
+    dataset.allMatches,
+    resolveSeason(previousQuestion, "2026-27"),
+    5,
+  );
+  const comparison = compareFormWithStandings(form, archiveStandings, 5);
+
+  assert.equal(isGroupTeamContextFollowUp(followUp), true);
+  assert.equal(previousQuestion, conversation[0].content);
+  assert.equal(comparison.found, true);
+  assert.equal(comparison.mostImpressive.playerId, "2239828059504");
+  assert.equal(comparison.mostImpressive.standing.rank, 12);
+  assert.deepEqual(
+    comparison.candidates.map((player) => player.standing.rank),
+    [12, 3, 4, 1, 7],
+  );
 });
