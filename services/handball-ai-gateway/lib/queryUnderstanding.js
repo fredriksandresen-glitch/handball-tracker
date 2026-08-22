@@ -91,6 +91,27 @@ function findPlayerByTokens(question, players) {
   return ranked[0].player;
 }
 
+function isPlayerFollowUpQuestion(question) {
+  return /\b(hun|henne|hennes|spilleren|overgangen)\b|\b(mer|mere)\s+detaljert\b|\butdyp/i.test(
+    String(question ?? ""),
+  );
+}
+
+function findPlayerFromConversation(conversation, players) {
+  if (!Array.isArray(conversation)) return null;
+
+  for (let index = conversation.length - 1; index >= 0; index -= 1) {
+    const message = conversation[index];
+    if (message?.role !== "user" || typeof message.content !== "string") {
+      continue;
+    }
+    const player = findPlayerByTokens(message.content, players);
+    if (player) return player;
+  }
+
+  return null;
+}
+
 function fuzzyMatchTeamName(input, teamNames) {
   const normalizedInput = normalizeText(input);
   if (!normalizedInput) return null;
@@ -138,7 +159,7 @@ function resolveSeason(question, contextSeason) {
 
   if (
     contextSeason === "2026-27" &&
-    /\bi fjor\b|\bforr?i?g(?:e|ie) sesong\b|\bsist(?:e)? sesong\b|\bfjorårets?\b/.test(
+    /\bi fjor\b|\bforr?i?g(?:e|ie) sesong\b|\bsist(?:e)? sesong\b|\bfjorårets?\b|\bfjorårs(?:sesong(?:en)?|statistikk(?:en)?)?\b/.test(
       normalized,
     )
   ) {
@@ -150,10 +171,12 @@ function resolveSeason(question, contextSeason) {
 
 module.exports = {
   extractClubFromQuestion,
+  findPlayerFromConversation,
   findPlayerByTokens,
   fuzzyMatchTeamName,
   levenshteinDistance,
   normalizeText,
+  isPlayerFollowUpQuestion,
   resolveSeason,
   tokenize,
 };

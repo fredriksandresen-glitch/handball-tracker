@@ -33,6 +33,7 @@ function buildStatsDataset(searchIndex, loadedFiles) {
         playerId,
         name: indexedPlayer?.name ?? "Ukjent",
         currentTeamName: indexedPlayer?.teamName ?? null,
+        position: indexedPlayer?.position ?? null,
         seasonTeamName: teamName,
         season,
         sourceFile: file,
@@ -54,6 +55,8 @@ function buildStatsDataset(searchIndex, loadedFiles) {
           mep: match.mep ?? 0,
           technicalErrors: match.technicalErrors ?? 0,
           suspensions: match.suspensions ?? 0,
+          warnings: match.warnings ?? 0,
+          redCards: match.redCards ?? 0,
         };
         player.matches.push(normalizedMatch);
         allMatches.push(normalizedMatch);
@@ -64,6 +67,107 @@ function buildStatsDataset(searchIndex, loadedFiles) {
   }
 
   return { allMatches, playersById };
+}
+
+function parsePlayTimeSeconds(value) {
+  const parts = String(value ?? "")
+    .split(":")
+    .map((part) => Number(part));
+  if (parts.length !== 3 || parts.some((part) => !Number.isFinite(part))) {
+    return 0;
+  }
+  return parts[0] * 3600 + parts[1] * 60 + parts[2];
+}
+
+function formatPlayTime(totalSeconds) {
+  const seconds = Math.max(0, Math.round(totalSeconds));
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainder = seconds % 60;
+  return [hours, minutes, remainder]
+    .map((part) => String(part).padStart(2, "0"))
+    .join(":");
+}
+
+function competitionRank(players, playerId, readMetric) {
+  const sorted = [...players].sort(
+    (left, right) => readMetric(right) - readMetric(left),
+  );
+  const playerIndex = sorted.findIndex(
+    (player) => String(player.playerId) === String(playerId),
+  );
+  if (playerIndex < 0) return null;
+
+  const playerValue = readMetric(sorted[playerIndex]);
+  const rank =
+    sorted.filter((player) => readMetric(player) > playerValue).length + 1;
+  return { rank, total: sorted.length, value: playerValue };
+}
+
+function summarizePlayerPerformance(player, playersById) {
+  const matches = player?.matches ?? [];
+  const seasonStats = player?.seasonStats ?? {};
+  const totalPlayTimeSeconds = matches.reduce(
+    (sum, match) => sum + parsePlayTimeSeconds(match.playTime),
+    0,
+  );
+  const averagePlayTimeSeconds =
+    matches.length > 0 ? totalPlayTimeSeconds / matches.length : 0;
+  const sortedByMep = [...matches].sort((left, right) => right.mep - left.mep);
+  const sortedByPlayTime = [...matches].sort(
+    (left, right) =>
+      parsePlayTimeSeconds(right.playTime) - parsePlayTimeSeconds(left.playTime),
+  );
+  const eligiblePeers = Object.values(playersById).filter(
+    (candidate) =>
+      candidate.position === player.position &&
+      Number(candidate.seasonStats?.matches ?? 0) >= 5,
+  );
+
+  return {
+    matches: matches.length,
+    totalPlayTime: formatPlayTime(totalPlayTimeSeconds),
+    averagePlayTime: formatPlayTime(averagePlayTimeSeconds),
+    longestPlayTime: sortedByPlayTime[0]?.playTime ?? "00:00:00",
+    shortestPlayTime: sortedByPlayTime.at(-1)?.playTime ?? "00:00:00",
+    matchesAtLeast50Minutes: matches.filter(
+      (match) => parsePlayTimeSeconds(match.playTime) >= 50 * 60,
+    ).length,
+    warnings: matches.reduce((sum, match) => sum + (match.warnings ?? 0), 0),
+    suspensions: matches.reduce(
+      (sum, match) => sum + (match.suspensions ?? 0),
+      0,
+    ),
+    technicalErrors: matches.reduce(
+      (sum, match) => sum + (match.technicalErrors ?? 0),
+      0,
+    ),
+    redCards: matches.reduce((sum, match) => sum + (match.redCards ?? 0), 0),
+    bestMatch: sortedByMep[0] ?? null,
+    peerComparison: {
+      position: player.position,
+      minimumMatches: 5,
+      mepTotal: competitionRank(
+        eligiblePeers,
+        player.playerId,
+        (candidate) => Number(candidate.seasonStats?.mepTotal ?? 0),
+      ),
+      shotPercentage: competitionRank(
+        eligiblePeers,
+        player.playerId,
+        (candidate) => Number(candidate.seasonStats?.shotPercentage ?? 0),
+      ),
+      goalsPerMatch: competitionRank(
+        eligiblePeers,
+        player.playerId,
+        (candidate) => {
+          const stats = candidate.seasonStats ?? {};
+          return Number(stats.goals ?? 0) / Math.max(Number(stats.matches ?? 0), 1);
+        },
+      ),
+    },
+    seasonStats,
+  };
 }
 
 function analyzeBestAgainstTeam(opponentTeam, allMatches) {
@@ -184,4 +288,7 @@ module.exports = {
   analyzeBestForm,
   buildStatsDataset,
   findBestMatchForPlayer,
+  formatPlayTime,
+  parsePlayTimeSeconds,
+  summarizePlayerPerformance,
 };

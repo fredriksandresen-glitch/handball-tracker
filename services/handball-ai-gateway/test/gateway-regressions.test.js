@@ -5,8 +5,10 @@ const test = require("node:test");
 
 const {
   extractClubFromQuestion,
+  findPlayerFromConversation,
   findPlayerByTokens,
   fuzzyMatchTeamName,
+  isPlayerFollowUpQuestion,
   resolveSeason,
 } = require("../lib/queryUnderstanding");
 const {
@@ -15,6 +17,7 @@ const {
   analyzeBestForm,
   buildStatsDataset,
   findBestMatchForPlayer,
+  summarizePlayerPerformance,
 } = require("../lib/statsDataset");
 
 const frontendData = path.resolve(__dirname, "../../../src/frontend/public/data");
@@ -118,4 +121,50 @@ test("ranks the final five matches from the previous season", () => {
   assert.equal(analysis.topPlayer.avgMep, 5.74);
   assert.equal(analysis.topPlayer.totalMep, 28.7);
   assert.equal(analysis.topPlayer.totalGoals, 42);
+});
+
+test("resolves a pronoun follow-up to Linnea from conversation history", () => {
+  const question =
+    "har du en mere detaljert oppsummering? og hva tenker du om overgangen hennes til Aker?";
+  const conversation = [
+    {
+      role: "user",
+      content: "hvordan vil du oppsummere fjorårssesongen til Linnea Aula?",
+    },
+    {
+      role: "assistant",
+      content: "Linnea representerte Fjellhammer i 2025-26.",
+    },
+  ];
+
+  assert.equal(isPlayerFollowUpQuestion(question), true);
+  assert.equal(
+    resolveSeason("hvordan var fjorårssesongen?", "2026-27"),
+    "2025-26",
+  );
+  assert.equal(
+    findPlayerFromConversation(conversation, players)?.playerId,
+    "22398210032285",
+  );
+});
+
+test("summarizes Linnea's playing time, discipline and position comparison", () => {
+  const linnea = dataset.playersById["22398210032285"];
+  const summary = summarizePlayerPerformance(linnea, dataset.playersById);
+
+  assert.equal(linnea.position, "VenstreKant");
+  assert.equal(summary.totalPlayTime, "04:31:37");
+  assert.equal(summary.averagePlayTime, "00:33:57");
+  assert.equal(summary.matchesAtLeast50Minutes, 3);
+  assert.equal(summary.technicalErrors, 3);
+  assert.equal(summary.suspensions, 1);
+  assert.equal(summary.warnings, 0);
+  assert.equal(summary.redCards, 0);
+  assert.equal(summary.bestMatch.opponent, "Sola");
+  assert.deepEqual(summary.peerComparison.mepTotal, {
+    rank: 26,
+    total: 27,
+    value: 0.3,
+  });
+  assert.equal(summary.peerComparison.shotPercentage.rank, 26);
 });

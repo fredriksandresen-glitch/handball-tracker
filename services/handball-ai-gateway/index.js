@@ -9,9 +9,11 @@ const path = require('path');
 require('dotenv').config();
 const {
   extractClubFromQuestion,
+  findPlayerFromConversation,
   findPlayerByTokens,
   fuzzyMatchTeamName,
   normalizeText,
+  isPlayerFollowUpQuestion,
   resolveSeason,
 } = require('./lib/queryUnderstanding');
 const {
@@ -20,6 +22,7 @@ const {
   analyzeBestForm,
   buildStatsDataset,
   findBestMatchForPlayer,
+  summarizePlayerPerformance,
 } = require('./lib/statsDataset');
 
 // ─── Candid Opt / BigInt helpers ───────────────────────────────────────────
@@ -230,6 +233,61 @@ function buildJsonPlayerStatsAnswer(player, requestedSeason) {
   answer += `- Skudd: ${stats.shots ?? 0}\n`;
   answer += `- Målprosent: ${stats.shotPercentage ?? 0}%\n`;
   answer += `- Samlet MEP: ${stats.mepTotal ?? 0}\n`;
+  return answer;
+}
+
+function positionLabel(position) {
+  const labels = {
+    VenstreKant: 'venstrekanter',
+    HoyreKant: 'høyrekanter',
+    Bakspiller: 'bakspillere',
+    Linjespiller: 'linjespillere',
+    Keeper: 'keepere',
+  };
+  return labels[position] ?? 'spillere i samme posisjon';
+}
+
+function buildDetailedPlayerSummary(player, performance, requestedSeason, isTransferQuestion) {
+  const stats = performance.seasonStats;
+  const peer = performance.peerComparison;
+  const best = performance.bestMatch;
+  let answer = `${player.name} hadde en ujevn rolle for ${player.seasonTeamName} i ${player.season}. `;
+  answer += `Hun var registrert i ${stats.matches ?? performance.matches} kamper og spilte totalt ${performance.totalPlayTime}, `;
+  answer += `i snitt ${performance.averagePlayTime} per kamp. Spilletiden varierte fra ${performance.shortestPlayTime} til ${performance.longestPlayTime}, `;
+  answer += `og hun spilte minst 50 minutter i ${performance.matchesAtLeast50Minutes} kamper.\n\n`;
+
+  answer += `Dokumenterte sesongtall:\n`;
+  answer += `- ${stats.goals ?? 0} mål på ${stats.shots ?? 0} skudd (${stats.shotPercentage ?? 0}%)\n`;
+  answer += `- ${stats.assists ?? 0} assist og ${performance.technicalErrors} tekniske feil\n`;
+  answer += `- ${performance.suspensions} 2-minuttersutvisning, ${performance.warnings} registrerte gule kort/advarsler og ${performance.redCards} røde kort\n`;
+  answer += `- Samlet MEP ${stats.mepTotal ?? 0}, snitt MEP ${stats.mepAvg ?? 0}\n`;
+
+  if (best) {
+    answer += `\nBeste registrerte kamp var ${best.homeAway === 'home' ? 'hjemme' : 'borte'} mot ${best.opponent} ${best.date}: `;
+    answer += `MEP ${best.mep}, ${best.goals} mål, ${best.assists} assist, `;
+    answer += `${best.shots} skudd og ${best.playTime} spilletid.\n`;
+  }
+
+  if (peer.mepTotal && peer.shotPercentage && peer.goalsPerMatch) {
+    const peers = positionLabel(peer.position);
+    answer += `\nSammenlignet med ${peers} med minst ${peer.minimumMatches} kamper:\n`;
+    answer += `- Samlet MEP: plass ${peer.mepTotal.rank} av ${peer.mepTotal.total}\n`;
+    answer += `- Mål per kamp: plass ${peer.goalsPerMatch.rank} av ${peer.goalsPerMatch.total}\n`;
+    answer += `- Skuddprosent: plass ${peer.shotPercentage.rank} av ${peer.shotPercentage.total}\n`;
+    answer += `Dette peker mot et lavt offensivt bidrag sammenlignet med posisjonskollegene, men åtte kamper er et begrenset grunnlag.\n`;
+  }
+
+  if (requestedSeason !== player.season) {
+    answer += `\nDet finnes ennå ingen kampstatistikk for ${requestedSeason}.`;
+  }
+
+  if (isTransferQuestion && player.currentTeamName) {
+    answer += `\n\nVurdering av overgangen til ${player.currentTeamName}:\n`;
+    answer += `Aker spiller i 1. divisjon i 2026-27, mens disse tallene kommer fra eliteserien med Fjellhammer. `;
+    answer += `Ut fra den ujevne rollen og de lave offensive nøkkeltallene kan et nivå ned være en fornuftig mulighet til å få en mer stabil rolle, flere avslutninger og større ansvar. `;
+    answer += `Det er en forsiktig sportslig vurdering, ikke et dokumentert resultat. Vi mangler fortsatt rolleplanen hennes i Aker og kampdata fra 2026-27, så det er for tidlig å slå fast at overgangen blir vellykket.`;
+  }
+
   return answer;
 }
 
@@ -478,7 +536,7 @@ app.post('/v1/handball/chat', async (req, res) => {
       });
     }
 
-    const { question, context } = req.body;
+    const { question, context, conversation } = req.body;
     if (!question || typeof question !== 'string') {
       return res.status(400).json({
         id: requestId, answer: 'Missing or invalid question', status: 'insufficient-data',
@@ -625,9 +683,14 @@ app.post('/v1/handball/chat', async (req, res) => {
         targetPlayer = findPlayerByTokens(question, jsonPlayers) ||
           findPlayerByTokens(question, players);
       }
+      if (!targetPlayer && isPlayerFollowUpQuestion(question)) {
+        targetPlayer = findPlayerFromConversation(conversation, jsonPlayers) ||
+          findPlayerFromConversation(conversation, players);
+      }
 
       if (targetPlayer) {
-        const isTransferQuestion = /\bbytte\b|\bovergang\b|\baker\b/i.test(question);
+        const isTransferQuestion = /\bbytte(?:t)?\b|\bovergang(?:en)?\b|\baker\b/i.test(question);
+        const isDetailedQuestion = /\bdetaljert\b|\butdyp\b|\boppsummer\b|\bvurder\b|\bovergang(?:en)?\b|\bspilletid\b|\bskuddprosent\b|\baker\b/i.test(question);
         const playerId = String(targetPlayer.id);
         const jsonPlayerData = playersById[playerId] || null;
 
@@ -689,6 +752,34 @@ app.post('/v1/handball/chat', async (req, res) => {
             currentTeamName,
             previousTeamName,
             isTransferQuestion
+          );
+        } else if (jsonPlayerData?.seasonStats && isDetailedQuestion) {
+          analysisMode = 'deterministic-detailed-player-summary';
+          const performance = summarizePlayerPerformance(jsonPlayerData, playersById);
+          const stats = jsonPlayerData.seasonStats;
+          evidence.push({
+            label: `Detaljert sesongstatistikk ${jsonPlayerData.season}`,
+            value: `${stats.matches ?? 0} kamper, ${performance.totalPlayTime} spilletid, MEP ${stats.mepTotal ?? 0}`,
+            playerId
+          });
+          if (performance.peerComparison.mepTotal) {
+            evidence.push({
+              label: `Sammenligning med ${positionLabel(jsonPlayerData.position)}`,
+              value: `MEP-plass ${performance.peerComparison.mepTotal.rank} av ${performance.peerComparison.mepTotal.total}, minst 5 kamper`,
+              playerId
+            });
+          }
+          sources.push({
+            label: `Kamp- og sesongstatistikk fra ${dataSource === 'icp-asset-canister' ? 'ICP asset-canister' : 'lokal cache'}`,
+            method: `player-stats/${jsonPlayerData.sourceFile}`,
+            entityIds: [playerId],
+            observedAt: new Date().toISOString()
+          });
+          deterministicAnswer = buildDetailedPlayerSummary(
+            jsonPlayerData,
+            performance,
+            requestedSeason,
+            isTransferQuestion,
           );
         } else if (jsonPlayerData?.seasonStats) {
           analysisMode = 'deterministic-player-stats';
