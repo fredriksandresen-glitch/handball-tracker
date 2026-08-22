@@ -133,7 +133,8 @@ start_heartbeat "backend-oppgradering"
 dfx build backend --network "$NETWORK"
 dfx canister install backend \
   --network "$NETWORK" \
-  --mode upgrade
+  --mode upgrade \
+  --wasm-memory-persistence keep
 stop_heartbeat
 
 echo "Verifiserer backend-canisteren:"

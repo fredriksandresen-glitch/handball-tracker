@@ -36,7 +36,8 @@ bash scripts/deploy-icp-frontend.sh
 ## Backend only
 
 This compiles and upgrades only the existing backend canister. It never builds,
-reads, or synchronizes frontend assets.
+reads, or synchronizes frontend assets. The upgrade explicitly keeps Wasm main
+memory, as required by Motoko enhanced orthogonal persistence.
 
 ```bash
 EXPECTED_COMMIT=<full-commit-sha> \
