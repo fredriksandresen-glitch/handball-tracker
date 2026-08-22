@@ -2,18 +2,27 @@
   "version": 1,
   "summary": {
     "rosterFiles": 26,
-    "rosterEntries": 471,
+    "rosterEntries": 472,
     "distinctExternalIds": 462,
-    "canonicalPlayers": 462,
+    "canonicalPlayers": 452,
     "candidateGroups": 13,
-    "needsReview": 13,
-    "resolved": 0
+    "needsReview": 2,
+    "resolved": 11,
+    "confirmedDistinct": 1
   },
   "candidates": [
     {
       "normalizedName": "alva bjanes iversen",
-      "status": "needs-review",
+      "status": "resolved",
       "sharedNumericSuffix": "9773860",
+      "review": {
+        "decision": "same",
+        "reviewedAt": "2026-08-22",
+        "evidence": [
+          "https://www.eurohandball.com/en/player/10gfObrZqnCl6w7crZlJfQ/AlvaBjanes-Iversen/",
+          "https://www.topphandball.no/artikkel/haslum-damer/"
+        ]
+      },
       "entries": [
         {
           "externalId": "4532759773860",
@@ -27,7 +36,7 @@
         },
         {
           "externalId": "9288369773860",
-          "canonicalId": "1000227",
+          "canonicalId": "1000021",
           "names": [
             "Alva Bjanes Iversen"
           ],
@@ -39,8 +48,16 @@
     },
     {
       "normalizedName": "elisabeth hammerstad",
-      "status": "needs-review",
+      "status": "resolved",
       "sharedNumericSuffix": "8245965",
+      "review": {
+        "decision": "same",
+        "reviewedAt": "2026-08-22",
+        "evidence": [
+          "https://www.ringblad.no/elisabeth-31-er-klar-for-lokal-klubb-hun-er-en-av-verdens-beste/s/5-45-2054640",
+          "https://www.t-a.no/tarene-trillet-da-hun-ga-beskjed-jeg-gruet-meg-til-a-dele-nyheten/s/5-116-2050668"
+        ]
+      },
       "entries": [
         {
           "externalId": "5838898245965",
@@ -54,7 +71,7 @@
         },
         {
           "externalId": "9288368245965",
-          "canonicalId": "1000207",
+          "canonicalId": "1000105",
           "names": [
             "Elisabeth Hammerstad"
           ],
@@ -67,8 +84,15 @@
     },
     {
       "normalizedName": "ina jatten",
-      "status": "needs-review",
+      "status": "resolved",
       "sharedNumericSuffix": "92449679",
+      "review": {
+        "decision": "same",
+        "reviewedAt": "2026-08-22",
+        "evidence": [
+          "https://www.oa.no/kjaresteparet-ina-og-sebastian-gjenforent-i-gjovik/s/5-35-2307481"
+        ]
+      },
       "entries": [
         {
           "externalId": "2239992449679",
@@ -82,7 +106,7 @@
         },
         {
           "externalId": "9484592449679",
-          "canonicalId": "1000336",
+          "canonicalId": "1000185",
           "names": [
             "Ina Jåtten"
           ],
@@ -94,12 +118,20 @@
     },
     {
       "normalizedName": "ingeborg johanne nyborg tommervag",
-      "status": "needs-review",
+      "status": "resolved",
       "sharedNumericSuffix": "7661392",
+      "review": {
+        "decision": "same",
+        "reviewedAt": "2026-08-22",
+        "evidence": [
+          "https://www.ihf.info/about/players/profiles/90531",
+          "https://www.sbm.no/samfunnsansvar/teft/2025-vinnere-teft-stipend-idrett/"
+        ]
+      },
       "entries": [
         {
           "externalId": "5327887661392",
-          "canonicalId": "1000461",
+          "canonicalId": "1000306",
           "names": [
             "Ingeborg Johanne Nyborg Tømmervåg"
           ],
@@ -121,8 +153,16 @@
     },
     {
       "normalizedName": "julie ellingsen",
-      "status": "needs-review",
+      "status": "resolved",
       "sharedNumericSuffix": "7451210",
+      "review": {
+        "decision": "same",
+        "reviewedAt": "2026-08-22",
+        "evidence": [
+          "https://mre.no/juniorlandslagsspelar-klar-for-volda/19.26865",
+          "https://mre.no/ein-sesong-til/19.28199"
+        ]
+      },
       "entries": [
         {
           "externalId": "4416517451210",
@@ -136,7 +176,7 @@
         },
         {
           "externalId": "5327887451210",
-          "canonicalId": "1000450",
+          "canonicalId": "1000137",
           "names": [
             "Julie Ellingsen"
           ],
@@ -202,8 +242,16 @@
     },
     {
       "normalizedName": "marie elstrand munthe",
-      "status": "needs-review",
+      "status": "resolved",
       "sharedNumericSuffix": "8158679",
+      "review": {
+        "decision": "same",
+        "reviewedAt": "2026-08-22",
+        "evidence": [
+          "https://follohk-damer.topphandball.no/2024/07/07/velkommen-til-marie-elstrand-munthe/",
+          "https://haslum.topphandball.no/spillerstall"
+        ]
+      },
       "entries": [
         {
           "externalId": "2239828158679",
@@ -217,7 +265,7 @@
         },
         {
           "externalId": "9288368158679",
-          "canonicalId": "1000213",
+          "canonicalId": "1000094",
           "names": [
             "Marie Elstrand Munthe"
           ],
@@ -229,12 +277,20 @@
     },
     {
       "normalizedName": "mia lundberg lersbryggen",
-      "status": "needs-review",
+      "status": "resolved",
       "sharedNumericSuffix": "9841766",
+      "review": {
+        "decision": "same",
+        "reviewedAt": "2026-08-22",
+        "evidence": [
+          "https://www.fjellhammer.no/wp-content/uploads/sites/19/2026/02/Arsrapport-Fjellhammer-IL-2025.pdf",
+          "https://www.bskhe.no/spillerstall/spillerstall-bsk-kvinner/"
+        ]
+      },
       "entries": [
         {
           "externalId": "2239829841766",
-          "canonicalId": "1000089",
+          "canonicalId": "1000032",
           "names": [
             "Mia Lundberg Lersbryggen"
           ],
@@ -256,8 +312,16 @@
     },
     {
       "normalizedName": "oda kongssund",
-      "status": "needs-review",
+      "status": "resolved",
       "sharedNumericSuffix": "8483568",
+      "review": {
+        "decision": "same",
+        "reviewedAt": "2026-08-22",
+        "evidence": [
+          "https://www.topphandball.no/artikkel/presentasjon-dette-er-bsk-damer/",
+          "https://www.gjerpenhandball.no/2025/03/31/vi-er-klare-for-leroy-sluttspillet/"
+        ]
+      },
       "entries": [
         {
           "externalId": "2239858483568",
@@ -271,7 +335,7 @@
         },
         {
           "externalId": "4533738483568",
-          "canonicalId": "1000179",
+          "canonicalId": "1000031",
           "names": [
             "Oda Kongssund"
           ],
@@ -283,8 +347,16 @@
     },
     {
       "normalizedName": "oda olsen",
-      "status": "needs-review",
+      "status": "confirmed-distinct",
       "sharedNumericSuffix": null,
+      "review": {
+        "decision": "different",
+        "reviewedAt": "2026-08-22",
+        "evidence": [
+          "https://www.ta.no/neste-ar-mister-oda-olsen-mange-av-lagvenninnene-i-gjerpen-det-er-klart-det-er-trist/s/5-50-2289990",
+          "https://www.kv.no/oda-24-er-ikke-nadig-med-seg-selv-etter-motet-med-eliteserielaget/s/5-63-383026"
+        ]
+      },
       "entries": [
         {
           "externalId": "4416518166535",
@@ -310,8 +382,16 @@
     },
     {
       "normalizedName": "tilde amalia gronvall",
-      "status": "needs-review",
+      "status": "resolved",
       "sharedNumericSuffix": "6444370",
+      "review": {
+        "decision": "same",
+        "reviewedAt": "2026-08-22",
+        "evidence": [
+          "https://haslumbredde.topphandball.no/2024/10/25/21-juniorspillere-tatt-ut-pa-regionale-landslagssamlinger/",
+          "https://aasane.topphandball.no/spillerstall/spillerstall-kvinner/"
+        ]
+      },
       "entries": [
         {
           "externalId": "4532756444370",
@@ -325,7 +405,7 @@
         },
         {
           "externalId": "9288366444370",
-          "canonicalId": "1000230",
+          "canonicalId": "1000020",
           "names": [
             "Tilde Amalia Grönvall"
           ],
@@ -337,8 +417,16 @@
     },
     {
       "normalizedName": "vilde refsland",
-      "status": "needs-review",
+      "status": "resolved",
       "sharedNumericSuffix": "8471849",
+      "review": {
+        "decision": "same",
+        "reviewedAt": "2026-08-22",
+        "evidence": [
+          "https://www.sola-hk.no/vilde-refsland-klar-for-sola-hk/",
+          "https://www.topphandball.no/artikkel/stavanger/"
+        ]
+      },
       "entries": [
         {
           "externalId": "2239838471849",
@@ -352,7 +440,7 @@
         },
         {
           "externalId": "2245078471849",
-          "canonicalId": "1000378",
+          "canonicalId": "1000360",
           "names": [
             "Vilde Refsland"
           ],

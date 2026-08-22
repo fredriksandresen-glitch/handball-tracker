@@ -199,6 +199,10 @@
         {
           "source": "club-roster",
           "externalId": "4532756444370"
+        },
+        {
+          "source": "club-roster",
+          "externalId": "9288366444370"
         }
       ]
     },
@@ -209,6 +213,10 @@
         {
           "source": "club-roster",
           "externalId": "4532759773860"
+        },
+        {
+          "source": "club-roster",
+          "externalId": "9288369773860"
         }
       ]
     },
@@ -309,6 +317,10 @@
         {
           "source": "club-roster",
           "externalId": "2239858483568"
+        },
+        {
+          "source": "club-roster",
+          "externalId": "4533738483568"
         }
       ]
     },
@@ -316,6 +328,10 @@
       "canonicalId": "1000032",
       "displayName": "Mia Lundberg Lersbryggen",
       "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2239829841766"
+        },
         {
           "source": "club-roster",
           "externalId": "2239859841766"
@@ -883,16 +899,6 @@
       ]
     },
     {
-      "canonicalId": "1000089",
-      "displayName": "Mia Lundberg Lersbryggen",
-      "aliases": [
-        {
-          "source": "club-roster",
-          "externalId": "2239829841766"
-        }
-      ]
-    },
-    {
       "canonicalId": "1000090",
       "displayName": "Sara Ashuri",
       "aliases": [
@@ -939,6 +945,10 @@
         {
           "source": "club-roster",
           "externalId": "2239828158679"
+        },
+        {
+          "source": "club-roster",
+          "externalId": "9288368158679"
         }
       ]
     },
@@ -1049,6 +1059,10 @@
         {
           "source": "club-roster",
           "externalId": "5838898245965"
+        },
+        {
+          "source": "club-roster",
+          "externalId": "9288368245965"
         }
       ]
     },
@@ -1369,6 +1383,10 @@
         {
           "source": "club-roster",
           "externalId": "4416517451210"
+        },
+        {
+          "source": "club-roster",
+          "externalId": "5327887451210"
         }
       ]
     },
@@ -1783,16 +1801,6 @@
       ]
     },
     {
-      "canonicalId": "1000179",
-      "displayName": "Oda Kongssund",
-      "aliases": [
-        {
-          "source": "club-roster",
-          "externalId": "4533738483568"
-        }
-      ]
-    },
-    {
       "canonicalId": "1000180",
       "displayName": "Kaja Stavdal Bækkevar",
       "aliases": [
@@ -1849,6 +1857,10 @@
         {
           "source": "club-roster",
           "externalId": "2239992449679"
+        },
+        {
+          "source": "club-roster",
+          "externalId": "9484592449679"
         }
       ]
     },
@@ -2063,16 +2075,6 @@
       ]
     },
     {
-      "canonicalId": "1000207",
-      "displayName": "Elisabeth Hammerstad",
-      "aliases": [
-        {
-          "source": "club-roster",
-          "externalId": "9288368245965"
-        }
-      ]
-    },
-    {
       "canonicalId": "1000208",
       "displayName": "Rikke Camilla Johansson",
       "aliases": [
@@ -2119,16 +2121,6 @@
         {
           "source": "club-roster",
           "externalId": "9288368145983"
-        }
-      ]
-    },
-    {
-      "canonicalId": "1000213",
-      "displayName": "Marie Elstrand Munthe",
-      "aliases": [
-        {
-          "source": "club-roster",
-          "externalId": "9288368158679"
         }
       ]
     },
@@ -2263,16 +2255,6 @@
       ]
     },
     {
-      "canonicalId": "1000227",
-      "displayName": "Alva Bjanes Iversen",
-      "aliases": [
-        {
-          "source": "club-roster",
-          "externalId": "9288369773860"
-        }
-      ]
-    },
-    {
       "canonicalId": "1000228",
       "displayName": "Guro Skålevåg",
       "aliases": [
@@ -2289,16 +2271,6 @@
         {
           "source": "club-roster",
           "externalId": "9288367721030"
-        }
-      ]
-    },
-    {
-      "canonicalId": "1000230",
-      "displayName": "Tilde Amalia Grönvall",
-      "aliases": [
-        {
-          "source": "club-roster",
-          "externalId": "9288366444370"
         }
       ]
     },
@@ -3058,6 +3030,10 @@
       "aliases": [
         {
           "source": "club-roster",
+          "externalId": "5327887661392"
+        },
+        {
+          "source": "club-roster",
           "externalId": "7757897661392"
         }
       ]
@@ -3353,16 +3329,6 @@
       ]
     },
     {
-      "canonicalId": "1000336",
-      "displayName": "Ina Jåtten",
-      "aliases": [
-        {
-          "source": "club-roster",
-          "externalId": "9484592449679"
-        }
-      ]
-    },
-    {
       "canonicalId": "1000337",
       "displayName": "Mia Kvarme",
       "aliases": [
@@ -3599,6 +3565,10 @@
         {
           "source": "club-roster",
           "externalId": "2239838471849"
+        },
+        {
+          "source": "club-roster",
+          "externalId": "2245078471849"
         }
       ]
     },
@@ -3769,16 +3739,6 @@
         {
           "source": "club-roster",
           "externalId": "22450710197090"
-        }
-      ]
-    },
-    {
-      "canonicalId": "1000378",
-      "displayName": "Vilde Refsland",
-      "aliases": [
-        {
-          "source": "club-roster",
-          "externalId": "2245078471849"
         }
       ]
     },
@@ -4493,16 +4453,6 @@
       ]
     },
     {
-      "canonicalId": "1000450",
-      "displayName": "Julie Ellingsen",
-      "aliases": [
-        {
-          "source": "club-roster",
-          "externalId": "5327887451210"
-        }
-      ]
-    },
-    {
       "canonicalId": "1000451",
       "displayName": "Aurora Hjelseth-Steen",
       "aliases": [
@@ -4603,16 +4553,6 @@
       ]
     },
     {
-      "canonicalId": "1000461",
-      "displayName": "Ingeborg Johanne Nyborg Tømmervåg",
-      "aliases": [
-        {
-          "source": "club-roster",
-          "externalId": "5327887661392"
-        }
-      ]
-    },
-    {
       "canonicalId": "1000462",
       "displayName": "Mia Hjertø Alagic",
       "aliases": [
@@ -4623,5 +4563,16 @@
       ]
     }
   ],
-  "redirects": {}
+  "redirects": {
+    "1000089": "1000032",
+    "1000179": "1000031",
+    "1000207": "1000105",
+    "1000213": "1000094",
+    "1000227": "1000021",
+    "1000230": "1000020",
+    "1000336": "1000185",
+    "1000378": "1000360",
+    "1000450": "1000137",
+    "1000461": "1000306"
+  }
 }

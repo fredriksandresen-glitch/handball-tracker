@@ -7,6 +7,7 @@ const FRONTEND_DIR = path.resolve(SCRIPT_DIR, "..");
 const DATA_DIR = path.join(FRONTEND_DIR, "src", "data");
 const REGISTRY_PATH = path.join(DATA_DIR, "playerIdentityRegistry.json");
 const CANDIDATES_PATH = path.join(DATA_DIR, "playerIdentityCandidates.json");
+const REVIEWS_PATH = path.join(DATA_DIR, "playerIdentityReviews.json");
 const CHECK_MODE = process.argv.includes("--check");
 const REGISTRY_VERSION = 1;
 const FIRST_CANONICAL_ID = 1_000_001n;
@@ -114,6 +115,62 @@ async function readRegistry() {
   return registry;
 }
 
+async function readReviews() {
+  if (!(await exists(REVIEWS_PATH))) {
+    return { version: REGISTRY_VERSION, merges: [], distinct: [] };
+  }
+
+  const reviews = JSON.parse(await readFile(REVIEWS_PATH, "utf8"));
+  if (
+    reviews.version !== REGISTRY_VERSION ||
+    !Array.isArray(reviews.merges) ||
+    !Array.isArray(reviews.distinct)
+  ) {
+    throw new Error("Invalid player identity review structure");
+  }
+  return reviews;
+}
+
+function reviewKey(externalIds) {
+  return [...externalIds].map(String).sort().join(":");
+}
+
+function validateReviews(reviews) {
+  const reviewedGroups = new Set();
+  for (const [decision, groups] of [
+    ["same", reviews.merges],
+    ["different", reviews.distinct],
+  ]) {
+    for (const group of groups) {
+      if (
+        !Array.isArray(group.externalIds) ||
+        group.externalIds.length < 2 ||
+        group.externalIds.some(
+          (externalId) => !/^\d+$/.test(String(externalId)),
+        )
+      ) {
+        throw new Error(`Invalid ${decision} identity review`);
+      }
+      if (
+        decision === "same" &&
+        (!group.currentExternalId ||
+          !group.externalIds
+            .map(String)
+            .includes(String(group.currentExternalId)))
+      ) {
+        throw new Error(
+          "Merged identity review must select a current external id",
+        );
+      }
+      const key = reviewKey(group.externalIds);
+      if (reviewedGroups.has(key)) {
+        throw new Error(`Duplicate identity review: ${key}`);
+      }
+      reviewedGroups.add(key);
+    }
+  }
+}
+
 function validateRegistry(registry) {
   const canonicalIds = new Set();
   const aliases = new Map();
@@ -208,7 +265,71 @@ function syncRegistry(registry, observations) {
   return aliases;
 }
 
-function buildCandidateReport(registry, aliases, observations, rosterFiles) {
+function applyMergeReviews(registry, reviews) {
+  for (const review of reviews.merges) {
+    const aliases = validateRegistry(registry);
+    const canonicalIds = new Set(
+      review.externalIds.map((externalId) => {
+        const canonicalId = aliases.get(
+          aliasKey(ALIAS_SOURCE, String(externalId)),
+        );
+        if (!canonicalId) {
+          throw new Error(`Reviewed alias is missing: ${externalId}`);
+        }
+        return canonicalId;
+      }),
+    );
+    if (canonicalIds.size === 1) continue;
+
+    const orderedIds = [...canonicalIds].sort(compareNumericStrings);
+    const targetId = orderedIds[0];
+    const sourceIds = new Set(orderedIds.slice(1));
+    const target = registry.players.find(
+      (player) => player.canonicalId === targetId,
+    );
+    if (!target) throw new Error(`Merge target is missing: ${targetId}`);
+
+    for (const player of registry.players) {
+      if (sourceIds.has(player.canonicalId)) {
+        target.aliases.push(...player.aliases);
+        registry.redirects[player.canonicalId] = targetId;
+      }
+    }
+    for (const [from, to] of Object.entries(registry.redirects)) {
+      if (sourceIds.has(to)) registry.redirects[from] = targetId;
+    }
+    registry.players = registry.players.filter(
+      (player) => !sourceIds.has(player.canonicalId),
+    );
+    if (review.preferredName) target.displayName = review.preferredName;
+  }
+
+  registry.players.sort((left, right) =>
+    compareNumericStrings(left.canonicalId, right.canonicalId),
+  );
+  for (const player of registry.players) {
+    player.aliases.sort((left, right) =>
+      aliasKey(left.source, left.externalId).localeCompare(
+        aliasKey(right.source, right.externalId),
+      ),
+    );
+  }
+  return validateRegistry(registry);
+}
+
+function buildCandidateReport(
+  registry,
+  aliases,
+  observations,
+  rosterFiles,
+  reviews,
+) {
+  const mergeReviews = new Map(
+    reviews.merges.map((review) => [reviewKey(review.externalIds), review]),
+  );
+  const distinctReviews = new Map(
+    reviews.distinct.map((review) => [reviewKey(review.externalIds), review]),
+  );
   const observationsByName = new Map();
   for (const observation of observations) {
     const normalizedName = normalizeName(observation.name);
@@ -249,11 +370,28 @@ function buildCandidateReport(registry, aliases, observations, rosterFiles) {
       .sort((left, right) => left.externalId.localeCompare(right.externalId));
     const canonicalIds = new Set(entries.map((entry) => entry.canonicalId));
     const suffix = sharedSuffix(entries.map((entry) => entry.externalId));
+    const key = reviewKey(entries.map((entry) => entry.externalId));
+    const review = mergeReviews.get(key) ?? distinctReviews.get(key);
+    const status =
+      canonicalIds.size === 1
+        ? "resolved"
+        : distinctReviews.has(key)
+          ? "confirmed-distinct"
+          : "needs-review";
 
     candidates.push({
       normalizedName,
-      status: canonicalIds.size === 1 ? "resolved" : "needs-review",
+      status,
       sharedNumericSuffix: suffix.length >= 5 ? suffix : null,
+      ...(review
+        ? {
+            review: {
+              decision: distinctReviews.has(key) ? "different" : "same",
+              reviewedAt: review.reviewedAt,
+              evidence: review.evidence ?? [],
+            },
+          }
+        : {}),
       entries,
     });
   }
@@ -277,6 +415,9 @@ function buildCandidateReport(registry, aliases, observations, rosterFiles) {
       candidateGroups: candidates.length,
       needsReview,
       resolved: candidates.length - needsReview,
+      confirmedDistinct: candidates.filter(
+        (candidate) => candidate.status === "confirmed-distinct",
+      ).length,
     },
     candidates,
   };
@@ -301,12 +442,16 @@ async function verifyOrWrite(filePath, expected) {
 
 const { observations, rosterFiles } = await readRosterObservations();
 const registry = await readRegistry();
-const aliases = syncRegistry(registry, observations);
+const reviews = await readReviews();
+validateReviews(reviews);
+syncRegistry(registry, observations);
+const aliases = applyMergeReviews(registry, reviews);
 const report = buildCandidateReport(
   registry,
   aliases,
   observations,
   rosterFiles,
+  reviews,
 );
 
 await verifyOrWrite(REGISTRY_PATH, registry);

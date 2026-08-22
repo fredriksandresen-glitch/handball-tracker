@@ -1,0 +1,114 @@
+{
+  "version": 1,
+  "merges": [
+    {
+      "preferredName": "Alva Bjanes Iversen",
+      "externalIds": ["4532759773860", "9288369773860"],
+      "currentExternalId": "9288369773860",
+      "reviewedAt": "2026-08-22",
+      "evidence": [
+        "https://www.eurohandball.com/en/player/10gfObrZqnCl6w7crZlJfQ/AlvaBjanes-Iversen/",
+        "https://www.topphandball.no/artikkel/haslum-damer/"
+      ]
+    },
+    {
+      "preferredName": "Elisabeth Hammerstad",
+      "externalIds": ["5838898245965", "9288368245965"],
+      "currentExternalId": "9288368245965",
+      "reviewedAt": "2026-08-22",
+      "evidence": [
+        "https://www.ringblad.no/elisabeth-31-er-klar-for-lokal-klubb-hun-er-en-av-verdens-beste/s/5-45-2054640",
+        "https://www.t-a.no/tarene-trillet-da-hun-ga-beskjed-jeg-gruet-meg-til-a-dele-nyheten/s/5-116-2050668"
+      ]
+    },
+    {
+      "preferredName": "Ina Jåtten",
+      "externalIds": ["2239992449679", "9484592449679"],
+      "currentExternalId": "2239992449679",
+      "reviewedAt": "2026-08-22",
+      "evidence": [
+        "https://www.oa.no/kjaresteparet-ina-og-sebastian-gjenforent-i-gjovik/s/5-35-2307481"
+      ]
+    },
+    {
+      "preferredName": "Ingeborg Johanne Nyborg Tømmervåg",
+      "externalIds": ["5327887661392", "7757897661392"],
+      "currentExternalId": "7757897661392",
+      "reviewedAt": "2026-08-22",
+      "evidence": [
+        "https://www.ihf.info/about/players/profiles/90531",
+        "https://www.sbm.no/samfunnsansvar/teft/2025-vinnere-teft-stipend-idrett/"
+      ]
+    },
+    {
+      "preferredName": "Julie Ellingsen",
+      "externalIds": ["4416517451210", "5327887451210"],
+      "currentExternalId": "5327887451210",
+      "reviewedAt": "2026-08-22",
+      "evidence": [
+        "https://mre.no/juniorlandslagsspelar-klar-for-volda/19.26865",
+        "https://mre.no/ein-sesong-til/19.28199"
+      ]
+    },
+    {
+      "preferredName": "Marie Elstrand Munthe",
+      "externalIds": ["2239828158679", "9288368158679"],
+      "currentExternalId": "9288368158679",
+      "reviewedAt": "2026-08-22",
+      "evidence": [
+        "https://follohk-damer.topphandball.no/2024/07/07/velkommen-til-marie-elstrand-munthe/",
+        "https://haslum.topphandball.no/spillerstall"
+      ]
+    },
+    {
+      "preferredName": "Mia Lundberg Lersbryggen",
+      "externalIds": ["2239829841766", "2239859841766"],
+      "currentExternalId": "2239859841766",
+      "reviewedAt": "2026-08-22",
+      "evidence": [
+        "https://www.fjellhammer.no/wp-content/uploads/sites/19/2026/02/Arsrapport-Fjellhammer-IL-2025.pdf",
+        "https://www.bskhe.no/spillerstall/spillerstall-bsk-kvinner/"
+      ]
+    },
+    {
+      "preferredName": "Oda Kongssund",
+      "externalIds": ["2239858483568", "4533738483568"],
+      "currentExternalId": "2239858483568",
+      "reviewedAt": "2026-08-22",
+      "evidence": [
+        "https://www.topphandball.no/artikkel/presentasjon-dette-er-bsk-damer/",
+        "https://www.gjerpenhandball.no/2025/03/31/vi-er-klare-for-leroy-sluttspillet/"
+      ]
+    },
+    {
+      "preferredName": "Tilde Amalia Grönvall",
+      "externalIds": ["4532756444370", "9288366444370"],
+      "currentExternalId": "9288366444370",
+      "reviewedAt": "2026-08-22",
+      "evidence": [
+        "https://haslumbredde.topphandball.no/2024/10/25/21-juniorspillere-tatt-ut-pa-regionale-landslagssamlinger/",
+        "https://aasane.topphandball.no/spillerstall/spillerstall-kvinner/"
+      ]
+    },
+    {
+      "preferredName": "Vilde Refsland",
+      "externalIds": ["2239838471849", "2245078471849"],
+      "currentExternalId": "2239838471849",
+      "reviewedAt": "2026-08-22",
+      "evidence": [
+        "https://www.sola-hk.no/vilde-refsland-klar-for-sola-hk/",
+        "https://www.topphandball.no/artikkel/stavanger/"
+      ]
+    }
+  ],
+  "distinct": [
+    {
+      "externalIds": ["4416518166535", "4533736762572"],
+      "reviewedAt": "2026-08-22",
+      "evidence": [
+        "https://www.ta.no/neste-ar-mister-oda-olsen-mange-av-lagvenninnene-i-gjerpen-det-er-klart-det-er-trist/s/5-50-2289990",
+        "https://www.kv.no/oda-24-er-ikke-nadig-med-seg-selv-etter-motet-med-eliteserielaget/s/5-63-383026"
+      ]
+    }
+  ]
+}

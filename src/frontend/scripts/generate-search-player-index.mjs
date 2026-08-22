@@ -118,6 +118,13 @@ function createInsight(stats = {}) {
 }
 
 const imageManifest = readJson("playerImageManifest.json");
+const identityReviews = readJson("playerIdentityReviews.json");
+const currentExternalIdByAlias = new Map();
+for (const review of identityReviews.merges) {
+  for (const externalId of review.externalIds) {
+    currentExternalIdByAlias.set(String(externalId), review.currentExternalId);
+  }
+}
 const entriesById = new Map();
 
 for (const [teamName, rosterFile, statsFile] of teams) {
@@ -151,12 +158,17 @@ for (const [teamName, rosterFile, statsFile] of teams) {
 }
 
 const searchIndex = [...entriesById.values()].flatMap((entries) => {
+  const preferredExternalId = currentExternalIdByAlias.get(entries[0]?.id);
+  if (preferredExternalId && preferredExternalId !== entries[0]?.id) return [];
   const insight = createInsight(entries[0]?.stats);
-  return entries.map(({ stats: _stats, rawPosition, ...entry }) => ({
-    ...entry,
-    searchText: `${entry.name} ${entry.teamName} ${rawPosition}`.toLowerCase(),
-    insight,
-  }));
+  return entries
+    .slice(0, 1)
+    .map(({ stats: _stats, rawPosition, ...entry }) => ({
+      ...entry,
+      searchText:
+        `${entry.name} ${entry.teamName} ${rawPosition}`.toLowerCase(),
+      insight,
+    }));
 });
 
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
