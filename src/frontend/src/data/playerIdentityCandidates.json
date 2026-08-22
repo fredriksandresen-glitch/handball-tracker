@@ -1,0 +1,366 @@
+{
+  "version": 1,
+  "summary": {
+    "rosterFiles": 26,
+    "rosterEntries": 471,
+    "distinctExternalIds": 462,
+    "canonicalPlayers": 462,
+    "candidateGroups": 13,
+    "needsReview": 13,
+    "resolved": 0
+  },
+  "candidates": [
+    {
+      "normalizedName": "alva bjanes iversen",
+      "status": "needs-review",
+      "sharedNumericSuffix": "9773860",
+      "entries": [
+        {
+          "externalId": "4532759773860",
+          "canonicalId": "1000021",
+          "names": [
+            "Alva Bjanes Iversen"
+          ],
+          "rosterFiles": [
+            "asaneRoster.json"
+          ]
+        },
+        {
+          "externalId": "9288369773860",
+          "canonicalId": "1000227",
+          "names": [
+            "Alva Bjanes Iversen"
+          ],
+          "rosterFiles": [
+            "haslumRoster.json"
+          ]
+        }
+      ]
+    },
+    {
+      "normalizedName": "elisabeth hammerstad",
+      "status": "needs-review",
+      "sharedNumericSuffix": "8245965",
+      "entries": [
+        {
+          "externalId": "5838898245965",
+          "canonicalId": "1000105",
+          "names": [
+            "Elisabeth Hammerstad"
+          ],
+          "rosterFiles": [
+            "folloRoster.json"
+          ]
+        },
+        {
+          "externalId": "9288368245965",
+          "canonicalId": "1000207",
+          "names": [
+            "Elisabeth Hammerstad"
+          ],
+          "rosterFiles": [
+            "haslumCurrentRoster.json",
+            "haslumRoster.json"
+          ]
+        }
+      ]
+    },
+    {
+      "normalizedName": "ina jatten",
+      "status": "needs-review",
+      "sharedNumericSuffix": "92449679",
+      "entries": [
+        {
+          "externalId": "2239992449679",
+          "canonicalId": "1000185",
+          "names": [
+            "Ina Jåtten"
+          ],
+          "rosterFiles": [
+            "gjovikRoster.json"
+          ]
+        },
+        {
+          "externalId": "9484592449679",
+          "canonicalId": "1000336",
+          "names": [
+            "Ina Jåtten"
+          ],
+          "rosterFiles": [
+            "ravensRoster.json"
+          ]
+        }
+      ]
+    },
+    {
+      "normalizedName": "ingeborg johanne nyborg tommervag",
+      "status": "needs-review",
+      "sharedNumericSuffix": "7661392",
+      "entries": [
+        {
+          "externalId": "5327887661392",
+          "canonicalId": "1000461",
+          "names": [
+            "Ingeborg Johanne Nyborg Tømmervåg"
+          ],
+          "rosterFiles": [
+            "voldaRoster.json"
+          ]
+        },
+        {
+          "externalId": "7757897661392",
+          "canonicalId": "1000306",
+          "names": [
+            "Ingeborg Johanne Nyborg Tømmervåg"
+          ],
+          "rosterFiles": [
+            "moldeRoster.json"
+          ]
+        }
+      ]
+    },
+    {
+      "normalizedName": "julie ellingsen",
+      "status": "needs-review",
+      "sharedNumericSuffix": "7451210",
+      "entries": [
+        {
+          "externalId": "4416517451210",
+          "canonicalId": "1000137",
+          "names": [
+            "Julie Ellingsen"
+          ],
+          "rosterFiles": [
+            "fredrikstadRoster.json"
+          ]
+        },
+        {
+          "externalId": "5327887451210",
+          "canonicalId": "1000450",
+          "names": [
+            "Julie Ellingsen"
+          ],
+          "rosterFiles": [
+            "voldaRoster.json"
+          ]
+        }
+      ]
+    },
+    {
+      "normalizedName": "kine hauge kvalsund",
+      "status": "needs-review",
+      "sharedNumericSuffix": "6743267",
+      "entries": [
+        {
+          "externalId": "2239946743267",
+          "canonicalId": "1000253",
+          "names": [
+            "Kine Hauge Kvalsund"
+          ],
+          "rosterFiles": [
+            "larvikRoster.json"
+          ]
+        },
+        {
+          "externalId": "5321366743267",
+          "canonicalId": "1000434",
+          "names": [
+            "Kine Hauge Kvalsund"
+          ],
+          "rosterFiles": [
+            "utleiraRoster.json"
+          ]
+        }
+      ]
+    },
+    {
+      "normalizedName": "line strand larsen",
+      "status": "needs-review",
+      "sharedNumericSuffix": "9273036",
+      "entries": [
+        {
+          "externalId": "5327889273036",
+          "canonicalId": "1000460",
+          "names": [
+            "Line Strand-Larsen"
+          ],
+          "rosterFiles": [
+            "voldaRoster.json"
+          ]
+        },
+        {
+          "externalId": "5838899273036",
+          "canonicalId": "1000122",
+          "names": [
+            "Line Strand-Larsen"
+          ],
+          "rosterFiles": [
+            "folloRoster.json"
+          ]
+        }
+      ]
+    },
+    {
+      "normalizedName": "marie elstrand munthe",
+      "status": "needs-review",
+      "sharedNumericSuffix": "8158679",
+      "entries": [
+        {
+          "externalId": "2239828158679",
+          "canonicalId": "1000094",
+          "names": [
+            "Marie Elstrand Munthe"
+          ],
+          "rosterFiles": [
+            "fjellhammerRoster.json"
+          ]
+        },
+        {
+          "externalId": "9288368158679",
+          "canonicalId": "1000213",
+          "names": [
+            "Marie Elstrand Munthe"
+          ],
+          "rosterFiles": [
+            "haslumCurrentRoster.json"
+          ]
+        }
+      ]
+    },
+    {
+      "normalizedName": "mia lundberg lersbryggen",
+      "status": "needs-review",
+      "sharedNumericSuffix": "9841766",
+      "entries": [
+        {
+          "externalId": "2239829841766",
+          "canonicalId": "1000089",
+          "names": [
+            "Mia Lundberg Lersbryggen"
+          ],
+          "rosterFiles": [
+            "fjellhammerRoster.json"
+          ]
+        },
+        {
+          "externalId": "2239859841766",
+          "canonicalId": "1000032",
+          "names": [
+            "Mia Lundberg Lersbryggen"
+          ],
+          "rosterFiles": [
+            "baekkelagetRoster.json"
+          ]
+        }
+      ]
+    },
+    {
+      "normalizedName": "oda kongssund",
+      "status": "needs-review",
+      "sharedNumericSuffix": "8483568",
+      "entries": [
+        {
+          "externalId": "2239858483568",
+          "canonicalId": "1000031",
+          "names": [
+            "Oda Kongssund"
+          ],
+          "rosterFiles": [
+            "baekkelagetRoster.json"
+          ]
+        },
+        {
+          "externalId": "4533738483568",
+          "canonicalId": "1000179",
+          "names": [
+            "Oda Kongssund"
+          ],
+          "rosterFiles": [
+            "gjerpenRoster.json"
+          ]
+        }
+      ]
+    },
+    {
+      "normalizedName": "oda olsen",
+      "status": "needs-review",
+      "sharedNumericSuffix": null,
+      "entries": [
+        {
+          "externalId": "4416518166535",
+          "canonicalId": "1000141",
+          "names": [
+            "Oda Olsen"
+          ],
+          "rosterFiles": [
+            "fredrikstadRoster.json"
+          ]
+        },
+        {
+          "externalId": "4533736762572",
+          "canonicalId": "1000163",
+          "names": [
+            "Oda Olsen"
+          ],
+          "rosterFiles": [
+            "gjerpenRoster.json"
+          ]
+        }
+      ]
+    },
+    {
+      "normalizedName": "tilde amalia gronvall",
+      "status": "needs-review",
+      "sharedNumericSuffix": "6444370",
+      "entries": [
+        {
+          "externalId": "4532756444370",
+          "canonicalId": "1000020",
+          "names": [
+            "Tilde Amalia Grönvall"
+          ],
+          "rosterFiles": [
+            "asaneRoster.json"
+          ]
+        },
+        {
+          "externalId": "9288366444370",
+          "canonicalId": "1000230",
+          "names": [
+            "Tilde Amalia Grönvall"
+          ],
+          "rosterFiles": [
+            "haslumRoster.json"
+          ]
+        }
+      ]
+    },
+    {
+      "normalizedName": "vilde refsland",
+      "status": "needs-review",
+      "sharedNumericSuffix": "8471849",
+      "entries": [
+        {
+          "externalId": "2239838471849",
+          "canonicalId": "1000360",
+          "names": [
+            "Vilde Refsland"
+          ],
+          "rosterFiles": [
+            "solaRoster.json"
+          ]
+        },
+        {
+          "externalId": "2245078471849",
+          "canonicalId": "1000378",
+          "names": [
+            "Vilde Refsland"
+          ],
+          "rosterFiles": [
+            "stavangerRoster.json"
+          ]
+        }
+      ]
+    }
+  ]
+}
