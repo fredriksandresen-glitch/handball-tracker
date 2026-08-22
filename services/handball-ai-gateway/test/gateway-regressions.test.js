@@ -25,6 +25,8 @@ const {
   findBestMatchForPlayer,
   summarizePlayerPerformance,
 } = require("../lib/statsDataset");
+const { buildComparisonReport } = require("../lib/comparisonReport");
+const { createComparisonPdf } = require("../lib/comparisonPdf");
 
 const frontendData = path.resolve(__dirname, "../../../src/frontend/public/data");
 const searchIndex = JSON.parse(
@@ -275,4 +277,39 @@ test("understands direct and conversational best-form variants", () => {
   const analysis = analyzeBestForm(dataset.allMatches, "2025-26", 5);
   assert.equal(analysis.topPlayer.playerName, "Sarah Deari Solheim");
   assert.equal(analysis.rankings.slice(0, 5).length, 5);
+});
+
+test("builds a role-aware comparison report from match-level data", () => {
+  const report = buildComparisonReport({
+    playerIds: ["2239826783348", "2239826764122"],
+    playersById: dataset.playersById,
+    season: "2025-26",
+    league: "elite",
+    standings: archiveStandings,
+    generatedAt: "2026-08-22T12:00:00.000Z",
+  });
+
+  assert.equal(report.players.length, 2);
+  assert.equal(report.comparison.samePosition, true);
+  assert.equal(report.players[0].name, "My Lervold");
+  assert.equal(report.players[0].metrics.games, 23);
+  assert.equal(report.players[0].metrics.goals, 55);
+  assert.equal(report.players[0].metrics.recentMatches.length, 5);
+  assert.equal(report.players[0].peerSampleSize >= 5, true);
+  assert.equal(report.comparison.leaders.length, 6);
+});
+
+test("renders the comparison report as a valid PDF", async () => {
+  const report = buildComparisonReport({
+    playerIds: ["2239826783348", "2239826764122"],
+    playersById: dataset.playersById,
+    season: "2025-26",
+    league: "elite",
+    standings: archiveStandings,
+    generatedAt: "2026-08-22T12:00:00.000Z",
+  });
+  const pdf = await createComparisonPdf(report);
+
+  assert.equal(pdf.subarray(0, 5).toString(), "%PDF-");
+  assert.equal(pdf.length > 10_000, true);
 });

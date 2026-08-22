@@ -9,6 +9,8 @@ import {
   BarChart3,
   CalendarDays,
   ChevronDown,
+  FileDown,
+  LoaderCircle,
   Search,
   Shield,
   Target,
@@ -48,6 +50,7 @@ import {
   mapClawdbotSeasonStats,
   type EnrichedPlayerMatchStats,
 } from "../services/clawdbotPlayerProfile";
+import { downloadComparisonReport } from "../services/comparisonReports";
 import type {
   Player,
   PlayerMatchStats,
@@ -617,13 +620,19 @@ function MatchHistory({
 function PlayerComparison({
   player,
   seasonStats,
+  season,
+  league,
 }: {
   player: Player;
   seasonStats: PlayerSeasonStats | null | undefined;
+  season: SeasonId;
+  league: LeagueId;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [reportLoading, setReportLoading] = useState(false);
+  const [reportError, setReportError] = useState<string | null>(null);
 
   const candidates = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -806,6 +815,7 @@ function PlayerComparison({
                 setIsOpen(false);
                 setQuery("");
                 setSelectedId(null);
+                setReportError(null);
               }}
               className="size-9 rounded-full border border-border bg-background/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
               aria-label="Lukk sammenligning"
@@ -937,6 +947,46 @@ function PlayerComparison({
                   </div>
                 );
               })}
+            </div>
+
+            <div className="border-t border-border bg-muted/15 p-4">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full justify-center"
+                disabled={reportLoading}
+                onClick={async () => {
+                  setReportLoading(true);
+                  setReportError(null);
+                  try {
+                    await downloadComparisonReport({
+                      playerIds: [player.id.toString(), selected.player.id.toString()],
+                      season,
+                      league,
+                    });
+                  } catch (error) {
+                    setReportError(
+                      error instanceof Error
+                        ? error.message
+                        : "Kunne ikke lage rapporten.",
+                    );
+                  } finally {
+                    setReportLoading(false);
+                  }
+                }}
+              >
+                {reportLoading ? (
+                  <LoaderCircle className="size-4 animate-spin" />
+                ) : (
+                  <FileDown className="size-4" />
+                )}
+                {reportLoading ? "Lager dybderapport..." : "Last ned dybderapport"}
+              </Button>
+              {reportError && (
+                <p className="mt-2 text-center text-xs text-destructive" role="alert">
+                  {reportError}
+                </p>
+              )}
             </div>
           </>
         ) : (
@@ -1079,7 +1129,12 @@ export default function PlayerPage() {
             Spilleren har ingen registrert lagtilknytning eller statistikk for {season.label}.
           </div>
         )}
-        <PlayerComparison player={player} seasonStats={visibleSeasonStats} />
+        <PlayerComparison
+          player={player}
+          seasonStats={visibleSeasonStats}
+          season={seasonId}
+          league={leagueId}
+        />
         <FormOverview player={player} stats={matchStats} />
 
         <Tabs active={activeTab} onChange={setActiveTab} />

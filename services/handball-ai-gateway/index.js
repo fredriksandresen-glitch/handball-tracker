@@ -31,6 +31,8 @@ const {
   findSeasonSegment,
   summarizePlayerPerformance,
 } = require('./lib/statsDataset');
+const { buildComparisonReport } = require('./lib/comparisonReport');
+const { createComparisonPdf } = require('./lib/comparisonPdf');
 
 // ─── Candid Opt / BigInt helpers ───────────────────────────────────────────
 
@@ -586,6 +588,57 @@ async function refreshCache() {
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+async function prepareComparisonReport(req) {
+  const body = req.body && typeof req.body === 'object' ? req.body : {};
+  const season = body.season === '2026-27' ? '2026-27' : '2025-26';
+  const league = body.league === 'first-division'
+    ? 'first-division'
+    : 'elite';
+  const { playersById, source } = await loadJsonStats();
+  const report = buildComparisonReport({
+    playerIds: body.playerIds,
+    playersById,
+    season,
+    league,
+    standings: archiveStandings,
+  });
+  return { report, source };
+}
+
+app.post('/v1/handball/comparisons', async (req, res) => {
+  try {
+    const { report, source } = await prepareComparisonReport(req);
+    res.json({ ...report, dataSource: source });
+  } catch (error) {
+    res.status(400).json({
+      error: 'comparison-report-unavailable',
+      message: error.message,
+    });
+  }
+});
+
+app.post('/v1/handball/reports/player-comparison.pdf', async (req, res) => {
+  try {
+    const { report } = await prepareComparisonReport(req);
+    const pdf = await createComparisonPdf(report);
+    const filename = `handball-tracker-${report.season}-spillersammenligning.pdf`;
+    res
+      .status(200)
+      .set({
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Content-Length': String(pdf.length),
+        'Cache-Control': 'no-store',
+      })
+      .send(pdf);
+  } catch (error) {
+    res.status(400).json({
+      error: 'comparison-report-unavailable',
+      message: error.message,
+    });
+  }
 });
 
 // Main chat endpoint

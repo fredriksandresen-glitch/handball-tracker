@@ -28,6 +28,8 @@ node index.js
 ## Offentlig endpoint-path
 ```
 POST /v1/handball/chat
+POST /v1/handball/comparisons
+POST /v1/handball/reports/player-comparison.pdf
 GET  /health
 ```
 
@@ -37,9 +39,9 @@ GET  /health
 | Frontend | `hrzvs-liaaa-aaaap-qusna-cai` |
 | Backend | `lj6bx-dyaaa-aaaap-qumhq-cai` |
 
-## SHA-256 for kjørende index.js
+## SHA-256 for versjonskontrollert index.js
 ```
-355acf22cf0b26c8bb3120498f44a361b8430ac3fbd74ef7c2448807caa84671
+0c8ca726fb5b73755f73487785923f4ddc275131adb351ad115007794bb42c58
 ```
 
 ## Regresjonstester
@@ -56,6 +58,11 @@ Testene dekker:
 - begge stavemåtene av Fjellhammer-spørsmålet
 - Camilla Herrems sesongstatistikk fra appens publiserte datasett
 - Linnea Aula med kortnavn, genitiv, tidligere klubb og overgang til Aker
+- rollejustert spillersammenligning og gyldig PDF-generering
+
+PDF-rapporten bruker `pdfkit`, som installeres av vanlig `npm ci`. Rapporten
+beregnes deterministisk fra kampdata og kaller ikke Moonshot. Frontend bruker
+samme offentlige gateway-base som AI-chatten og bytter bare endpoint-path.
 
 Den publiserte asset-statistikken er autoritativ for svar som skal samsvare med
 appen. Den eldre Motoko-seeden kan inneholde andre summer.
