@@ -14,9 +14,11 @@ const {
   fuzzyMatchTeamName,
   isBestFormQuestion,
   isComparisonReportFollowUp,
+  isDetailedPlayerQuestion,
   isGroupTeamContextFollowUp,
   isPreviousSeasonFormFollowUp,
   isPlayerFollowUpQuestion,
+  isRecruitmentQuestion,
   resolveSeason,
 } = require("../lib/queryUnderstanding");
 const {
@@ -25,6 +27,7 @@ const {
   analyzeBestAgainstTeam,
   analyzeBestForm,
   analyzeLatestTeamMatch,
+  analyzeRecruitmentCandidates,
   buildStatsDataset,
   compareFormWithStandings,
   findBestMatchForPlayer,
@@ -32,6 +35,10 @@ const {
 } = require("../lib/statsDataset");
 const { buildComparisonReport } = require("../lib/comparisonReport");
 const { createComparisonPdf } = require("../lib/comparisonPdf");
+const {
+  buildRecruitmentFallbackAnswer,
+  buildRecruitmentModelPrompts,
+} = require("../lib/recruitmentAnalysis");
 const {
   buildComparisonFallbackAnswer,
   buildComparisonModelPrompts,
@@ -187,6 +194,7 @@ test("resolves a pronoun follow-up to Linnea from conversation history", () => {
   ];
 
   assert.equal(isPlayerFollowUpQuestion(question), true);
+  assert.equal(isDetailedPlayerQuestion(question), true);
   assert.equal(
     resolveSeason("hvordan var fjorårssesongen?", "2026-27"),
     "2025-26",
@@ -194,6 +202,24 @@ test("resolves a pronoun follow-up to Linnea from conversation history", () => {
   assert.equal(
     findPlayerFromConversation(conversation, players)?.playerId,
     "22398210032285",
+  );
+});
+
+test("treats a same-position follow-up as a detailed player question", () => {
+  const question =
+    "hvordan gjorde hun det sammenlignet med andre i samme posisjon?";
+  const conversation = [
+    {
+      role: "user",
+      content:
+        "hvordan gikk det med marthe bjørnson ulvåknippa forrige sesong?",
+    },
+  ];
+
+  assert.equal(isPlayerFollowUpQuestion(question), true);
+  assert.equal(
+    findPlayerFromConversation(conversation, players)?.playerId,
+    "2239827495091",
   );
 });
 
@@ -446,6 +472,34 @@ test("resolves a PDF follow-up to the previous comparison request", () => {
     findPreviousComparisonQuestion(conversation),
     conversation[0].content,
   );
+});
+
+test("builds a grounded wing recruitment shortlist for misspelled questions", () => {
+  const question =
+    "hvilkrn kantspillere anbegfaller du at kontakte for rekryttering?";
+  const analysis = analyzeRecruitmentCandidates(dataset.playersById, {
+    season: "2025-26",
+    minimumGames: 4,
+  });
+  const fallback = buildRecruitmentFallbackAnswer(analysis);
+  const prompts = buildRecruitmentModelPrompts({
+    question,
+    conversation: [],
+    analysis,
+  });
+
+  assert.equal(isRecruitmentQuestion(question), true);
+  assert.equal(analysis.found, true);
+  assert.equal(analysis.minimumGames, 4);
+  assert.equal(analysis.byLeague.elite.length > 0, true);
+  assert.equal(analysis.byLeague["first-division"].length > 0, true);
+  assert.equal(
+    analysis.candidates.every((candidate) => candidate.matches >= 4),
+    true,
+  );
+  assert.match(fallback, /prestasjonsbasert shortlist/i);
+  assert.match(prompts.systemPrompt, /kontrakt/i);
+  assert.match(prompts.userPrompt, /Kontrollert kandidatgrunnlag/);
 });
 
 test("builds a role-aware comparison report from match-level data", () => {

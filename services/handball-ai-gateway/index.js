@@ -18,8 +18,10 @@ const {
   fuzzyMatchTeamName,
   isBestFormQuestion,
   isComparisonReportFollowUp,
+  isDetailedPlayerQuestion,
   isGroupTeamContextFollowUp,
   isPreviousSeasonFormFollowUp,
+  isRecruitmentQuestion,
   normalizeText,
   isPlayerFollowUpQuestion,
   resolveSeason,
@@ -30,6 +32,7 @@ const {
   analyzeBestPlayerForTeam,
   analyzeBestForm,
   analyzeLatestTeamMatch,
+  analyzeRecruitmentCandidates,
   buildStatsDataset,
   compareFormWithStandings,
   findBestMatchForPlayer,
@@ -46,6 +49,10 @@ const {
   findUnsupportedNumberTokens,
   isTeammatePositionComparisonQuestion,
 } = require('./lib/hybridAnalysis');
+const {
+  buildRecruitmentFallbackAnswer,
+  buildRecruitmentModelPrompts,
+} = require('./lib/recruitmentAnalysis');
 
 // ─── Candid Opt / BigInt helpers ───────────────────────────────────────────
 
@@ -808,6 +815,7 @@ app.post('/v1/handball/chat', async (req, res) => {
       mentionedTeam &&
         /\bbest(?:e)?\s+spiller(?:en)?\b/.test(normalizedSearchQuestion),
     );
+    const asksForRecruitment = isRecruitmentQuestion(question);
 
     // ─── Check for "best against team" (motstander) ─────────────────────
     const bestAgainstMatch = normalizedQuestion.match(/\bbest\b.*\bmot\b\s+([\wæøåäöü\s-]+?)(?:\s+i\s+(?:fjor|år)|\s+forrige|\s+sist|\s+siste|\s+sesong|$)/i) ||
@@ -1021,6 +1029,78 @@ app.post('/v1/handball/chat', async (req, res) => {
         observedAt: new Date().toISOString(),
       });
       deterministicAnswer = buildBestTeamPlayerAnswer(analysis);
+    } else if (asksForRecruitment) {
+      analysisMode = 'hybrid-wing-recruitment';
+      const analysis = analyzeRecruitmentCandidates(playersById, {
+        season: '2025-26',
+        minimumGames: 4,
+      });
+      if (!analysis.found) {
+        return res.json({
+          id: requestId,
+          answer: 'Jeg fant ingen kantspillere med tilstrekkelig kampgrunnlag for en rekrutteringsanalyse.',
+          status: 'insufficient-data',
+          generatedByAi: false,
+          evidence: [],
+          sources: [],
+          missingData: ['Kantspillere med minst fire kamper'],
+          followUpQuestions: [],
+        });
+      }
+
+      for (const candidate of analysis.candidates) {
+        const standings = candidate.league === 'first-division'
+          ? firstDivisionArchiveStandings
+          : archiveStandings;
+        const teamName = candidate.teams[0];
+        const matchedStandingName = fuzzyMatchTeamName(
+          teamName,
+          standings.map((standing) => standing.name),
+        );
+        candidate.standing = standings.find(
+          (standing) => standing.name === matchedStandingName,
+        ) ?? null;
+      }
+
+      const fallbackAnswer = buildRecruitmentFallbackAnswer(analysis);
+      const prompts = buildRecruitmentModelPrompts({
+        question,
+        conversation,
+        analysis,
+      });
+      evidence.push({
+        label: 'Scoutinggrunnlag for kantspillere',
+        value: `${analysis.candidates.length} kandidater med minst ${analysis.minimumGames} kamper i ${analysis.season}`,
+      });
+      sources.push({
+        label: `Kampstatistikk fra ${dataSource === 'icp-asset-canister' ? 'ICP asset-canister' : 'lokal cache'}`,
+        method: 'player-stats/*PlayerStats.json',
+        entityIds: analysis.candidates.map((candidate) => candidate.playerId),
+        observedAt: new Date().toISOString(),
+      });
+
+      try {
+        modelCalled = true;
+        const modelAnswer = await callAiModel(
+          prompts.systemPrompt,
+          prompts.userPrompt,
+        );
+        const unsupportedNumbers = findUnsupportedNumberTokens(
+          modelAnswer,
+          prompts.facts,
+        );
+        if (unsupportedNumbers.length > 0) {
+          throw new Error(
+            `Grounding validation rejected numbers: ${unsupportedNumbers.join(', ')}`,
+          );
+        }
+        hybridAnswer = modelAnswer.trim();
+        hybridGeneratedByAi = true;
+      } catch (error) {
+        console.error(`[${requestId}] Recruitment model fallback:`, error.message);
+        analysisMode = 'hybrid-wing-recruitment-fallback';
+        hybridAnswer = fallbackAnswer;
+      }
     } else {
       // ─── Player lookup ────────────────────────────────────────────────
       analysisMode = 'player-lookup';
@@ -1057,7 +1137,7 @@ app.post('/v1/handball/chat', async (req, res) => {
 
       if (targetPlayer) {
         const isTransferQuestion = /\bbytte(?:t)?\b|\bovergang(?:en)?\b|\baker\b/i.test(question);
-        const isDetailedQuestion = /\bdetaljert\b|\butdyp\b|\boppsummer\b|\bvurder\b|\bovergang(?:en)?\b|\bspilletid\b|\bskuddprosent\b|\baker\b|\bhvordan\s+(?:gikk|spilte|presterte)\b/i.test(question);
+        const isDetailedQuestion = isDetailedPlayerQuestion(question);
         const isTeammateComparison =
           isTeammatePositionComparisonQuestion(question) ||
           Boolean(previousComparisonQuestion);

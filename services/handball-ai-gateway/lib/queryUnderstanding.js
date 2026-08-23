@@ -107,6 +107,13 @@ function isPlayerFollowUpQuestion(question) {
   );
 }
 
+function isDetailedPlayerQuestion(question) {
+  const normalized = normalizeText(question);
+  return /\b(detaljert|utdyp\w*|oppsummer\w*|vurder\w*|overgang\w*|spilletid|skuddprosent|aker|sammenlign\w*)\b|\bsamme posisjon\b|\bhvordan (gikk|spilte|presterte|gjorde)\b/.test(
+    normalized,
+  );
+}
+
 function findPlayerFromConversation(conversation, players) {
   if (!Array.isArray(conversation)) return null;
 
@@ -128,6 +135,19 @@ function isComparisonReportFollowUp(question) {
     /\b(pdf|rapport(?:en)?)\b/.test(normalized) &&
     /\b(send|sende|lag|lage|last|laste|naa|igjen|meg)\b/.test(normalized)
   );
+}
+
+function isRecruitmentQuestion(question) {
+  const normalized = normalizeText(question);
+  const asksForCandidate = /\b(anbef\w*|kandidat\w*|hvilk\w*)\b/.test(
+    normalized,
+  );
+  const recruitmentIntent =
+    /\b(kontakt\w*|rekrut\w*|rekryt\w*|signer\w*|hent\w*)\b/.test(
+      normalized,
+    );
+  const mentionsPlayerRole = /\b(kant\w*|spiller\w*)\b/.test(normalized);
+  return asksForCandidate && recruitmentIntent && mentionsPlayerRole;
 }
 
 function findPreviousComparisonQuestion(conversation) {
@@ -328,6 +348,8 @@ module.exports = {
   isBestFormQuestion,
   isGroupTeamContextFollowUp,
   isComparisonReportFollowUp,
+  isDetailedPlayerQuestion,
+  isRecruitmentQuestion,
   isPreviousSeasonFormFollowUp,
   levenshteinDistance,
   normalizeText,

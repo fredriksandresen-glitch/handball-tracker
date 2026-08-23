@@ -633,12 +633,97 @@ function analyzeBestPlayerForTeam(teamName, allMatches, options = {}) {
   };
 }
 
+function analyzeRecruitmentCandidates(playersById, options = {}) {
+  const season = options.season ?? "2025-26";
+  const minimumGames = options.minimumGames ?? 4;
+  const leagues = options.leagues ?? ["elite", "first-division"];
+  const candidates = [];
+
+  for (const player of Object.values(playersById)) {
+    const position = normalizeDatasetPosition(player.position);
+    if (!new Set(["VenstreKant", "HoyreKant"]).has(position)) continue;
+
+    for (const league of leagues) {
+      const segments = (player.seasonSegments ?? []).filter(
+        (segment) => segment.season === season && segment.league === league,
+      );
+      if (segments.length === 0) continue;
+
+      const stats = aggregateSeasonStats(segments);
+      if (stats.matches < minimumGames) continue;
+
+      const matches = segments.flatMap((segment) => segment.matches ?? []);
+      const recentMatches = [...matches]
+        .sort((left, right) => String(left.date).localeCompare(String(right.date)))
+        .slice(-5);
+      const totalMinutes = matches.reduce(
+        (sum, match) => sum + parsePlayTimeSeconds(match.playTime) / 60,
+        0,
+      );
+      const average = (value) =>
+        stats.matches > 0 ? round1(value / stats.matches) : 0;
+
+      candidates.push({
+        playerId: player.playerId,
+        name: player.name,
+        position,
+        league,
+        season,
+        teams: [...new Set(segments.map((segment) => segment.teamName))],
+        currentTeamName: player.currentTeamName,
+        matches: stats.matches,
+        goals: stats.goals,
+        goalsPerGame: average(stats.goals),
+        assists: stats.assists,
+        assistsPerGame: average(stats.assists),
+        shots: stats.shots,
+        shotPercentage: stats.shotPercentage,
+        technicalErrors: stats.technicalErrors,
+        suspensions: stats.suspensions,
+        mepTotal: stats.mepTotal,
+        mepPerGame: average(stats.mepTotal),
+        minutesPerGame: average(totalMinutes),
+        formLastFive:
+          recentMatches.length > 0
+            ? round1(
+                recentMatches.reduce(
+                  (sum, match) => sum + Number(match.mep ?? 0),
+                  0,
+                ) / recentMatches.length,
+              )
+            : 0,
+      });
+    }
+  }
+
+  candidates.sort(
+    (left, right) =>
+      right.mepPerGame - left.mepPerGame ||
+      right.goalsPerGame - left.goalsPerGame ||
+      right.shotPercentage - left.shotPercentage,
+  );
+
+  return {
+    found: candidates.length > 0,
+    season,
+    minimumGames,
+    candidates,
+    byLeague: Object.fromEntries(
+      leagues.map((league) => [
+        league,
+        candidates.filter((candidate) => candidate.league === league).slice(0, 8),
+      ]),
+    ),
+  };
+}
+
 module.exports = {
   STAT_DATASETS,
   analyzeBestPlayerForTeam,
   analyzeBestAgainstTeam,
   analyzeBestForm,
   analyzeLatestTeamMatch,
+  analyzeRecruitmentCandidates,
   buildStatsDataset,
   compareFormWithStandings,
   findBestMatchForPlayer,
