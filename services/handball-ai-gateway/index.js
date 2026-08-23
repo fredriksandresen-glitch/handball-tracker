@@ -1057,7 +1057,7 @@ app.post('/v1/handball/chat', async (req, res) => {
 
       if (targetPlayer) {
         const isTransferQuestion = /\bbytte(?:t)?\b|\bovergang(?:en)?\b|\baker\b/i.test(question);
-        const isDetailedQuestion = /\bdetaljert\b|\butdyp\b|\boppsummer\b|\bvurder\b|\bovergang(?:en)?\b|\bspilletid\b|\bskuddprosent\b|\baker\b/i.test(question);
+        const isDetailedQuestion = /\bdetaljert\b|\butdyp\b|\boppsummer\b|\bvurder\b|\bovergang(?:en)?\b|\bspilletid\b|\bskuddprosent\b|\baker\b|\bhvordan\s+(?:gikk|spilte|presterte)\b/i.test(question);
         const isTeammateComparison =
           isTeammatePositionComparisonQuestion(question) ||
           Boolean(previousComparisonQuestion);

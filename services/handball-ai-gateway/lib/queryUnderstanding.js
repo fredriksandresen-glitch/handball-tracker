@@ -49,6 +49,16 @@ function tokenMatches(questionToken, nameToken) {
   );
 }
 
+function fuzzySurnameMatches(questionToken, nameToken) {
+  if (tokenMatches(questionToken, nameToken)) return true;
+  if (questionToken.length < 8 || nameToken.length < 8) return false;
+
+  const distance = levenshteinDistance(questionToken, nameToken);
+  const similarity =
+    1 - distance / Math.max(questionToken.length, nameToken.length);
+  return similarity >= 0.7;
+}
+
 function findPlayerByTokens(question, players) {
   const questionTokens = tokenize(question);
   if (questionTokens.length === 0) return null;
@@ -62,7 +72,7 @@ function findPlayerByTokens(question, players) {
       tokenMatches(token, nameTokens[0]),
     );
     const lastNameMatched = questionTokens.some((token) =>
-      tokenMatches(token, nameTokens[nameTokens.length - 1]),
+      fuzzySurnameMatches(token, nameTokens[nameTokens.length - 1]),
     );
     if (!firstNameMatched || !lastNameMatched) continue;
 

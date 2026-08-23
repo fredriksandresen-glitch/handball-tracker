@@ -132,6 +132,19 @@ test("resolves Linnea Aula without confusing her with Ada Aalstad", () => {
   );
 });
 
+test("resolves Marthe Ulvaknippa despite the user's name misspelling", () => {
+  const player = findPlayerByTokens(
+    "hvordan gikk det for marte ullevålsknippa forrige sesong?",
+    players,
+  );
+
+  assert.equal(player?.playerId, "2239827495091");
+  assert.equal(player.name, "Marthe Bjørnson Ulvåknippa");
+  assert.equal(player.seasonStats.matches, 25);
+  assert.equal(player.seasonStats.goals, 58);
+  assert.equal(player.seasonStats.assists, 41);
+});
+
 test("keeps both Fjellhammer best-player spellings deterministic", () => {
   const analysis = analyzeBestAgainstTeam("Fjellhammer", dataset.allMatches);
 
