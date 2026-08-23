@@ -19,6 +19,7 @@ const {
   isPreviousSeasonFormFollowUp,
   isPlayerFollowUpQuestion,
   isRecruitmentQuestion,
+  isPositionBenchmarkQuestion,
   resolveSeason,
 } = require("../lib/queryUnderstanding");
 const {
@@ -39,6 +40,11 @@ const {
   buildRecruitmentFallbackAnswer,
   buildRecruitmentModelPrompts,
 } = require("../lib/recruitmentAnalysis");
+const {
+  buildPositionBenchmarkFacts,
+  buildPositionBenchmarkFallbackAnswer,
+  buildPositionBenchmarkModelPrompts,
+} = require("../lib/positionBenchmarkAnalysis");
 const {
   buildComparisonFallbackAnswer,
   buildComparisonModelPrompts,
@@ -205,6 +211,33 @@ test("resolves a pronoun follow-up to Linnea from conversation history", () => {
   );
 });
 
+test("builds a grounded position benchmark for Marthe", () => {
+  const marthe = dataset.playersById["2239827495091"];
+  const segmentPerformances = marthe.seasonSegments.map((segment) => ({
+    segment,
+    performance: summarizePlayerPerformance(marthe, dataset.playersById, {
+      teamName: segment.teamName,
+      league: segment.league,
+    }),
+  }));
+  const facts = buildPositionBenchmarkFacts(marthe, segmentPerformances);
+  const fallback = buildPositionBenchmarkFallbackAnswer(
+    marthe,
+    segmentPerformances,
+  );
+  const prompts = buildPositionBenchmarkModelPrompts({
+    question: "Hvordan gjorde hun det sammenlignet med andre i samme posisjon?",
+    conversation: [],
+    facts,
+  });
+
+  assert.equal(facts.segments[0].peerComparison.mepTotal.rank, 41);
+  assert.equal(facts.segments[0].peerComparison.mepTotal.total, 91);
+  assert.equal(facts.segments[0].peerComparison.shotPercentage.rank, 26);
+  assert.match(fallback, /øvre halvdel/);
+  assert.match(prompts.systemPrompt, /volum, effektivitet og samlet MEP/);
+});
+
 test("treats a same-position follow-up as a detailed player question", () => {
   const question =
     "hvordan gjorde hun det sammenlignet med andre i samme posisjon?";
@@ -217,6 +250,8 @@ test("treats a same-position follow-up as a detailed player question", () => {
   ];
 
   assert.equal(isPlayerFollowUpQuestion(question), true);
+  assert.equal(isDetailedPlayerQuestion(question), true);
+  assert.equal(isPositionBenchmarkQuestion(question), true);
   assert.equal(
     findPlayerFromConversation(conversation, players)?.playerId,
     "2239827495091",

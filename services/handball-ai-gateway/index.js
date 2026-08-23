@@ -24,6 +24,7 @@ const {
   isRecruitmentQuestion,
   normalizeText,
   isPlayerFollowUpQuestion,
+  isPositionBenchmarkQuestion,
   resolveSeason,
 } = require('./lib/queryUnderstanding');
 const {
@@ -53,6 +54,11 @@ const {
   buildRecruitmentFallbackAnswer,
   buildRecruitmentModelPrompts,
 } = require('./lib/recruitmentAnalysis');
+const {
+  buildPositionBenchmarkFacts,
+  buildPositionBenchmarkFallbackAnswer,
+  buildPositionBenchmarkModelPrompts,
+} = require('./lib/positionBenchmarkAnalysis');
 
 // ─── Candid Opt / BigInt helpers ───────────────────────────────────────────
 
@@ -1141,6 +1147,7 @@ app.post('/v1/handball/chat', async (req, res) => {
         const isTeammateComparison =
           isTeammatePositionComparisonQuestion(question) ||
           Boolean(previousComparisonQuestion);
+        const isPositionBenchmark = isPositionBenchmarkQuestion(question);
         const playerId = String(targetPlayer.id);
         const jsonPlayerData = playersById[playerId] || null;
 
@@ -1305,6 +1312,64 @@ app.post('/v1/handball/chat', async (req, res) => {
             } catch (error) {
               console.error(`[${requestId}] PDF generation failed:`, error.message);
             }
+          }
+        } else if (jsonPlayerData?.seasonStats && isPositionBenchmark) {
+          analysisMode = 'hybrid-position-benchmark';
+          const segmentPerformances = (jsonPlayerData.seasonSegments ?? []).map(
+            (segment) => ({
+              segment,
+              performance: summarizePlayerPerformance(
+                jsonPlayerData,
+                playersById,
+                { teamName: segment.teamName, league: segment.league },
+              ),
+            }),
+          );
+          const facts = buildPositionBenchmarkFacts(
+            jsonPlayerData,
+            segmentPerformances,
+          );
+          const fallbackAnswer = buildPositionBenchmarkFallbackAnswer(
+            jsonPlayerData,
+            segmentPerformances,
+          );
+          const prompts = buildPositionBenchmarkModelPrompts({
+            question,
+            conversation,
+            facts,
+          });
+          evidence.push({
+            label: `Posisjonssammenligning ${jsonPlayerData.season}`,
+            value: `${jsonPlayerData.name} mot spillere i samme posisjon med minst fem kamper`,
+            playerId,
+          });
+          sources.push({
+            label: `Kamp- og sesongstatistikk fra ${dataSource === 'icp-asset-canister' ? 'ICP asset-canister' : 'lokal cache'}`,
+            method: `player-stats/${jsonPlayerData.sourceFiles.join(',')}`,
+            entityIds: [playerId],
+            observedAt: new Date().toISOString(),
+          });
+          try {
+            modelCalled = true;
+            const modelAnswer = await callAiModel(
+              prompts.systemPrompt,
+              prompts.userPrompt,
+            );
+            const unsupportedNumbers = findUnsupportedNumberTokens(
+              modelAnswer,
+              facts,
+            );
+            if (unsupportedNumbers.length > 0) {
+              throw new Error(
+                `Grounding validation rejected numbers: ${unsupportedNumbers.join(', ')}`,
+              );
+            }
+            hybridAnswer = modelAnswer.trim();
+            hybridGeneratedByAi = true;
+          } catch (error) {
+            console.error(`[${requestId}] Position benchmark fallback:`, error.message);
+            analysisMode = 'hybrid-position-benchmark-fallback';
+            hybridAnswer = fallbackAnswer;
           }
         } else if (isBestMatchQuestion && extractedClub) {
           analysisMode = 'deterministic-best-match';

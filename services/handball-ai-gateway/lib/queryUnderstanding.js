@@ -114,6 +114,14 @@ function isDetailedPlayerQuestion(question) {
   );
 }
 
+function isPositionBenchmarkQuestion(question) {
+  const normalized = normalizeText(question);
+  return (
+    /\b(sammenlign\w*|opp mot)\b/.test(normalized) &&
+    /\b(andre|samme posisjon|posisjon\w*)\b/.test(normalized)
+  );
+}
+
 function findPlayerFromConversation(conversation, players) {
   if (!Array.isArray(conversation)) return null;
 
@@ -354,6 +362,7 @@ module.exports = {
   levenshteinDistance,
   normalizeText,
   isPlayerFollowUpQuestion,
+  isPositionBenchmarkQuestion,
   resolveSeason,
   tokenize,
 };
