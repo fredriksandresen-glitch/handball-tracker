@@ -1,45 +1,41 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { useInternetIdentity } from "@caffeineai/core-infrastructure";
+import { useActor, useInternetIdentity } from "@caffeineai/core-infrastructure";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouterState, useSearch } from "@tanstack/react-router";
 import {
   AlertCircle,
   Bot,
   Database,
   LoaderCircle,
-  RefreshCw,
+  LogIn,
+  MessageSquarePlus,
   SendHorizontal,
+  ShieldCheck,
   Sparkles,
   Trash2,
 } from "lucide-react";
-import { type FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import { normalizeLeagueId, normalizeSeasonId } from "../data/seasons";
 import {
-  type AiChatConversationMessage,
-  type AiChatResponse,
-  askAiChat,
-} from "../services/aiChat";
+  type AiMessage,
+  type AiThread,
+  createAiActor,
+} from "../services/aiBackend";
+import { resolveAiChatEntities } from "../services/aiChat";
 
 const STARTER_QUESTIONS = [
   "Hvem er i best form de siste fem kampene?",
   "Hvilke spillere har best målsnitt denne sesongen?",
-  "Hvilket lag har best målforskjell?",
-  "Oppsummer de siste kampene til Sarah Deari Solheim.",
+  "Hvilken spiller presterte best relativt til lagets plassering?",
+  "Oppsummer forrige sesong til Linnea Aula.",
 ];
 
-type ChatMessage = {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  response?: AiChatResponse;
-  isError?: boolean;
-};
-
-function Evidence({ response }: { response: AiChatResponse }) {
-  const hasEvidence = response.evidence.length > 0;
-  const hasSources = response.sources.length > 0;
-  const hasMissingData = response.missingData.length > 0;
+function Evidence({ message }: { message: AiMessage }) {
+  const hasEvidence = message.evidence.length > 0;
+  const hasSources = message.sources.length > 0;
+  const hasMissingData = message.missingData.length > 0;
 
   if (!hasEvidence && !hasSources && !hasMissingData) return null;
 
@@ -52,13 +48,13 @@ function Evidence({ response }: { response: AiChatResponse }) {
             Datagrunnlag
           </div>
           <dl className="divide-y divide-border/60 border-y border-border/60">
-            {response.evidence.map((item, index) => (
+            {message.evidence.map((item, index) => (
               <div
                 key={`${item.label}-${item.value}-${index}`}
                 className="grid grid-cols-[minmax(0,1fr)_auto] gap-3 py-2 text-sm"
               >
                 <dt className="min-w-0 text-muted-foreground">{item.label}</dt>
-                <dd className="font-display font-bold tabular-nums text-foreground">
+                <dd className="max-w-48 text-right font-display font-bold tabular-nums text-foreground sm:max-w-72">
                   {item.value}
                   {item.unit ? ` ${item.unit}` : ""}
                 </dd>
@@ -70,13 +66,13 @@ function Evidence({ response }: { response: AiChatResponse }) {
 
       {hasSources && (
         <div className="space-y-1.5 text-xs text-muted-foreground">
-          {response.sources.map((source, index) => (
+          {message.sources.map((source, index) => (
             <div
               key={`${source.method}-${index}`}
               className="flex items-start justify-between gap-3"
             >
               <span>{source.label}</span>
-              <code className="shrink-0 text-[10px] text-foreground/75">
+              <code className="max-w-48 truncate text-[10px] text-foreground/75 sm:max-w-72">
                 {source.method}
               </code>
             </div>
@@ -90,7 +86,7 @@ function Evidence({ response }: { response: AiChatResponse }) {
             <AlertCircle className="size-3.5 text-chart-4" />
             Manglende data
           </div>
-          {response.missingData.map((item) => (
+          {message.missingData.map((item) => (
             <p key={item}>{item}</p>
           ))}
         </div>
@@ -99,10 +95,8 @@ function Evidence({ response }: { response: AiChatResponse }) {
   );
 }
 
-function Message({ message }: { message: ChatMessage }) {
-  const isUser = message.role === "user";
-
-  if (isUser) {
+function Message({ message }: { message: AiMessage }) {
+  if (message.role === "user") {
     return (
       <div className="flex justify-end pl-10">
         <div className="max-w-[88%] rounded-md bg-primary px-3.5 py-3 text-sm leading-6 text-primary-foreground">
@@ -112,32 +106,32 @@ function Message({ message }: { message: ChatMessage }) {
     );
   }
 
+  const isError = message.status === "failed";
   return (
     <div
       className={cn(
         "border-l-2 pl-3.5",
-        message.isError ? "border-destructive" : "border-primary/50",
+        isError ? "border-destructive" : "border-primary/50",
       )}
     >
       <div className="mb-2 flex items-center gap-2">
-        {message.isError ? (
+        {isError ? (
           <AlertCircle className="size-4 text-destructive" />
         ) : (
           <Sparkles className="size-4 text-primary" />
         )}
         <span className="text-[10px] font-display font-bold uppercase tracking-widest text-muted-foreground">
-          {message.isError ? "Feil" : "AI-generert analyse"}
+          {isError
+            ? "Feil"
+            : message.generatedByAi
+              ? "AI-generert analyse"
+              : "Datadrevet analyse"}
         </span>
-        {message.response?.mode === "mock" && (
-          <span className="border border-border px-1.5 py-0.5 text-[9px] font-bold uppercase text-muted-foreground">
-            Demo
-          </span>
-        )}
       </div>
       <p className="whitespace-pre-wrap text-sm leading-6 text-foreground">
         {message.content}
       </p>
-      {message.response && <Evidence response={message.response} />}
+      <Evidence message={message} />
     </div>
   );
 }
@@ -146,8 +140,96 @@ function LoadingMessage() {
   return (
     <div className="flex items-center gap-2 border-l-2 border-primary/50 py-1 pl-3.5 text-sm text-muted-foreground">
       <LoaderCircle className="size-4 animate-spin text-primary" />
-      Kontrollerer data og analyserer...
+      Jobben ligger trygt på ICP. Clawdbot analyserer...
     </div>
+  );
+}
+
+function LoginRequired({
+  onLogin,
+  loading,
+}: {
+  onLogin: () => void;
+  loading: boolean;
+}) {
+  return (
+    <div className="flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center px-4 text-center">
+      <ShieldCheck className="mb-4 size-9 text-primary" />
+      <h1 className="font-display text-xl font-bold text-foreground">
+        Logg inn for AI-analyse
+      </h1>
+      <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">
+        Samtalene lagres privat på din Internet Identity Principal og følger deg
+        mellom enheter.
+      </p>
+      <Button className="mt-5" onClick={onLogin} disabled={loading}>
+        {loading ? <LoaderCircle className="animate-spin" /> : <LogIn />}
+        Logg inn med Internet Identity
+      </Button>
+    </div>
+  );
+}
+
+function ThreadList({
+  threads,
+  selectedId,
+  onSelect,
+  onNew,
+  onDelete,
+}: {
+  threads: AiThread[];
+  selectedId?: bigint;
+  onSelect: (id: bigint) => void;
+  onNew: () => void;
+  onDelete: (id: bigint) => void;
+}) {
+  return (
+    <aside className="border-b border-border pb-3 md:w-56 md:shrink-0 md:border-b-0 md:border-r md:pb-0 md:pr-3">
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="w-full justify-start"
+        onClick={onNew}
+      >
+        <MessageSquarePlus />
+        Ny samtale
+      </Button>
+      <div className="no-scrollbar mt-2 flex gap-1 overflow-x-auto md:max-h-[calc(100vh-14rem)] md:flex-col md:overflow-y-auto">
+        {threads.map((thread) => {
+          const selected = selectedId === thread.id;
+          return (
+            <div
+              key={thread.id.toString()}
+              className={cn(
+                "group flex h-10 min-w-44 items-center border-l-2 px-2 text-sm md:min-w-0",
+                selected
+                  ? "border-primary bg-muted text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <button
+                type="button"
+                className="min-w-0 flex-1 truncate text-left"
+                onClick={() => onSelect(thread.id)}
+                title={thread.title}
+              >
+                {thread.title}
+              </button>
+              <button
+                type="button"
+                className="ml-1 flex size-7 shrink-0 items-center justify-center text-muted-foreground opacity-70 hover:text-destructive md:opacity-0 md:group-hover:opacity-100"
+                onClick={() => onDelete(thread.id)}
+                aria-label="Slett samtale"
+                title="Slett samtale"
+              >
+                <Trash2 className="size-3.5" />
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    </aside>
   );
 }
 
@@ -156,86 +238,131 @@ export default function AiChatPage() {
   const router = useRouterState();
   const season = normalizeSeasonId(search.season);
   const league = normalizeLeagueId(search.league);
-  const { identity } = useInternetIdentity();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const { identity, login, isInitializing, isLoggingIn } =
+    useInternetIdentity();
+  const { actor, isFetching: isActorFetching } = useActor(createAiActor);
+  const queryClient = useQueryClient();
+  const [selectedThreadId, setSelectedThreadId] = useState<bigint>();
+  const [isDraftThread, setIsDraftThread] = useState(false);
   const [input, setInput] = useState("");
-  const [isSending, setIsSending] = useState(false);
-  const [failedQuestion, setFailedQuestion] = useState<string>();
   const endRef = useRef<HTMLDivElement>(null);
 
-  const principal = useMemo(() => {
-    const value = identity?.getPrincipal();
-    return value && !value.isAnonymous() ? value.toText() : undefined;
-  }, [identity]);
+  const principal = identity?.getPrincipal();
+  const isAuthenticated = Boolean(principal && !principal.isAnonymous());
+
+  const threadsQuery = useQuery({
+    queryKey: ["aiThreads", principal?.toText()],
+    queryFn: () => actor?.getMyAiThreads() ?? Promise.resolve([]),
+    enabled: isAuthenticated && Boolean(actor),
+    staleTime: 5_000,
+  });
 
   useEffect(() => {
-    if (messages.length > 0 || isSending) {
+    if (
+      isDraftThread ||
+      selectedThreadId !== undefined ||
+      !threadsQuery.data?.length
+    ) {
+      return;
+    }
+    setSelectedThreadId(threadsQuery.data[0].id);
+  }, [isDraftThread, selectedThreadId, threadsQuery.data]);
+
+  const messagesQuery = useQuery({
+    queryKey: ["aiMessages", selectedThreadId?.toString()],
+    queryFn: () =>
+      selectedThreadId !== undefined && actor
+        ? actor.getMyAiMessages(selectedThreadId)
+        : Promise.resolve([]),
+    enabled:
+      isAuthenticated && Boolean(actor) && selectedThreadId !== undefined,
+    refetchInterval: (query) => {
+      const messages = query.state.data;
+      return messages?.at(-1)?.role === "user" ? 1_500 : false;
+    },
+  });
+
+  const messages = isDraftThread ? [] : (messagesQuery.data ?? []);
+  const waitingForAnswer = messages.at(-1)?.role === "user";
+
+  const submitMutation = useMutation({
+    mutationFn: async (question: string) => {
+      if (!actor) throw new Error("ICP-backenden er ikke klar ennå.");
+      const entities = await resolveAiChatEntities(question);
+      return actor.submitAiQuestion(
+        isDraftThread ? undefined : selectedThreadId,
+        question,
+        {
+          season,
+          league,
+          route: router.location.pathname,
+          playerIds: entities
+            .filter((entity) => entity.type === "player")
+            .map((entity) => entity.id),
+          teamIds: entities
+            .filter((entity) => entity.type === "team")
+            .map((entity) => entity.id),
+        },
+      );
+    },
+    onSuccess: async (result) => {
+      setIsDraftThread(false);
+      setSelectedThreadId(result.threadId);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["aiThreads"] }),
+        queryClient.invalidateQueries({
+          queryKey: ["aiMessages", result.threadId.toString()],
+        }),
+      ]);
+    },
+  });
+
+  useEffect(() => {
+    if (messages.length > 0 || submitMutation.isPending) {
       endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }
-  }, [isSending, messages.length]);
+  }, [messages.length, submitMutation.isPending]);
+
+  const isSending = submitMutation.isPending || waitingForAnswer;
 
   const sendQuestion = async (rawQuestion: string) => {
     const question = rawQuestion.trim();
     if (!question || isSending) return;
-
-    const conversation: AiChatConversationMessage[] = messages
-      .filter((message) => !message.isError)
-      .map((message) => ({
-        role: message.role,
-        content: message.content,
-      }));
-    const userMessage: ChatMessage = {
-      id: crypto.randomUUID(),
-      role: "user",
-      content: question,
-    };
-
-    setMessages((current) => [...current, userMessage]);
     setInput("");
-    setFailedQuestion(undefined);
-    setIsSending(true);
-
-    try {
-      const response = await askAiChat({
-        question,
-        conversation,
-        season,
-        league,
-        route: router.location.pathname,
-        principal,
-      });
-      setMessages((current) => [
-        ...current,
-        {
-          id: response.id,
-          role: "assistant",
-          content: response.answer,
-          response,
-        },
-      ]);
-    } catch (error) {
-      setFailedQuestion(question);
-      setMessages((current) => [
-        ...current,
-        {
-          id: crypto.randomUUID(),
-          role: "assistant",
-          content:
-            error instanceof Error
-              ? error.message
-              : "Analysen kunne ikke fullføres. Prøv igjen.",
-          isError: true,
-        },
-      ]);
-    } finally {
-      setIsSending(false);
-    }
+    await submitMutation.mutateAsync(question).catch(() => undefined);
   };
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     void sendQuestion(input);
   };
+
+  const deleteThread = async (threadId: bigint) => {
+    if (!actor) return;
+    try {
+      await actor.deleteMyAiThread(threadId);
+    } catch (error) {
+      console.error("Kunne ikke slette AI-samtalen", error);
+      return;
+    }
+    if (selectedThreadId === threadId) {
+      setSelectedThreadId(undefined);
+      setIsDraftThread(false);
+    }
+    await queryClient.invalidateQueries({ queryKey: ["aiThreads"] });
+  };
+
+  if (isInitializing || isActorFetching) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center text-muted-foreground">
+        <LoaderCircle className="size-5 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <LoginRequired onLogin={login} loading={isLoggingIn} />;
+  }
 
   return (
     <div className="flex min-h-[calc(100vh-9rem)] flex-col">
@@ -244,103 +371,114 @@ export default function AiChatPage() {
           <div className="mb-1 flex items-center gap-2 text-primary">
             <Bot className="size-5" />
             <span className="text-[10px] font-display font-bold uppercase tracking-widest">
-              Clawdbot
+              Clawdbot via ICP
             </span>
           </div>
           <h1 className="font-display text-xl font-bold text-foreground">
             AI-analyse
           </h1>
         </div>
-        {messages.length > 0 && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              setMessages([]);
-              setFailedQuestion(undefined);
-            }}
-            disabled={isSending}
-            aria-label="Tøm samtalen"
-            title="Tøm samtalen"
-          >
-            <Trash2 />
-          </Button>
-        )}
-      </div>
-
-      <div className="flex-1 space-y-6 py-5" aria-live="polite">
-        {messages.length === 0 && !isSending && (
-          <div className="space-y-3">
-            {STARTER_QUESTIONS.map((question) => (
-              <button
-                key={question}
-                type="button"
-                onClick={() => void sendQuestion(question)}
-                className="flex min-h-11 w-full items-center justify-between gap-3 border-b border-border px-1 py-3 text-left text-sm text-foreground transition-colors hover:text-primary"
-              >
-                <span>{question}</span>
-                <SendHorizontal className="size-4 shrink-0 text-muted-foreground" />
-              </button>
-            ))}
-          </div>
-        )}
-
-        {messages.map((message) => (
-          <Message key={message.id} message={message} />
-        ))}
-        {isSending && <LoadingMessage />}
-
-        {failedQuestion && !isSending && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => void sendQuestion(failedQuestion)}
-          >
-            <RefreshCw />
-            Prøv igjen
-          </Button>
-        )}
-        <div ref={endRef} />
-      </div>
-
-      <form
-        onSubmit={handleSubmit}
-        className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-20 -mx-2 border-t border-border bg-background/95 px-2 pb-2 pt-3 backdrop-blur"
-      >
-        <div className="flex items-end gap-2">
-          <Textarea
-            value={input}
-            onChange={(event) => setInput(event.target.value.slice(0, 1_000))}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" && !event.shiftKey) {
-                event.preventDefault();
-                if (input.trim() && !isSending) void sendQuestion(input);
-              }
-            }}
-            placeholder="Spør om spillere, lag, kamper eller statistikk"
-            rows={1}
-            className="no-scrollbar max-h-32 min-h-11 resize-none overflow-y-auto bg-card text-base md:text-sm"
-            disabled={isSending}
-            aria-label="Spørsmål til AI-analysen"
-          />
-          <Button
-            type="submit"
-            size="icon"
-            className="size-11 shrink-0"
-            disabled={!input.trim() || isSending}
-            aria-label="Send spørsmål"
-            title="Send spørsmål"
-          >
-            {isSending ? (
-              <LoaderCircle className="animate-spin" />
-            ) : (
-              <SendHorizontal />
-            )}
-          </Button>
+        <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase text-muted-foreground">
+          <ShieldCheck className="size-3.5 text-primary" />
+          Privat historikk
         </div>
-      </form>
+      </div>
+
+      <div className="flex flex-1 flex-col gap-4 pt-4 md:flex-row">
+        <ThreadList
+          threads={threadsQuery.data ?? []}
+          selectedId={isDraftThread ? undefined : selectedThreadId}
+          onSelect={(id) => {
+            setIsDraftThread(false);
+            setSelectedThreadId(id);
+          }}
+          onNew={() => {
+            setIsDraftThread(true);
+            setSelectedThreadId(undefined);
+            setInput("");
+          }}
+          onDelete={(id) => void deleteThread(id)}
+        />
+
+        <div className="flex min-w-0 flex-1 flex-col">
+          <div className="flex-1 space-y-6 pb-5" aria-live="polite">
+            {messagesQuery.isError && !isDraftThread && (
+              <div className="border-l-2 border-destructive pl-3 text-sm text-destructive">
+                Kunne ikke hente samtalen fra ICP. Prøv å laste siden på nytt.
+              </div>
+            )}
+
+            {messages.length === 0 && !isSending && (
+              <div className="space-y-3">
+                {STARTER_QUESTIONS.map((question) => (
+                  <button
+                    key={question}
+                    type="button"
+                    onClick={() => void sendQuestion(question)}
+                    className="flex min-h-11 w-full items-center justify-between gap-3 border-b border-border px-1 py-3 text-left text-sm text-foreground transition-colors hover:text-primary"
+                  >
+                    <span>{question}</span>
+                    <SendHorizontal className="size-4 shrink-0 text-muted-foreground" />
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {messages.map((message) => (
+              <Message key={message.id.toString()} message={message} />
+            ))}
+            {isSending && <LoadingMessage />}
+
+            {submitMutation.isError && (
+              <div className="border-l-2 border-destructive pl-3 text-sm text-destructive">
+                {submitMutation.error instanceof Error
+                  ? submitMutation.error.message
+                  : "Kunne ikke legge analysen i ICP-køen."}
+              </div>
+            )}
+            <div ref={endRef} />
+          </div>
+
+          <form
+            onSubmit={handleSubmit}
+            className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-20 -mx-2 border-t border-border bg-background/95 px-2 pb-2 pt-3 backdrop-blur"
+          >
+            <div className="flex items-end gap-2">
+              <Textarea
+                value={input}
+                onChange={(event) =>
+                  setInput(event.target.value.slice(0, 1_000))
+                }
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    if (input.trim() && !isSending) void sendQuestion(input);
+                  }
+                }}
+                placeholder="Spør om spillere, lag, kamper eller statistikk"
+                rows={1}
+                className="no-scrollbar max-h-32 min-h-11 resize-none overflow-y-auto bg-card text-base md:text-sm"
+                disabled={isSending}
+                aria-label="Spørsmål til AI-analysen"
+              />
+              <Button
+                type="submit"
+                size="icon"
+                className="size-11 shrink-0"
+                disabled={!input.trim() || isSending}
+                aria-label="Send spørsmål"
+                title="Send spørsmål"
+              >
+                {isSending ? (
+                  <LoaderCircle className="animate-spin" />
+                ) : (
+                  <SendHorizontal />
+                )}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }

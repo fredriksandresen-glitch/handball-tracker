@@ -1107,4 +1107,10 @@ app.listen(PORT, '127.0.0.1', () => {
   void Promise.all([loadJsonStats(), refreshCache()]).catch(error => {
     console.error('Initial cache warmup failed:', error.message);
   });
+  if (String(process.env.AI_WORKER_ENABLED).toLowerCase() === 'true') {
+    const { startAiWorker } = require('./worker');
+    void startAiWorker().catch(error => {
+      console.error('AI worker failed to start:', error.message);
+    });
+  }
 });

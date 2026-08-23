@@ -7,8 +7,12 @@ v22.22.0
 
 ## Startkommando
 ```bash
-node index.js
+AI_WORKER_ENABLED=true node index.js
 ```
+
+Tjenesten lytter bare på `127.0.0.1`. AI-chatten bruker en outbound worker mot
+ICP-backenden og trenger ikke Cloudflare Tunnel, CORS eller et offentlig
+Clawdbot-endepunkt.
 
 ## Port
 ```
@@ -24,14 +28,40 @@ node index.js
 - `ICP_HOST` (valgfritt)
 - `ALLOWED_ORIGINS` (valgfri, kommaseparert liste)
 - `ARCHIVE_STANDINGS_FILE` (valgfri sti til `leagueStandingsArchive.json`)
+- `AI_WORKER_ENABLED` (sett til `true` for ICP-køen)
+- `AI_WORKER_IDENTITY_PATH` (obligatorisk når worker er aktiv)
+- `AI_WORKER_POLL_INTERVAL_MS` (valgfritt, default 5000)
+- `AI_LOCAL_CHAT_URL` (valgfritt, default lokal port 3000)
 
-## Offentlig endpoint-path
+## Oppsett av worker-identitet
+
+```bash
+npm run worker:identity
+export AI_WORKER_IDENTITY_PATH="$PWD/secrets/ai-worker-identity.json"
+export AI_WORKER_ENABLED=true
+npm start
+```
+
+Kommandoen skriver ut workerens Principal. En controller for backend-canisteren
+må registrere denne én gang:
+
+```bash
+dfx canister call backend configureAiWorker '(principal "<WORKER_PRINCIPAL>")' --network ic
+```
+
+Nøkkelfilen under `secrets/` skal aldri committes. Ta en privat backup; en ny
+identitet må registreres på nytt i canisteren.
+
+## Lokale endpoint-paths
 ```
 POST /v1/handball/chat
 POST /v1/handball/comparisons
 POST /v1/handball/reports/player-comparison.pdf
 GET  /health
 ```
+
+Chat-endepunktet kalles av worker-en på samme Linux-server. Nettleseren sender
+spørsmålet til Motoko-backenden med den innloggede brukerens Principal.
 
 ## ICP canister-IDer
 | Type | Canister ID |
@@ -61,8 +91,8 @@ Testene dekker:
 - rollejustert spillersammenligning og gyldig PDF-generering
 
 PDF-rapporten bruker `pdfkit`, som installeres av vanlig `npm ci`. Rapporten
-beregnes deterministisk fra kampdata og kaller ikke Moonshot. Frontend bruker
-samme offentlige gateway-base som AI-chatten og bytter bare endpoint-path.
+beregnes deterministisk fra kampdata og kaller ikke Moonshot. PDF-nedlasting er
+fortsatt en separat, valgfri HTTP-funksjon; AI-chatten er ikke avhengig av den.
 
 Den publiserte asset-statistikken er autoritativ for svar som skal samsvare med
 appen. Den eldre Motoko-seeden kan inneholde andre summer.

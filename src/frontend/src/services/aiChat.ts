@@ -110,7 +110,9 @@ async function loadSearchIndex() {
   return searchIndexPromise;
 }
 
-async function resolveEntities(question: string): Promise<AiChatEntity[]> {
+export async function resolveAiChatEntities(
+  question: string,
+): Promise<AiChatEntity[]> {
   const normalizedQuestion = normalize(question);
   if (!normalizedQuestion) return [];
 
@@ -360,7 +362,7 @@ export async function askAiChat(
     throw new Error("AI-tjenesten er ikke konfigurert for live analyse.");
   }
 
-  const entities = await resolveEntities(question);
+  const entities = await resolveAiChatEntities(question);
   return sendLiveRequest(
     endpoint,
     createRequest(input, entities, runtimeConfig),
