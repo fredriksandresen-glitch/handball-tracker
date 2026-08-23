@@ -234,6 +234,31 @@ test("builds a grounded position benchmark for Marthe", () => {
   assert.equal(facts.segments[0].peerComparison.mepTotal.rank, 41);
   assert.equal(facts.segments[0].peerComparison.mepTotal.total, 91);
   assert.equal(facts.segments[0].peerComparison.shotPercentage.rank, 26);
+  assert.equal(
+    isPositionBenchmarkQuestion(
+      "hvordan gjorde hun det i forhold til snittet i hennes posisjon i samme liga?",
+    ),
+    true,
+  );
+  assert.equal(
+    Number.isFinite(
+      facts.segments[0].peerComparison.positionAverages.mepPerMatch,
+    ),
+    true,
+  );
+  assert.deepEqual(facts.segments[0].peerComparison.playerRates, {
+    mepPerMatch: 1.5,
+    goalsPerMatch: 2.3,
+    assistsPerMatch: 1.6,
+    shotPercentage: 64.4,
+  });
+  assert.deepEqual(facts.segments[0].peerComparison.positionAverages, {
+    mepPerMatch: 1.6,
+    goalsPerMatch: 2.7,
+    assistsPerMatch: 2.2,
+    shotPercentage: 57.5,
+  });
+  assert.match(fallback, /mot posisjonssnitt/);
   assert.match(fallback, /øvre halvdel/);
   assert.match(prompts.systemPrompt, /volum, effektivitet og samlet MEP/);
 });

@@ -117,8 +117,12 @@ function isDetailedPlayerQuestion(question) {
 function isPositionBenchmarkQuestion(question) {
   const normalized = normalizeText(question);
   return (
-    /\b(sammenlign\w*|opp mot)\b/.test(normalized) &&
-    /\b(andre|samme posisjon|posisjon\w*)\b/.test(normalized)
+    /\b(sammenlign\w*|opp mot|i forhold til|snitt\w*|gjennomsnitt\w*)\b/.test(
+      normalized,
+    ) &&
+    /\b(andre|samme liga|hennes posisjon|samme posisjon|posisjon\w*|snitt\w*|gjennomsnitt\w*)\b/.test(
+      normalized,
+    )
   );
 }
 

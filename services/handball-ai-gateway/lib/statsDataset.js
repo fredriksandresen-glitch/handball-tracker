@@ -233,6 +233,14 @@ function competitionRank(players, playerId, readMetric) {
   return { rank, total: sorted.length, value: playerValue };
 }
 
+function averageMetric(players, readMetric) {
+  if (players.length === 0) return null;
+  return round1(
+    players.reduce((sum, player) => sum + readMetric(player), 0) /
+      players.length,
+  );
+}
+
 function scopedSegments(player, options = {}) {
   const segments = player?.seasonSegments ?? [];
   if (segments.length === 0) return [];
@@ -309,6 +317,52 @@ function summarizePlayerPerformance(player, playersById, options = {}) {
     peerComparison: {
       position: player.position,
       minimumMatches: 5,
+      playerRates: {
+        mepPerMatch: round1(
+          Number(seasonStats.mepTotal ?? 0) /
+            Math.max(Number(seasonStats.matches ?? 0), 1),
+        ),
+        goalsPerMatch: round1(
+          Number(seasonStats.goals ?? 0) /
+            Math.max(Number(seasonStats.matches ?? 0), 1),
+        ),
+        assistsPerMatch: round1(
+          Number(seasonStats.assists ?? 0) /
+            Math.max(Number(seasonStats.matches ?? 0), 1),
+        ),
+        shotPercentage: Number(seasonStats.shotPercentage ?? 0),
+      },
+      positionAverages: {
+        mepPerMatch: averageMetric(
+          eligiblePeers,
+          (candidate) =>
+            Number(candidate.seasonStats?.mepTotal ?? 0) /
+            Math.max(Number(candidate.seasonStats?.matches ?? 0), 1),
+        ),
+        goalsPerMatch: averageMetric(
+          eligiblePeers,
+          (candidate) =>
+            Number(candidate.seasonStats?.goals ?? 0) /
+            Math.max(Number(candidate.seasonStats?.matches ?? 0), 1),
+        ),
+        assistsPerMatch: averageMetric(
+          eligiblePeers,
+          (candidate) =>
+            Number(candidate.seasonStats?.assists ?? 0) /
+            Math.max(Number(candidate.seasonStats?.matches ?? 0), 1),
+        ),
+        shotPercentage: averageMetric(
+          eligiblePeers,
+          (candidate) => Number(candidate.seasonStats?.shotPercentage ?? 0),
+        ),
+      },
+      mepPerMatch: competitionRank(
+        eligiblePeers,
+        player.playerId,
+        (candidate) =>
+          Number(candidate.seasonStats?.mepTotal ?? 0) /
+          Math.max(Number(candidate.seasonStats?.matches ?? 0), 1),
+      ),
       mepTotal: competitionRank(
         eligiblePeers,
         player.playerId,

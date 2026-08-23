@@ -32,9 +32,15 @@ function buildPositionBenchmarkFallbackAnswer(player, segmentPerformances) {
   for (const { segment, performance } of segmentPerformances) {
     const peer = performance.peerComparison;
     const stats = performance.seasonStats;
+    const rates = peer.playerRates;
+    const averages = peer.positionAverages;
     answer += `\n${segment.teamName}, ${segment.league === "first-division" ? "1. divisjon" : "Eliteserien"}:\n`;
+    answer += `- MEP per kamp: ${rates.mepPerMatch} mot posisjonssnitt ${averages.mepPerMatch}\n`;
+    answer += `- Mål per kamp: ${rates.goalsPerMatch} mot posisjonssnitt ${averages.goalsPerMatch}\n`;
+    answer += `- Assist per kamp: ${rates.assistsPerMatch} mot posisjonssnitt ${averages.assistsPerMatch}\n`;
+    answer += `- Skuddprosent: ${rates.shotPercentage}% mot posisjonssnitt ${averages.shotPercentage}%\n`;
     for (const [label, ranking] of [
-      ["Samlet MEP", peer.mepTotal],
+      ["MEP per kamp", peer.mepPerMatch],
       ["Mål per kamp", peer.goalsPerMatch],
       ["Skuddprosent", peer.shotPercentage],
     ]) {
