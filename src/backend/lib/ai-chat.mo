@@ -1,7 +1,5 @@
 import Array "mo:core/Array";
-import Int "mo:core/Int";
 import List "mo:core/List";
-import Nat "mo:core/Nat";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import Time "mo:core/Time";
@@ -116,7 +114,11 @@ module {
     let threads = state.threads.toArray()
       .filter(func(thread) { thread.owner == caller })
       .map(publicThread);
-    Array.sort(threads, func(a, b) { Int.compare(b.updatedAt, a.updatedAt) });
+    threads.sort(func(a, b) {
+      if (a.updatedAt > b.updatedAt) #less
+      else if (a.updatedAt < b.updatedAt) #greater
+      else #equal
+    });
   };
 
   public func getMyMessages(state : State, caller : Principal, threadId : Nat) : [Types.PublicMessage] {
@@ -250,9 +252,9 @@ module {
       message.threadId == job.threadId and message.owner == job.owner and message.id != job.userMessageId
     });
     let start = if (messages.size() > MAX_CONVERSATION_MESSAGES) {
-      Nat.sub(messages.size(), MAX_CONVERSATION_MESSAGES)
+      messages.size() - MAX_CONVERSATION_MESSAGES
     } else 0;
-    Array.tabulate<Types.ConversationMessage>(Nat.sub(messages.size(), start), func(index) {
+    Array.tabulate<Types.ConversationMessage>(messages.size() - start, func(index) {
       let message = messages[start + index];
       { role = message.role; content = message.content };
     });
