@@ -18,7 +18,7 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MatchCard } from "../components/MatchCard";
 import { PositionBadge } from "../components/PositionBadge";
 import { useSelectedLeague } from "../components/LeagueSelect";
@@ -47,8 +47,12 @@ import {
   getStaticPlayerLeagueId,
   getStaticPlayers,
   getStaticProfile,
+  getPlayerSeasonScopes,
+  mapClawdbotMatchStats,
+  mapClawdbotPlayer,
   mapClawdbotSeasonStats,
   type EnrichedPlayerMatchStats,
+  type PlayerSeasonScope,
 } from "../services/clawdbotPlayerProfile";
 import { downloadComparisonReport } from "../services/comparisonReports";
 import type {
@@ -169,6 +173,77 @@ function TeamLogo({ teamName, size = "sm" }: { teamName?: string; size?: "sm" | 
     >
       <img src={logoUrl} alt="" className={cn("object-contain", imgClass, getTeamLogoClassName(teamName))} />
     </span>
+  );
+}
+
+function SeasonScopeSelector({
+  scopes,
+  activeScopeId,
+  seasonLabel,
+  onChange,
+}: {
+  scopes: PlayerSeasonScope[];
+  activeScopeId: string;
+  seasonLabel: string;
+  onChange: (scopeId: string) => void;
+}) {
+  if (scopes.length < 3) return null;
+
+  return (
+    <section className="px-4 pt-4" aria-label={`Klubbopphold ${seasonLabel}`}>
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <div>
+          <p className="text-[10px] font-display font-bold uppercase tracking-widest text-muted-foreground">
+            Klubbopphold {seasonLabel}
+          </p>
+          <p className="mt-0.5 text-xs text-foreground">
+            Statistikken kan vises samlet eller per lag.
+          </p>
+        </div>
+        <span className="shrink-0 rounded-full border border-primary/30 bg-primary/10 px-2 py-1 text-[10px] font-display font-bold uppercase text-primary">
+          Utlån
+        </span>
+      </div>
+
+      <fieldset
+        className="grid grid-cols-3 overflow-hidden rounded-lg border border-border bg-card"
+      >
+        <legend className="sr-only">Velg statistikkgrunnlag</legend>
+        {scopes.map((scope) => {
+          const isActive = scope.id === activeScopeId;
+          const matches = Number(scope.profile.seasonStats.matches ?? 0);
+
+          return (
+            <button
+              key={scope.id}
+              type="button"
+              aria-pressed={isActive}
+              onClick={() => onChange(scope.id)}
+              className={cn(
+                "min-w-0 border-r border-border px-2 py-2.5 text-center transition-colors last:border-r-0",
+                isActive
+                  ? "bg-primary/15 text-primary"
+                  : "text-muted-foreground hover:bg-muted/35 hover:text-foreground",
+              )}
+            >
+              <span className="flex min-h-5 items-center justify-center gap-1.5">
+                {scope.teamName ? (
+                  <TeamLogo teamName={scope.teamName} />
+                ) : (
+                  <BarChart3 className="size-4" />
+                )}
+                <span className="truncate text-xs font-display font-black">
+                  {scope.label}
+                </span>
+              </span>
+              <span className="mt-1 block text-[10px] tabular-nums">
+                {matches} kamper{scope.spellType === "loan" ? " · utlån" : ""}
+              </span>
+            </button>
+          );
+        })}
+      </fieldset>
+    </section>
   );
 }
 
@@ -588,7 +663,14 @@ function MatchHistory({
             >
               <span className="min-w-0">
                 <span className="block font-display font-bold text-foreground truncate">{match.opponent ? "mot " + match.opponent : "Kamp"}</span>
-                <span className="block text-xs text-muted-foreground truncate">{match.date ?? "Kamp " + match.matchId.toString()}</span>
+                <span className="block text-xs text-muted-foreground truncate">
+                  {[
+                    match.date ?? `Kamp ${match.matchId.toString()}`,
+                    match.teamName,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </span>
               </span>
               <span className="text-right font-bold text-primary tabular-nums">{formatDecimal(match.mep)}</span>
               <span className="text-right text-foreground tabular-nums">{keeper ? formatNumber(match.saves) : formatNumber(match.goals)}</span>
@@ -622,11 +704,13 @@ function PlayerComparison({
   seasonStats,
   season,
   league,
+  teamName,
 }: {
   player: Player;
   seasonStats: PlayerSeasonStats | null | undefined;
   season: SeasonId;
   league: LeagueId;
+  teamName?: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -685,7 +769,7 @@ function PlayerComparison({
   if (!seasonStats) return null;
 
   const keeper = isGK(player.position);
-  const currentTeam = getStaticTeamName(player.id);
+  const currentTeam = teamName ?? getStaticTeamName(player.id);
   const rows =
     selected === null
       ? []
@@ -1037,33 +1121,58 @@ export default function PlayerPage() {
   const { id } = useParams({ from: "/player/$id" });
   const router = useRouter();
   const playerId = BigInt(id);
-  const leagueId =
-    getStaticPlayerLeagueId(playerId, seasonId) ?? selectedLeagueId;
-  const leagueLabel = getLeagueLabel(leagueId, seasonId);
   const [activeTab, setActiveTab] = useState<Tab>("season");
+  const seasonScopes = useMemo(
+    () => getPlayerSeasonScopes(playerId, seasonId),
+    [playerId, seasonId],
+  );
+  const [activeScopeId, setActiveScopeId] = useState("combined");
+
+  useEffect(() => {
+    setActiveScopeId(seasonScopes[0]?.id ?? "combined");
+  }, [id, seasonId, seasonScopes]);
+
+  const activeScope =
+    seasonScopes.find((scope) => scope.id === activeScopeId) ??
+    seasonScopes[0];
+  const leagueId =
+    activeScope?.leagueId ??
+    getStaticPlayerLeagueId(playerId, seasonId) ??
+    selectedLeagueId;
+  const leagueLabel = getLeagueLabel(leagueId, seasonId);
 
   const { data: player, isLoading: playerLoading } = usePlayer(playerId, seasonId);
   const { data: seasonStats, isLoading: seasonLoading } =
     usePlayerSeasonStats(playerId, seasonId);
   const { data: matchStats = [], isLoading: matchLoading } =
     usePlayerMatchStats(playerId, seasonId);
-  const hasSeasonSnapshot = !!getStaticProfile(playerId, seasonId);
+  const scopedProfile = activeScope?.profile;
+  const displayPlayer = scopedProfile ? mapClawdbotPlayer(scopedProfile) : player;
+  const displaySeasonStats = scopedProfile
+    ? mapClawdbotSeasonStats(scopedProfile)
+    : seasonStats;
+  const displayMatchStats = scopedProfile
+    ? mapClawdbotMatchStats(scopedProfile)
+    : matchStats;
+  const hasSeasonSnapshot = !!scopedProfile || !!getStaticProfile(playerId, seasonId);
   const { data: team } = useTeam(
-    hasSeasonSnapshot ? (player?.teamId ?? 0n) : 0n,
+    hasSeasonSnapshot ? (displayPlayer?.teamId ?? 0n) : 0n,
     seasonId,
     leagueId,
   );
   const { data: nextMatchResult } = useNextMatchForTeam(
-    player?.teamId ?? 0n,
+    displayPlayer?.teamId ?? 0n,
     seasonId,
     leagueId,
   );
 
   const isLoading = playerLoading || seasonLoading || matchLoading;
   const visibleSeasonStats =
-    seasonStats && hasUsefulStats(seasonStats) ? seasonStats : null;
+    displaySeasonStats && hasUsefulStats(displaySeasonStats)
+      ? displaySeasonStats
+      : null;
 
-  if (isLoading && !player) {
+  if (isLoading && !displayPlayer) {
     return (
       <div className="px-4 py-20 text-center text-muted-foreground">
         Laster spillerprofil...
@@ -1071,7 +1180,7 @@ export default function PlayerPage() {
     );
   }
 
-  if (!player) {
+  if (!displayPlayer) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
         <Shield className="size-12 text-muted-foreground" />
@@ -1103,18 +1212,25 @@ export default function PlayerPage() {
       </div>
 
       <PlayerHero
-        player={player}
-        teamName={team?.name}
-        teamId={player.teamId}
+        player={displayPlayer}
+        teamName={team?.name ?? activeScope?.teamName}
+        teamId={displayPlayer.teamId}
         season={seasonId}
         league={leagueId}
+      />
+
+      <SeasonScopeSelector
+        scopes={seasonScopes}
+        activeScopeId={activeScope?.id ?? activeScopeId}
+        seasonLabel={season.label}
+        onChange={setActiveScopeId}
       />
 
       {nextMatchResult && (
         <div className="px-4 pt-4">
           <MatchCard
             match={nextMatchResult.match}
-            teamId={player.teamId}
+            teamId={displayPlayer.teamId}
             homeTeamName={nextMatchResult.homeTeamName}
             awayTeamName={nextMatchResult.awayTeamName}
           />
@@ -1122,34 +1238,39 @@ export default function PlayerPage() {
       )}
 
       <div className="flex flex-col gap-5 pt-5">
-        <KeyStats player={player} stats={visibleSeasonStats} />
-        <InsightCards player={player} stats={visibleSeasonStats} />
+        <KeyStats player={displayPlayer} stats={visibleSeasonStats} />
+        <InsightCards player={displayPlayer} stats={visibleSeasonStats} />
         {!hasSeasonSnapshot && (
           <div className="mx-4 rounded-xl border border-border bg-card px-4 py-4 text-sm text-muted-foreground">
             Spilleren har ingen registrert lagtilknytning eller statistikk for {season.label}.
           </div>
         )}
         <PlayerComparison
-          player={player}
+          player={displayPlayer}
           seasonStats={visibleSeasonStats}
           season={seasonId}
           league={leagueId}
+          teamName={activeScope?.label ?? team?.name}
         />
-        <FormOverview player={player} stats={matchStats} />
+        <FormOverview player={displayPlayer} stats={displayMatchStats} />
 
         <Tabs active={activeTab} onChange={setActiveTab} />
 
         <div className="px-4">
           {activeTab === "season" &&
             (visibleSeasonStats ? (
-              <SeasonDetails player={player} stats={visibleSeasonStats} />
+              <SeasonDetails player={displayPlayer} stats={visibleSeasonStats} />
             ) : (
               <div className="py-10 text-center text-sm text-muted-foreground">
                 Ingen sesongstatistikk tilgjengelig
               </div>
             ))}
-          {activeTab === "matches" && <MatchHistory player={player} stats={matchStats} />}
-          {activeTab === "form" && <FormOverview player={player} stats={matchStats} />}
+          {activeTab === "matches" && (
+            <MatchHistory player={displayPlayer} stats={displayMatchStats} />
+          )}
+          {activeTab === "form" && (
+            <FormOverview player={displayPlayer} stats={displayMatchStats} />
+          )}
         </div>
       </div>
     </div>

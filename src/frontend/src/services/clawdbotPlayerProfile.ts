@@ -1,5 +1,6 @@
 import akerRosterData from "../data/akerRoster.json";
 import firstDivision2526StatsData from "../data/firstDivision2526PlayerStats.json";
+import playerSeasonSpells2526Data from "../data/playerSeasonSpells2526.json";
 import kjelsaasRosterData from "../data/kjelsaasRoster.json";
 import voldaRosterData from "../data/voldaRoster.json";
 import levangerRosterData from "../data/levangerRoster.json";
@@ -162,6 +163,7 @@ type ClawdbotRecentMatch = {
   savePercentage?: number | null;
   goalsConceded?: number | null;
   shotsAgainst?: number | null;
+  teamName?: string | null;
 };
 
 export type ClawdbotPlayerProfile = {
@@ -186,12 +188,48 @@ type StaticPlayerStats = {
   recentMatches: ClawdbotRecentMatch[];
 };
 
+type StaticPlayerSeasonSpell = {
+  canonicalPlayerId: string;
+  externalPlayerId: string;
+  playerName: string;
+  position?: string | null;
+  teamName: string;
+  leagueId: LeagueId;
+  seasonId: SeasonId;
+  spellType?: "loan" | "permanent";
+  seasonStats: ClawdbotSeasonStats;
+  goalkeeperStats?: ClawdbotGoalkeeperStats;
+  recentMatches: ClawdbotRecentMatch[];
+};
+
+export type PlayerSeasonScope = {
+  id: string;
+  label: string;
+  teamName?: string;
+  leagueId: LeagueId;
+  spellType?: "loan" | "permanent";
+  profile: ClawdbotPlayerProfile;
+};
+
 const FIRST_DIVISION_2526_STATS_BY_ID = Object.fromEntries(
   (firstDivision2526StatsData as StaticPlayerStats[]).map((stats) => [
     stats.playerId,
     stats,
   ]),
 ) as Record<string, StaticPlayerStats>;
+
+const PLAYER_SEASON_SPELLS =
+  playerSeasonSpells2526Data as StaticPlayerSeasonSpell[];
+
+const PLAYER_SEASON_SPELLS_BY_KEY = PLAYER_SEASON_SPELLS.reduce<
+  Record<string, StaticPlayerSeasonSpell[]>
+>((index, spell) => {
+  const key = `${spell.canonicalPlayerId}:${spell.seasonId}`;
+  const records = index[key] ?? [];
+  records.push(spell);
+  index[key] = records;
+  return index;
+}, {});
 
 export type EnrichedPlayerMatchStats = PlayerMatchStats & {
   date?: string;
@@ -212,6 +250,7 @@ export type EnrichedPlayerMatchStats = PlayerMatchStats & {
   warnings?: bigint;
   redCards?: bigint;
   playTime?: string;
+  teamName?: string;
 };
 
 type StaticTeamConfig = {
@@ -676,6 +715,137 @@ export function getStaticProfile(
   return createStaticProfile(entry.player, entry.team, seasonId);
 }
 
+function roundToOneDecimal(value: number) {
+  return Math.round(value * 10) / 10;
+}
+
+function withMatchTeam(
+  profile: ClawdbotPlayerProfile,
+  teamName: string,
+): ClawdbotPlayerProfile {
+  return {
+    ...profile,
+    recentMatches: profile.recentMatches.map((match) => ({
+      ...match,
+      teamName,
+    })),
+  };
+}
+
+function combineSeasonProfiles(
+  profiles: ClawdbotPlayerProfile[],
+): ClawdbotPlayerProfile {
+  const primary = profiles[0];
+  const sum = (field: keyof ClawdbotSeasonStats) =>
+    profiles.reduce(
+      (total, profile) => total + Number(profile.seasonStats[field] ?? 0),
+      0,
+    );
+  const matches = sum("matches");
+  const goals = sum("goals");
+  const shots = sum("shots");
+  const assists = sum("assists");
+  const mepTotal = roundToOneDecimal(sum("mepTotal"));
+
+  return {
+    player: primary.player,
+    seasonStats: {
+      matches,
+      goals,
+      shots,
+      shotPercentage:
+        shots > 0 ? roundToOneDecimal((goals / shots) * 100) : 0,
+      assists,
+      technicalErrors: sum("technicalErrors"),
+      suspensions: sum("suspensions"),
+      mepAvg: matches > 0 ? roundToOneDecimal(mepTotal / matches) : 0,
+      mepTotal,
+    },
+    recentMatches: profiles
+      .flatMap((profile) => profile.recentMatches)
+      .sort((left, right) =>
+        String(right.date ?? "").localeCompare(String(left.date ?? "")),
+      ),
+  };
+}
+
+export function getPlayerSeasonScopes(
+  playerId: bigint,
+  seasonId: SeasonId,
+): PlayerSeasonScope[] {
+  const spellRecords =
+    PLAYER_SEASON_SPELLS_BY_KEY[`${playerId.toString()}:${seasonId}`] ?? [];
+  if (spellRecords.length === 0) return [];
+
+  const primaryEntry = getStaticPlayerEntry(playerId, seasonId);
+  const primaryProfile = getStaticProfile(playerId, seasonId);
+  const fallbackProfile = primaryProfile ?? getStaticProfile(playerId);
+  if (!fallbackProfile) return [];
+
+  const clubScopes: PlayerSeasonScope[] = [];
+  if (primaryProfile && primaryEntry) {
+    const teamName = primaryProfile.player.team ?? primaryEntry.team.name;
+    clubScopes.push({
+      id: slugify(teamName),
+      label: teamName,
+      teamName,
+      leagueId: getTeamLeagueId(primaryEntry.team),
+      profile: withMatchTeam(primaryProfile, teamName),
+    });
+  }
+
+  for (const spell of spellRecords) {
+    if (
+      clubScopes.some(
+        (scope) =>
+          normalizeTeamLookup(scope.teamName) ===
+          normalizeTeamLookup(spell.teamName),
+      )
+    ) {
+      continue;
+    }
+
+    const profile: ClawdbotPlayerProfile = {
+      player: {
+        ...fallbackProfile.player,
+        id: spell.canonicalPlayerId,
+        name: fallbackProfile.player.name || spell.playerName,
+        team: spell.teamName,
+        position: spell.position ?? fallbackProfile.player.position,
+        season: getSeason(spell.seasonId).statsCode,
+        tournament: `${getLeagueLabel(spell.leagueId, spell.seasonId)} kvinner`,
+      },
+      seasonStats: spell.seasonStats,
+      goalkeeperStats: spell.goalkeeperStats,
+      recentMatches: spell.recentMatches.map((match) => ({
+        ...match,
+        teamName: spell.teamName,
+      })),
+    };
+
+    clubScopes.push({
+      id: slugify(spell.teamName),
+      label: spell.teamName,
+      teamName: spell.teamName,
+      leagueId: spell.leagueId,
+      spellType: spell.spellType,
+      profile,
+    });
+  }
+
+  if (clubScopes.length < 2) return [];
+
+  return [
+    {
+      id: "combined",
+      label: "Samlet",
+      leagueId: clubScopes[0].leagueId,
+      profile: combineSeasonProfiles(clubScopes.map((scope) => scope.profile)),
+    },
+    ...clubScopes,
+  ];
+}
+
 export function getStaticTeamLogoUrl(team?: string | null) {
   const normalized = normalizeTeamLookup(team);
   const aliasLogo = Object.entries(STATIC_TEAM_LOGO_ALIASES).find(
@@ -809,6 +979,7 @@ export function mapClawdbotMatchStats(
       warnings: toOptionalBigInt(match.warnings),
       redCards: toOptionalBigInt(match.redCards),
       playTime: match.playTime ?? undefined,
+      teamName: match.teamName ?? undefined,
       date: match.date ?? undefined,
       opponent: match.opponent ?? undefined,
       homeAway: match.homeAway ?? undefined,

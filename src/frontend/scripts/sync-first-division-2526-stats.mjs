@@ -13,6 +13,10 @@ const fullOutputPath = path.join(
   dataRoot,
   "firstDivision2526FullPlayerStats.json",
 );
+const seasonSpellsOutputPath = path.join(
+  dataRoot,
+  "playerSeasonSpells2526.json",
+);
 const identityRegistryPath = path.join(dataRoot, "playerIdentityRegistry.json");
 
 const PRIME_URL = "https://admin.topphandball.no/apps/prime/prime.php";
@@ -389,6 +393,26 @@ function compactCurrentPlayerStats(players) {
   );
 }
 
+function extractSeasonSpells(players) {
+  return players
+    .filter((player) => player.spellType && player.canonicalPlayerId)
+    .map((player) => ({
+      canonicalPlayerId: String(player.canonicalPlayerId),
+      externalPlayerId: String(player.playerId),
+      playerName: player.playerName,
+      position: player.position,
+      teamName: player.teamName,
+      leagueId: player.league,
+      seasonId: player.season,
+      spellType: player.spellType,
+      seasonStats: player.seasonStats,
+      ...(player.goalkeeperStats
+        ? { goalkeeperStats: player.goalkeeperStats }
+        : {}),
+      recentMatches: player.recentMatches,
+    }));
+}
+
 async function main() {
   if (process.argv.includes("--reuse-generated")) {
     const summaries = JSON.parse(
@@ -399,13 +423,18 @@ async function main() {
     const registry = JSON.parse(await readFile(identityRegistryPath, "utf8"));
     addIdentityMetadata(summaries, registry);
     const compactStats = compactCurrentPlayerStats(summaries);
+    const seasonSpells = extractSeasonSpells(summaries);
     await writeFile(fullOutputPath, `${JSON.stringify(summaries)}\n`);
     await writeFile(
       compactOutputPath,
       `${JSON.stringify(compactStats, null, 2)}\n`,
     );
+    await writeFile(
+      seasonSpellsOutputPath,
+      `${JSON.stringify(seasonSpells, null, 2)}\n`,
+    );
     console.log(
-      `Reused generated data: ${summaries.length} full and ${compactStats.length} compact players.`,
+      `Reused generated data: ${summaries.length} full, ${compactStats.length} compact players and ${seasonSpells.length} multi-club spells.`,
     );
     return;
   }
@@ -454,16 +483,21 @@ async function main() {
   );
   await writeFile(fullOutputPath, `${JSON.stringify(summaries)}\n`);
   const compactStats = compactCurrentPlayerStats(summaries);
+  const seasonSpells = extractSeasonSpells(summaries);
   await writeFile(
     compactOutputPath,
     `${JSON.stringify(compactStats, null, 2)}\n`,
+  );
+  await writeFile(
+    seasonSpellsOutputPath,
+    `${JSON.stringify(seasonSpells, null, 2)}\n`,
   );
 
   const linnea = summaries.find(
     (player) => normalize(player.playerName) === "linnea aula",
   );
   console.log(
-    `Wrote ${summaries.length} full and ${compactStats.length} compact players. Linnea: ${linnea?.seasonStats.goals ?? "not found"} goals, ${linnea?.recentMatches.length ?? 0} matches.`,
+    `Wrote ${summaries.length} full, ${compactStats.length} compact players and ${seasonSpells.length} multi-club spells. Linnea: ${linnea?.seasonStats.goals ?? "not found"} goals, ${linnea?.recentMatches.length ?? 0} matches.`,
   );
 }
 
