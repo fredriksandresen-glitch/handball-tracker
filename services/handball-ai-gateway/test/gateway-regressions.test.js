@@ -27,6 +27,14 @@ const {
 } = require("../lib/statsDataset");
 const { buildComparisonReport } = require("../lib/comparisonReport");
 const { createComparisonPdf } = require("../lib/comparisonPdf");
+const {
+  buildComparisonFallbackAnswer,
+  buildComparisonModelPrompts,
+  chooseSharedLeague,
+  findCurrentTeamPositionPeers,
+  findUnsupportedNumberTokens,
+  isTeammatePositionComparisonQuestion,
+} = require("../lib/hybridAnalysis");
 
 const frontendData = path.resolve(__dirname, "../../../src/frontend/public/data");
 const searchIndex = JSON.parse(
@@ -198,6 +206,67 @@ test("summarizes Linnea's playing time, discipline and position comparison", () 
     value: 0.3,
   });
   assert.equal(fjellhammer.peerComparison.shotPercentage.rank, 26);
+});
+
+test("resolves Aker's other left wing for a conversational comparison", () => {
+  const question =
+    "kan jeg få en rapport der du sammenligner henne mot den andre venstrekanten til Aker topphåndball der hun har begynt nå?";
+  const linnea = dataset.playersById["22398210032285"];
+  const teammates = findCurrentTeamPositionPeers(
+    linnea,
+    dataset.playersById,
+  );
+
+  assert.equal(isTeammatePositionComparisonQuestion(question), true);
+  assert.equal(teammates.length, 1);
+  assert.equal(teammates[0].name, "Milla Haugerstuen Breen");
+  assert.equal(
+    chooseSharedLeague([linnea, teammates[0]], "2025-26"),
+    "first-division",
+  );
+});
+
+test("builds a grounded Linnea and Milla comparison for Clawdbot", () => {
+  const linnea = dataset.playersById["22398210032285"];
+  const milla = dataset.playersById["8163978717973"];
+  const report = buildComparisonReport({
+    playerIds: [linnea.playerId, milla.playerId],
+    playersById: dataset.playersById,
+    season: "2025-26",
+    league: "first-division",
+  });
+  const fallback = buildComparisonFallbackAnswer(
+    report,
+    "Aker Topphåndball",
+  );
+  const prompts = buildComparisonModelPrompts({
+    question: "Sammenlign henne med den andre venstrekanten i Aker.",
+    conversation: [
+      { role: "user", content: "Oppsummer forrige sesong til Linnea Aula." },
+    ],
+    report,
+    currentTeamName: "Aker Topphåndball",
+  });
+
+  assert.equal(report.players[0].metrics.games, 7);
+  assert.equal(report.players[0].metrics.goals, 18);
+  assert.equal(report.players[1].metrics.games, 25);
+  assert.equal(report.players[1].metrics.goals, 56);
+  assert.equal(report.players[1].metrics.shotPercentage, 80);
+  assert.match(fallback, /Milla Haugerstuen Breen/);
+  assert.match(fallback, /sterkeste og tryggeste dokumenterte/);
+  assert.match(prompts.userPrompt, /Kontrollert sammenligningsgrunnlag/);
+  assert.deepEqual(
+    findUnsupportedNumberTokens(
+      "Milla hadde 56 mål på 25 kamper og 80% uttelling.",
+      prompts.facts,
+    ),
+    [],
+  );
+  assert.deepEqual(
+    findUnsupportedNumberTokens("Milla hadde 999 mål.", prompts.facts),
+    ["999"],
+  );
 });
 
 test("ranks first-division form separately from elite form", () => {

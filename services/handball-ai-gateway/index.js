@@ -33,6 +33,14 @@ const {
 } = require('./lib/statsDataset');
 const { buildComparisonReport } = require('./lib/comparisonReport');
 const { createComparisonPdf } = require('./lib/comparisonPdf');
+const {
+  buildComparisonFallbackAnswer,
+  buildComparisonModelPrompts,
+  chooseSharedLeague,
+  findCurrentTeamPositionPeers,
+  findUnsupportedNumberTokens,
+  isTeammatePositionComparisonQuestion,
+} = require('./lib/hybridAnalysis');
 
 // ─── Candid Opt / BigInt helpers ───────────────────────────────────────────
 
@@ -694,6 +702,8 @@ app.post('/v1/handball/chat', async (req, res) => {
     let evidence = [];
     let sources = [];
     let deterministicAnswer = null;
+    let hybridAnswer = null;
+    let hybridGeneratedByAi = false;
 
     // ─── Extract potential club from question ───────────────────────────
     const extractedClub = extractClubFromQuestion(question);
@@ -878,10 +888,147 @@ app.post('/v1/handball/chat', async (req, res) => {
       if (targetPlayer) {
         const isTransferQuestion = /\bbytte(?:t)?\b|\bovergang(?:en)?\b|\baker\b/i.test(question);
         const isDetailedQuestion = /\bdetaljert\b|\butdyp\b|\boppsummer\b|\bvurder\b|\bovergang(?:en)?\b|\bspilletid\b|\bskuddprosent\b|\baker\b/i.test(question);
+        const isTeammateComparison =
+          isTeammatePositionComparisonQuestion(question);
         const playerId = String(targetPlayer.id);
         const jsonPlayerData = playersById[playerId] || null;
 
-        if (isBestMatchQuestion && extractedClub) {
+        if (jsonPlayerData?.seasonStats && isTeammateComparison) {
+          analysisMode = 'hybrid-current-team-position-comparison';
+          const teammates = findCurrentTeamPositionPeers(
+            jsonPlayerData,
+            playersById,
+          ).slice(0, 3);
+
+          if (teammates.length === 0) {
+            return res.json({
+              id: requestId,
+              answer: `Jeg fant ${jsonPlayerData.name}, men ingen annen spiller i samme posisjon hos ${jsonPlayerData.currentTeamName} med tilgjengelig historisk statistikk.`,
+              status: 'insufficient-data',
+              evidence: [],
+              sources: [],
+              missingData: [
+                `Historisk statistikk for andre ${jsonPlayerData.position}-spillere hos ${jsonPlayerData.currentTeamName}`,
+              ],
+              followUpQuestions: [],
+            });
+          }
+
+          const comparisonPlayers = [jsonPlayerData, ...teammates];
+          let comparisonSeason = requestedSeason;
+          let comparisonLeague = chooseSharedLeague(
+            comparisonPlayers,
+            comparisonSeason,
+          );
+
+          if (!comparisonLeague && Array.isArray(conversation)) {
+            for (let index = conversation.length - 1; index >= 0; index -= 1) {
+              const message = conversation[index];
+              if (message?.role !== 'user') continue;
+              const candidateSeason = resolveSeason(
+                message.content,
+                context?.season ?? null,
+              );
+              const candidateLeague = chooseSharedLeague(
+                comparisonPlayers,
+                candidateSeason,
+              );
+              if (candidateLeague) {
+                comparisonSeason = candidateSeason;
+                comparisonLeague = candidateLeague;
+                break;
+              }
+            }
+          }
+
+          if (!comparisonLeague && requestedSeason !== '2025-26') {
+            comparisonSeason = '2025-26';
+            comparisonLeague = chooseSharedLeague(
+              comparisonPlayers,
+              comparisonSeason,
+            );
+          }
+
+          if (!comparisonLeague) {
+            return res.json({
+              id: requestId,
+              answer: `Jeg fant spillerne, men ikke kampstatistikk fra samme liga og sesong som kan sammenlignes på en trygg måte.`,
+              status: 'insufficient-data',
+              evidence: [],
+              sources: [],
+              missingData: ['Felles historisk liga og sesong for spillerne'],
+              followUpQuestions: [],
+            });
+          }
+
+          const report = buildComparisonReport({
+            playerIds: comparisonPlayers.map((player) => player.playerId),
+            playersById,
+            season: comparisonSeason,
+            league: comparisonLeague,
+            standings: comparisonLeague === 'elite' ? archiveStandings : [],
+          });
+          const fallbackAnswer = buildComparisonFallbackAnswer(
+            report,
+            jsonPlayerData.currentTeamName,
+          );
+          const prompts = buildComparisonModelPrompts({
+            question,
+            conversation,
+            report,
+            currentTeamName: jsonPlayerData.currentTeamName,
+          });
+
+          evidence.push({
+            label: `Sammenligning i ${comparisonSeason}`,
+            value: `${report.players.map((player) => player.name).join(' mot ')}, ${comparisonLeague === 'first-division' ? '1. divisjon' : 'Eliteserien'}`,
+            playerId,
+          });
+          for (const player of report.players) {
+            evidence.push({
+              label: player.name,
+              value: `${player.metrics.games} kamper, ${player.metrics.goals} mål, ${player.metrics.shotPercentage}% uttelling, MEP ${player.metrics.mepTotal}`,
+              playerId: player.playerId,
+            });
+          }
+          sources.push({
+            label: `Rollejustert kampanalyse fra ${dataSource === 'icp-asset-canister' ? 'ICP asset-canister' : 'lokal cache'}`,
+            method: `player-stats/${[
+              ...new Set(
+                comparisonPlayers.flatMap((player) => player.sourceFiles ?? []),
+              ),
+            ].join(',')}`,
+            entityIds: report.players.map((player) => player.playerId),
+            observedAt: new Date().toISOString(),
+          });
+
+          try {
+            modelCalled = true;
+            const modelAnswer = await callAiModel(
+              prompts.systemPrompt,
+              prompts.userPrompt,
+            );
+            const unsupportedNumbers = findUnsupportedNumberTokens(
+              modelAnswer,
+              {
+                facts: prompts.facts,
+                question,
+                conversation,
+              },
+            );
+            if (unsupportedNumbers.length > 0) {
+              throw new Error(
+                `Grounding validation rejected numbers: ${unsupportedNumbers.join(', ')}`,
+              );
+            }
+            hybridAnswer = modelAnswer.trim();
+            hybridGeneratedByAi = true;
+          } catch (error) {
+            console.error(`[${requestId}] Grounded comparison model fallback:`, error.message);
+            analysisMode = 'hybrid-current-team-position-comparison-fallback';
+            hybridAnswer = fallbackAnswer;
+          }
+        } else if (isBestMatchQuestion && extractedClub) {
           analysisMode = 'deterministic-best-match';
           const seasonTeamNames = [...new Set(
             jsonPlayers.flatMap(player =>
@@ -1027,6 +1174,24 @@ app.post('/v1/handball/chat', async (req, res) => {
           }
         }
       }
+    }
+
+    if (hybridAnswer) {
+      const duration = Date.now() - startTime;
+      console.log(`[${new Date().toISOString()}] ${requestId} analysisMode=${analysisMode} modelCalled=${modelCalled} dataSource=${dataSource} duration=${duration}ms`);
+      return res.json({
+        id: requestId,
+        answer: hybridAnswer,
+        status: 'answered',
+        generatedByAi: hybridGeneratedByAi,
+        evidence,
+        sources,
+        missingData: [],
+        followUpQuestions: [
+          'Vil du lage en PDF-rapport av sammenligningen?',
+          'Vil du sammenligne formkurvene kamp for kamp?',
+        ],
+      });
     }
 
     // ─── Return deterministic answer if we have one ─────────────────────
