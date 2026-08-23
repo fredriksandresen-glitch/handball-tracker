@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { useActor, useInternetIdentity } from "@caffeineai/core-infrastructure";
+import {
+  createActorWithConfig,
+  useInternetIdentity,
+} from "@caffeineai/core-infrastructure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouterState, useSearch } from "@tanstack/react-router";
 import {
@@ -11,6 +14,7 @@ import {
   LoaderCircle,
   LogIn,
   MessageSquarePlus,
+  RefreshCw,
   SendHorizontal,
   ShieldCheck,
   Sparkles,
@@ -240,15 +244,29 @@ export default function AiChatPage() {
   const league = normalizeLeagueId(search.league);
   const { identity, login, isInitializing, isLoggingIn } =
     useInternetIdentity();
-  const { actor, isFetching: isActorFetching } = useActor(createAiActor);
   const queryClient = useQueryClient();
   const [selectedThreadId, setSelectedThreadId] = useState<bigint>();
   const [isDraftThread, setIsDraftThread] = useState(false);
   const [input, setInput] = useState("");
+  const [pendingQuestion, setPendingQuestion] = useState<string>();
+  const [pendingMessageId, setPendingMessageId] = useState<bigint>();
   const endRef = useRef<HTMLDivElement>(null);
 
   const principal = identity?.getPrincipal();
   const isAuthenticated = Boolean(principal && !principal.isAnonymous());
+
+  const aiActorQuery = useQuery({
+    queryKey: ["aiActor", principal?.toText()],
+    queryFn: () => {
+      if (!identity) throw new Error("Internet Identity er ikke klar ennå.");
+      return createActorWithConfig(createAiActor, {
+        agentOptions: { identity },
+      });
+    },
+    enabled: isAuthenticated,
+    staleTime: Number.POSITIVE_INFINITY,
+  });
+  const actor = aiActorQuery.data;
 
   const threadsQuery = useQuery({
     queryKey: ["aiThreads", principal?.toText()],
@@ -306,6 +324,7 @@ export default function AiChatPage() {
       );
     },
     onSuccess: async (result) => {
+      setPendingMessageId(result.userMessageId);
       setIsDraftThread(false);
       setSelectedThreadId(result.threadId);
       await Promise.all([
@@ -318,16 +337,34 @@ export default function AiChatPage() {
   });
 
   useEffect(() => {
-    if (messages.length > 0 || submitMutation.isPending) {
+    if (messages.length > 0 || pendingQuestion || submitMutation.isPending) {
       endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }
-  }, [messages.length, submitMutation.isPending]);
+  }, [messages.length, pendingQuestion, submitMutation.isPending]);
+
+  useEffect(() => {
+    if (
+      pendingMessageId !== undefined &&
+      messages.some((message) => message.id === pendingMessageId)
+    ) {
+      setPendingQuestion(undefined);
+      setPendingMessageId(undefined);
+    }
+  }, [messages, pendingMessageId]);
 
   const isSending = submitMutation.isPending || waitingForAnswer;
+  const showPendingQuestion = Boolean(
+    pendingQuestion &&
+      (pendingMessageId === undefined ||
+        !messages.some((message) => message.id === pendingMessageId)),
+  );
 
   const sendQuestion = async (rawQuestion: string) => {
     const question = rawQuestion.trim();
     if (!question || isSending) return;
+    submitMutation.reset();
+    setPendingQuestion(question);
+    setPendingMessageId(undefined);
     setInput("");
     await submitMutation.mutateAsync(question).catch(() => undefined);
   };
@@ -352,7 +389,7 @@ export default function AiChatPage() {
     await queryClient.invalidateQueries({ queryKey: ["aiThreads"] });
   };
 
-  if (isInitializing || isActorFetching) {
+  if (isInitializing || (isAuthenticated && aiActorQuery.isFetching)) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center text-muted-foreground">
         <LoaderCircle className="size-5 animate-spin" />
@@ -389,10 +426,16 @@ export default function AiChatPage() {
           threads={threadsQuery.data ?? []}
           selectedId={isDraftThread ? undefined : selectedThreadId}
           onSelect={(id) => {
+            submitMutation.reset();
+            setPendingQuestion(undefined);
+            setPendingMessageId(undefined);
             setIsDraftThread(false);
             setSelectedThreadId(id);
           }}
           onNew={() => {
+            submitMutation.reset();
+            setPendingQuestion(undefined);
+            setPendingMessageId(undefined);
             setIsDraftThread(true);
             setSelectedThreadId(undefined);
             setInput("");
@@ -408,7 +451,7 @@ export default function AiChatPage() {
               </div>
             )}
 
-            {messages.length === 0 && !isSending && (
+            {messages.length === 0 && !isSending && !pendingQuestion && (
               <div className="space-y-3">
                 {STARTER_QUESTIONS.map((question) => (
                   <button
@@ -427,13 +470,34 @@ export default function AiChatPage() {
             {messages.map((message) => (
               <Message key={message.id.toString()} message={message} />
             ))}
+            {showPendingQuestion && (
+              <div className="flex justify-end pl-10">
+                <div className="max-w-[88%] rounded-md bg-primary px-3.5 py-3 text-sm leading-6 text-primary-foreground">
+                  {pendingQuestion}
+                </div>
+              </div>
+            )}
             {isSending && <LoadingMessage />}
 
             {submitMutation.isError && (
-              <div className="border-l-2 border-destructive pl-3 text-sm text-destructive">
-                {submitMutation.error instanceof Error
-                  ? submitMutation.error.message
-                  : "Kunne ikke legge analysen i ICP-køen."}
+              <div className="flex items-center justify-between gap-3 border-l-2 border-destructive pl-3 text-sm text-destructive">
+                <span>
+                  {submitMutation.error instanceof Error
+                    ? submitMutation.error.message
+                    : "Kunne ikke legge analysen i ICP-køen."}
+                </span>
+                {pendingQuestion && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0"
+                    onClick={() => void sendQuestion(pendingQuestion)}
+                  >
+                    <RefreshCw />
+                    Prøv igjen
+                  </Button>
+                )}
               </div>
             )}
             <div ref={endRef} />
