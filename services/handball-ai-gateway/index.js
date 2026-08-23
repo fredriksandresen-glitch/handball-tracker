@@ -19,6 +19,7 @@ const {
   isBestFormQuestion,
   isComparisonReportFollowUp,
   isDetailedPlayerQuestion,
+  isEndSeasonPotentialQuestion,
   isGroupTeamContextFollowUp,
   isPreviousSeasonFormFollowUp,
   isRecruitmentQuestion,
@@ -35,6 +36,7 @@ const {
   analyzeBestForm,
   analyzeLatestTeamMatch,
   analyzeRecruitmentCandidates,
+  analyzeEndSeasonMepTrend,
   buildStatsDataset,
   compareFormWithStandings,
   findBestMatchForPlayer,
@@ -64,6 +66,10 @@ const {
   buildPlayerResolutionPrompts,
   parsePlayerResolution,
 } = require('./lib/entityResolution');
+const {
+  buildMepTrendFallbackAnswer,
+  buildMepTrendModelPrompts,
+} = require('./lib/trendAnalysis');
 
 // ─── Candid Opt / BigInt helpers ───────────────────────────────────────────
 
@@ -827,12 +833,72 @@ app.post('/v1/handball/chat', async (req, res) => {
         /\bbest(?:e)?\s+spiller(?:en)?\b/.test(normalizedSearchQuestion),
     );
     const asksForRecruitment = isRecruitmentQuestion(question);
+    const asksForEndSeasonPotential = isEndSeasonPotentialQuestion(question);
 
     // ─── Check for "best against team" (motstander) ─────────────────────
     const bestAgainstMatch = normalizedQuestion.match(/\bbest\b.*\bmot\b\s+([\wæøåäöü\s-]+?)(?:\s+i\s+(?:fjor|år)|\s+forrige|\s+sist|\s+siste|\s+sesong|$)/i) ||
                               normalizedQuestion.match(/\bspilte\b.*\bbest\b.*\bmot\b\s+([\wæøåäöü\s-]+?)(?:\s+i\s+(?:fjor|år)|\s+forrige|\s+sist|\s+siste|\s+sesong|$)/i);
 
-    if (previousBestFormQuestion) {
+    if (asksForEndSeasonPotential) {
+      analysisMode = 'hybrid-end-season-mep-trend';
+      const analysis = analyzeEndSeasonMepTrend(
+        allMatches,
+        requestedSeason,
+        5,
+        requestedLeague,
+      );
+      if (!analysis.found || analysis.candidates.length === 0) {
+        return res.json({
+          id: requestId,
+          answer: `Jeg fant ikke fem avslutningskamper med en positiv MEP-kurve for nok spillere i ${requestedSeason}.`,
+          status: 'insufficient-data',
+          generatedByAi: false,
+          evidence: [],
+          sources: [],
+          missingData: [`Fem avslutningskamper per spiller i ${requestedSeason}`],
+          followUpQuestions: [],
+        });
+      }
+
+      const fallbackAnswer = buildMepTrendFallbackAnswer(analysis);
+      const prompts = buildMepTrendModelPrompts({
+        question,
+        conversation,
+        analysis,
+      });
+      evidence.push({
+        label: `Positiv MEP-kurve ved sesongslutt ${requestedSeason}`,
+        value: `${analysis.candidates.length} kandidater basert på de fem siste kampene`,
+      });
+      sources.push({
+        label: `Kampstatistikk fra ${dataSource === 'icp-asset-canister' ? 'ICP asset-canister' : 'lokal cache'}`,
+        method: 'player-stats/*PlayerStats.json',
+        entityIds: analysis.candidates.map((candidate) => candidate.playerId),
+        observedAt: new Date().toISOString(),
+      });
+      try {
+        modelCalled = true;
+        const modelAnswer = await callAiModel(
+          prompts.systemPrompt,
+          prompts.userPrompt,
+        );
+        const unsupportedNumbers = findUnsupportedNumberTokens(
+          modelAnswer,
+          prompts.facts,
+        );
+        if (unsupportedNumbers.length > 0) {
+          throw new Error(
+            `Grounding validation rejected numbers: ${unsupportedNumbers.join(', ')}`,
+          );
+        }
+        hybridAnswer = modelAnswer.trim();
+        hybridGeneratedByAi = true;
+      } catch (error) {
+        console.error(`[${requestId}] MEP trend model fallback:`, error.message);
+        analysisMode = 'hybrid-end-season-mep-trend-fallback';
+        hybridAnswer = fallbackAnswer;
+      }
+    } else if (previousBestFormQuestion) {
       analysisMode = 'deterministic-form-team-context';
       const previousSeason = resolveSeason(
         previousBestFormQuestion,

@@ -15,6 +15,7 @@ const {
   isBestFormQuestion,
   isComparisonReportFollowUp,
   isDetailedPlayerQuestion,
+  isEndSeasonPotentialQuestion,
   isGroupTeamContextFollowUp,
   isPreviousSeasonFormFollowUp,
   isPlayerFollowUpQuestion,
@@ -30,6 +31,7 @@ const {
   analyzeBestForm,
   analyzeLatestTeamMatch,
   analyzeRecruitmentCandidates,
+  analyzeEndSeasonMepTrend,
   buildStatsDataset,
   compareFormWithStandings,
   findBestMatchForPlayer,
@@ -50,6 +52,10 @@ const {
   buildPlayerResolutionPrompts,
   parsePlayerResolution,
 } = require("../lib/entityResolution");
+const {
+  buildMepTrendFallbackAnswer,
+  buildMepTrendModelPrompts,
+} = require("../lib/trendAnalysis");
 const {
   buildComparisonFallbackAnswer,
   buildComparisonModelPrompts,
@@ -506,6 +512,51 @@ test("understands direct and conversational best-form variants", () => {
   const analysis = analyzeBestForm(dataset.allMatches, "2025-26", 5);
   assert.equal(analysis.topPlayer.playerName, "Sarah Deari Solheim");
   assert.equal(analysis.rankings.slice(0, 5).length, 5);
+});
+
+test("understands best form at the end of the previous season", () => {
+  const question = "hvem hadde best form på slutten av forrige sesong?";
+  const season = resolveSeason(question, "2026-27");
+  const analysis = analyzeBestForm(dataset.allMatches, season, 5, "elite");
+
+  assert.equal(isBestFormQuestion(question), true);
+  assert.equal(season, "2025-26");
+  assert.equal(analysis.found, true);
+  assert.equal(analysis.topPlayer.playerName, "Sarah Deari Solheim");
+});
+
+test("builds a grounded MEP curve analysis for potential questions", () => {
+  const question =
+    "hvilken spillere har stort potential at gjøre det bra med tanke på sluttiden av førrige sesong mep kurve?";
+  const season = resolveSeason(question, "2026-27");
+  const analysis = analyzeEndSeasonMepTrend(
+    dataset.allMatches,
+    season,
+    5,
+    "elite",
+  );
+  const fallback = buildMepTrendFallbackAnswer(analysis);
+  const prompts = buildMepTrendModelPrompts({
+    question,
+    conversation: [],
+    analysis,
+  });
+
+  assert.equal(isEndSeasonPotentialQuestion(question), true);
+  assert.equal(season, "2025-26");
+  assert.equal(analysis.found, true);
+  assert.equal(analysis.candidates.length > 0, true);
+  assert.equal(
+    analysis.candidates.every(
+      (candidate) =>
+        candidate.matches === 5 &&
+        candidate.slopePerMatch > 0 &&
+        candidate.earlyToLateChange > 0,
+    ),
+    true,
+  );
+  assert.match(fallback, /positiv MEP-kurve/i);
+  assert.match(prompts.systemPrompt, /framtidig potensial/);
 });
 
 test("answers Fjellhammer's latest-match scorer and position questions", () => {

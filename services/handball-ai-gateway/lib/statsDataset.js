@@ -501,6 +501,106 @@ function analyzeBestForm(
   };
 }
 
+function analyzeEndSeasonMepTrend(
+  allMatches,
+  season,
+  matchCount = 5,
+  league = "elite",
+) {
+  const matchesByPlayer = new Map();
+  for (const match of allMatches) {
+    if (season && match.season !== season) continue;
+    if (league && match.league !== league) continue;
+    const playerMatches = matchesByPlayer.get(match.playerId) ?? [];
+    playerMatches.push(match);
+    matchesByPlayer.set(match.playerId, playerMatches);
+  }
+
+  const round2 = (value) => Math.round(value * 100) / 100;
+  const candidates = [];
+  for (const [playerId, matches] of matchesByPlayer) {
+    const recentMatches = [...matches]
+      .sort((left, right) =>
+        String(left.date ?? left.matchId).localeCompare(
+          String(right.date ?? right.matchId),
+        ),
+      )
+      .slice(-matchCount);
+    if (recentMatches.length < matchCount) continue;
+
+    const mepValues = recentMatches.map((match) => Number(match.mep ?? 0));
+    const xAverage = (matchCount - 1) / 2;
+    const yAverage =
+      mepValues.reduce((sum, value) => sum + value, 0) / matchCount;
+    const numerator = mepValues.reduce(
+      (sum, value, index) =>
+        sum + (index - xAverage) * (value - yAverage),
+      0,
+    );
+    const denominator = mepValues.reduce(
+      (sum, _value, index) => sum + (index - xAverage) ** 2,
+      0,
+    );
+    const firstTwoAverage = (mepValues[0] + mepValues[1]) / 2;
+    const lastTwoAverage =
+      (mepValues.at(-2) + mepValues.at(-1)) / 2;
+    const latestMatch = recentMatches.at(-1);
+
+    candidates.push({
+      playerId,
+      playerName: latestMatch.playerName,
+      playerTeam: latestMatch.playerTeam,
+      position: latestMatch.playerPosition,
+      season,
+      league,
+      matches: matchCount,
+      mepValues: mepValues.map(round2),
+      averageMep: round2(yAverage),
+      slopePerMatch: round2(denominator > 0 ? numerator / denominator : 0),
+      earlyToLateChange: round2(lastTwoAverage - firstTwoAverage),
+      firstTwoAverage: round2(firstTwoAverage),
+      lastTwoAverage: round2(lastTwoAverage),
+      positiveSteps: mepValues.slice(1).filter(
+        (value, index) => value > mepValues[index],
+      ).length,
+      totalGoals: recentMatches.reduce(
+        (sum, match) => sum + Number(match.goals ?? 0),
+        0,
+      ),
+      totalAssists: recentMatches.reduce(
+        (sum, match) => sum + Number(match.assists ?? 0),
+        0,
+      ),
+      recentMatches: recentMatches.map((match) => ({
+        date: match.date,
+        opponent: match.opponent,
+        mep: Number(match.mep ?? 0),
+        goals: Number(match.goals ?? 0),
+        assists: Number(match.assists ?? 0),
+      })),
+    });
+  }
+
+  candidates.sort(
+    (left, right) =>
+      right.slopePerMatch - left.slopePerMatch ||
+      right.earlyToLateChange - left.earlyToLateChange ||
+      right.averageMep - left.averageMep,
+  );
+  const positiveCandidates = candidates.filter(
+    (candidate) =>
+      candidate.slopePerMatch > 0 && candidate.earlyToLateChange > 0,
+  );
+
+  return {
+    found: candidates.length > 0,
+    season,
+    league,
+    matchCount,
+    candidates: positiveCandidates.slice(0, 12),
+  };
+}
+
 function compareFormWithStandings(formAnalysis, standings, limit = 5) {
   const standingByTeam = new Map(
     standings.map((standing) => [normalizeText(standing.name), standing]),
@@ -778,6 +878,7 @@ module.exports = {
   analyzeBestForm,
   analyzeLatestTeamMatch,
   analyzeRecruitmentCandidates,
+  analyzeEndSeasonMepTrend,
   buildStatsDataset,
   compareFormWithStandings,
   findBestMatchForPlayer,

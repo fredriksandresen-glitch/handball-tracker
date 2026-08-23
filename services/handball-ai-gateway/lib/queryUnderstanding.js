@@ -280,7 +280,18 @@ function isBestFormQuestion(question) {
   return (
     /\bform\b/.test(normalized) &&
     /\b(best(?:e)?|topp)\b/.test(normalized) &&
-    /\b(siste|kamp(?:en|ene)?)\b/.test(normalized)
+    /\b(siste|kamp(?:en|ene)?|slutt\w*)\b/.test(normalized)
+  );
+}
+
+function isEndSeasonPotentialQuestion(question) {
+  const normalized = normalizeText(question);
+  return (
+    /\b(potensial\w*|potential\w*|utvikling\w*|lovende)\b/.test(
+      normalized,
+    ) &&
+    /\b(mep|form|kurve\w*)\b/.test(normalized) &&
+    /\b(slutt\w*|siste|sesongslutt\w*)\b/.test(normalized)
   );
 }
 
@@ -374,13 +385,14 @@ function extractClubFromQuestion(question) {
 }
 
 function resolveSeason(question, contextSeason) {
-  const normalized = String(question).toLocaleLowerCase("nb-NO");
-  const explicitSeason = normalized.match(/\b(20\d{2})\s*[-/]\s*(\d{2})\b/);
+  const raw = String(question).toLocaleLowerCase("nb-NO");
+  const normalized = normalizeText(question);
+  const explicitSeason = raw.match(/\b(20\d{2})\s*[-/]\s*(\d{2})\b/);
   if (explicitSeason) return `${explicitSeason[1]}-${explicitSeason[2]}`;
 
   if (
     contextSeason === "2026-27" &&
-    /\bi fjor\b|\bforr?i?g(?:e|ie) sesong\b|\bsist(?:e)? sesong\b|\bfjorårets?\b|\bfjorårs(?:sesong(?:en)?|statistikk(?:en)?)?\b/.test(
+    /\bi fjor\b|\b(?:forrige|forrgie|forgie|foerrige) sesong\b|\bsist(?:e)? sesong\b|\bfjoraarets?\b|\bfjoraars(?:sesong(?:en)?|statistikk(?:en)?)?\b/.test(
       normalized,
     )
   ) {
@@ -403,6 +415,7 @@ module.exports = {
   isGroupTeamContextFollowUp,
   isComparisonReportFollowUp,
   isDetailedPlayerQuestion,
+  isEndSeasonPotentialQuestion,
   isRecruitmentQuestion,
   isPreviousSeasonFormFollowUp,
   levenshteinDistance,
