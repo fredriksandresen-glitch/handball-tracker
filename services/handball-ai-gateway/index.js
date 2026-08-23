@@ -70,6 +70,10 @@ const {
   buildMepTrendFallbackAnswer,
   buildMepTrendModelPrompts,
 } = require('./lib/trendAnalysis');
+const {
+  assessHandballRequest,
+  runHandballAgent,
+} = require('./lib/handballAgent');
 
 // ─── Candid Opt / BigInt helpers ───────────────────────────────────────────
 
@@ -763,6 +767,19 @@ app.post('/v1/handball/chat', async (req, res) => {
       return res.status(400).json({
         id: requestId, answer: 'Question too long (max 500 characters)', status: 'insufficient-data',
         evidence: [], sources: [], missingData: [], followUpQuestions: []
+      });
+    }
+    const safety = assessHandballRequest(question);
+    if (!safety.allowed) {
+      return res.json({
+        id: requestId,
+        answer: safety.answer,
+        status: 'answered',
+        generatedByAi: false,
+        evidence: [],
+        sources: [],
+        missingData: [],
+        followUpQuestions: [],
       });
     }
 
@@ -1651,113 +1668,58 @@ app.post('/v1/handball/chat', async (req, res) => {
       });
     }
 
-    // ─── Fallback to AI model for open-ended questions ──────────────────
-    let fallbackData = null;
-    if (mentionedTeam) {
-      let teamSeason = analyzeBestPlayerForTeam(mentionedTeam, allMatches, {
-        season: requestedSeason,
-        league: requestedLeague,
-      });
-      if (!teamSeason.found) {
-        teamSeason = analyzeBestPlayerForTeam(mentionedTeam, allMatches, {
-          season: requestedSeason,
-        });
-      }
-      let latestMatch = analyzeLatestTeamMatch(mentionedTeam, allMatches, {
-        season: requestedSeason,
-        league: requestedLeague,
-      });
-      if (!latestMatch.found) {
-        latestMatch = analyzeLatestTeamMatch(mentionedTeam, allMatches, {
-          season: requestedSeason,
-        });
-      }
-      fallbackData = {
-        team: mentionedTeam,
-        requestedSeason,
-        seasonSummary: teamSeason.found
-          ? {
-              season: teamSeason.season,
-              minimumGames: teamSeason.minimumGames,
-              players: teamSeason.rankings.slice(0, 10),
-            }
-          : null,
-        latestMatch: latestMatch.found
-          ? {
-              date: latestMatch.date,
-              opponent: latestMatch.opponent,
-              season: latestMatch.season,
-              teamGoals: latestMatch.teamGoals,
-              players: latestMatch.players,
-              positions: latestMatch.positionRanking,
-            }
-          : null,
-      };
-      evidence.push({
-        label: `Kontrollert lagdata for ${mentionedTeam}`,
-        value: teamSeason.found
-          ? `${teamSeason.season}, ${teamSeason.rankings.length} rangerte spillere`
-          : 'Ingen komplett sesongrangering',
-      });
+    // ─── Agentic fallback for open-ended handball questions ─────────────
+    analysisMode = 'agentic-handball';
+    const agentResult = await runHandballAgent({
+      question,
+      conversation,
+      context,
+      state: {
+        playersById,
+        allMatches,
+        defaultSeason: requestedSeason,
+        defaultLeague: requestedLeague,
+        standings: {
+          elite: archiveStandings,
+          firstDivision: firstDivisionArchiveStandings,
+        },
+      },
+      callModel: async (systemPrompt, userPrompt) => {
+        modelCalled = true;
+        return callAiModel(systemPrompt, userPrompt);
+      },
+      validateNumbers: findUnsupportedNumberTokens,
+    });
+    evidence.push({
+      label: 'Kontrollert håndballagent',
+      value: agentResult.toolNames.length > 0
+        ? `Brukte verktøy: ${agentResult.toolNames.join(', ')}`
+        : 'Ingen dataverktøy ble brukt',
+    });
+    if (agentResult.entityIds.length > 0) {
       sources.push({
-        label: `Kampdata fra ${dataSource === 'icp-asset-canister' ? 'ICP asset-canister' : 'lokal cache'}`,
-        method: 'player-stats/*PlayerStats.json',
-        entityIds: teamSeason.found
-          ? teamSeason.rankings.map((player) => player.playerId)
-          : [],
+        label: `Strukturerte håndballdata fra ${dataSource === 'icp-asset-canister' ? 'ICP asset-canister' : 'lokal cache'}`,
+        method: agentResult.toolNames.join(','),
+        entityIds: agentResult.entityIds,
         observedAt: new Date().toISOString(),
       });
     }
 
-    const systemPrompt = `Du er en håndballekspert som hjelper brukere med spørsmål om norsk håndball.
-Du har tilgang til data fra REMA 1000-ligaen (eliteserien) og 1. divisjon.
-Svar på norsk. Bruk kun de strukturerte faktaene fra konteksten under. Hvis data mangler, si det tydelig.
-Skill mellom fakta og vurdering. Ikke finn på tall, spillere, kamper eller overganger som ikke finnes i dataene.`;
-
-    const userPrompt = `Spørsmål: ${question}\n\nSiste samtalekontekst:\n${JSON.stringify((conversation ?? []).slice(-6))}\n\nKontrollert datagrunnlag:\n${fallbackData ? JSON.stringify(fallbackData) : 'Ingen relevant strukturert data ble funnet.'}\n\nSvar konsist og presist. Gjør analyse når datagrunnlaget tillater det, og forklar konkret hva som mangler ellers.`;
-
-    let answer;
-    try {
-      modelCalled = true;
-      answer = await callAiModel(systemPrompt, userPrompt);
-      const unsupportedNumbers = findUnsupportedNumberTokens(answer, {
-        fallbackData,
-        question,
-        conversation,
-      });
-      if (unsupportedNumbers.length > 0) {
-        throw new Error(
-          `Grounding validation rejected numbers: ${unsupportedNumbers.join(', ')}`,
-        );
-      }
-    } catch (err) {
-      console.error(`[${requestId}] AI call failed:`, err.message);
-      return res.json({
-        id: requestId,
-        answer: fallbackData
-          ? 'Clawdbot kunne ikke fullføre den åpne analysen akkurat nå. Datagrunnlaget er funnet, men jeg vil ikke presentere et svar som ikke er kontrollert.'
-          : 'Jeg fant ikke et tilstrekkelig datagrunnlag for spørsmålet, og vil ikke gjette på svaret.',
-        status: 'insufficient-data', generatedByAi: false,
-        evidence: [], sources: [], missingData: ['AI model response'],
-        followUpQuestions: ['Prøv igjen om et øyeblikk']
-      });
-    }
-
     const duration = Date.now() - startTime;
-    console.log(`[${new Date().toISOString()}] ${requestId} analysisMode=${analysisMode} modelCalled=true dataSource=${dataSource} duration=${duration}ms`);
+    console.log(`[${new Date().toISOString()}] ${requestId} analysisMode=${analysisMode} modelCalled=${modelCalled} tools=${agentResult.toolNames.join(',')} dataSource=${dataSource} duration=${duration}ms`);
 
-    res.json({
+    return res.json({
       id: requestId,
-      answer: answer.trim(),
-      status: fallbackData ? 'answered' : 'insufficient-data',
-      generatedByAi: true,
+      answer: agentResult.answer,
+      status: agentResult.status === 'refused' ? 'answered' : agentResult.status,
+      generatedByAi: agentResult.generatedByAi,
       evidence,
       sources,
-      missingData: fallbackData ? [] : ['relevant data for question'],
-      followUpQuestions: [
-        'Vil du se statistikk for en annen spiller?',
-        'Vil du sammenligne med et annet lag?'
-      ]
+      missingData:
+        agentResult.status === 'insufficient-data'
+          ? ['relevant handball data']
+          : [],
+      followUpQuestions: [],
     });
 
   } catch (err) {
