@@ -43,10 +43,52 @@ function tokenMatches(questionToken, nameToken) {
   }
 
   return (
-    questionToken.length >= 5 &&
-    nameToken.length >= 5 &&
+    questionToken.length >= 4 &&
+    nameToken.length >= 4 &&
     levenshteinDistance(questionToken, nameToken) <= 1
   );
+}
+
+function tokenSimilarity(left, right) {
+  if (tokenMatches(left, right)) return 1;
+  return 1 - levenshteinDistance(left, right) / Math.max(left.length, right.length);
+}
+
+function rankPlayerCandidates(question, players, limit = 12) {
+  const baseQuestionTokens = tokenize(question).filter(
+    (token) => token.length >= 3,
+  );
+  const questionTokens = [
+    ...baseQuestionTokens,
+    ...baseQuestionTokens.slice(0, -1).map(
+      (token, index) => `${token}${baseQuestionTokens[index + 1]}`,
+    ),
+  ];
+  if (questionTokens.length === 0) return [];
+
+  return players
+    .map((player) => {
+      const nameTokens = tokenize(player.name);
+      if (nameTokens.length < 2) return null;
+      const bestSimilarity = (nameToken) =>
+        Math.max(
+          ...questionTokens.map((questionToken) =>
+            tokenSimilarity(questionToken, nameToken),
+          ),
+        );
+      const firstNameSimilarity = bestSimilarity(nameTokens[0]);
+      const lastNameSimilarity = bestSimilarity(nameTokens.at(-1));
+      if (firstNameSimilarity < 0.45 || lastNameSimilarity < 0.55) return null;
+      return {
+        player,
+        score: Math.round(
+          (firstNameSimilarity * 0.45 + lastNameSimilarity * 0.55) * 1000,
+        ) / 1000,
+      };
+    })
+    .filter(Boolean)
+    .sort((left, right) => right.score - left.score)
+    .slice(0, limit);
 }
 
 function fuzzySurnameMatches(questionToken, nameToken) {
@@ -365,6 +407,7 @@ module.exports = {
   isPreviousSeasonFormFollowUp,
   levenshteinDistance,
   normalizeText,
+  rankPlayerCandidates,
   isPlayerFollowUpQuestion,
   isPositionBenchmarkQuestion,
   resolveSeason,

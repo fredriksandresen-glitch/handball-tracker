@@ -23,6 +23,7 @@ const {
   isPreviousSeasonFormFollowUp,
   isRecruitmentQuestion,
   normalizeText,
+  rankPlayerCandidates,
   isPlayerFollowUpQuestion,
   isPositionBenchmarkQuestion,
   resolveSeason,
@@ -59,6 +60,10 @@ const {
   buildPositionBenchmarkFallbackAnswer,
   buildPositionBenchmarkModelPrompts,
 } = require('./lib/positionBenchmarkAnalysis');
+const {
+  buildPlayerResolutionPrompts,
+  parsePlayerResolution,
+} = require('./lib/entityResolution');
 
 // ─── Candid Opt / BigInt helpers ───────────────────────────────────────────
 
@@ -1140,6 +1145,32 @@ app.post('/v1/handball/chat', async (req, res) => {
         targetPlayer = findPlayerFromConversation(conversation, jsonPlayers) ||
           findPlayerFromConversation(conversation, players);
       }
+      if (!targetPlayer) {
+        const playerCandidates = rankPlayerCandidates(
+          playerLookupQuestion,
+          jsonPlayers,
+        );
+        if (playerCandidates.length > 0) {
+          const prompts = buildPlayerResolutionPrompts({
+            question: playerLookupQuestion,
+            conversation,
+            candidates: playerCandidates,
+          });
+          try {
+            modelCalled = true;
+            const resolution = await callAiModel(
+              prompts.systemPrompt,
+              prompts.userPrompt,
+            );
+            targetPlayer = parsePlayerResolution(
+              resolution,
+              playerCandidates,
+            );
+          } catch (error) {
+            console.error(`[${requestId}] Model-assisted player resolution failed:`, error.message);
+          }
+        }
+      }
 
       if (targetPlayer) {
         const isTransferQuestion = /\bbytte(?:t)?\b|\bovergang(?:en)?\b|\baker\b/i.test(question);
@@ -1541,7 +1572,7 @@ app.post('/v1/handball/chat', async (req, res) => {
     // ─── Return deterministic answer if we have one ─────────────────────
     if (deterministicAnswer) {
       const duration = Date.now() - startTime;
-      console.log(`[${new Date().toISOString()}] ${requestId} analysisMode=${analysisMode} modelCalled=false dataSource=${dataSource} duration=${duration}ms`);
+      console.log(`[${new Date().toISOString()}] ${requestId} analysisMode=${analysisMode} modelCalled=${modelCalled} dataSource=${dataSource} duration=${duration}ms`);
       return res.json({
         id: requestId,
         answer: deterministicAnswer,

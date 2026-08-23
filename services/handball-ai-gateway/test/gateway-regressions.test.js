@@ -20,6 +20,7 @@ const {
   isPlayerFollowUpQuestion,
   isRecruitmentQuestion,
   isPositionBenchmarkQuestion,
+  rankPlayerCandidates,
   resolveSeason,
 } = require("../lib/queryUnderstanding");
 const {
@@ -45,6 +46,10 @@ const {
   buildPositionBenchmarkFallbackAnswer,
   buildPositionBenchmarkModelPrompts,
 } = require("../lib/positionBenchmarkAnalysis");
+const {
+  buildPlayerResolutionPrompts,
+  parsePlayerResolution,
+} = require("../lib/entityResolution");
 const {
   buildComparisonFallbackAnswer,
   buildComparisonModelPrompts,
@@ -156,6 +161,40 @@ test("resolves Marthe Ulvaknippa despite the user's name misspelling", () => {
   assert.equal(player.seasonStats.matches, 25);
   assert.equal(player.seasonStats.goals, 58);
   assert.equal(player.seasonStats.assists, 41);
+});
+
+test("resolves Sara Solheim to Sarah Deari Solheim", () => {
+  const question =
+    "hvor bra var sara solheim i forhold til snittet i ligaen i forrgie sesong?";
+  const player = findPlayerByTokens(question, players);
+
+  assert.equal(player?.playerId, "2239828059504");
+  assert.equal(player.name, "Sarah Deari Solheim");
+  assert.equal(isPositionBenchmarkQuestion(question), true);
+});
+
+test("supports model-assisted player resolution from validated candidates", () => {
+  const candidates = rankPlayerCandidates(
+    "hvordan spilte mette ulva knippa forrige sesong?",
+    players,
+  );
+  const prompts = buildPlayerResolutionPrompts({
+    question: "hvordan spilte mette ulva knippa forrige sesong?",
+    conversation: [],
+    candidates,
+  });
+  const resolved = parsePlayerResolution(
+    JSON.stringify({ playerId: "2239827495091" }),
+    candidates,
+  );
+
+  assert.equal(candidates.length > 0, true);
+  assert.match(prompts.systemPrompt, /entitetsoppslaget/);
+  assert.equal(resolved?.name, "Marthe Bjørnson Ulvåknippa");
+  assert.equal(
+    parsePlayerResolution('{"playerId":"not-in-list"}', candidates),
+    null,
+  );
 });
 
 test("keeps both Fjellhammer best-player spellings deterministic", () => {
