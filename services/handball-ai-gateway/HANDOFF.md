@@ -20,7 +20,7 @@ Clawdbot-endepunkt.
 ```
 
 ## Nødvendige miljøvariabelnavn
-- `MOONSHOT_API_KEY` (obligatorisk)
+- `MOONSHOT_API_KEY` (anbefalt som reserve; ikke nødvendig for primær OpenClaw-agent)
 - `MOONSHOT_MODEL` (valgfritt, default `kimi-k3`)
 - `PORT` (valgfritt, default 3000)
 - `ICP_ASSET_BASE_URL` (valgfritt)
@@ -31,7 +31,15 @@ Clawdbot-endepunkt.
 - `AI_WORKER_ENABLED` (sett til `true` for ICP-køen)
 - `AI_WORKER_IDENTITY_PATH` (obligatorisk når worker er aktiv)
 - `AI_WORKER_POLL_INTERVAL_MS` (valgfritt, default 5000)
+- `AI_WORKER_REQUEST_TIMEOUT_MS` (valgfritt, default 180000)
 - `AI_LOCAL_CHAT_URL` (valgfritt, default lokal port 3000)
+- `OPENCLAW_AGENT_ENABLED` (`true` aktiverer den ekte OpenClaw-agentløkken)
+- `OPENCLAW_AGENT_MODE` (`primary` anbefales, `fallback` bruker gamle ruter først)
+- `OPENCLAW_BASE_URL` (default `http://127.0.0.1:18789/v1`)
+- `OPENCLAW_GATEWAY_TOKEN` (obligatorisk server-secret når agenten er aktiv)
+- `OPENCLAW_AGENT_ID` (default `handball-tracker`)
+- `OPENCLAW_AGENT_TIMEOUT_MS` (valgfritt, default 120000)
+- `OPENCLAW_AGENT_MAX_STEPS` (valgfritt, default 8)
 
 ## Oppsett av worker-identitet
 
@@ -62,6 +70,23 @@ GET  /health
 
 Chat-endepunktet kalles av worker-en på samme Linux-server. Nettleseren sender
 spørsmålet til Motoko-backenden med den innloggede brukerens Principal.
+
+## OpenClaw-agent
+
+Når `OPENCLAW_AGENT_ENABLED=true` og `OPENCLAW_AGENT_MODE=primary`, sendes
+håndballspørsmål til OpenClaw Gateway på loopback. Dette bruker OpenClaws
+normale agentkjøring, ikke et direkte råkall til Moonshot. Gatewayen tilbyr kun
+de kontrollerte håndballverktøyene og utfører verktøykall lokalt mot appens
+strukturerte datasett. Agenten kan gjøre flere oppslag før den svarer.
+
+Hver kombinasjon av ICP Principal og chattråd får en stabil, hash-basert
+OpenClaw-sesjonsnøkkel. ICP-backenden beholder fortsatt den autoritative
+samtalehistorikken. Principal og OpenClaw-token sendes aldri til nettleseren.
+
+Agentens workspace-instruksjoner og et eksempel på den låste agentkonfigen
+ligger under `openclaw/`. Chat Completions-endepunktet må kun være tilgjengelig
+lokalt eller via privat ingress. Bearer-tokenet gir operator-tilgang og skal
+aldri eksponeres offentlig.
 
 ## ICP canister-IDer
 | Type | Canister ID |

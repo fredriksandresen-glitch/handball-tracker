@@ -1,0 +1,42 @@
+// Merge these fields into the existing private OpenClaw configuration.
+// Do not replace unrelated agents, channels, providers, auth or bindings.
+{
+  gateway: {
+    http: {
+      endpoints: {
+        chatCompletions: { enabled: true },
+      },
+    },
+  },
+  agents: {
+    entries: {
+      "handball-tracker": {
+        workspace: "~/.openclaw/workspace-handball-tracker",
+        model: "moonshot/kimi-k3",
+        thinkingDefault: "high",
+        skills: [],
+        sandbox: {
+          mode: "all",
+          scope: "agent",
+          workspaceAccess: "none",
+        },
+        tools: {
+          profile: "minimal",
+          deny: [
+            "session_status",
+            "group:fs",
+            "group:runtime",
+            "group:web",
+            "group:sessions",
+            "group:memory",
+            "group:messaging",
+            "group:nodes",
+            "group:automation",
+            "group:media",
+            "gateway",
+          ],
+        },
+      },
+    },
+  },
+}

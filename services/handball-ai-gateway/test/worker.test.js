@@ -32,6 +32,7 @@ test("maps an ICP work item to the existing gateway contract", () => {
     "https://icp-api.io",
   );
   assert.equal(request.context.principal, "aaaaa-aa");
+  assert.equal(request.context.threadId, "4");
   assert.equal(request.context.season, "2026-27");
   assert.equal(request.conversation[1].role, "assistant");
   assert.deepEqual(request.context.entities, [

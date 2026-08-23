@@ -74,6 +74,10 @@ const {
   assessHandballRequest,
   runHandballAgent,
 } = require('./lib/handballAgent');
+const {
+  isOpenClawAgentConfigured,
+  runOpenClawHandballAgent,
+} = require('./lib/openClawAgent');
 
 // ─── Candid Opt / BigInt helpers ───────────────────────────────────────────
 
@@ -747,6 +751,7 @@ app.post('/v1/handball/chat', async (req, res) => {
   let analysisMode = 'unknown';
   let modelCalled = false;
   let dataSource = 'none';
+  let openClawAttempted = false;
 
   try {
     if (!req.body || typeof req.body !== 'object') {
@@ -851,6 +856,68 @@ app.post('/v1/handball/chat', async (req, res) => {
     );
     const asksForRecruitment = isRecruitmentQuestion(question);
     const asksForEndSeasonPotential = isEndSeasonPotentialQuestion(question);
+    const asksForPdf = reportFollowUp || /\bpdf\b/.test(normalizedSearchQuestion);
+    const handballAgentState = {
+      playersById,
+      allMatches,
+      defaultSeason: requestedSeason,
+      defaultLeague: requestedLeague,
+      standings: {
+        elite: archiveStandings,
+        firstDivision: firstDivisionArchiveStandings,
+      },
+    };
+
+    // OpenClaw runs the real, stateful agent loop. Report requests stay on the
+    // deterministic PDF path because they also need a binary attachment.
+    if (
+      isOpenClawAgentConfigured() &&
+      String(process.env.OPENCLAW_AGENT_MODE ?? 'primary').toLowerCase() === 'primary' &&
+      !asksForPdf
+    ) {
+      openClawAttempted = true;
+      analysisMode = 'openclaw-handball-agent';
+      try {
+        modelCalled = true;
+        const openClawResult = await runOpenClawHandballAgent({
+          question,
+          conversation,
+          context,
+          state: handballAgentState,
+          validateNumbers: findUnsupportedNumberTokens,
+        });
+        evidence.push({
+          label: 'Clawdbot håndballagent',
+          value: openClawResult.toolNames.length > 0
+            ? `Brukte verktøy: ${openClawResult.toolNames.join(', ')}`
+            : 'Ingen dataverktøy ble brukt',
+        });
+        if (openClawResult.entityIds.length > 0) {
+          sources.push({
+            label: `Strukturerte håndballdata fra ${dataSource === 'icp-asset-canister' ? 'ICP asset-canister' : 'lokal cache'}`,
+            method: openClawResult.toolNames.join(','),
+            entityIds: openClawResult.entityIds,
+            observedAt: new Date().toISOString(),
+          });
+        }
+        const duration = Date.now() - startTime;
+        console.log(`[${new Date().toISOString()}] ${requestId} analysisMode=${analysisMode} provider=${openClawResult.provider} tools=${openClawResult.toolNames.join(',')} dataSource=${dataSource} duration=${duration}ms`);
+        return res.json({
+          id: requestId,
+          answer: openClawResult.answer,
+          status: openClawResult.status === 'refused' ? 'answered' : openClawResult.status,
+          generatedByAi: openClawResult.generatedByAi,
+          evidence,
+          sources,
+          missingData: openClawResult.status === 'insufficient-data'
+            ? ['relevant handball data']
+            : [],
+          followUpQuestions: [],
+        });
+      } catch (error) {
+        console.warn(`[${requestId}] OpenClaw primary unavailable; using local analysis fallback: ${error.message}`);
+      }
+    }
 
     // ─── Check for "best against team" (motstander) ─────────────────────
     const bestAgainstMatch = normalizedQuestion.match(/\bbest\b.*\bmot\b\s+([\wæøåäöü\s-]+?)(?:\s+i\s+(?:fjor|år)|\s+forrige|\s+sist|\s+siste|\s+sesong|$)/i) ||
@@ -1670,28 +1737,40 @@ app.post('/v1/handball/chat', async (req, res) => {
 
     // ─── Agentic fallback for open-ended handball questions ─────────────
     analysisMode = 'agentic-handball';
-    const agentResult = await runHandballAgent({
-      question,
-      conversation,
-      context,
-      state: {
-        playersById,
-        allMatches,
-        defaultSeason: requestedSeason,
-        defaultLeague: requestedLeague,
-        standings: {
-          elite: archiveStandings,
-          firstDivision: firstDivisionArchiveStandings,
-        },
-      },
-      callModel: async (systemPrompt, userPrompt) => {
+    let agentResult = null;
+    if (isOpenClawAgentConfigured() && !openClawAttempted) {
+      openClawAttempted = true;
+      try {
         modelCalled = true;
-        return callAiModel(systemPrompt, userPrompt);
-      },
-      validateNumbers: findUnsupportedNumberTokens,
-    });
+        agentResult = await runOpenClawHandballAgent({
+          question,
+          conversation,
+          context,
+          state: handballAgentState,
+          validateNumbers: findUnsupportedNumberTokens,
+        });
+        analysisMode = 'openclaw-handball-agent-fallback';
+      } catch (error) {
+        console.warn(`[${requestId}] OpenClaw fallback unavailable; using local agent: ${error.message}`);
+      }
+    }
+    if (!agentResult) {
+      agentResult = await runHandballAgent({
+        question,
+        conversation,
+        context,
+        state: handballAgentState,
+        callModel: async (systemPrompt, userPrompt) => {
+          modelCalled = true;
+          return callAiModel(systemPrompt, userPrompt);
+        },
+        validateNumbers: findUnsupportedNumberTokens,
+      });
+    }
     evidence.push({
-      label: 'Kontrollert håndballagent',
+      label: agentResult.provider === 'openclaw'
+        ? 'Clawdbot håndballagent'
+        : 'Kontrollert håndballagent',
       value: agentResult.toolNames.length > 0
         ? `Brukte verktøy: ${agentResult.toolNames.join(', ')}`
         : 'Ingen dataverktøy ble brukt',

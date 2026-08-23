@@ -7,6 +7,7 @@ const DEFAULT_BACKEND_CANISTER_ID = "lj6bx-dyaaa-aaaap-qumhq-cai";
 const DEFAULT_ICP_HOST = "https://icp-api.io";
 const DEFAULT_LOCAL_CHAT_URL = "http://127.0.0.1:3000/v1/handball/chat";
 const DEFAULT_POLL_INTERVAL_MS = 5_000;
+const DEFAULT_REQUEST_TIMEOUT_MS = 180_000;
 const MAX_REPORT_SIZE = 1_000_000;
 
 const Role = IDL.Variant({ user: IDL.Null, assistant: IDL.Null });
@@ -198,6 +199,7 @@ function buildGatewayRequest(job, canisterId, host) {
       season: job.context.season,
       league: job.context.league,
       route: job.context.route,
+      threadId: String(job.threadId),
       principal: job.owner.toText(),
       entities,
     },
@@ -242,13 +244,14 @@ async function processJob({
   canisterId,
   host,
   fetchImpl,
+  requestTimeoutMs = DEFAULT_REQUEST_TIMEOUT_MS,
 }) {
   try {
     const response = await fetchImpl(chatUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(buildGatewayRequest(job, canisterId, host)),
-      signal: AbortSignal.timeout(90_000),
+      signal: AbortSignal.timeout(requestTimeoutMs),
     });
     if (!response.ok) {
       throw new Error(`Local AI gateway returned HTTP ${response.status}`);
@@ -308,6 +311,11 @@ async function startAiWorker(options = {}) {
       DEFAULT_POLL_INTERVAL_MS,
   );
   const fetchImpl = options.fetchImpl || globalThis.fetch;
+  const requestTimeoutMs = Number(
+    options.requestTimeoutMs ||
+      process.env.AI_WORKER_REQUEST_TIMEOUT_MS ||
+      DEFAULT_REQUEST_TIMEOUT_MS,
+  );
   let stopped = false;
 
   console.log(
@@ -329,6 +337,7 @@ async function startAiWorker(options = {}) {
           canisterId,
           host,
           fetchImpl,
+          requestTimeoutMs,
         });
       } catch (error) {
         const message =
