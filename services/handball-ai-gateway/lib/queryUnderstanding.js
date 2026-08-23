@@ -112,6 +112,74 @@ function findPlayerFromConversation(conversation, players) {
   return null;
 }
 
+function isComparisonReportFollowUp(question) {
+  const normalized = normalizeText(question);
+  return (
+    /\b(pdf|rapport(?:en)?)\b/.test(normalized) &&
+    /\b(send|sende|lag|lage|last|laste|naa|igjen|meg)\b/.test(normalized)
+  );
+}
+
+function findPreviousComparisonQuestion(conversation) {
+  if (!Array.isArray(conversation)) return null;
+  for (let index = conversation.length - 1; index >= 0; index -= 1) {
+    const message = conversation[index];
+    if (message?.role !== "user" || typeof message.content !== "string") {
+      continue;
+    }
+    const normalized = normalizeText(message.content);
+    if (
+      /\b(sammenlign(?:e|er|ing)?|rapport)\b/.test(normalized) &&
+      /\b(andre|annen|samme posisjon|venstrekant|hoyrekant|lagkamerat)\b/.test(
+        normalized,
+      )
+    ) {
+      return message.content;
+    }
+  }
+  return null;
+}
+
+function findTeamMention(question, teamNames) {
+  const normalizedQuestion = normalizeText(question);
+  const questionTokens = normalizedQuestion.split(/\s+/).filter(Boolean);
+  const ranked = [];
+
+  for (const teamName of [...new Set(teamNames.filter(Boolean))]) {
+    const normalizedTeam = normalizeText(teamName);
+    const shortTeam = normalizedTeam
+      .replace(/\b(topphaandball|topphandball|haandball|handball|elite|damer|hk|th)\b/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+    const aliases = [...new Set([normalizedTeam, shortTeam].filter(Boolean))];
+    let score = 0;
+    for (const alias of aliases) {
+      if (normalizedQuestion.includes(alias)) {
+        score = Math.max(score, 100 + alias.length);
+        continue;
+      }
+      const aliasTokens = alias.split(/\s+/).filter((token) => token.length >= 4);
+      const tokenMatches = aliasTokens.filter((teamToken) =>
+        questionTokens.some(
+          (questionToken) =>
+            questionToken === teamToken ||
+            (questionToken.length >= 5 &&
+              levenshteinDistance(questionToken, teamToken) <= 1),
+        ),
+      ).length;
+      if (tokenMatches > 0) {
+        score = Math.max(score, 60 + tokenMatches * 10 + aliasTokens.length);
+      }
+    }
+    if (score > 0) ranked.push({ teamName, score });
+  }
+
+  ranked.sort((left, right) => right.score - left.score);
+  if (ranked.length === 0) return null;
+  if (ranked.length > 1 && ranked[0].score === ranked[1].score) return null;
+  return ranked[0].teamName;
+}
+
 function isGroupTeamContextFollowUp(question) {
   const normalized = normalizeText(question);
   const referencesGroup = /\b(hvem av de|hvem av dem|hvem av disse|av de|av dem|disse spillerne)\b/.test(
@@ -241,12 +309,15 @@ function resolveSeason(question, contextSeason) {
 module.exports = {
   extractClubFromQuestion,
   extractRequestedMatchCount,
+  findPreviousComparisonQuestion,
   findPreviousBestFormQuestion,
   findPlayerFromConversation,
   findPlayerByTokens,
+  findTeamMention,
   fuzzyMatchTeamName,
   isBestFormQuestion,
   isGroupTeamContextFollowUp,
+  isComparisonReportFollowUp,
   isPreviousSeasonFormFollowUp,
   levenshteinDistance,
   normalizeText,

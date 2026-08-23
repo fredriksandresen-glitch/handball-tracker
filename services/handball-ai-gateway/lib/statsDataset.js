@@ -166,6 +166,7 @@ function buildStatsDataset(searchIndex, loadedFiles) {
           externalPlayerId,
           playerName: player.name,
           playerTeam: segmentTeamName,
+          playerPosition: player.position,
           league: segment.league,
           season: segment.season,
           sourceFile: file,
@@ -486,10 +487,158 @@ function findBestMatchForPlayer(playerId, clubName, allMatches) {
   );
 }
 
+function analyzeLatestTeamMatch(teamName, allMatches, options = {}) {
+  const teamMatches = allMatches.filter(
+    (match) =>
+      normalizeText(match.playerTeam) === normalizeText(teamName) &&
+      (!options.league || match.league === options.league),
+  );
+  let scoped = options.season
+    ? teamMatches.filter((match) => match.season === options.season)
+    : teamMatches;
+  let usedFallbackSeason = false;
+  if (scoped.length === 0 && options.fallbackToLatestSeason !== false) {
+    scoped = teamMatches;
+    usedFallbackSeason = Boolean(options.season && scoped.length > 0);
+  }
+  if (scoped.length === 0) {
+    return { found: false, reason: `Ingen kamper for ${teamName} ble funnet.` };
+  }
+
+  const latest = [...scoped].sort(
+    (left, right) =>
+      String(right.date).localeCompare(String(left.date)) ||
+      String(right.matchId).localeCompare(String(left.matchId)),
+  )[0];
+  const matchRecords = scoped.filter(
+    (match) => String(match.matchId) === String(latest.matchId),
+  );
+  const players = matchRecords
+    .map((match) => ({
+      playerId: match.playerId,
+      playerName: match.playerName,
+      position: match.playerPosition ?? "Ukjent",
+      goals: Number(match.goals ?? 0),
+      assists: Number(match.assists ?? 0),
+      mep: Number(match.mep ?? 0),
+    }))
+    .sort((left, right) => right.goals - left.goals || right.mep - left.mep);
+  const positions = new Map();
+  for (const player of players) {
+    const aggregate = positions.get(player.position) ?? {
+      position: player.position,
+      goals: 0,
+      assists: 0,
+      players: [],
+    };
+    aggregate.goals += player.goals;
+    aggregate.assists += player.assists;
+    if (player.goals > 0) aggregate.players.push(player);
+    positions.set(player.position, aggregate);
+  }
+  const positionRanking = [...positions.values()].sort(
+    (left, right) => right.goals - left.goals || right.assists - left.assists,
+  );
+
+  return {
+    found: true,
+    teamName,
+    matchId: latest.matchId,
+    date: latest.date,
+    opponent: latest.opponent,
+    homeAway: latest.homeAway,
+    season: latest.season,
+    league: latest.league,
+    usedFallbackSeason,
+    teamGoals: players.reduce((sum, player) => sum + player.goals, 0),
+    players,
+    playerRanking: players,
+    positionRanking,
+    topPlayer: players[0] ?? null,
+    topPosition: positionRanking[0] ?? null,
+  };
+}
+
+function analyzeBestPlayerForTeam(teamName, allMatches, options = {}) {
+  const teamMatches = allMatches.filter(
+    (match) =>
+      normalizeText(match.playerTeam) === normalizeText(teamName) &&
+      (!options.league || match.league === options.league),
+  );
+  let season = options.season;
+  let scoped = season
+    ? teamMatches.filter((match) => match.season === season)
+    : teamMatches;
+  let usedFallbackSeason = false;
+  if (scoped.length === 0 && teamMatches.length > 0) {
+    season = [...new Set(teamMatches.map((match) => match.season))]
+      .filter(Boolean)
+      .sort()
+      .at(-1);
+    scoped = teamMatches.filter((match) => match.season === season);
+    usedFallbackSeason = true;
+  }
+  if (scoped.length === 0) {
+    return { found: false, reason: `Ingen spillerstatistikk for ${teamName} ble funnet.` };
+  }
+
+  const byPlayer = new Map();
+  for (const match of scoped) {
+    const aggregate = byPlayer.get(match.playerId) ?? {
+      playerId: match.playerId,
+      playerName: match.playerName,
+      position: match.playerPosition ?? "Ukjent",
+      games: 0,
+      goals: 0,
+      assists: 0,
+      shots: 0,
+      totalMep: 0,
+    };
+    aggregate.games += 1;
+    aggregate.goals += Number(match.goals ?? 0);
+    aggregate.assists += Number(match.assists ?? 0);
+    aggregate.shots += Number(match.shots ?? 0);
+    aggregate.totalMep += Number(match.mep ?? 0);
+    byPlayer.set(match.playerId, aggregate);
+  }
+  const maxGames = Math.max(...[...byPlayer.values()].map((player) => player.games));
+  const minimumGames = Math.min(4, maxGames);
+  const rankings = [...byPlayer.values()]
+    .filter((player) => player.games >= minimumGames)
+    .map((player) => ({
+      ...player,
+      totalMep: Math.round(player.totalMep * 10) / 10,
+      mepPerGame: Math.round((player.totalMep / player.games) * 100) / 100,
+      goalsPerGame: Math.round((player.goals / player.games) * 100) / 100,
+      shotPercentage:
+        player.shots > 0
+          ? Math.round((player.goals / player.shots) * 1000) / 10
+          : 0,
+    }))
+    .sort(
+      (left, right) =>
+        right.totalMep - left.totalMep ||
+        right.mepPerGame - left.mepPerGame,
+    );
+
+  return {
+    found: rankings.length > 0,
+    teamName,
+    season,
+    league: scoped[0]?.league ?? options.league ?? null,
+    usedFallbackSeason,
+    minimumGames,
+    rankings: rankings.slice(0, 10),
+    topPlayer: rankings[0] ?? null,
+  };
+}
+
 module.exports = {
   STAT_DATASETS,
+  analyzeBestPlayerForTeam,
   analyzeBestAgainstTeam,
   analyzeBestForm,
+  analyzeLatestTeamMatch,
   buildStatsDataset,
   compareFormWithStandings,
   findBestMatchForPlayer,

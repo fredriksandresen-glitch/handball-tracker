@@ -6,11 +6,14 @@ const test = require("node:test");
 const {
   extractClubFromQuestion,
   extractRequestedMatchCount,
+  findPreviousComparisonQuestion,
   findPreviousBestFormQuestion,
   findPlayerFromConversation,
   findPlayerByTokens,
+  findTeamMention,
   fuzzyMatchTeamName,
   isBestFormQuestion,
+  isComparisonReportFollowUp,
   isGroupTeamContextFollowUp,
   isPreviousSeasonFormFollowUp,
   isPlayerFollowUpQuestion,
@@ -18,8 +21,10 @@ const {
 } = require("../lib/queryUnderstanding");
 const {
   STAT_DATASETS,
+  analyzeBestPlayerForTeam,
   analyzeBestAgainstTeam,
   analyzeBestForm,
+  analyzeLatestTeamMatch,
   buildStatsDataset,
   compareFormWithStandings,
   findBestMatchForPlayer,
@@ -363,6 +368,71 @@ test("understands direct and conversational best-form variants", () => {
   const analysis = analyzeBestForm(dataset.allMatches, "2025-26", 5);
   assert.equal(analysis.topPlayer.playerName, "Sarah Deari Solheim");
   assert.equal(analysis.rankings.slice(0, 5).length, 5);
+});
+
+test("answers Fjellhammer's latest-match scorer and position questions", () => {
+  const teamNames = [
+    ...new Set(dataset.allMatches.map((match) => match.playerTeam)),
+  ];
+  const team = findTeamMention(
+    "hvilken posisjon og spiller scorte mest mål for fjellhammar siste kampen de spilte?",
+    teamNames,
+  );
+  const analysis = analyzeLatestTeamMatch(team, dataset.allMatches, {
+    season: "2026-27",
+    league: "elite",
+  });
+
+  assert.equal(team, "Fjellhammer");
+  assert.equal(analysis.found, true);
+  assert.equal(analysis.usedFallbackSeason, true);
+  assert.equal(analysis.season, "2025-26");
+  assert.ok(analysis.topPlayer);
+  assert.ok(analysis.topPosition);
+  assert.equal(analysis.teamGoals > 0, true);
+});
+
+test("answers best-player questions for Utleira using available history", () => {
+  const teamNames = [
+    ...new Set(dataset.allMatches.map((match) => match.playerTeam)),
+  ];
+  const team = findTeamMention(
+    "hvemr er den beste spilleren til Utleira Forrige sesong+",
+    teamNames,
+  );
+  const analysis = analyzeBestPlayerForTeam(team, dataset.allMatches, {
+    season: "2025-26",
+  });
+
+  assert.equal(team, "Utleira");
+  assert.equal(analysis.found, true);
+  assert.equal(analysis.season, "2025-26");
+  assert.equal(analysis.minimumGames, 4);
+  assert.ok(analysis.topPlayer);
+  assert.equal(analysis.topPlayer.games >= 4, true);
+});
+
+test("resolves a PDF follow-up to the previous comparison request", () => {
+  const conversation = [
+    {
+      role: "user",
+      content:
+        "kan du sammenligne Linnea Aulas forrige sesong med den andre venstrekanten hos Aker? gi meg en god analyse og en PDF",
+    },
+    {
+      role: "assistant",
+      content: "Jeg fant Milla Haugerstuen Breen og sammenlignet spillerne.",
+    },
+  ];
+
+  assert.equal(
+    isComparisonReportFollowUp("kan du sende rapporten til meg nå?"),
+    true,
+  );
+  assert.equal(
+    findPreviousComparisonQuestion(conversation),
+    conversation[0].content,
+  );
 });
 
 test("builds a role-aware comparison report from match-level data", () => {

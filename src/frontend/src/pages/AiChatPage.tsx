@@ -587,7 +587,9 @@ export default function AiChatPage() {
                   message={message}
                   report={report}
                   downloading={downloadingReportId === report?.id}
-                  downloadError={downloadErrorReportId === report?.id}
+                  downloadError={Boolean(
+                    report && downloadErrorReportId === report.id,
+                  )}
                   onDownload={(item) => void downloadReport(item)}
                 />
               );

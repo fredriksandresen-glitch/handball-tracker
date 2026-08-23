@@ -10,11 +10,14 @@ require('dotenv').config();
 const {
   extractClubFromQuestion,
   extractRequestedMatchCount,
+  findPreviousComparisonQuestion,
   findPreviousBestFormQuestion,
   findPlayerFromConversation,
   findPlayerByTokens,
+  findTeamMention,
   fuzzyMatchTeamName,
   isBestFormQuestion,
+  isComparisonReportFollowUp,
   isGroupTeamContextFollowUp,
   isPreviousSeasonFormFollowUp,
   normalizeText,
@@ -24,7 +27,9 @@ const {
 const {
   STAT_DATASETS,
   analyzeBestAgainstTeam,
+  analyzeBestPlayerForTeam,
   analyzeBestForm,
+  analyzeLatestTeamMatch,
   buildStatsDataset,
   compareFormWithStandings,
   findBestMatchForPlayer,
@@ -259,6 +264,53 @@ function buildBestFormAnswer(analysis) {
   }
 
   answer += `\nBare spillere med minst ${analysis.matchCount} registrerte kamper i perioden er med. Form er målt som gjennomsnittlig MEP.`;
+  return answer;
+}
+
+function singularPositionLabel(position) {
+  return {
+    VenstreKant: 'venstre kant',
+    HoyreKant: 'høyre kant',
+    Bakspiller: 'bakspiller',
+    Linje: 'linjespiller',
+    Keeper: 'keeper',
+  }[position] ?? 'ukjent posisjon';
+}
+
+function buildLatestTeamMatchAnswer(analysis) {
+  const venue = analysis.homeAway === 'home' ? 'hjemme' : 'borte';
+  const topPosition = analysis.topPosition;
+  const topPlayer = analysis.topPlayer;
+  let answer = `${analysis.teamName} sin siste registrerte kamp var ${venue} mot ${analysis.opponent} ${analysis.date} i ${analysis.season}. `;
+  if (analysis.usedFallbackSeason) {
+    answer += `Det finnes ikke nyere kampdata i valgt sesong, så jeg bruker siste tilgjengelige kamp. `;
+  }
+  answer += `Laget scoret ${analysis.teamGoals} registrerte mål.\n\n`;
+  answer += `${singularPositionLabel(topPosition.position)} var posisjonen som scoret mest, med ${topPosition.goals} mål. `;
+  const positionScorers = topPosition.players
+    .map((player) => `${player.playerName} (${player.goals})`)
+    .join(', ');
+  if (positionScorers) answer += `Målscorere fra posisjonen: ${positionScorers}.\n\n`;
+  answer += `${topPlayer.playerName} scoret flest for ${analysis.teamName}, med ${topPlayer.goals} mål`;
+  answer += `, ${topPlayer.assists} assist og MEP ${topPlayer.mep}.`;
+  return answer;
+}
+
+function buildBestTeamPlayerAnswer(analysis) {
+  const top = analysis.topPlayer;
+  const runnersUp = analysis.rankings.slice(1, 3);
+  let answer = `${top.playerName} var den høyest rangerte spilleren for ${analysis.teamName} i ${analysis.season}, basert på samlet MEP blant spillere med minst ${analysis.minimumGames} kamper. `;
+  if (analysis.usedFallbackSeason) {
+    answer += `Det finnes ikke kampdata for den valgte sesongen, så jeg bruker siste tilgjengelige sesong. `;
+  }
+  answer += `Hun hadde MEP ${top.totalMep} totalt (${top.mepPerGame} per kamp), ${top.goals} mål og ${top.assists} assist på ${top.games} kamper.\n\n`;
+  if (runnersUp.length > 0) {
+    answer += 'Nærmeste utfordrere:\n';
+    runnersUp.forEach((player, index) => {
+      answer += `${index + 2}. ${player.playerName}: MEP ${player.totalMep}, ${player.goals} mål på ${player.games} kamper\n`;
+    });
+  }
+  answer += `\n«Beste» er her definert som høyest samlet MEP. Det må leses sammen med rolle, spilletid og antall kamper.`;
   return answer;
 }
 
@@ -737,6 +789,25 @@ app.post('/v1/handball/chat', async (req, res) => {
     const previousBestFormQuestion = isGroupTeamContextFollowUp(question)
       ? findPreviousBestFormQuestion(conversation)
       : null;
+    const reportFollowUp = isComparisonReportFollowUp(question);
+    const previousComparisonQuestion = reportFollowUp
+      ? findPreviousComparisonQuestion(conversation)
+      : null;
+    const historicalTeamNames = [
+      ...new Set(allMatches.map((match) => match.playerTeam).filter(Boolean)),
+    ];
+    const mentionedTeam = findTeamMention(question, historicalTeamNames);
+    const asksAboutLatestTeamMatch = Boolean(
+      mentionedTeam &&
+        /\bsiste\s+kamp(?:en)?\b/.test(normalizedSearchQuestion) &&
+        /\b(maal|score|scora|scorte|posisjon|spiller)\b/.test(
+          normalizedSearchQuestion,
+        ),
+    );
+    const asksForBestTeamPlayer = Boolean(
+      mentionedTeam &&
+        /\bbest(?:e)?\s+spiller(?:en)?\b/.test(normalizedSearchQuestion),
+    );
 
     // ─── Check for "best against team" (motstander) ─────────────────────
     const bestAgainstMatch = normalizedQuestion.match(/\bbest\b.*\bmot\b\s+([\wæøåäöü\s-]+?)(?:\s+i\s+(?:fjor|år)|\s+forrige|\s+sist|\s+siste|\s+sesong|$)/i) ||
@@ -871,6 +942,85 @@ app.post('/v1/handball/chat', async (req, res) => {
       });
 
       deterministicAnswer = buildBestAgainstAnswer(analysis);
+    } else if (asksAboutLatestTeamMatch) {
+      analysisMode = 'deterministic-latest-team-match';
+      let analysis = analyzeLatestTeamMatch(mentionedTeam, allMatches, {
+        season: requestedSeason,
+        league: requestedLeague,
+      });
+      if (!analysis.found) {
+        analysis = analyzeLatestTeamMatch(mentionedTeam, allMatches, {
+          season: requestedSeason,
+        });
+      }
+      if (!analysis.found) {
+        return res.json({
+          id: requestId,
+          answer: analysis.reason,
+          status: 'insufficient-data',
+          generatedByAi: false,
+          evidence: [],
+          sources: [],
+          missingData: [`Kampdata for ${mentionedTeam}`],
+          followUpQuestions: [],
+        });
+      }
+      evidence.push({
+        label: `Siste kamp for ${mentionedTeam}`,
+        value: `${analysis.date} mot ${analysis.opponent}, ${analysis.teamGoals} mål`,
+        matchId: String(analysis.matchId),
+      });
+      evidence.push({
+        label: 'Flest mål fra posisjon',
+        value: `${singularPositionLabel(analysis.topPosition.position)}: ${analysis.topPosition.goals} mål`,
+      });
+      evidence.push({
+        label: 'Toppscorer i kampen',
+        value: `${analysis.topPlayer.playerName}: ${analysis.topPlayer.goals} mål`,
+        playerId: analysis.topPlayer.playerId,
+      });
+      sources.push({
+        label: `Kampstatistikk fra ${dataSource === 'icp-asset-canister' ? 'ICP asset-canister' : 'lokal cache'}`,
+        method: 'player-stats/*PlayerStats.json',
+        entityIds: analysis.players.map((player) => player.playerId),
+        observedAt: new Date().toISOString(),
+      });
+      deterministicAnswer = buildLatestTeamMatchAnswer(analysis);
+    } else if (asksForBestTeamPlayer) {
+      analysisMode = 'deterministic-best-team-player';
+      let analysis = analyzeBestPlayerForTeam(mentionedTeam, allMatches, {
+        season: requestedSeason,
+        league: requestedLeague,
+      });
+      if (!analysis.found) {
+        analysis = analyzeBestPlayerForTeam(mentionedTeam, allMatches, {
+          season: requestedSeason,
+        });
+      }
+      if (!analysis.found) {
+        return res.json({
+          id: requestId,
+          answer: analysis.reason,
+          status: 'insufficient-data',
+          generatedByAi: false,
+          evidence: [],
+          sources: [],
+          missingData: [`Spillerstatistikk for ${mentionedTeam}`],
+          followUpQuestions: [],
+        });
+      }
+      evidence.push({
+        label: `Høyest samlet MEP for ${mentionedTeam}`,
+        value: `${analysis.topPlayer.playerName}: ${analysis.topPlayer.totalMep}`,
+        playerId: analysis.topPlayer.playerId,
+      });
+      sources.push({
+        label: `Sesongstatistikk fra ${dataSource === 'icp-asset-canister' ? 'ICP asset-canister' : 'lokal cache'}`,
+        method: 'player-stats/*PlayerStats.json',
+        entityIds: analysis.rankings.slice(0, 5).map((player) => player.playerId),
+        observedAt: new Date().toISOString(),
+      });
+      deterministicAnswer = buildBestTeamPlayerAnswer(analysis);
     } else {
       // ─── Player lookup ────────────────────────────────────────────────
       analysisMode = 'player-lookup';
@@ -892,11 +1042,15 @@ app.post('/v1/handball/chat', async (req, res) => {
       }
 
       const isBestMatchQuestion = /\bbeste\s+kamp\b|\bbest\s+kamp\b/i.test(question);
+      const playerLookupQuestion = previousComparisonQuestion ?? question;
       if (!targetPlayer) {
-        targetPlayer = findPlayerByTokens(question, jsonPlayers) ||
-          findPlayerByTokens(question, players);
+        targetPlayer = findPlayerByTokens(playerLookupQuestion, jsonPlayers) ||
+          findPlayerByTokens(playerLookupQuestion, players);
       }
-      if (!targetPlayer && isPlayerFollowUpQuestion(question)) {
+      if (
+        !targetPlayer &&
+        (isPlayerFollowUpQuestion(question) || reportFollowUp)
+      ) {
         targetPlayer = findPlayerFromConversation(conversation, jsonPlayers) ||
           findPlayerFromConversation(conversation, players);
       }
@@ -905,7 +1059,8 @@ app.post('/v1/handball/chat', async (req, res) => {
         const isTransferQuestion = /\bbytte(?:t)?\b|\bovergang(?:en)?\b|\baker\b/i.test(question);
         const isDetailedQuestion = /\bdetaljert\b|\butdyp\b|\boppsummer\b|\bvurder\b|\bovergang(?:en)?\b|\bspilletid\b|\bskuddprosent\b|\baker\b/i.test(question);
         const isTeammateComparison =
-          isTeammatePositionComparisonQuestion(question);
+          isTeammatePositionComparisonQuestion(question) ||
+          Boolean(previousComparisonQuestion);
         const playerId = String(targetPlayer.id);
         const jsonPlayerData = playersById[playerId] || null;
 
@@ -1021,31 +1176,36 @@ app.post('/v1/handball/chat', async (req, res) => {
             observedAt: new Date().toISOString(),
           });
 
-          try {
-            modelCalled = true;
-            const modelAnswer = await callAiModel(
-              prompts.systemPrompt,
-              prompts.userPrompt,
-            );
-            const unsupportedNumbers = findUnsupportedNumberTokens(
-              modelAnswer,
-              {
-                facts: prompts.facts,
-                question,
-                conversation,
-              },
-            );
-            if (unsupportedNumbers.length > 0) {
-              throw new Error(
-                `Grounding validation rejected numbers: ${unsupportedNumbers.join(', ')}`,
+          if (reportFollowUp) {
+            analysisMode = 'deterministic-comparison-report-follow-up';
+            hybridAnswer = `PDF-rapporten med sammenligningen mellom ${report.players.map((player) => player.name).join(' og ')} er klar for nedlasting.`;
+          } else {
+            try {
+              modelCalled = true;
+              const modelAnswer = await callAiModel(
+                prompts.systemPrompt,
+                prompts.userPrompt,
               );
+              const unsupportedNumbers = findUnsupportedNumberTokens(
+                modelAnswer,
+                {
+                  facts: prompts.facts,
+                  question,
+                  conversation,
+                },
+              );
+              if (unsupportedNumbers.length > 0) {
+                throw new Error(
+                  `Grounding validation rejected numbers: ${unsupportedNumbers.join(', ')}`,
+                );
+              }
+              hybridAnswer = modelAnswer.trim();
+              hybridGeneratedByAi = true;
+            } catch (error) {
+              console.error(`[${requestId}] Grounded comparison model fallback:`, error.message);
+              analysisMode = 'hybrid-current-team-position-comparison-fallback';
+              hybridAnswer = fallbackAnswer;
             }
-            hybridAnswer = modelAnswer.trim();
-            hybridGeneratedByAi = true;
-          } catch (error) {
-            console.error(`[${requestId}] Grounded comparison model fallback:`, error.message);
-            analysisMode = 'hybrid-current-team-position-comparison-fallback';
-            hybridAnswer = fallbackAnswer;
           }
 
           if (/\bpdf\b|\brapport(?:en)?\b/i.test(question)) {
@@ -1250,23 +1410,92 @@ app.post('/v1/handball/chat', async (req, res) => {
     }
 
     // ─── Fallback to AI model for open-ended questions ──────────────────
+    let fallbackData = null;
+    if (mentionedTeam) {
+      let teamSeason = analyzeBestPlayerForTeam(mentionedTeam, allMatches, {
+        season: requestedSeason,
+        league: requestedLeague,
+      });
+      if (!teamSeason.found) {
+        teamSeason = analyzeBestPlayerForTeam(mentionedTeam, allMatches, {
+          season: requestedSeason,
+        });
+      }
+      let latestMatch = analyzeLatestTeamMatch(mentionedTeam, allMatches, {
+        season: requestedSeason,
+        league: requestedLeague,
+      });
+      if (!latestMatch.found) {
+        latestMatch = analyzeLatestTeamMatch(mentionedTeam, allMatches, {
+          season: requestedSeason,
+        });
+      }
+      fallbackData = {
+        team: mentionedTeam,
+        requestedSeason,
+        seasonSummary: teamSeason.found
+          ? {
+              season: teamSeason.season,
+              minimumGames: teamSeason.minimumGames,
+              players: teamSeason.rankings.slice(0, 10),
+            }
+          : null,
+        latestMatch: latestMatch.found
+          ? {
+              date: latestMatch.date,
+              opponent: latestMatch.opponent,
+              season: latestMatch.season,
+              teamGoals: latestMatch.teamGoals,
+              players: latestMatch.players,
+              positions: latestMatch.positionRanking,
+            }
+          : null,
+      };
+      evidence.push({
+        label: `Kontrollert lagdata for ${mentionedTeam}`,
+        value: teamSeason.found
+          ? `${teamSeason.season}, ${teamSeason.rankings.length} rangerte spillere`
+          : 'Ingen komplett sesongrangering',
+      });
+      sources.push({
+        label: `Kampdata fra ${dataSource === 'icp-asset-canister' ? 'ICP asset-canister' : 'lokal cache'}`,
+        method: 'player-stats/*PlayerStats.json',
+        entityIds: teamSeason.found
+          ? teamSeason.rankings.map((player) => player.playerId)
+          : [],
+        observedAt: new Date().toISOString(),
+      });
+    }
+
     const systemPrompt = `Du er en håndballekspert som hjelper brukere med spørsmål om norsk håndball.
 Du har tilgang til data fra REMA 1000-ligaen (eliteserien) og 1. divisjon.
-Svar på norsk. Bruk kun data fra konteksten under. Hvis data mangler, si det tydelig.
-Ikke finn på tall som ikke finnes i dataene.`;
+Svar på norsk. Bruk kun de strukturerte faktaene fra konteksten under. Hvis data mangler, si det tydelig.
+Skill mellom fakta og vurdering. Ikke finn på tall, spillere, kamper eller overganger som ikke finnes i dataene.`;
 
-    const userPrompt = `Spørsmål: ${question}\n\nTilgjengelig data:\nIngen spesifikk data funnet for dette spørsmålet.\n\nSvar konsist og presist. Hvis data mangler, forklar hva som mangler.`;
+    const userPrompt = `Spørsmål: ${question}\n\nSiste samtalekontekst:\n${JSON.stringify((conversation ?? []).slice(-6))}\n\nKontrollert datagrunnlag:\n${fallbackData ? JSON.stringify(fallbackData) : 'Ingen relevant strukturert data ble funnet.'}\n\nSvar konsist og presist. Gjør analyse når datagrunnlaget tillater det, og forklar konkret hva som mangler ellers.`;
 
     let answer;
     try {
       modelCalled = true;
       answer = await callAiModel(systemPrompt, userPrompt);
+      const unsupportedNumbers = findUnsupportedNumberTokens(answer, {
+        fallbackData,
+        question,
+        conversation,
+      });
+      if (unsupportedNumbers.length > 0) {
+        throw new Error(
+          `Grounding validation rejected numbers: ${unsupportedNumbers.join(', ')}`,
+        );
+      }
     } catch (err) {
       console.error(`[${requestId}] AI call failed:`, err.message);
-      return res.status(503).json({
+      return res.json({
         id: requestId,
-        answer: 'AI-tjenesten er midlertidig utilgjengelig. Prøv igjen senere.',
-        status: 'insufficient-data',
+        answer: fallbackData
+          ? 'Clawdbot kunne ikke fullføre den åpne analysen akkurat nå. Datagrunnlaget er funnet, men jeg vil ikke presentere et svar som ikke er kontrollert.'
+          : 'Jeg fant ikke et tilstrekkelig datagrunnlag for spørsmålet, og vil ikke gjette på svaret.',
+        status: 'insufficient-data', generatedByAi: false,
         evidence: [], sources: [], missingData: ['AI model response'],
         followUpQuestions: ['Prøv igjen om et øyeblikk']
       });
@@ -1278,11 +1507,11 @@ Ikke finn på tall som ikke finnes i dataene.`;
     res.json({
       id: requestId,
       answer: answer.trim(),
-      status: evidence.length > 0 ? 'answered' : 'insufficient-data',
+      status: fallbackData ? 'answered' : 'insufficient-data',
       generatedByAi: true,
       evidence,
       sources,
-      missingData: evidence.length === 0 ? ['relevant data for question'] : [],
+      missingData: fallbackData ? [] : ['relevant data for question'],
       followUpQuestions: [
         'Vil du se statistikk for en annen spiller?',
         'Vil du sammenligne med et annet lag?'
