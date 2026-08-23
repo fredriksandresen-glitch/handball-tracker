@@ -12,6 +12,7 @@ const {
   fuzzyMatchTeamName,
   normalizeText,
   rankPlayerCandidates,
+  resolveSeason,
 } = require("./queryUnderstanding");
 const {
   buildPositionBenchmarkFacts,
@@ -104,6 +105,43 @@ function parseAgentPlan(value) {
   } catch {
     return null;
   }
+}
+
+function inferFallbackPlan(question, context = {}) {
+  const normalized = normalizeText(question);
+  const season = resolveSeason(question, context.season ?? "2026-27");
+  const league = normalizeLeague(context.league, "elite");
+  if (
+    /\bmep\b/.test(normalized) &&
+    /\b(kurve\w*|trend\w*|utvikling\w*|start\w*|avslut\w*)\b/.test(
+      normalized,
+    )
+  ) {
+    return {
+      domain: "handball",
+      operations: [
+        {
+          tool: "mep_trend",
+          args: { season, league, matchCount: 5, limit: 10 },
+        },
+      ],
+    };
+  }
+  if (
+    /\bform\b/.test(normalized) &&
+    /\b(best\w*|slutt\w*|siste)\b/.test(normalized)
+  ) {
+    return {
+      domain: "handball",
+      operations: [
+        {
+          tool: "best_form",
+          args: { season, league, matchCount: 5, limit: 10 },
+        },
+      ],
+    };
+  }
+  return null;
 }
 
 function normalizeSeason(value, fallback) {
@@ -406,15 +444,20 @@ async function runHandballAgent({
       await callModel(prompts.systemPrompt, prompts.userPrompt),
     );
   } catch (error) {
-    return {
-      answer: "Håndballagenten klarte ikke å planlegge dataoppslaget akkurat nå.",
-      status: "insufficient-data",
-      generatedByAi: false,
-      toolNames: [],
-      entityIds: [],
-      error: error.message,
-    };
+    plan = inferFallbackPlan(question, context);
+    if (!plan) {
+      return {
+        answer: "Håndballagenten klarte ikke å planlegge dataoppslaget akkurat nå.",
+        status: "insufficient-data",
+        generatedByAi: false,
+        toolNames: [],
+        entityIds: [],
+        error: error.message,
+      };
+    }
   }
+
+  if (!plan) plan = inferFallbackPlan(question, context);
 
   if (!plan || plan.domain !== "handball") {
     return {
@@ -497,6 +540,7 @@ module.exports = {
   assessHandballRequest,
   executeAgentTool,
   finalAnswerPrompts,
+  inferFallbackPlan,
   parseAgentPlan,
   plannerPrompts,
   runHandballAgent,

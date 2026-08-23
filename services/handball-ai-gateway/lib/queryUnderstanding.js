@@ -286,12 +286,20 @@ function isBestFormQuestion(question) {
 
 function isEndSeasonPotentialQuestion(question) {
   const normalized = normalizeText(question);
-  return (
+  const asksForPotential =
     /\b(potensial\w*|potential\w*|utvikling\w*|lovende)\b/.test(
       normalized,
-    ) &&
+    ) ||
+    /\bpositiv\w*\b.*\bmep\b.*\bkurve\w*\b/.test(normalized) ||
+    /\bstart\w*\b.*\bdaarlig\w*\b.*\bavslut\w*\b.*\bbra\b/.test(
+      normalized,
+    );
+  return (
+    asksForPotential &&
     /\b(mep|form|kurve\w*)\b/.test(normalized) &&
-    /\b(slutt\w*|siste|sesongslutt\w*)\b/.test(normalized)
+    /\b(slutt\w*|siste|sesongslutt\w*|avslut\w*|sesong\w*)\b/.test(
+      normalized,
+    )
   );
 }
 
