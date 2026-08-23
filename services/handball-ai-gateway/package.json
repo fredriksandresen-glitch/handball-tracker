@@ -23,6 +23,7 @@
     "express": "^5.2.1",
     "express-rate-limit": "^8.6.2",
     "node-fetch": "^2.7.0",
-    "pdfkit": "0.19.1"
+    "pdfkit": "0.19.1",
+    "sharp": "0.34.5"
   }
 }

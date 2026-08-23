@@ -2,7 +2,7 @@ import Principal "mo:core/Principal";
 import AiChatLib "../lib/ai-chat";
 import Types "../types/ai-chat";
 
-mixin (state : AiChatLib.State) {
+mixin (state : AiChatLib.State, reportState : AiChatLib.ReportState) {
   public shared ({ caller }) func createAiThread(title : Text) : async Types.PublicThread {
     AiChatLib.createThread(state, caller, title);
   };
@@ -15,6 +15,14 @@ mixin (state : AiChatLib.State) {
     AiChatLib.getMyMessages(state, caller, threadId);
   };
 
+  public query ({ caller }) func getMyAiReports(threadId : Nat) : async [Types.ReportMetadata] {
+    AiChatLib.getMyReports(state, reportState, caller, threadId);
+  };
+
+  public query ({ caller }) func getMyAiReport(reportId : Nat) : async ?Types.PublicReport {
+    AiChatLib.getMyReport(reportState, caller, reportId);
+  };
+
   public query ({ caller }) func getMyAiJob(jobId : Nat) : async ?Types.PublicJob {
     AiChatLib.getMyJob(state, caller, jobId);
   };
@@ -24,7 +32,7 @@ mixin (state : AiChatLib.State) {
   };
 
   public shared ({ caller }) func deleteMyAiThread(threadId : Nat) : async () {
-    AiChatLib.deleteMyThread(state, caller, threadId);
+    AiChatLib.deleteMyThread(state, reportState, caller, threadId);
   };
 
   public shared ({ caller }) func submitAiQuestion(
@@ -40,7 +48,7 @@ mixin (state : AiChatLib.State) {
   };
 
   public shared ({ caller }) func completeAiJob(jobId : Nat, completion : Types.Completion) : async () {
-    AiChatLib.completeJob(state, caller, jobId, completion);
+    AiChatLib.completeJob(state, reportState, caller, jobId, completion);
   };
 
   public shared ({ caller }) func failAiJob(jobId : Nat, error : Text) : async () {

@@ -55,6 +55,27 @@ test("maps structured gateway evidence back to Candid values", () => {
   assert.equal(completion.evidence[0].title, "MEP");
   assert.equal(completion.sources[0].title, "Kampdata");
   assert.equal(completion.sources[0].method, "player-stats/test.json");
+  assert.deepEqual(completion.report, []);
+});
+
+test("maps a PDF report attachment to a private Candid upload", () => {
+  const pdf = Buffer.from("%PDF-1.7\nreport");
+  const completion = buildCompletion({
+    answer: "Rapporten er klar.",
+    status: "answered",
+    evidence: [],
+    sources: [],
+    missingData: [],
+    followUpQuestions: [],
+    report: {
+      filename: "spillersammenligning.pdf",
+      mimeType: "application/pdf",
+      contentBase64: pdf.toString("base64"),
+    },
+  });
+  assert.equal(completion.report.length, 1);
+  assert.equal(completion.report[0].filename, "spillersammenligning.pdf");
+  assert.equal(Buffer.from(completion.report[0].content).equals(pdf), true);
 });
 
 test("completes a claimed job after local analysis", async () => {

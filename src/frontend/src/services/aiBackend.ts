@@ -76,6 +76,20 @@ export type SubmitAiQuestionResult = {
   userMessageId: bigint;
 };
 
+export type AiReportMetadata = {
+  id: bigint;
+  messageId: bigint;
+  filename: string;
+  mimeType: string;
+  size: bigint;
+  createdAt: bigint;
+};
+
+export type AiReportFile = {
+  metadata: AiReportMetadata;
+  content: Uint8Array;
+};
+
 type RawRole = { user: null } | { assistant: null };
 type RawMessageStatus = { complete: null } | { failed: null };
 type RawAnswerStatus = { answered: null } | { insufficientData: null };
@@ -122,6 +136,8 @@ interface RawAiService {
   deleteMyAiThread: ActorMethod<[bigint], undefined>;
   getMyAiThreads: ActorMethod<[], AiThread[]>;
   getMyAiMessages: ActorMethod<[bigint], RawMessage[]>;
+  getMyAiReports: ActorMethod<[bigint], AiReportMetadata[]>;
+  getMyAiReport: ActorMethod<[bigint], [] | [AiReportFile]>;
   getMyAiJob: ActorMethod<[bigint], [] | [RawJob]>;
   getMyActiveAiJob: ActorMethod<[bigint], [] | [RawJob]>;
   submitAiQuestion: ActorMethod<
@@ -186,6 +202,8 @@ export interface AiBackend {
   deleteMyAiThread(threadId: bigint): Promise<void>;
   getMyAiThreads(): Promise<AiThread[]>;
   getMyAiMessages(threadId: bigint): Promise<AiMessage[]>;
+  getMyAiReports(threadId: bigint): Promise<AiReportMetadata[]>;
+  getMyAiReport(reportId: bigint): Promise<AiReportFile | undefined>;
   getMyAiJob(jobId: bigint): Promise<AiJob | undefined>;
   getMyActiveAiJob(threadId: bigint): Promise<AiJob | undefined>;
   submitAiQuestion(
@@ -212,6 +230,14 @@ class AiBackendActor implements AiBackend {
 
   async getMyAiMessages(threadId: bigint) {
     return (await this.actor.getMyAiMessages(threadId)).map(mapMessage);
+  }
+
+  getMyAiReports(threadId: bigint) {
+    return this.actor.getMyAiReports(threadId);
+  }
+
+  async getMyAiReport(reportId: bigint) {
+    return option(await this.actor.getMyAiReport(reportId));
   }
 
   async getMyAiJob(jobId: bigint) {
@@ -298,6 +324,18 @@ const Context = IDL.Record({
   playerIds: IDL.Vec(IDL.Text),
   teamIds: IDL.Vec(IDL.Text),
 });
+const ReportMetadata = IDL.Record({
+  id: IDL.Nat,
+  messageId: IDL.Nat,
+  filename: IDL.Text,
+  mimeType: IDL.Text,
+  size: IDL.Nat,
+  createdAt: IDL.Int,
+});
+const Report = IDL.Record({
+  metadata: ReportMetadata,
+  content: IDL.Vec(IDL.Nat8),
+});
 const SubmitResult = IDL.Record({
   threadId: IDL.Nat,
   jobId: IDL.Nat,
@@ -314,6 +352,12 @@ const idlFactory: Parameters<typeof Actor.createActor>[0] = ({ IDL: Candid }) =>
       [Candid.Vec(Message)],
       ["query"],
     ),
+    getMyAiReports: Candid.Func(
+      [Candid.Nat],
+      [Candid.Vec(ReportMetadata)],
+      ["query"],
+    ),
+    getMyAiReport: Candid.Func([Candid.Nat], [Candid.Opt(Report)], ["query"]),
     getMyAiJob: Candid.Func([Candid.Nat], [Candid.Opt(Job)], ["query"]),
     getMyActiveAiJob: Candid.Func([Candid.Nat], [Candid.Opt(Job)], ["query"]),
     submitAiQuestion: Candid.Func(

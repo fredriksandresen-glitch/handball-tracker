@@ -4,7 +4,7 @@ const {
 } = require("./statsDataset");
 const { normalizeText } = require("./queryUnderstanding");
 
-const MIN_PEER_MATCHES = 5;
+const MIN_PEER_MATCHES = 4;
 
 function round(value, decimals = 1) {
   const factor = 10 ** decimals;
@@ -212,14 +212,122 @@ function buildPercentiles(metrics, peers) {
   };
 }
 
+function buildPositionAverage(peers) {
+  const metricKeys = [
+    "mepPerGame",
+    "formLastFive",
+    "goalsPer60",
+    "assistsPer60",
+    "shotPercentage",
+    "minutesPerGame",
+    "mepConsistency",
+    "savePercentage",
+  ];
+  return Object.fromEntries(
+    metricKeys.map((key) => {
+      const values = peers
+        .map((peer) => peer[key])
+        .filter((value) => Number.isFinite(value));
+      return [key, values.length > 0 ? round(average(values), 2) : null];
+    }),
+  );
+}
+
+function canonicalTeamName(value) {
+  return normalizeText(value)
+    .replace(/\b(topphaandball|topphandball|haandball|handball|elite|hk|th)\b/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function findStanding(teamNames, standings) {
   for (const teamName of teamNames) {
     const standing = standings.find(
-      (candidate) => normalizeText(candidate.name) === normalizeText(teamName),
+      (candidate) =>
+        canonicalTeamName(candidate.name) === canonicalTeamName(teamName),
     );
-    if (standing) return { rank: Number(standing.rank), teamName: standing.name };
+    if (standing) {
+      return {
+        rank: Number(standing.rank),
+        teamName: standing.name,
+        played: Number(standing.played ?? 0),
+        points: Number(standing.points ?? 0),
+        goalsFor: Number(standing.goalsFor ?? 0),
+        goalsAgainst: Number(standing.goalsAgainst ?? 0),
+        goalDifference: Number(
+          standing.goalDifference ??
+            Number(standing.goalsFor ?? 0) - Number(standing.goalsAgainst ?? 0),
+        ),
+      };
+    }
   }
   return null;
+}
+
+function buildGoalContribution({ player, matches, playersById, season, league, standing }) {
+  const appearanceMatchIds = new Set(matches.map((match) => String(match.matchId)));
+  const teamNames = new Set(matches.map((match) => canonicalTeamName(match.playerTeam)));
+  const seenPlayerMatches = new Set();
+  let teamGoalsInAppearances = 0;
+
+  for (const candidate of Object.values(playersById)) {
+    for (const match of scopedMatches(candidate, season, league)) {
+      if (
+        !appearanceMatchIds.has(String(match.matchId)) ||
+        !teamNames.has(canonicalTeamName(match.playerTeam))
+      ) {
+        continue;
+      }
+      const uniqueKey = `${match.matchId}:${match.externalPlayerId ?? match.playerId}`;
+      if (seenPlayerMatches.has(uniqueKey)) continue;
+      seenPlayerMatches.add(uniqueKey);
+      teamGoalsInAppearances += Number(match.goals ?? 0);
+    }
+  }
+
+  const playerGoals = matches.reduce(
+    (sum, match) => sum + Number(match.goals ?? 0),
+    0,
+  );
+  return {
+    playerGoals,
+    teamGoalsInAppearances,
+    appearanceGoalShare: round(
+      teamGoalsInAppearances > 0
+        ? (playerGoals / teamGoalsInAppearances) * 100
+        : 0,
+      1,
+    ),
+    seasonTeamGoals: standing?.goalsFor || null,
+    fullSeasonGoalShare:
+      standing?.goalsFor > 0
+        ? round((playerGoals / standing.goalsFor) * 100, 1)
+        : null,
+    scope:
+      "Andel av lagets registrerte mål i kampene spilleren selv deltok i.",
+  };
+}
+
+function buildTeamContext(players) {
+  const ranked = players
+    .filter((player) => player.standing)
+    .sort((left, right) => left.standing.rank - right.standing.rank);
+  if (ranked.length < 2) return null;
+  const strongest = ranked[0];
+  const weakest = ranked.at(-1);
+  if (strongest.standing.rank === weakest.standing.rank) return null;
+  return {
+    strongestPlayerId: strongest.playerId,
+    strongestTeam: strongest.standing,
+    weakestPlayerId: weakest.playerId,
+    weakestTeam: weakest.standing,
+    rankGap: weakest.standing.rank - strongest.standing.rank,
+    interpretation:
+      `${weakest.name} leverte tallene for ${weakest.standing.teamName}, som endte ` +
+      `${weakest.standing.rank}. mot ${strongest.standing.teamName} på ` +
+      `${strongest.standing.rank}. plass. Produksjon på det svakere laget skal derfor ` +
+      "løftes fram som kontekst, men omregnes ikke til en kunstig justert score.",
+  };
 }
 
 function strongestSignals(player) {
@@ -264,12 +372,16 @@ function buildComparisonSummary(players, samePosition) {
     };
   });
 
+  const teamContext = buildTeamContext(players);
   return {
     samePosition,
     verdict: samePosition
-      ? "Spillerne er vurdert med samme rollegrunnlag. Ingen enkeltmåling avgjør hvem som er best totalt."
+      ? teamContext
+        ? `Spillerne er vurdert i samme rolle og liga. Råtallene må leses sammen med lagstyrken: ${teamContext.weakestTeam.teamName} endte ${teamContext.weakestTeam.rank}., mens ${teamContext.strongestTeam.teamName} endte ${teamContext.strongestTeam.rank}.`
+        : "Spillerne er vurdert med samme rollegrunnlag. Ingen enkeltmåling avgjør hvem som er best totalt."
       : "Spillerne har ulike roller. Rapporten fremhever rollejusterte styrker og kårer ikke én universell vinner.",
     leaders,
+    teamContext,
   };
 }
 
@@ -300,6 +412,7 @@ function buildComparisonReport({
     const metrics = aggregateMatches(matches, player.position);
     const peers = scopedPeerMetrics(playersById, season, league, player.position);
     const teams = teamNamesForScope(player, season, league);
+    const standing = findStanding(teams, standings);
     const result = {
       playerId: player.playerId,
       canonicalId: player.canonicalId,
@@ -307,10 +420,20 @@ function buildComparisonReport({
       position: player.position,
       teams,
       currentTeamName: player.currentTeamName,
-      standing: findStanding(teams, standings),
+      imageUrl: player.imageUrl,
+      standing,
+      goalContribution: buildGoalContribution({
+        player,
+        matches,
+        playersById,
+        season,
+        league,
+        standing,
+      }),
       peerSampleSize: peers.length,
       metrics,
       percentiles: buildPercentiles(metrics, peers),
+      positionAverage: buildPositionAverage(peers),
     };
     return { ...result, strengths: strongestSignals(result) };
   });
@@ -331,18 +454,21 @@ function buildComparisonReport({
       formWindow: 5,
       peerMinimumMatches: MIN_PEER_MATCHES,
       consistency: "Standardavvik i MEP per kamp. Lavere verdi betyr jevnere prestasjoner.",
-      percentiles: "Sammenlignet med spillere i samme posisjon, liga og sesong med minst fem kamper.",
+      percentiles: `Sammenlignet med spillere i samme posisjon, liga og sesong med minst ${MIN_PEER_MATCHES} kamper. Posisjonssnittet bruker den samme referansegruppen.`,
     },
     caveats: [
       "Rapporten beskriver registrerte prestasjoner og dokumenterer ikke taktisk rolle, skader eller trenervurderinger.",
       "Spillere med få kamper har større statistisk usikkerhet.",
+      "Lagplassering brukes som kontekst, ikke som en matematisk korreksjon av spillerens nøkkeltall.",
       samePosition
         ? "MEP, effektivitet, volum og stabilitet må vurderes samlet."
         : "Direkte rangering mellom ulike posisjoner kan være misvisende.",
     ],
     sources: [
       "Kamp- og sesongstatistikk fra Handball Tracker sin ICP asset-canister.",
-      "Lagplassering fra arkivert sluttabell når tilgjengelig.",
+      league === "first-division"
+        ? "Sluttabell for 1. divisjon 2025/26 fra Norges Håndballforbund, turnering 436256."
+        : "Lagplassering fra arkivert sluttabell når tilgjengelig.",
     ],
   };
 }

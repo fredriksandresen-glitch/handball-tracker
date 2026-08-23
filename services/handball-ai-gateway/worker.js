@@ -7,6 +7,7 @@ const DEFAULT_BACKEND_CANISTER_ID = "lj6bx-dyaaa-aaaap-qumhq-cai";
 const DEFAULT_ICP_HOST = "https://icp-api.io";
 const DEFAULT_LOCAL_CHAT_URL = "http://127.0.0.1:3000/v1/handball/chat";
 const DEFAULT_POLL_INTERVAL_MS = 5_000;
+const MAX_REPORT_SIZE = 1_000_000;
 
 const Role = IDL.Variant({ user: IDL.Null, assistant: IDL.Null });
 const AnswerStatus = IDL.Variant({
@@ -53,6 +54,11 @@ const Source = IDL.Record({
   entityIds: IDL.Vec(IDL.Text),
   observedAt: IDL.Opt(IDL.Text),
 });
+const ReportUpload = IDL.Record({
+  filename: IDL.Text,
+  mimeType: IDL.Text,
+  content: IDL.Vec(IDL.Nat8),
+});
 const Completion = IDL.Record({
   answer: IDL.Text,
   answerStatus: AnswerStatus,
@@ -61,6 +67,7 @@ const Completion = IDL.Record({
   sources: IDL.Vec(Source),
   missingData: IDL.Vec(IDL.Text),
   followUpQuestions: IDL.Vec(IDL.Text),
+  report: IDL.Opt(ReportUpload),
 });
 const WorkerStatus = IDL.Record({
   configured: IDL.Bool,
@@ -148,6 +155,32 @@ function sourceArray(value) {
   });
 }
 
+function reportOption(value) {
+  if (!value || typeof value !== "object") return [];
+  if (
+    typeof value.filename !== "string" ||
+    !value.filename.trim() ||
+    value.mimeType !== "application/pdf" ||
+    typeof value.contentBase64 !== "string" ||
+    !value.contentBase64
+  ) {
+    throw new Error("Local AI gateway returned an invalid PDF report");
+  }
+  const content = Buffer.from(value.contentBase64, "base64");
+  if (
+    content.length === 0 ||
+    content.length > MAX_REPORT_SIZE ||
+    content.subarray(0, 5).toString() !== "%PDF-"
+  ) {
+    throw new Error("Local AI gateway returned an invalid PDF payload");
+  }
+  return [{
+    filename: value.filename.trim().slice(0, 180),
+    mimeType: "application/pdf",
+    content: Uint8Array.from(content),
+  }];
+}
+
 function buildGatewayRequest(job, canisterId, host) {
   const entities = [
     ...job.context.playerIds.map((id) => ({ type: "player", id })),
@@ -198,6 +231,7 @@ function buildCompletion(response) {
     sources: sourceArray(response.sources),
     missingData: stringArray(response.missingData),
     followUpQuestions: stringArray(response.followUpQuestions, 3),
+    report: reportOption(response.report),
   };
 }
 
@@ -327,5 +361,6 @@ module.exports = {
   buildGatewayRequest,
   createWorkerActor,
   processJob,
+  reportOption,
   startAiWorker,
 };

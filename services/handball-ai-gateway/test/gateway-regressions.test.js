@@ -69,6 +69,15 @@ const archiveStandings = JSON.parse(
     "utf8",
   ),
 );
+const firstDivisionArchiveStandings = JSON.parse(
+  fs.readFileSync(
+    path.resolve(
+      __dirname,
+      "../data/firstDivisionStandingsArchive2526.json",
+    ),
+    "utf8",
+  ),
+);
 
 test("resolves Camilla Herrem and keeps her 2025/26 statistics", () => {
   const player = findPlayerByTokens(
@@ -234,6 +243,7 @@ test("builds a grounded Linnea and Milla comparison for Clawdbot", () => {
     playersById: dataset.playersById,
     season: "2025-26",
     league: "first-division",
+    standings: firstDivisionArchiveStandings,
   });
   const fallback = buildComparisonFallbackAnswer(
     report,
@@ -253,8 +263,15 @@ test("builds a grounded Linnea and Milla comparison for Clawdbot", () => {
   assert.equal(report.players[1].metrics.games, 25);
   assert.equal(report.players[1].metrics.goals, 56);
   assert.equal(report.players[1].metrics.shotPercentage, 80);
+  assert.equal(report.players[0].standing.rank, 11);
+  assert.equal(report.players[1].standing.rank, 3);
+  assert.equal(report.players[0].goalContribution.appearanceGoalShare, 9.5);
+  assert.equal(report.players[0].goalContribution.teamGoalsInAppearances, 190);
+  assert.equal(report.players[1].goalContribution.appearanceGoalShare, 6.9);
+  assert.equal(report.players[1].goalContribution.teamGoalsInAppearances, 807);
   assert.match(fallback, /Milla Haugerstuen Breen/);
-  assert.match(fallback, /sterkeste og tryggeste dokumenterte/);
+  assert.match(fallback, /sterkeste og tryggeste rådatagrunnlaget/);
+  assert.match(fallback, /Kjelsås endte 11\./);
   assert.match(prompts.userPrompt, /Kontrollert sammenligningsgrunnlag/);
   assert.deepEqual(
     findUnsupportedNumberTokens(
@@ -377,7 +394,12 @@ test("renders the comparison report as a valid PDF", async () => {
     standings: archiveStandings,
     generatedAt: "2026-08-22T12:00:00.000Z",
   });
-  const pdf = await createComparisonPdf(report);
+  const pdf = await createComparisonPdf(report, {
+    fetchImpl: async () => ({
+      ok: false,
+      headers: { get: () => null },
+    }),
+  });
 
   assert.equal(pdf.subarray(0, 5).toString(), "%PDF-");
   assert.equal(pdf.length > 10_000, true);

@@ -125,6 +125,7 @@ function buildStatsDataset(searchIndex, loadedFiles) {
         canonicalId,
         externalIds: [],
         name: indexedPlayer?.name ?? playerStats.playerName ?? "Ukjent",
+        imageUrl: indexedPlayer?.imageUrl ?? null,
         currentTeamName: indexedPlayer?.teamName ?? null,
         position:
           indexedPlayer?.position ??

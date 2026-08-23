@@ -35,6 +35,11 @@ actor Main {
     var nextJobId = 1;
   };
 
+  let aiReportState : AiChatLib.ReportState = {
+    var reports = List.empty<AiChatTypes.Report>();
+    var nextReportId = 1;
+  };
+
   let state : HandballLib.State = {
     teams;
     players;
@@ -59,5 +64,5 @@ actor Main {
 
   include HandballApi(state);
   include ProfixioApi(state, profixioCache);
-  include AiChatApi(aiChatState);
+  include AiChatApi(aiChatState, aiReportState);
 };

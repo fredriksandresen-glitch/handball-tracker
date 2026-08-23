@@ -77,9 +77,14 @@ const ARCHIVE_STANDINGS_PATHS = [
   path.resolve(__dirname, '../../src/frontend/src/data/leagueStandingsArchive.json'),
   '/tmp/handball-icp-deploy-cache/src/frontend/src/data/leagueStandingsArchive.json',
 ].filter(Boolean);
+const FIRST_DIVISION_STANDINGS_PATHS = [
+  process.env.FIRST_DIVISION_ARCHIVE_STANDINGS_FILE,
+  path.resolve(__dirname, 'data/firstDivisionStandingsArchive2526.json'),
+  '/tmp/handball-icp-deploy-cache/services/handball-ai-gateway/data/firstDivisionStandingsArchive2526.json',
+].filter(Boolean);
 
-function loadArchiveStandings() {
-  for (const filePath of ARCHIVE_STANDINGS_PATHS) {
+function loadArchiveStandings(paths) {
+  for (const filePath of paths) {
     try {
       if (fs.existsSync(filePath)) {
         const standings = JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -92,7 +97,10 @@ function loadArchiveStandings() {
   return [];
 }
 
-const archiveStandings = loadArchiveStandings();
+const archiveStandings = loadArchiveStandings(ARCHIVE_STANDINGS_PATHS);
+const firstDivisionArchiveStandings = loadArchiveStandings(
+  FIRST_DIVISION_STANDINGS_PATHS,
+);
 
 let jsonStatsCache = {
   playersById: null,
@@ -610,7 +618,10 @@ async function prepareComparisonReport(req) {
     playersById,
     season,
     league,
-    standings: archiveStandings,
+    standings:
+      league === 'first-division'
+        ? firstDivisionArchiveStandings
+        : archiveStandings,
   });
   return { report, source };
 }
@@ -704,6 +715,7 @@ app.post('/v1/handball/chat', async (req, res) => {
     let deterministicAnswer = null;
     let hybridAnswer = null;
     let hybridGeneratedByAi = false;
+    let reportAttachment = null;
 
     // ─── Extract potential club from question ───────────────────────────
     const extractedClub = extractClubFromQuestion(question);
@@ -749,7 +761,11 @@ app.post('/v1/handball/chat', async (req, res) => {
       );
       const comparison = compareFormWithStandings(
         formAnalysis,
-        previousSeason === '2025-26' ? archiveStandings : [],
+        previousSeason === '2025-26'
+          ? requestedLeague === 'first-division'
+            ? firstDivisionArchiveStandings
+            : archiveStandings
+          : [],
         5,
       );
 
@@ -966,7 +982,10 @@ app.post('/v1/handball/chat', async (req, res) => {
             playersById,
             season: comparisonSeason,
             league: comparisonLeague,
-            standings: comparisonLeague === 'elite' ? archiveStandings : [],
+            standings:
+              comparisonLeague === 'first-division'
+                ? firstDivisionArchiveStandings
+                : archiveStandings,
           });
           const fallbackAnswer = buildComparisonFallbackAnswer(
             report,
@@ -1027,6 +1046,25 @@ app.post('/v1/handball/chat', async (req, res) => {
             console.error(`[${requestId}] Grounded comparison model fallback:`, error.message);
             analysisMode = 'hybrid-current-team-position-comparison-fallback';
             hybridAnswer = fallbackAnswer;
+          }
+
+          if (/\bpdf\b|\brapport(?:en)?\b/i.test(question)) {
+            try {
+              const pdf = await createComparisonPdf(report);
+              if (pdf.length > 1_000_000) {
+                throw new Error(`PDF is too large: ${pdf.length} bytes`);
+              }
+              const reportNames = report.players
+                .map((player) => normalizeText(player.name).replace(/\s+/g, '-'))
+                .join('-vs-');
+              reportAttachment = {
+                filename: `handball-tracker-${report.season}-${reportNames}.pdf`,
+                mimeType: 'application/pdf',
+                contentBase64: pdf.toString('base64'),
+              };
+            } catch (error) {
+              console.error(`[${requestId}] PDF generation failed:`, error.message);
+            }
           }
         } else if (isBestMatchQuestion && extractedClub) {
           analysisMode = 'deterministic-best-match';
@@ -1187,6 +1225,7 @@ app.post('/v1/handball/chat', async (req, res) => {
         evidence,
         sources,
         missingData: [],
+        report: reportAttachment,
         followUpQuestions: [
           'Vil du lage en PDF-rapport av sammenligningen?',
           'Vil du sammenligne formkurvene kamp for kamp?',

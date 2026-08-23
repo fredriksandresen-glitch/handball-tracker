@@ -11,6 +11,8 @@ import {
   AlertCircle,
   Bot,
   Database,
+  Download,
+  FileText,
   LoaderCircle,
   LogIn,
   MessageSquarePlus,
@@ -24,6 +26,7 @@ import { type FormEvent, useEffect, useRef, useState } from "react";
 import { normalizeLeagueId, normalizeSeasonId } from "../data/seasons";
 import {
   type AiMessage,
+  type AiReportMetadata,
   type AiThread,
   createAiActor,
 } from "../services/aiBackend";
@@ -99,7 +102,26 @@ function Evidence({ message }: { message: AiMessage }) {
   );
 }
 
-function Message({ message }: { message: AiMessage }) {
+function formatFileSize(size: bigint) {
+  const bytes = Number(size);
+  return bytes >= 1_000_000
+    ? `${(bytes / 1_000_000).toFixed(1)} MB`
+    : `${Math.max(1, Math.round(bytes / 1_000))} kB`;
+}
+
+function Message({
+  message,
+  report,
+  downloading,
+  downloadError,
+  onDownload,
+}: {
+  message: AiMessage;
+  report?: AiReportMetadata;
+  downloading: boolean;
+  downloadError: boolean;
+  onDownload: (report: AiReportMetadata) => void;
+}) {
   if (message.role === "user") {
     return (
       <div className="flex justify-end pl-10">
@@ -136,6 +158,40 @@ function Message({ message }: { message: AiMessage }) {
         {message.content}
       </p>
       <Evidence message={message} />
+      {report && (
+        <div className="mt-4 flex items-center gap-3 border-y border-border/70 py-3">
+          <FileText className="size-5 shrink-0 text-primary" />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold text-foreground">
+              {report.filename}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              PDF-rapport · {formatFileSize(report.size)}
+            </p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="shrink-0"
+            onClick={() => onDownload(report)}
+            disabled={downloading}
+            aria-label="Last ned PDF-rapport"
+            title="Last ned PDF-rapport"
+          >
+            {downloading ? (
+              <LoaderCircle className="animate-spin" />
+            ) : (
+              <Download />
+            )}
+          </Button>
+        </div>
+      )}
+      {downloadError && (
+        <p className="mt-2 text-xs text-destructive">
+          Rapporten kunne ikke lastes ned. Prøv igjen.
+        </p>
+      )}
     </div>
   );
 }
@@ -250,6 +306,8 @@ export default function AiChatPage() {
   const [input, setInput] = useState("");
   const [pendingQuestion, setPendingQuestion] = useState<string>();
   const [pendingMessageId, setPendingMessageId] = useState<bigint>();
+  const [downloadingReportId, setDownloadingReportId] = useState<bigint>();
+  const [downloadErrorReportId, setDownloadErrorReportId] = useState<bigint>();
   const endRef = useRef<HTMLDivElement>(null);
 
   const principal = identity?.getPrincipal();
@@ -301,7 +359,32 @@ export default function AiChatPage() {
   });
 
   const messages = isDraftThread ? [] : (messagesQuery.data ?? []);
-  const waitingForAnswer = messages.at(-1)?.role === "user";
+  const latestMessage = messages.at(-1);
+  const waitingForAnswer = latestMessage?.role === "user";
+
+  const reportsQuery = useQuery({
+    queryKey: ["aiReports", selectedThreadId?.toString()],
+    queryFn: () =>
+      selectedThreadId !== undefined && actor
+        ? actor.getMyAiReports(selectedThreadId)
+        : Promise.resolve([]),
+    enabled:
+      isAuthenticated && Boolean(actor) && selectedThreadId !== undefined,
+  });
+  const reportsByMessageId = new Map(
+    (reportsQuery.data ?? []).map((report) => [
+      report.messageId.toString(),
+      report,
+    ]),
+  );
+
+  useEffect(() => {
+    if (latestMessage?.role === "assistant" && selectedThreadId !== undefined) {
+      void queryClient.invalidateQueries({
+        queryKey: ["aiReports", selectedThreadId.toString()],
+      });
+    }
+  }, [latestMessage?.role, queryClient, selectedThreadId]);
 
   const submitMutation = useMutation({
     mutationFn: async (question: string) => {
@@ -331,6 +414,9 @@ export default function AiChatPage() {
         queryClient.invalidateQueries({ queryKey: ["aiThreads"] }),
         queryClient.invalidateQueries({
           queryKey: ["aiMessages", result.threadId.toString()],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["aiReports", result.threadId.toString()],
         }),
       ]);
     },
@@ -387,6 +473,32 @@ export default function AiChatPage() {
       setIsDraftThread(false);
     }
     await queryClient.invalidateQueries({ queryKey: ["aiThreads"] });
+  };
+
+  const downloadReport = async (report: AiReportMetadata) => {
+    if (!actor || downloadingReportId !== undefined) return;
+    setDownloadingReportId(report.id);
+    setDownloadErrorReportId(undefined);
+    try {
+      const file = await actor.getMyAiReport(report.id);
+      if (!file) throw new Error("PDF-rapporten finnes ikke.");
+      const bytes = new Uint8Array(file.content);
+      const url = URL.createObjectURL(
+        new Blob([bytes.buffer], { type: file.metadata.mimeType }),
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = file.metadata.filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Kunne ikke laste ned PDF-rapporten", error);
+      setDownloadErrorReportId(report.id);
+    } finally {
+      setDownloadingReportId(undefined);
+    }
   };
 
   if (isInitializing || (isAuthenticated && aiActorQuery.isFetching)) {
@@ -467,9 +579,19 @@ export default function AiChatPage() {
               </div>
             )}
 
-            {messages.map((message) => (
-              <Message key={message.id.toString()} message={message} />
-            ))}
+            {messages.map((message) => {
+              const report = reportsByMessageId.get(message.id.toString());
+              return (
+                <Message
+                  key={message.id.toString()}
+                  message={message}
+                  report={report}
+                  downloading={downloadingReportId === report?.id}
+                  downloadError={downloadErrorReportId === report?.id}
+                  onDownload={(item) => void downloadReport(item)}
+                />
+              );
+            })}
             {showPendingQuestion && (
               <div className="flex justify-end pl-10">
                 <div className="max-w-[88%] rounded-md bg-primary px-3.5 py-3 text-sm leading-6 text-primary-foreground">

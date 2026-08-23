@@ -30,6 +30,37 @@ module {
     observedAt : ?Text;
   };
 
+  public type ReportUpload = {
+    filename : Text;
+    mimeType : Text;
+    content : Blob;
+  };
+
+  public type ReportMetadata = {
+    id : Nat;
+    messageId : Nat;
+    filename : Text;
+    mimeType : Text;
+    size : Nat;
+    createdAt : Int;
+  };
+
+  public type Report = {
+    id : Nat;
+    threadId : Nat;
+    messageId : Nat;
+    owner : Principal;
+    filename : Text;
+    mimeType : Text;
+    content : Blob;
+    createdAt : Int;
+  };
+
+  public type PublicReport = {
+    metadata : ReportMetadata;
+    content : Blob;
+  };
+
   public type Message = {
     id : Nat;
     threadId : Nat;
@@ -128,6 +159,7 @@ module {
     sources : [Source];
     missingData : [Text];
     followUpQuestions : [Text];
+    report : ?ReportUpload;
   };
 
   public type WorkerStatus = {

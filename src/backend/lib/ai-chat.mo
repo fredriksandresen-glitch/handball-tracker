@@ -10,6 +10,7 @@ module {
   let MAX_THREADS_PER_USER = 25;
   let MAX_DAILY_QUESTIONS = 40;
   let MAX_CONVERSATION_MESSAGES = 12;
+  let MAX_REPORT_SIZE = 1_000_000;
   let DAY_NS : Int = 86_400_000_000_000;
   let STALE_JOB_NS : Int = 300_000_000_000;
 
@@ -21,6 +22,11 @@ module {
     var nextThreadId : Nat;
     var nextMessageId : Nat;
     var nextJobId : Nat;
+  };
+
+  public type ReportState = {
+    var reports : List.List<Types.Report>;
+    var nextReportId : Nat;
   };
 
   public func requireAuthenticated(caller : Principal) {
@@ -69,6 +75,15 @@ module {
     createdAt = job.createdAt;
     updatedAt = job.updatedAt;
     error = job.error;
+  };
+
+  func reportMetadata(report : Types.Report) : Types.ReportMetadata = {
+    id = report.id;
+    messageId = report.messageId;
+    filename = report.filename;
+    mimeType = report.mimeType;
+    size = report.content.size();
+    createdAt = report.createdAt;
   };
 
   func findOwnedThread(state : State, caller : Principal, threadId : Nat) : Types.Thread {
@@ -129,6 +144,38 @@ module {
       .map(publicMessage);
   };
 
+  public func getMyReports(
+    state : State,
+    reportState : ReportState,
+    caller : Principal,
+    threadId : Nat,
+  ) : [Types.ReportMetadata] {
+    requireAuthenticated(caller);
+    ignore findOwnedThread(state, caller, threadId);
+    reportState.reports.toArray()
+      .filter(func(report) {
+        report.owner == caller and report.threadId == threadId
+      })
+      .map(reportMetadata);
+  };
+
+  public func getMyReport(
+    reportState : ReportState,
+    caller : Principal,
+    reportId : Nat,
+  ) : ?Types.PublicReport {
+    requireAuthenticated(caller);
+    switch (reportState.reports.find(func(report) {
+      report.id == reportId and report.owner == caller
+    })) {
+      case (?report) ?{
+        metadata = reportMetadata(report);
+        content = report.content;
+      };
+      case null null;
+    };
+  };
+
   public func getMyJob(state : State, caller : Principal, jobId : Nat) : ?Types.PublicJob {
     requireAuthenticated(caller);
     switch (state.jobs.find(func(job) { job.id == jobId and job.owner == caller })) {
@@ -149,7 +196,12 @@ module {
     };
   };
 
-  public func deleteMyThread(state : State, caller : Principal, threadId : Nat) {
+  public func deleteMyThread(
+    state : State,
+    reportState : ReportState,
+    caller : Principal,
+    threadId : Nat,
+  ) {
     requireAuthenticated(caller);
     ignore findOwnedThread(state, caller, threadId);
     switch (state.jobs.find(func(job) {
@@ -162,6 +214,9 @@ module {
     state.threads := state.threads.filter(func(thread) { thread.id != threadId or thread.owner != caller });
     state.messages := state.messages.filter(func(message) { message.threadId != threadId or message.owner != caller });
     state.jobs := state.jobs.filter(func(job) { job.threadId != threadId or job.owner != caller });
+    reportState.reports := reportState.reports.filter(func(report) {
+      report.threadId != threadId or report.owner != caller
+    });
   };
 
   public func submitQuestion(
@@ -298,10 +353,28 @@ module {
     claimed;
   };
 
-  public func completeJob(state : State, caller : Principal, jobId : Nat, completion : Types.Completion) {
+  public func completeJob(
+    state : State,
+    reportState : ReportState,
+    caller : Principal,
+    jobId : Nat,
+    completion : Types.Completion,
+  ) {
     requireWorker(state, caller);
     if (completion.answer.size() == 0 or completion.answer.size() > 20_000) {
       Runtime.trap("AI answer must contain between 1 and 20000 characters");
+    };
+    switch (completion.report) {
+      case (?report) {
+        if (
+          report.filename.size() == 0 or report.filename.size() > 160 or
+          report.mimeType != "application/pdf" or
+          report.content.size() == 0 or report.content.size() > MAX_REPORT_SIZE
+        ) {
+          Runtime.trap("AI report must be a PDF no larger than 1000000 bytes");
+        };
+      };
+      case null {};
     };
 
     let now = Time.now();
@@ -334,6 +407,23 @@ module {
         };
         state.nextMessageId += 1;
         state.messages.add(message);
+        switch (completion.report) {
+          case (?upload) {
+            let report : Types.Report = {
+              id = reportState.nextReportId;
+              threadId = job.threadId;
+              messageId = message.id;
+              owner = job.owner;
+              filename = upload.filename;
+              mimeType = upload.mimeType;
+              content = upload.content;
+              createdAt = now;
+            };
+            reportState.nextReportId += 1;
+            reportState.reports.add(report);
+          };
+          case null {};
+        };
         updateThreadTimestamp(state, job.threadId, now);
       };
     };
