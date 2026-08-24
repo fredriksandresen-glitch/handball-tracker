@@ -204,6 +204,19 @@ function isOpenClawAgentConfigured(env = process.env) {
   return config.enabled && Boolean(config.token && config.agentId);
 }
 
+function publicOpenClawConfig(env = process.env) {
+  const config = openClawAgentConfig(env);
+  return {
+    enabled: config.enabled,
+    configured: config.enabled && Boolean(config.token && config.agentId),
+    mode: String(env.OPENCLAW_AGENT_MODE ?? "primary").toLowerCase(),
+    baseUrl: config.baseUrl,
+    agentId: config.agentId,
+    timeoutMs: config.timeoutMs,
+    maxSteps: config.maxSteps,
+  };
+}
+
 function assertPrivateOpenClawUrl(baseUrl, env = process.env) {
   const url = new URL(baseUrl);
   const privateHosts = new Set(["127.0.0.1", "localhost", "::1", "[::1]"]);
@@ -216,6 +229,87 @@ function assertPrivateOpenClawUrl(baseUrl, env = process.env) {
   }
   if (!privateHosts.has(url.hostname) && url.protocol !== "https:") {
     throw new Error("Remote OpenClaw endpoints must use HTTPS");
+  }
+}
+
+function diagnosticError(error) {
+  const message = error instanceof Error ? error.message : String(error);
+  return message
+    .replace(/Bearer\s+\S+/gi, "Bearer [redacted]")
+    .replace(/[A-Za-z0-9_-]{32,}/g, "[redacted]")
+    .slice(0, 300);
+}
+
+async function probeOpenClawAgent({
+  fetchImpl = fetch,
+  env = process.env,
+  timeoutMs = 5_000,
+} = {}) {
+  const config = openClawAgentConfig(env);
+  const publicConfig = publicOpenClawConfig(env);
+  if (!config.enabled) {
+    return {
+      status: "disabled",
+      ...publicConfig,
+      reachable: false,
+      agentAvailable: false,
+      error: null,
+    };
+  }
+  if (!config.token || !config.agentId) {
+    return {
+      status: "degraded",
+      ...publicConfig,
+      reachable: false,
+      agentAvailable: false,
+      error: "OpenClaw agent environment is incomplete",
+    };
+  }
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    assertPrivateOpenClawUrl(config.baseUrl, {
+      OPENCLAW_ALLOW_REMOTE: String(config.allowRemote),
+    });
+    const response = await fetchImpl(`${config.baseUrl}/models`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${config.token}` },
+      signal: controller.signal,
+    });
+    if (!response.ok) {
+      throw new Error(`OpenClaw models endpoint returned HTTP ${response.status}`);
+    }
+    const body = await response.json();
+    const modelIds = Array.isArray(body?.data)
+      ? body.data.map((entry) => String(entry?.id ?? ""))
+      : [];
+    const expectedIds = new Set([
+      `openclaw/${config.agentId}`,
+      `openclaw:${config.agentId}`,
+      `agent:${config.agentId}`,
+      config.agentId,
+    ]);
+    const agentAvailable = modelIds.some((id) => expectedIds.has(id));
+    return {
+      status: agentAvailable ? "ok" : "degraded",
+      ...publicConfig,
+      reachable: true,
+      agentAvailable,
+      error: agentAvailable
+        ? null
+        : `Agent ${config.agentId} was not returned by /models`,
+    };
+  } catch (error) {
+    return {
+      status: "degraded",
+      ...publicConfig,
+      reachable: false,
+      agentAvailable: false,
+      error: diagnosticError(error),
+    };
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
@@ -468,5 +562,7 @@ module.exports = {
   initialMessages,
   isOpenClawAgentConfigured,
   openClawAgentConfig,
+  probeOpenClawAgent,
+  publicOpenClawConfig,
   runOpenClawHandballAgent,
 };

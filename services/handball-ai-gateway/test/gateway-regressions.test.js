@@ -533,6 +533,31 @@ test("understands best form at the end of the previous season", () => {
   assert.equal(analysis.topPlayer.playerName, "Sarah Deari Solheim");
 });
 
+test("understands compound form-curve wording when the agent is unavailable", () => {
+  const question =
+    "hvilken spiller hadde beste formkurve siste 5 kampene av forrige sesong i eliteserien?";
+  const plan = inferFallbackPlan(question, {
+    season: "2026-27",
+    league: "elite",
+  });
+
+  assert.equal(isBestFormQuestion(question), true);
+  assert.deepEqual(plan, {
+    domain: "handball",
+    operations: [
+      {
+        tool: "best_form",
+        args: {
+          season: "2025-26",
+          league: "elite",
+          matchCount: 5,
+          limit: 10,
+        },
+      },
+    ],
+  });
+});
+
 test("builds a grounded MEP curve analysis for potential questions", () => {
   const question =
     "hvilken spillere har stort potential at gjøre det bra med tanke på sluttiden av førrige sesong mep kurve?";

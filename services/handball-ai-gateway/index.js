@@ -76,6 +76,8 @@ const {
 } = require('./lib/handballAgent');
 const {
   isOpenClawAgentConfigured,
+  probeOpenClawAgent,
+  publicOpenClawConfig,
   runOpenClawHandballAgent,
 } = require('./lib/openClawAgent');
 
@@ -687,7 +689,16 @@ async function refreshCache() {
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    aiAgent: publicOpenClawConfig(),
+  });
+});
+
+app.get('/health/ai', async (req, res) => {
+  const result = await probeOpenClawAgent();
+  res.status(result.status === 'degraded' ? 503 : 200).json(result);
 });
 
 async function prepareComparisonReport(req) {

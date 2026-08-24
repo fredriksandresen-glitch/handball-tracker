@@ -1,5 +1,6 @@
-// Merge these fields into the existing private OpenClaw configuration.
-// Do not replace unrelated agents, channels, providers, auth or bindings.
+// Schema for the Clawdbot version used by the current Linux server.
+// Merge the agent into agents.list. Do not replace existing list entries,
+// channels, providers, auth or bindings.
 {
   gateway: {
     http: {
@@ -9,12 +10,11 @@
     },
   },
   agents: {
-    entries: {
-      "handball-tracker": {
-        workspace: "~/.openclaw/workspace-handball-tracker",
+    list: [
+      {
+        id: "handball-tracker",
+        workspace: "~/.clawdbot/workspace-handball-tracker",
         model: "moonshot/kimi-k3",
-        thinkingDefault: "high",
-        skills: [],
         sandbox: {
           mode: "all",
           scope: "agent",
@@ -37,6 +37,6 @@
           ],
         },
       },
-    },
+    ],
   },
 }

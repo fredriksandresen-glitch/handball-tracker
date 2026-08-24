@@ -1,9 +1,13 @@
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 const test = require("node:test");
 const {
   assertPrivateOpenClawUrl,
   buildOpenClawSessionKey,
   isOpenClawAgentConfigured,
+  probeOpenClawAgent,
+  publicOpenClawConfig,
   runOpenClawHandballAgent,
 } = require("../lib/openClawAgent");
 
@@ -67,6 +71,51 @@ test("recognizes a fully configured OpenClaw handball agent", () => {
       OPENCLAW_GATEWAY_TOKEN: "",
     }),
     false,
+  );
+  const publicConfig = publicOpenClawConfig(environment);
+  assert.equal(publicConfig.configured, true);
+  assert.equal("token" in publicConfig, false);
+});
+
+test("uses the legacy agents.list schema without unsupported fields", () => {
+  const example = fs.readFileSync(
+    path.resolve(
+      __dirname,
+      "../openclaw/handball-tracker-agent.example.json5",
+    ),
+    "utf8",
+  );
+
+  assert.match(example, /agents:\s*\{[\s\S]*list:\s*\[/);
+  assert.doesNotMatch(example, /thinkingDefault/);
+  assert.doesNotMatch(example, /\bskills\s*:/);
+  assert.match(example, /\.clawdbot\/workspace-handball-tracker/);
+});
+
+test("probes the private models endpoint without exposing the bearer token", async () => {
+  let request;
+  const result = await probeOpenClawAgent({
+    env: environment,
+    fetchImpl: async (url, options) => {
+      request = { url, options };
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          data: [{ id: "openclaw/handball-tracker" }],
+        }),
+      };
+    },
+  });
+
+  assert.equal(result.status, "ok");
+  assert.equal(result.reachable, true);
+  assert.equal(result.agentAvailable, true);
+  assert.equal("token" in result, false);
+  assert.equal(request.url, "http://127.0.0.1:18789/v1/models");
+  assert.equal(
+    request.options.headers.Authorization,
+    "Bearer private-test-token",
   );
 });
 

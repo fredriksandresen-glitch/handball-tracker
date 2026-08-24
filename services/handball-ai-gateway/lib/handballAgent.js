@@ -128,7 +128,7 @@ function inferFallbackPlan(question, context = {}) {
     };
   }
   if (
-    /\bform\b/.test(normalized) &&
+    /\bform\w*\b/.test(normalized) &&
     /\b(best\w*|slutt\w*|siste)\b/.test(normalized)
   ) {
     return {

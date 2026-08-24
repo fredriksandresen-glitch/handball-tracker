@@ -66,6 +66,7 @@ POST /v1/handball/chat
 POST /v1/handball/comparisons
 POST /v1/handball/reports/player-comparison.pdf
 GET  /health
+GET  /health/ai
 ```
 
 Chat-endepunktet kalles av worker-en på samme Linux-server. Nettleseren sender
@@ -84,9 +85,16 @@ OpenClaw-sesjonsnøkkel. ICP-backenden beholder fortsatt den autoritative
 samtalehistorikken. Principal og OpenClaw-token sendes aldri til nettleseren.
 
 Agentens workspace-instruksjoner og et eksempel på den låste agentkonfigen
-ligger under `openclaw/`. Chat Completions-endepunktet må kun være tilgjengelig
-lokalt eller via privat ingress. Bearer-tokenet gir operator-tilgang og skal
-aldri eksponeres offentlig.
+ligger under `openclaw/`. Serverens nåværende Clawdbot-versjon bruker
+`agents.list`; `thinkingDefault` og `skills` er ikke gyldige inne i et element
+i denne listen. Agenten arver derfor global thinking-innstilling, mens
+verktøypolicyen låses per agent. Ikke konverter eksemplet til
+`agents.entries` uten å oppgradere og validere Clawdbot først.
+
+`GET /health/ai` kontrollerer privat `/v1/models`, bekrefter at
+`handball-tracker` finnes og returnerer ingen bearer-secret. Chat
+Completions-endepunktet må kun være tilgjengelig lokalt eller via privat
+ingress. Bearer-tokenet gir operator-tilgang og skal aldri eksponeres offentlig.
 
 ## ICP canister-IDer
 | Type | Canister ID |

@@ -278,7 +278,7 @@ function isGroupTeamContextFollowUp(question) {
 function isBestFormQuestion(question) {
   const normalized = normalizeText(question);
   return (
-    /\bform\b/.test(normalized) &&
+    /\bform\w*\b/.test(normalized) &&
     /\b(best(?:e)?|topp)\b/.test(normalized) &&
     /\b(siste|kamp(?:en|ene)?|slutt\w*)\b/.test(normalized)
   );
