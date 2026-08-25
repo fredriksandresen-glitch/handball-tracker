@@ -21,11 +21,19 @@ function git(args) {
 const commit = git("rev-parse HEAD") || "unknown";
 const shortCommit = commit.slice(0, 7);
 const branch = git("rev-parse --abbrev-ref HEAD") || "unknown";
+// dist/ is a build output tracked in this repo; changes there are expected and
+// do not mean the SOURCE is unreproducible. Only source drift makes a build dirty.
 const dirtyOutput = git("status --porcelain");
-const dirty = dirtyOutput.length > 0;
+const dirtyFiles = dirtyOutput
+  .split("\n")
+  .map((line) => line.slice(3).trim())
+  .filter(Boolean)
+  .filter((file) => !file.includes("src/frontend/dist/"))
+  .filter((file) => !file.includes("src/frontend/public/"));
+const dirty = dirtyFiles.length > 0;
 const buildTime = new Date().toISOString();
 
-const buildInfo = { commit, shortCommit, branch, dirty, buildTime };
+const buildInfo = { commit, shortCommit, branch, dirty, buildTime, dirtyFiles };
 writeFileSync(
   resolve(distDir, "build-info.json"),
   `${JSON.stringify(buildInfo, null, 2)}\n`,
