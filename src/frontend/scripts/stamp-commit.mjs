@@ -24,12 +24,17 @@ const branch = git("rev-parse --abbrev-ref HEAD") || "unknown";
 // dist/ is a build output tracked in this repo; changes there are expected and
 // do not mean the SOURCE is unreproducible. Only source drift makes a build dirty.
 const dirtyOutput = git("status --porcelain");
+const IGNORED_PATHS = [
+  "src/frontend/dist/",
+  "src/frontend/public/",
+  "node_modules/",
+  "pnpm-lock.yaml",
+];
 const dirtyFiles = dirtyOutput
   .split("\n")
-  .map((line) => line.slice(3).trim())
+  .map((line) => line.replace(/^.{2}\s+/, "").trim())
   .filter(Boolean)
-  .filter((file) => !file.includes("src/frontend/dist/"))
-  .filter((file) => !file.includes("src/frontend/public/"));
+  .filter((file) => !IGNORED_PATHS.some((ignored) => file.includes(ignored)));
 const dirty = dirtyFiles.length > 0;
 const buildTime = new Date().toISOString();
 
