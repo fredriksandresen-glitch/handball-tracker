@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCheck,
+  ChevronRight,
   Layers,
   ListFilter,
   Shield,
@@ -40,6 +41,11 @@ import {
 } from "../hooks/useTeam";
 import { resolveImageUrl } from "../utils/playerImages";
 import { getTeamLogoClassName } from "../utils/teamLogoStyles";
+import {
+  CUP_SEASON,
+  describeCupMatch,
+  getCupMatchesForTeam,
+} from "../utils/cupFixtures";
 import { useTeams } from "../hooks/useTeams";
 import {
   getLeagueLabel,
@@ -344,6 +350,12 @@ export default function TeamPage() {
   const { data: followedPlayers = [] } = useFollowedPlayers();
   const followPlayer = useFollowPlayer();
   const [rosterSort, setRosterSort] = useState<RosterSort>("position");
+  const [cupExpanded, setCupExpanded] = useState(false);
+
+  const cupMatches = useMemo(
+    () => getCupMatchesForTeam(team?.name),
+    [team?.name],
+  );
 
   const followedIds = useMemo(
     () => new Set(followedPlayers.map((p) => p.id.toString())),
@@ -574,6 +586,88 @@ export default function TeamPage() {
         />
       )}
 
+      {/* ── NM (cup) ── */}
+      {cupMatches.length > 0 && team && (
+        <div className="space-y-3" data-ocid="team-nm-section">
+          <button
+            type="button"
+            onClick={() => setCupExpanded((v) => !v)}
+            aria-expanded={cupExpanded}
+            className={cn(
+              "w-full flex items-center justify-between gap-3 rounded-xl border px-4 py-3 transition-colors",
+              cupExpanded
+                ? "border-primary/50 bg-primary/5"
+                : "border-border bg-card hover:border-primary/40",
+            )}
+            data-ocid="team-nm-toggle"
+          >
+            <span className="flex items-center gap-2">
+              <Trophy className="size-4 text-primary" />
+              <span className="text-sm font-display font-bold text-foreground">
+                {`NM ${CUP_SEASON.replace("-", "/")}`}
+              </span>
+              <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                {cupMatches.length} {cupMatches.length === 1 ? "kamp" : "kamper"}
+              </span>
+            </span>
+            <ChevronRight
+              className={cn(
+                "size-4 text-muted-foreground transition-transform",
+                cupExpanded && "rotate-90",
+              )}
+            />
+          </button>
+          {cupExpanded && (
+            <ul className="space-y-2" data-ocid="team-nm-list">
+              {cupMatches.map((match) => {
+                const view = describeCupMatch(match, team.name);
+                return (
+                  <li
+                    key={match.id}
+                    className="rounded-xl border border-border bg-card px-4 py-3"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                            {view.isHome ? "H" : "B"}
+                          </span>
+                          <span className="truncate text-sm font-display font-semibold text-foreground">
+                            {view.opponent}
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-muted-foreground">
+                          {match.kickoff
+                            ? new Date(match.kickoff * 1000).toLocaleDateString("nb-NO", {
+                                day: "2-digit",
+                                month: "short",
+                              })
+                            : "Dato ikke satt"}
+                        </span>
+                      </div>
+                      {match.played ? (
+                        <span
+                          className={cn(
+                            "shrink-0 font-display font-bold tabular-nums",
+                            view.won && "text-primary",
+                            view.lost && "text-muted-foreground",
+                          )}
+                        >
+                          {view.teamScore}–{view.opponentScore}
+                        </span>
+                      ) : (
+                        <span className="shrink-0 text-[11px] uppercase tracking-wide text-muted-foreground">
+                          Ikke spilt
+                        </span>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      )}
       {/* ── Roster ── */}
       {players.length > 0 ? (
         <div className="space-y-5" data-ocid="team-roster">
