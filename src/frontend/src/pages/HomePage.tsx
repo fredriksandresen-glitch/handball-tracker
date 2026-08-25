@@ -11,8 +11,14 @@ import {
 } from "../hooks/useFollowedPlayers";
 import { usePlayerMatchStatsBatch } from "../hooks/usePlayer";
 import { useTeams } from "../hooks/useTeams";
-import { FeedEventType, POSITION_LABELS, Position } from "../types/handball";
-import type { FeedEvent, Player, SortField, Team } from "../types/handball";
+import { POSITION_LABELS, Position } from "../types/handball";
+import type {
+  Player,
+  PlayerMatchStats,
+  SortField,
+  Team,
+} from "../types/handball";
+import type { EnrichedPlayerMatchStats } from "../services/clawdbotPlayerProfile";
 
 // ── Constants ─────────────────────────────────────────────────────────────
 const SORT_OPTIONS: { value: SortField; label: string }[] = [
@@ -29,76 +35,91 @@ function getTeamName(teamId: bigint, teams: Team[]): string {
   return teams.find((t) => t.id === teamId)?.name ?? "";
 }
 
+type StatsMap = Record<string, PlayerMatchStats[]>;
+
+function statsFor(player: Player, statsMap: StatsMap): EnrichedPlayerMatchStats[] {
+  return (statsMap[player.id.toString()] ?? []) as EnrichedPlayerMatchStats[];
+}
+
+function matchSortKey(match: EnrichedPlayerMatchStats): string {
+  return match.date ?? match.matchId.toString().padStart(20, "0");
+}
+
+/** Latest match date as a comparable number. 0 = no data. */
+function lastActivity(player: Player, statsMap: StatsMap): number {
+  const keys = statsFor(player, statsMap).map((m) => matchSortKey(m));
+  if (keys.length === 0) return 0;
+  const newest = keys.sort()[keys.length - 1];
+  const parsed = Date.parse(newest);
+  return Number.isNaN(parsed) ? keys.length : parsed;
+}
+
+function totalGoals(player: Player, statsMap: StatsMap): number {
+  return statsFor(player, statsMap).reduce(
+    (sum, m) => sum + Number(m.goals ?? 0n),
+    0,
+  );
+}
+
+/** playTime is "MM:SS" or "H:MM:SS" or a plain number of minutes. */
+function parsePlayTime(value: unknown): number {
+  if (typeof value === "number") return Number.isFinite(value) ? value : 0;
+  if (typeof value !== "string" || value.trim() === "") return 0;
+  const parts = value.split(":").map((p) => Number(p));
+  if (parts.some((p) => Number.isNaN(p))) return 0;
+  if (parts.length === 3) return parts[0] * 60 + parts[1] + parts[2] / 60;
+  if (parts.length === 2) return parts[0] + parts[1] / 60;
+  return parts[0];
+}
+
+function totalMinutes(player: Player, statsMap: StatsMap): number {
+  return statsFor(player, statsMap).reduce(
+    (sum, m) =>
+      sum +
+      (m.minutesPlayed !== undefined
+        ? Number(m.minutesPlayed)
+        : parsePlayTime(m.playTime)),
+    0,
+  );
+}
+
+/** Average MEP over the last 3 matches, else average goals. */
+function formScore(player: Player, statsMap: StatsMap): number {
+  const matches = statsFor(player, statsMap)
+    .slice()
+    .sort((a, b) => matchSortKey(a).localeCompare(matchSortKey(b)));
+  if (matches.length === 0) return 0;
+
+  const recent = matches.slice(-3);
+  const meps = recent
+    .map((m) => m.mep)
+    .filter((v): v is number => typeof v === "number");
+  if (meps.length > 0) {
+    return meps.reduce((s, v) => s + v, 0) / meps.length;
+  }
+  return (
+    recent.reduce((s, m) => s + Number(m.goals ?? 0n), 0) / recent.length
+  );
+}
+
 function sortPlayers(
   players: Player[],
   sort: SortField,
-  events: FeedEvent[],
+  statsMap: StatsMap,
 ): Player[] {
-  const copy = [...players];
+  const score =
+    sort === "activity"
+      ? lastActivity
+      : sort === "goals"
+        ? totalGoals
+        : sort === "minutes"
+          ? totalMinutes
+          : formScore;
 
-  if (sort === "activity") {
-    return copy.sort((a, b) => {
-      const aLast = Math.max(
-        0,
-        ...events
-          .filter((e) => e.playerId === a.id)
-          .map((e) => Number(e.createdAt)),
-      );
-      const bLast = Math.max(
-        0,
-        ...events
-          .filter((e) => e.playerId === b.id)
-          .map((e) => Number(e.createdAt)),
-      );
-      return bLast - aLast;
-    });
-  }
-
-  if (sort === "goals") {
-    return copy.sort((a, b) => {
-      const aG = events
-        .filter(
-          (e) =>
-            e.playerId === a.id && e.eventType === FeedEventType.GoalsScored,
-        )
-        .reduce((s, e) => s + Number(e.statValue ?? 0n), 0);
-      const bG = events
-        .filter(
-          (e) =>
-            e.playerId === b.id && e.eventType === FeedEventType.GoalsScored,
-        )
-        .reduce((s, e) => s + Number(e.statValue ?? 0n), 0);
-      return bG - aG;
-    });
-  }
-
-  if (sort === "minutes") {
-    return copy.sort((a, b) => {
-      const aM = events
-        .filter(
-          (e) =>
-            e.playerId === a.id && e.eventType === FeedEventType.MinutesPlayed,
-        )
-        .reduce((s, e) => s + Number(e.statValue ?? 0n), 0);
-      const bM = events
-        .filter(
-          (e) =>
-            e.playerId === b.id && e.eventType === FeedEventType.MinutesPlayed,
-        )
-        .reduce((s, e) => s + Number(e.statValue ?? 0n), 0);
-      return bM - aM;
-    });
-  }
-
-  // form
-  return copy.sort((a, b) => {
-    const aF = events.filter(
-      (e) => e.playerId === a.id && e.eventType === FeedEventType.GoalsScored,
-    ).length;
-    const bF = events.filter(
-      (e) => e.playerId === b.id && e.eventType === FeedEventType.GoalsScored,
-    ).length;
-    return bF - aF;
+  return [...players].sort((a, b) => {
+    const diff = score(b, statsMap) - score(a, statsMap);
+    // Stable, predictable tiebreak so the list never looks random.
+    return diff !== 0 ? diff : a.name.localeCompare(b.name, "nb");
   });
 }
 
@@ -331,8 +352,8 @@ export default function HomePage() {
       filtered = filtered.filter((p) => (p.position as string) === posFilter);
     if (teamFilter !== "all")
       filtered = filtered.filter((p) => p.teamId.toString() === teamFilter);
-    return sortPlayers(filtered, sort, feedEvents);
-  }, [followedPlayers, posFilter, teamFilter, sort, feedEvents]);
+    return sortPlayers(filtered, sort, matchStatsMap);
+  }, [followedPlayers, posFilter, teamFilter, sort, matchStatsMap]);
 
   const isLoading = loadingPlayers || loadingFeed;
   const hasFollowed = followedPlayers.length > 0;
