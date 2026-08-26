@@ -1,7 +1,7 @@
 {
   "name": "Handball Tracker",
   "short_name": "Handball",
-  "description": "Følg dine favorittspillere i REMA 1000-ligaen",
+  "description": "Følg dine favorittspillere i Elkjøp-ligaen og norsk topphåndball",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f1117",

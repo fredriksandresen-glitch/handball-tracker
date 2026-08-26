@@ -1,0 +1,11 @@
+{
+  "commit": "8b387e522a90dc40364857f2fe2a891eb41df784",
+  "shortCommit": "8b387e5",
+  "branch": "nm-restore",
+  "dirty": true,
+  "buildTime": "2026-08-25T14:03:31.718Z",
+  "dirtyFiles": [
+    "canister_ids.json",
+    "dfx.json"
+  ]
+}
