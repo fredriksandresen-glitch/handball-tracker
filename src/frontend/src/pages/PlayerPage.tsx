@@ -40,7 +40,11 @@ import {
   usePlayerMatchStats,
   usePlayerSeasonStats,
 } from "../hooks/usePlayer";
-import { resolveImageUrl } from "../utils/playerImages";
+import {
+  resolveImageUrl,
+  resolvePlayerCardImageSources,
+  resolvePlayerFullImageUrl,
+} from "../utils/playerImages";
 import { getTeamLogoClassName } from "../utils/teamLogoStyles";
 import { useNextMatchForTeam, useTeam } from "../hooks/useTeam";
 import {
@@ -319,9 +323,9 @@ function PlayerHero({
   return (
     <section className="bg-card border-b border-border px-4 py-5">
       <div className="flex items-start gap-4">
-        {resolveImageUrl(player.imageUrl) ? (
+        {resolvePlayerFullImageUrl(player.imageUrl) ? (
           <img
-            src={resolveImageUrl(player.imageUrl)}
+            src={resolvePlayerFullImageUrl(player.imageUrl)}
             alt={player.name}
             className="size-28 rounded-2xl object-cover object-top border-2 border-primary/40 bg-muted"
           />
@@ -1152,10 +1156,20 @@ function PlayerComparison({
                     )}
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      {resolveImageUrl(candidate.player.imageUrl) ? (
+                      {resolvePlayerCardImageSources(
+                        candidate.player.imageUrl,
+                      )?.src ? (
                         <img
-                          src={resolveImageUrl(candidate.player.imageUrl)}
+                          src={
+                            resolvePlayerCardImageSources(
+                              candidate.player.imageUrl,
+                            )?.src
+                          }
                           alt=""
+                          loading="lazy"
+                          decoding="async"
+                          width={40}
+                          height={40}
                           className="size-10 rounded-lg object-cover object-top bg-muted shrink-0"
                         />
                       ) : (

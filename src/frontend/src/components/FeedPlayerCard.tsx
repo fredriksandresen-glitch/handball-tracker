@@ -10,42 +10,45 @@ import { formatMatchDate, getCountdown } from "../services/handballService";
 import type { EnrichedPlayerMatchStats } from "../services/clawdbotPlayerProfile";
 import type { FeedEvent, Player, PlayerMatchStats } from "../types/handball";
 import { FeedEventType, Position } from "../types/handball";
-import { resolveImageUrl } from "../utils/playerImages";
+import {
+  resolveImageUrl,
+  resolvePlayerCardImageSources,
+} from "../utils/playerImages";
 import { PositionBadge } from "./PositionBadge";
 
+/**
+ * Formkurve som stolper (designgjennomgang 2026-08-27) — samme uttrykk som
+ * PlayerCard. Siste kamp i hvitt, kamper over snittet i gront.
+ */
 function Sparkline({ values }: { values: number[] }) {
   if (values.length < 2) return null;
-
-  const min = Math.min(...values, 0);
-  const max = Math.max(...values, 1);
-  const range = Math.max(max - min, 1);
-  const W = 48;
-  const H = 20;
-  const pts = values.map((v, i) => {
-    const x = (i / (values.length - 1)) * W;
-    const y = H - ((v - min) / range) * (H - 4) - 2;
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
+  const recent = values.slice(-5);
+  const max = Math.max(...recent, 1);
+  const average = recent.reduce((sum, v) => sum + v, 0) / recent.length;
 
   return (
-    <svg
-      width={W}
-      height={H}
-      viewBox={`0 0 ${W} ${H}`}
+    <div
+      className="mt-2.5 flex h-6 items-end gap-[3px]"
       role="img"
-      aria-label="MEP-formkurve"
-      className="flex-shrink-0 opacity-85"
+      aria-label="MEP-formkurve siste kamper"
+      title="MEP-form siste kamper"
     >
-      <title>MEP-form siste kamper</title>
-      <polyline
-        points={pts.join(" ")}
-        fill="none"
-        strokeWidth="1.8"
-        stroke="white"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+      {recent.map((value, index) => {
+        const height = Math.max(12, (value / max) * 100);
+        const isLast = index === recent.length - 1;
+        const isAbove = value >= average;
+        return (
+          <span
+            key={`spark-${index}-${value}`}
+            style={{ height: `${height}%` }}
+            className={cn(
+              "block flex-1 rounded-t-sm",
+              isLast ? "bg-white" : isAbove ? "bg-emerald-400/80" : "bg-white/30",
+            )}
+          />
+        );
+      })}
+    </div>
   );
 }
 
@@ -176,6 +179,8 @@ export function FeedPlayerCard({
 }: Props) {
   const navigate = useNavigate();
   const [imageFailed, setImageFailed] = useState(false);
+  // Kortbilde (webp 400/720) i stedet for originalen paa ~1,4 MB PNG.
+  const playerCardImage = resolvePlayerCardImageSources(player.imageUrl);
 
   const lastGoalEvent = feedEvents
     .filter((e) => e.eventType === FeedEventType.GoalsScored)
@@ -231,10 +236,14 @@ export function FeedPlayerCard({
           </div>
         )}
 
-        {resolveImageUrl(player.imageUrl) && !imageFailed ? (
+        {playerCardImage && !imageFailed ? (
           <img
-            src={resolveImageUrl(player.imageUrl)}
+            src={playerCardImage.src}
+            srcSet={playerCardImage.srcSet}
+            sizes="(max-width: 640px) 50vw, 320px"
             alt={player.name}
+            loading="lazy"
+            decoding="async"
             onError={() => setImageFailed(true)}
             className="absolute inset-0 z-10 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />
@@ -242,13 +251,21 @@ export function FeedPlayerCard({
           <PlayerImageFallback name={player.name} />
         )}
 
-        <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
+        {/* Lettere gradient (designgjennomgang 2026-08-27): fire stopp slik at
+            ansiktet slipper fram uten at teksten blir mindre lesbar. */}
+        <div
+          className="absolute inset-0 z-20"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(6,12,26,0.94) 0%, rgba(6,12,26,0.72) 18%, rgba(6,12,26,0.28) 42%, rgba(6,12,26,0.02) 62%, transparent 100%)",
+          }}
+        />
 
-        {nationalTeam && (
-          <div className="absolute left-3 top-3 z-30 rounded-full border border-white/20 bg-black/35 px-2.5 py-1 text-[10px] font-display font-black uppercase tracking-wide text-white shadow-subtle backdrop-blur-md">
-            {nationalTeam.countryCode}
-          </div>
-        )}
+        {/* Landkode-chippen er fjernet 2026-08-27: flagget i bakgrunnen viser
+            allerede nasjonaliteten, og plassen brukes bedre til posisjonen. */}
+        <div className="absolute left-3 top-3 z-30">
+          <PositionBadge position={player.position} variant="overlay" />
+        </div>
 
         <button
           type="button"
@@ -262,11 +279,7 @@ export function FeedPlayerCard({
         </button>
 
         <div className="absolute bottom-0 left-0 right-0 z-30 px-3.5 sm:px-3 pb-3.5 sm:pb-3 pt-12 sm:pt-10">
-          <div className="mb-1">
-            <PositionBadge position={player.position} variant="overlay" />
-          </div>
-
-          <p className="font-display font-black text-white text-[15px] sm:text-sm leading-tight truncate drop-shadow-sm">
+          <p className="font-display font-black text-white text-[17px] sm:text-[15px] tracking-tight leading-tight truncate drop-shadow-sm">
             {player.name}
           </p>
 
@@ -274,54 +287,84 @@ export function FeedPlayerCard({
             {teamName}
           </p>
 
-          <div className="flex items-end justify-between mt-2.5 sm:mt-2 pt-2.5 sm:pt-2 border-t border-white/15">
-            <div className="flex gap-3">
+          {/* Ett hovedtall, resten som stottetall (designgjennomgang
+              2026-08-27). Formkurven ligger i full bredde under. */}
+          <div className="mt-2.5 sm:mt-2 pt-2.5 sm:pt-2 border-t border-white/15">
+            <div className="flex items-end gap-3.5">
               {latestMatch?.mep !== undefined && (
                 <div>
-                  <span className="block font-display font-black text-2xl sm:text-xl text-white leading-none tabular-nums">
+                  <span className="block font-display font-black text-[30px] sm:text-[26px] tracking-tight text-white leading-none tabular-nums">
                     {formatDecimal(latestMatch.mep)}
                   </span>
-                  <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
+                  <span className="block text-[9px] font-bold uppercase tracking-wide text-white/75 mt-1">
                     MEP sist
                   </span>
                 </div>
               )}
               {latestSaves !== undefined && (
                 <div>
-                  <span className="block font-display font-bold text-base text-white/85 leading-none tabular-nums">
+                  <span
+                    className={cn(
+                      "block font-display leading-none tabular-nums",
+                      latestMatch?.mep === undefined
+                        ? "font-black text-[30px] sm:text-[26px] tracking-tight text-white"
+                        : "font-bold text-[15px] text-white/90",
+                    )}
+                  >
                     {latestSaves.toString()}
                   </span>
-                  <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
+                  <span
+                    className={cn(
+                      "block text-[9px] uppercase tracking-wide mt-1",
+                      latestMatch?.mep === undefined
+                        ? "font-bold text-white/75"
+                        : "text-white/55",
+                    )}
+                  >
                     Redn.
                   </span>
                 </div>
               )}
               {latestSavePct !== undefined && (
                 <div>
-                  <span className="block font-display font-bold text-base text-white/85 leading-none tabular-nums">
+                  <span className="block font-display font-bold text-[15px] text-white/90 leading-none tabular-nums">
                     {latestSavePct.toFixed(1)}%
                   </span>
-                  <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
+                  <span className="block text-[9px] uppercase tracking-wide text-white/55 mt-1">
                     Red%
                   </span>
                 </div>
               )}
               {latestGoals !== undefined && (
                 <div>
-                  <span className="block font-display font-bold text-base text-white/85 leading-none tabular-nums">
+                  <span
+                    className={cn(
+                      "block font-display leading-none tabular-nums",
+                      latestMatch?.mep === undefined
+                        ? "font-black text-[30px] sm:text-[26px] tracking-tight text-white"
+                        : "font-bold text-[15px] text-white/90",
+                    )}
+                  >
                     {latestGoals.toString()}
                   </span>
-                  <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
+                  <span
+                    className={cn(
+                      "block text-[9px] uppercase tracking-wide mt-1",
+                      latestMatch?.mep === undefined
+                        ? "font-bold text-white/75"
+                        : "text-white/55",
+                    )}
+                  >
                     Mål
                   </span>
                 </div>
               )}
               {lastMinEvent?.statValue !== undefined && (
                 <div>
-                  <span className="block font-display font-bold text-base text-white/85 leading-none">
+                  <span className="block font-display font-bold text-[15px] text-white/90 leading-none tabular-nums">
                     {lastMinEvent.statValue.toString()}
                   </span>
-                  <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
+                  <span className="block text-[9px] uppercase tracking-wide text-white/55 mt-1">
                     Min
                   </span>
                 </div>
@@ -329,12 +372,10 @@ export function FeedPlayerCard({
             </div>
 
             {sparkValues.length >= 2 && (
-              <div className="flex flex-col items-end gap-0.5">
+              <>
                 <Sparkline values={sparkValues} />
-                <span className="text-[8px] uppercase tracking-wide text-white/45">
-                  MEP-form
-                </span>
-              </div>
+                <span className="sr-only">MEP-form</span>
+              </>
             )}
           </div>
 

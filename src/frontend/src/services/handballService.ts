@@ -7,15 +7,10 @@ import type { backendInterface } from "../backend";
 export type { backendInterface };
 export { createActor };
 
+import { POSITION_LABELS } from "../data/positionMetadata";
+
 export function getPositionLabel(position: string): string {
-  const labels: Record<string, string> = {
-    Keeper: "Keeper",
-    Bakspiller: "Bakspiller",
-    VenstreKant: "V. kant",
-    HoyreKant: "H. kant",
-    Linje: "Linjespiller",
-  };
-  return labels[position] ?? position;
+  return POSITION_LABELS[position] ?? position;
 }
 
 export function formatMatchDate(startTimeNs: bigint): string {

@@ -1,4 +1,5 @@
 import playerCardImageManifest from "../data/playerCardImageManifest.json";
+import playerFullImageManifest from "../data/playerFullImageManifest.json";
 import playerImageManifest from "../data/playerImageManifest.json";
 import type { Player } from "../types/handball";
 
@@ -7,6 +8,12 @@ const CARD_IMAGE_MANIFEST = playerCardImageManifest as Record<
   string,
   { "400": string; "720": string }
 >;
+/**
+ * Full oppløsning i webp (1000x1500, q90). Erstatter PNG-originalene, som var
+ * ~1,3 MB hver og 250 MB til sammen paa canisteren. Se
+ * scripts/generate-player-full-images.mjs.
+ */
+const FULL_IMAGE_MANIFEST = playerFullImageManifest as Record<string, string>;
 const BROKEN_REMOTE_IMAGE_URLS = new Set([
   "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ingeborg-Rolseth-Holt-Gjerpen-Skien.png",
   "https://nthapi.webcore.no/wp-content/uploads/2026/05/Janne-Havelsrud-Eklo-Byasen-Elite.png",
@@ -61,14 +68,29 @@ export function resolveImageUrl(url: string | null | undefined): string | undefi
     return url;
   }
 
-  // Check manifest for a local copy
+  // Check manifest for a local copy.
+  // Returnerer webp-varianten naar den finnes — PNG-originalene deployes ikke
+  // lenger (se scripts/prune-dist-originals.mjs).
   const localPath = IMAGE_MANIFEST[url];
   if (localPath) {
-    return localPath;
+    return FULL_IMAGE_MANIFEST[localPath] ?? localPath;
   }
 
   // Fallback to original external URL
   return url;
+}
+
+/**
+ * Full oppløsning for spillerprofil og lightbox — webp naar vi har det,
+ * ellers original. Bruk denne i stedet for resolveImageUrl naar bildet
+ * faktisk vises stort.
+ */
+export function resolvePlayerFullImageUrl(
+  url: string | null | undefined,
+): string | undefined {
+  const resolved = resolveImageUrl(url);
+  if (!resolved) return undefined;
+  return FULL_IMAGE_MANIFEST[resolved] ?? resolved;
 }
 
 /** Returns the player with imageUrl resolved through the manifest.

@@ -22,6 +22,17 @@ const cupFixtures = cupFixturesData as CupFixtures;
 
 export const CUP_SEASON = cupFixtures.season;
 
+/**
+ * NM-seksjonen er skjult 2026-08-27 etter avtale med Fredrik.
+ * Grunn: cupFixtures2627.json er ikke synket — 11 av 39 kamper star som
+ * uspilte 0-0 selv om de faktisk er spilt (bl.a. begge Fjellhammer-kampene).
+ * Halvferdige data ser ut som en bug i demoen for Norges Handballforbund.
+ *
+ * Slik slar du den PA igjen: sett denne til true etter at
+ * cupFixtures2627.json er oppdatert med ekte resultater.
+ */
+export const SHOW_CUP_SECTION = false;
+
 function normalizeName(value: string): string {
   return value
     .toLowerCase()

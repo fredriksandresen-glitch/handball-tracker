@@ -67,7 +67,8 @@ type TopInsight = {
 
 type RankingRow = {
   player: Player;
-  teamName?: string;
+  /** Kan vaere null naar laget ikke er kjent i datagrunnlaget. */
+  teamName?: string | null;
   teamLogoUrl?: string;
   insight: TopInsight;
   rankChange: number;
@@ -83,11 +84,23 @@ const TOPLIST_MODES: { value: ToplistMode; label: string }[] = [
 
 const POSITION_OPTIONS: { value: PositionOption; label: string }[] = [
   { value: "all", label: "Alle" },
-  { value: Position.Keeper, label: "Keeper" },
-  { value: Position.VenstreKant, label: "V. kant" },
-  { value: Position.HoyreKant, label: "H. kant" },
-  { value: Position.Linje, label: "Linje" },
-  { value: Position.Bakspiller, label: "Bakspiller" },
+  { value: Position.Keeper, label: POSITION_LABELS.Keeper },
+  { value: Position.VenstreKant, label: POSITION_LABELS.VenstreKant },
+  { value: Position.HoyreKant, label: POSITION_LABELS.HoyreKant },
+  { value: Position.Linje, label: POSITION_LABELS.Linje },
+  { value: Position.Bakspiller, label: POSITION_LABELS.Bakspiller },
+  {
+    value: "BakspillerVenstre" as PositionOption,
+    label: POSITION_LABELS.BakspillerVenstre,
+  },
+  {
+    value: "BakspillerMidt" as PositionOption,
+    label: POSITION_LABELS.BakspillerMidt,
+  },
+  {
+    value: "BakspillerHoyre" as PositionOption,
+    label: POSITION_LABELS.BakspillerHoyre,
+  },
 ];
 
 const MODE_COPY: Record<ToplistMode, { title: string; text: string }> = {
@@ -434,7 +447,7 @@ function RankingListItem({
       </div>
 
       <div className="min-w-0 flex items-center gap-3">
-        <TeamLogo teamName={row.teamName} logoUrl={row.teamLogoUrl} />
+        <TeamLogo teamName={row.teamName ?? undefined} logoUrl={row.teamLogoUrl} />
         <div className="min-w-0">
           <p className="font-display font-black text-sm text-foreground truncate group-hover:text-primary transition-colors">
             {row.player.name}

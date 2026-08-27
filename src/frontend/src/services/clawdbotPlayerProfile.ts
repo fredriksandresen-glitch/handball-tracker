@@ -608,6 +608,29 @@ function mapPosition(position?: string | null): Position {
     return Position.Linje;
   }
 
+  // Skill mellom bakspiller venstre/midt/hoyre slik rakilden gjor.
+  // Verdiene finnes ikke i backend-enumet, men brukes som strenger i UI.
+  if (normalized.includes("bakspiller")) {
+    if (normalized.includes("venstre")) {
+      return "BakspillerVenstre" as Position;
+    }
+    if (normalized.includes("hoyre") || normalized.includes("hyre")) {
+      return "BakspillerHoyre" as Position;
+    }
+    if (normalized.includes("midt")) {
+      return "BakspillerMidt" as Position;
+    }
+    return Position.Bakspiller;
+  }
+
+  // Tom eller ukjent posisjon skal ikke stille bli bakspiller.
+  if (!normalized || normalized === "--" || normalized === "-") {
+    return "Ukjent" as Position;
+  }
+  if (normalized.includes("kant")) {
+    return "Ukjent" as Position;
+  }
+
   return Position.Bakspiller;
 }
 

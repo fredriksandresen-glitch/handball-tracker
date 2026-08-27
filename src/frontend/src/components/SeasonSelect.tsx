@@ -21,6 +21,7 @@ export function SeasonSelect({ compact = false }: { compact?: boolean }) {
   useEffect(() => {
     if (search.season !== season) {
       void navigate({
+        to: ".",
         search: (previous) => ({ ...previous, season: CURRENT_SEASON_ID }),
         replace: true,
       });
@@ -29,6 +30,7 @@ export function SeasonSelect({ compact = false }: { compact?: boolean }) {
 
   function handleChange(nextSeason: SeasonId) {
     void navigate({
+      to: ".",
       search: (previous) => ({ ...previous, season: nextSeason }),
     });
   }

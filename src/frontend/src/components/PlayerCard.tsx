@@ -11,38 +11,44 @@ import {
 } from "../utils/playerImages";
 import { PositionBadge } from "./PositionBadge";
 
+/**
+ * Formkurve som stolper i stedet for tynn linje (designgjennomgang 2026-08-27).
+ * Siste kamp fremheves i hvitt, oppgang farges gront — gir kortet et svar paa
+ * "er hun i form na?" uten at man maa klikke seg inn.
+ */
 function Sparkline({ values }: { values: number[] }) {
   if (values.length < 2) return null;
-  const max = Math.max(...values, 1);
-  const W = 40;
-  const H = 18;
-
-  const pts = values.map((v, i) => {
-    const x = (i / (values.length - 1)) * W;
-    const y = H - (v / max) * (H - 3) - 2;
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
+  const recent = values.slice(-5);
+  const max = Math.max(...recent, 1);
+  const average = recent.reduce((sum, v) => sum + v, 0) / recent.length;
 
   return (
-    <svg
-      width={W}
-      height={H}
-      viewBox={`0 0 ${W} ${H}`}
+    <div
+      className="mt-2.5 flex h-6 items-end gap-[3px]"
       role="img"
-      aria-label="Formkurve"
-      className="flex-shrink-0 opacity-90"
+      aria-label="Formkurve siste kamper"
+      title="Formkurve siste kamper"
     >
-      <title>Formkurve siste kamper</title>
-      <polyline
-        points={pts.join(" ")}
-        fill="none"
-        strokeWidth="1.8"
-        stroke="white"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        opacity="0.85"
-      />
-    </svg>
+      {recent.map((value, index) => {
+        const height = Math.max(12, (value / max) * 100);
+        const isLast = index === recent.length - 1;
+        const isAbove = value >= average;
+        return (
+          <span
+            key={`spark-${index}-${value}`}
+            style={{ height: `${height}%` }}
+            className={cn(
+              "block flex-1 rounded-t-sm",
+              isLast
+                ? "bg-white"
+                : isAbove
+                  ? "bg-emerald-400/80"
+                  : "bg-white/30",
+            )}
+          />
+        );
+      })}
+    </div>
   );
 }
 
@@ -214,20 +220,26 @@ export function PlayerCard({
           />
         )}
 
-        <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+        {/* Lettere gradient (designgjennomgang 2026-08-27): fire stopp i stedet
+            for ett hardt sprang, slik at ansiktet slipper fram uten at teksten
+            blir mindre lesbar. */}
+        <div
+          className="absolute inset-0 z-20"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(6,12,26,0.94) 0%, rgba(6,12,26,0.72) 18%, rgba(6,12,26,0.28) 42%, rgba(6,12,26,0.02) 62%, transparent 100%)",
+          }}
+        />
 
-        {nationalTeam && (
-          <div className="absolute left-3 top-3 z-30 rounded-full border border-white/20 bg-black/35 px-2.5 py-1 text-[10px] font-display font-black uppercase tracking-wide text-white shadow-subtle backdrop-blur-md">
-            {nationalTeam.countryCode}
-          </div>
-        )}
+        {/* Posisjon oppe til VENSTRE (2026-08-27): hoyre side er reservert til
+            folge-knappen, og landkoden er fjernet — flagget i bakgrunnen sier
+            allerede hvilket land spilleren tilhorer. */}
+        <div className="absolute left-3 top-3 z-30">
+          <PositionBadge position={player.position} variant="overlay" />
+        </div>
 
         <div className="absolute bottom-0 left-0 right-0 z-30 px-3.5 pb-3.5 pt-12">
-          <div className="mb-1.5">
-            <PositionBadge position={player.position} variant="overlay" />
-          </div>
-
-          <p className="font-display font-black text-white leading-tight text-base truncate drop-shadow-sm">
+          <p className="font-display font-black text-white leading-tight text-[17px] tracking-tight truncate drop-shadow-sm">
             {player.name}
           </p>
 
@@ -238,74 +250,115 @@ export function PlayerCard({
           )}
 
           {hasStats && (
-            <div className="flex items-end justify-between mt-2 pt-2 border-t border-white/15 gap-2">
-              <div className="flex gap-3 min-w-0">
+            <div className="mt-2 pt-2 border-t border-white/15">
+              {/* Ett hovedtall, resten som stottetall (designgjennomgang
+                  2026-08-27). For var alle like store, sa oyet visste ikke
+                  hvor det skulle. */}
+              <div className="flex items-end gap-3.5 min-w-0">
                 {hasGenericStats ? (
-                  genericStats.slice(0, 3).map((item) => (
-                    <div key={`${item.label}-${item.value}`} className="min-w-0">
-                      <span
-                        className={cn(
-                          "block leading-none tabular-nums truncate",
-                          item.emphasis
-                            ? "font-display font-black text-xl text-white"
-                            : "font-display font-bold text-lg text-white/90",
-                        )}
-                      >
-                        {item.value}
-                      </span>
-                      <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5 truncate">
-                        {item.label}
-                      </span>
-                    </div>
-                  ))
+                  genericStats.slice(0, 3).map((item, index) => {
+                    const isHero = item.emphasis ?? index === 0;
+                    return (
+                      <div key={`${item.label}-${item.value}`} className="min-w-0">
+                        <span
+                          className={cn(
+                            "block leading-none tabular-nums truncate",
+                            isHero
+                              ? "font-display font-black text-[30px] tracking-tight text-white"
+                              : "font-display font-bold text-[15px] text-white/90",
+                          )}
+                        >
+                          {item.value}
+                        </span>
+                        <span
+                          className={cn(
+                            "block text-[9px] uppercase tracking-wide mt-1 truncate",
+                            isHero
+                              ? "font-bold text-white/75"
+                              : "text-white/55",
+                          )}
+                        >
+                          {item.label}
+                        </span>
+                      </div>
+                    );
+                  })
                 ) : (
                   <>
                     {latestMep !== undefined && (
                       <div>
-                        <span className="block font-display font-black text-xl text-white leading-none tabular-nums">
+                        <span className="block font-display font-black text-[30px] tracking-tight text-white leading-none tabular-nums">
                           {latestMep.toFixed(1)}
                         </span>
-                        <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5">
+                        <span className="block text-[9px] font-bold uppercase tracking-wide text-white/75 mt-1">
                           MEP sist
                         </span>
                       </div>
                     )}
                     {latestSaves !== undefined && (
                       <div>
-                        <span className="block font-display font-bold text-lg text-white/90 leading-none tabular-nums">
+                        <span
+                          className={cn(
+                            "block font-display leading-none tabular-nums",
+                            latestMep === undefined
+                              ? "font-black text-[30px] tracking-tight text-white"
+                              : "font-bold text-[15px] text-white/90",
+                          )}
+                        >
                           {latestSaves}
                         </span>
-                        <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5">
+                        <span
+                          className={cn(
+                            "block text-[9px] uppercase tracking-wide mt-1",
+                            latestMep === undefined
+                              ? "font-bold text-white/75"
+                              : "text-white/55",
+                          )}
+                        >
                           Redn.
                         </span>
                       </div>
                     )}
                     {latestSavePct !== undefined && (
                       <div>
-                        <span className="block font-display font-bold text-lg text-white/90 leading-none tabular-nums">
+                        <span className="block font-display font-bold text-[15px] text-white/90 leading-none tabular-nums">
                           {latestSavePct.toFixed(1)}%
                         </span>
-                        <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5">
+                        <span className="block text-[9px] uppercase tracking-wide text-white/55 mt-1">
                           Red%
                         </span>
                       </div>
                     )}
                     {displayGoals !== undefined && latestSaves === undefined && (
                       <div>
-                        <span className="block font-display font-black text-xl text-white leading-none">
+                        <span
+                          className={cn(
+                            "block font-display leading-none tabular-nums",
+                            latestMep === undefined
+                              ? "font-black text-[30px] tracking-tight text-white"
+                              : "font-bold text-[15px] text-white/90",
+                          )}
+                        >
                           {displayGoals}
                         </span>
-                        <span className="block text-[9px] uppercase tracking-wide text-white/60 mt-0.5">
+                        <span
+                          className={cn(
+                            "block text-[9px] uppercase tracking-wide mt-1",
+                            latestMep === undefined
+                              ? "font-bold text-white/75"
+                              : "text-white/55",
+                          )}
+                        >
                           Mål
                         </span>
                       </div>
                     )}
                     {minutes !== undefined && (
                       <div>
-                        <span className="block font-display font-bold text-lg text-white/90 leading-none">
+                        <span className="block font-display font-bold text-[15px] text-white/90 leading-none tabular-nums">
                           {minutes}
                         </span>
-                        <span className="block text-[9px] uppercase tracking-wide text-white/60 mt-0.5">
+                        <span className="block text-[9px] uppercase tracking-wide text-white/55 mt-1">
                           Min
                         </span>
                       </div>
@@ -313,13 +366,13 @@ export function PlayerCard({
                   </>
                 )}
               </div>
+              {/* Formkurven ligger na i full bredde under tallene, ikke klemt
+                  inn til hoyre. Gir plass til stolpene og et roligere kort. */}
               {hasSpark && (
-                <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
+                <>
                   <Sparkline values={sparkValues} />
-                  <span className="text-[9px] uppercase tracking-wide text-white/50">
-                    {sparkLabel}
-                  </span>
-                </div>
+                  <span className="sr-only">{sparkLabel}</span>
+                </>
               )}
             </div>
           )}

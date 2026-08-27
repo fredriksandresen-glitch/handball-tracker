@@ -31,6 +31,7 @@ import {
   createAiActor,
 } from "../services/aiBackend";
 import { resolveAiChatEntities } from "../services/aiChat";
+import { AiPlayerChips } from "../components/AiPlayerChips";
 
 const STARTER_QUESTIONS = [
   "Hvem er i best form de siste fem kampene?",
@@ -157,6 +158,10 @@ function Message({
       <p className="whitespace-pre-wrap text-sm leading-6 text-foreground">
         {message.content}
       </p>
+      <AiPlayerChips
+        entityIds={message.sources.flatMap((source) => source.entityIds)}
+        answer={message.content}
+      />
       <Evidence message={message} />
       {report && (
         <div className="mt-4 flex items-center gap-3 border-y border-border/70 py-3">

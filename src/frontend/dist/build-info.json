@@ -1,11 +1,31 @@
 {
-  "commit": "8b387e522a90dc40364857f2fe2a891eb41df784",
-  "shortCommit": "8b387e5",
+  "commit": "4a5a2dbd7234a9af96bad2f8c9eae577e263c5c9",
+  "shortCommit": "4a5a2db",
   "branch": "nm-restore",
   "dirty": true,
-  "buildTime": "2026-08-25T14:03:31.718Z",
+  "buildTime": "2026-08-27T10:53:36.325Z",
   "dirtyFiles": [
-    "canister_ids.json",
-    "dfx.json"
+    "src/frontend/package.json",
+    "src/frontend/scripts/generate-search-player-index.mjs",
+    "src/frontend/src/components/FeedPlayerCard.tsx",
+    "src/frontend/src/components/LeagueSelect.tsx",
+    "src/frontend/src/components/PlayerCard.tsx",
+    "src/frontend/src/components/SeasonSelect.tsx",
+    "src/frontend/src/data/nextMatches.ts",
+    "src/frontend/src/data/positionMetadata.ts",
+    "src/frontend/src/pages/AiChatPage.tsx",
+    "src/frontend/src/pages/FavoritesPage.tsx",
+    "src/frontend/src/pages/PlayerPage.tsx",
+    "src/frontend/src/pages/SearchPage.tsx",
+    "src/frontend/src/pages/TeamPage.tsx",
+    "src/frontend/src/services/clawdbotPlayerProfile.ts",
+    "src/frontend/src/services/handballService.ts",
+    "src/frontend/src/utils/cupFixtures.ts",
+    "src/frontend/src/utils/playerImages.ts",
+    "scripts/add-ii-controller.sh",
+    "src/frontend/scripts/generate-player-full-images.mjs",
+    "src/frontend/scripts/prune-dist-originals.mjs",
+    "src/frontend/src/components/AiPlayerChips.tsx",
+    "src/frontend/src/data/playerFullImageManifest.json"
   ]
 }

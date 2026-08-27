@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="no"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Handball Tracker — designgjennomgang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:oklch(0.985 0.004 255); --fg:oklch(0.17 0.055 268); --card:#fff;
+  --primary:oklch(0.22 0.09 268); --accent:oklch(0.54 0.18 258);
+  --muted:oklch(0.94 0.012 258); --muted-fg:oklch(0.46 0.028 265);
+  --border:oklch(0.82 0.022 260);
+  --c1:oklch(0.54 0.18 258); --c2:oklch(0.56 0.16 150);
+  --c3:oklch(0.55 0.2 25); --c4:oklch(0.72 0.15 85);
+  --disp:"Space Grotesk",sans-serif; --body:"DM Sans",sans-serif;
+  --img:https://hrzvs-liaaa-aaaap-qusna-cai.icp0.io/assets/player-card-images/;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--body);background:var(--bg);color:var(--fg);line-height:1.55;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:40px 24px 100px}
+h1{font-family:var(--disp);font-size:34px;font-weight:700;letter-spacing:-.02em}
+.sub{color:var(--muted-fg);margin-top:8px;font-size:15px;max-width:640px}
+h2{font-family:var(--disp);font-size:13px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--accent);margin:64px 0 6px}
+h3{font-family:var(--disp);font-size:23px;font-weight:700;letter-spacing:-.01em;margin-bottom:6px}
+.lede{color:var(--muted-fg);font-size:15px;margin-bottom:24px;max-width:720px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+@media(max-width:860px){.split{grid-template-columns:1fr}}
+.pane{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px}
+.pane.alt{background:oklch(0.98 0.008 258);border-color:oklch(0.88 0.03 258)}
+.tag{display:inline-block;font-family:var(--disp);font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.1em;padding:4px 10px;border-radius:999px;margin-bottom:16px}
+.tag.now{background:var(--muted);color:var(--muted-fg)}
+.tag.new{background:var(--accent);color:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* ---------- KORT: NÅ ---------- */
+.card{position:relative;aspect-ratio:3/4.45;border-radius:16px;overflow:hidden;
+  background:var(--muted);cursor:pointer}
+.card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
+.scrim-now{position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.9),rgba(0,0,0,.4) 45%,transparent)}
+.card .body{position:absolute;left:0;right:0;bottom:0;padding:14px;z-index:3}
+.pos{display:inline-block;font-family:var(--disp);font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em;color:#fff;background:rgba(255,255,255,.2);
+  border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:2px 8px;
+  backdrop-filter:blur(6px);margin-bottom:6px}
+.nm{font-family:var(--disp);font-weight:700;color:#fff;font-size:16px;line-height:1.15}
+.tm{font-size:11px;color:rgba(255,255,255,.7);margin-top:2px}
+.stats-now{display:flex;gap:12px;margin-top:8px;padding-top:8px;
+  border-top:1px solid rgba(255,255,255,.15)}
+.stats-now .v{font-family:var(--disp);font-weight:700;font-size:20px;color:#fff;line-height:1}
+.stats-now .l{font-size:8px;text-transform:uppercase;letter-spacing:.05em;
+  color:rgba(255,255,255,.6);margin-top:3px}
+.flag{position:absolute;left:12px;top:12px;z-index:4;font-family:var(--disp);font-size:10px;
+  font-weight:700;color:#fff;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.2);
+  border-radius:999px;padding:3px 9px;backdrop-filter:blur(6px)}
+
+/* ---------- KORT: FORSLAG ---------- */
+.card2{position:relative;aspect-ratio:3/4.45;border-radius:18px;overflow:hidden;
+  background:var(--muted);cursor:pointer;
+  box-shadow:0 1px 2px rgba(11,27,51,.06),0 8px 24px -8px rgba(11,27,51,.18);
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.card2:hover{transform:translateY(-4px);
+  box-shadow:0 2px 4px rgba(11,27,51,.08),0 18px 40px -12px rgba(11,27,51,.3)}
+.card2 img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;
+  transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.card2:hover img{transform:scale(1.04)}
+/* mykere, mer trinnvis scrim — slipper bildet fram */
+.scrim-new{position:absolute;inset:0;background:
+  linear-gradient(to top,rgba(6,12,26,.94) 0%,rgba(6,12,26,.72) 18%,
+  rgba(6,12,26,.28) 42%,rgba(6,12,26,.02) 62%,transparent 100%)}
+.rim{position:absolute;inset:0;border-radius:18px;pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
+.topbar{position:absolute;left:12px;right:12px;top:12px;z-index:4;
+  display:flex;align-items:center;justify-content:space-between;gap:6px}
+.chip{font-family:var(--disp);font-size:10px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:#fff;background:rgba(10,18,36,.5);
+  border:1px solid rgba(255,255,255,.16);border-radius:8px;padding:3px 8px;
+  backdrop-filter:blur(10px) saturate(1.4)}
+.chip.hot{background:linear-gradient(135deg,oklch(0.62 0.21 25),oklch(0.68 0.19 45));
+  border-color:transparent}
+.card2 .body{position:absolute;left:0;right:0;bottom:0;padding:14px;z-index:3}
+.card2 .nm{font-size:17px;letter-spacing:-.01em}
+.metaline{display:flex;align-items:center;gap:6px;margin-top:3px}
+.metaline .tm{margin:0}
+.dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.4)}
+/* hero-stat + støttestats: tydelig hierarki */
+.stats-new{display:flex;align-items:flex-end;gap:14px;margin-top:10px}
+.hero .v{font-family:var(--disp);font-weight:700;font-size:32px;color:#fff;line-height:.9;
+  letter-spacing:-.03em}
+.hero .l{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  color:rgba(255,255,255,.75);margin-top:4px}
+.side{display:flex;gap:12px;padding-bottom:2px}
+.side .v{font-family:var(--disp);font-weight:700;font-size:15px;color:rgba(255,255,255,.92);line-height:1}
+.side .l{font-size:9px;text-transform:uppercase;letter-spacing:.07em;
+  color:rgba(255,255,255,.55);margin-top:3px}
+/* formkurve rett på kortet */
+.spark{margin-top:11px;height:26px;display:flex;align-items:flex-end;gap:3px}
+.spark i{flex:1;border-radius:2px 2px 0 0;background:rgba(255,255,255,.28);display:block}
+.spark i.up{background:linear-gradient(to top,oklch(0.66 0.18 150),oklch(0.76 0.16 150))}
+.spark i.last{background:#fff}
+.trend{display:inline-flex;align-items:center;gap:3px;font-family:var(--disp);font-size:10px;
+  font-weight:700;color:oklch(0.82 0.14 150)}
+
+/* ---------- FILTER ---------- */
+.pills-now{display:flex;gap:8px;flex-wrap:wrap}
+.pill-now{font-family:var(--disp);font-size:11px;font-weight:500;text-transform:uppercase;
+  letter-spacing:.05em;height:28px;padding:0 14px;border-radius:999px;border:1px solid var(--border);
+  background:#fff;color:var(--muted-fg);display:inline-flex;align-items:center;cursor:pointer}
+.pill-now.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+.seg{display:inline-flex;background:var(--muted);border-radius:12px;padding:3px;gap:2px;
+  flex-wrap:wrap}
+.seg button{font-family:var(--disp);font-size:12px;font-weight:700;border:0;background:transparent;
+  color:var(--muted-fg);padding:7px 13px;border-radius:9px;cursor:pointer;display:flex;
+  align-items:center;gap:6px;transition:all .2s}
+.seg button:hover{color:var(--fg)}
+.seg button.on{background:#fff;color:var(--fg);
+  box-shadow:0 1px 2px rgba(11,27,51,.1),0 2px 8px -2px rgba(11,27,51,.12)}
+.cnt{font-size:10px;font-weight:700;background:var(--muted);color:var(--muted-fg);
+  padding:1px 6px;border-radius:6px;min-width:20px;text-align:center}
+.seg button.on .cnt{background:var(--accent);color:#fff}
+.grouplbl{font-family:var(--disp);font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.12em;color:var(--muted-fg);margin:16px 0 7px}
+
+/* ---------- NOTATER ---------- */
+.notes{margin-top:26px;display:grid;gap:12px}
+.note{display:flex;gap:13px;background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:15px 17px}
+.note .n{font-family:var(--disp);font-weight:700;font-size:12px;color:#fff;background:var(--accent);
+  width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;
+  flex:0 0 22px;margin-top:1px}
+.note b{font-family:var(--disp);font-size:14px;display:block;margin-bottom:2px}
+.note p{font-size:13.5px;color:var(--muted-fg)}
+.foot{margin-top:70px;padding-top:22px;border-top:1px solid var(--border);
+  font-size:13px;color:var(--muted-fg)}
+</style></head><body><div class="wrap">
+
+<h1>Designgjennomgang — Handball Tracker</h1>
+<p class="sub">Ingenting i appen er endret. Dette er en frittstående skisse for å se
+forbedringspotensial side om side. Bildene hentes fra den live canisteren, så det du ser er
+ekte data i ekte oppløsning.</p>
+
+<h2>01 — Spillerkortet</h2>
+<h3>Bildet får mer plass, tallene får hierarki</h3>
+<p class="lede">Kortene fungerer godt allerede. De to tingene som holder dem tilbake er en tung
+gradient som spiser bildet, og tre like store tall uten tydelig hovedtall.</p>
+
+<div class="split">
+  <div class="pane">
+    <span class="tag now">Nå</span>
+    <div class="grid2">
+      <div class="card">
+        <img src="https://hrzvs-liaaa-aaaap-qusna-cai.icp0.io/assets/player-card-images/00538f1fa4fa4b1f-400.webp" alt="">
+        <div class="scrim-now"></div>
+        <div class="flag">FI</div>
+        <div class="body">
+          <span class="pos">V. kant</span>
+          <p class="nm">Linnea Aula</p>
+          <p class="tm">Aker Topphåndball</p>
+          <div class="stats-now">
+            <div><div class="v">2,6</div><div class="l">Mål/kamp</div></div>
+            <div><div class="v">1,4</div><div class="l">MEP</div></div>
+            <div><div class="v">62%</div><div class="l">Skudd</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://hrzvs-liaaa-aaaap-qusna-cai.icp0.io/assets/player-card-images/0097aa867c1d9f28-400.webp" alt="">
+        <div class="scrim-now"></div>
+        <div class="body">
+          <span class="pos">V. kant</span>
+          <p class="nm">Selin Kamburce</p>
+          <p class="tm">Aker Topphåndball</p>
+          <div class="stats-now">
+            <div><div class="v">4,4</div><div class="l">Mål/kamp</div></div>
+            <div><div class="v">3,0</div><div class="l">MEP</div></div>
+            <div><div class="v">79%</div><div class="l">Skudd</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pane alt">
+    <span class="tag new">Forslag</span>
+    <div class="grid2">
+      <div class="card2">
+        <img src="https://hrzvs-liaaa-aaaap-qusna-cai.icp0.io/assets/player-card-images/00538f1fa4fa4b1f-400.webp" alt="">
+        <div class="scrim-new"></div><div class="rim"></div>
+        <div class="topbar"><span class="chip">FI</span><span class="chip">V. kant</span></div>
+        <div class="body">
+          <p class="nm">Linnea Aula</p>
+          <div class="metaline"><span class="tm">Aker</span><span class="dot"></span>
+            <span class="tm">1. div</span></div>
+          <div class="stats-new">
+            <div class="hero"><div class="v">2,6</div><div class="l">Mål/kamp</div></div>
+            <div class="side">
+              <div><div class="v">1,4</div><div class="l">MEP</div></div>
+              <div><div class="v">62%</div><div class="l">Skudd</div></div>
+            </div>
+          </div>
+          <div class="spark">
+            <i style="height:38%"></i><i style="height:22%"></i><i class="up" style="height:55%"></i>
+            <i class="up" style="height:70%"></i><i class="last" style="height:100%"></i>
+          </div>
+        </div>
+      </div>
+      <div class="card2">
+        <img src="https://hrzvs-liaaa-aaaap-qusna-cai.icp0.io/assets/player-card-images/0097aa867c1d9f28-400.webp" alt="">
+        <div class="scrim-new"></div><div class="rim"></div>
+        <div class="topbar"><span class="chip hot">Nr. 1</span><span class="chip">V. kant</span></div>
+        <div class="body">
+          <p class="nm">Selin Kamburce</p>
+          <div class="metaline"><span class="tm">Aker</span><span class="dot"></span>
+            <span class="tm">25 kamper</span></div>
+          <div class="stats-new">
+            <div class="hero"><div class="v">4,4</div><div class="l">Mål/kamp</div></div>
+            <div class="side">
+              <div><div class="v">3,0</div><div class="l">MEP</div></div>
+              <div><div class="v">79%</div><div class="l">Skudd</div></div>
+            </div>
+          </div>
+          <div class="spark">
+            <i class="up" style="height:60%"></i><i class="up" style="height:78%"></i>
+            <i style="height:45%"></i><i class="up" style="height:85%"></i>
+            <i class="last" style="height:96%"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="notes">
+  <div class="note"><span class="n">1</span><div><b>Lettere gradient</b>
+    <p>Fra <code>black/90</code> i ett steg til fire stopp som slipper ansiktet fram.
+    Teksten er like lesbar, men bildet — som er det beste dere har — får puste.</p></div></div>
+  <div class="note"><span class="n">2</span><div><b>Ett hovedtall, to støttetall</b>
+    <p>I dag er alle tre like store, så øyet vet ikke hvor det skal. Nå leses kortet på
+    et halvt sekund.</p></div></div>
+  <div class="note"><span class="n">3</span><div><b>Etikettene opp fra 8 til 9 px</b>
+    <p>8 px er under det som er komfortabelt lesbart på mobil. Små justeringer, merkbar forskjell.</p></div></div>
+  <div class="note"><span class="n">4</span><div><b>Formkurve rett på kortet</b>
+    <p>Fem siste kamper som mikro-graf. Gir kortet bevegelse og et svar på «er hun i form nå?»
+    uten at man må klikke.</p></div></div>
+  <div class="note"><span class="n">5</span><div><b>Flagg og posisjon på samme linje</b>
+    <p>I dag ligger flagget øverst til venstre og posisjonen nederst. Samlet topplinje rydder
+    bunnen og gir plass til formkurven.</p></div></div>
+</div>
+
+<h2>02 — Filtrene</h2>
+<h3>Fra ni piller til gruppert kontroll</h3>
+<p class="lede">Med bakspiller-oppdelingen ble det ni filtre på rad. På mobil betyr det
+horisontal scrolling, og man mister oversikten over hva som er valgt.</p>
+
+<div class="split">
+  <div class="pane">
+    <span class="tag now">Nå</span>
+    <div class="pills-now">
+      <button class="pill-now on">Alle</button><button class="pill-now">Keeper</button>
+      <button class="pill-now">V. kant</button><button class="pill-now">H. kant</button>
+      <button class="pill-now">Linjespiller</button><button class="pill-now">Bakspiller</button>
+      <button class="pill-now">V. back</button><button class="pill-now">Midtback</button>
+      <button class="pill-now">H. back</button><button class="pill-now">Ukjent</button>
+    </div>
+    <p style="margin-top:16px;font-size:13px;color:var(--muted-fg)">
+      Ti like elementer. Ingen antall, ingen gruppering, og «Ukjent» er like fremtredende
+      som «Keeper».</p>
+  </div>
+  <div class="pane alt">
+    <span class="tag new">Forslag</span>
+    <div class="grouplbl">Posisjon</div>
+    <div class="seg">
+      <button class="on">Alle <span class="cnt">452</span></button>
+      <button>Keeper <span class="cnt">60</span></button>
+      <button>Kant <span class="cnt">105</span></button>
+      <button>Back <span class="cnt">211</span></button>
+      <button>Linje <span class="cnt">69</span></button>
+    </div>
+    <div class="grouplbl">Back — presiser</div>
+    <div class="seg">
+      <button class="on">Alle backer <span class="cnt">211</span></button>
+      <button>Venstre <span class="cnt">56</span></button>
+      <button>Midt <span class="cnt">58</span></button>
+      <button>Høyre <span class="cnt">40</span></button>
+    </div>
+    <p style="margin-top:16px;font-size:13px;color:var(--muted-fg)">
+      Fem hovedvalg i stedet for ti. Undernivået for backer vises bare når det er relevant.
+      Antallet gjør at man ser hvor mye data som ligger bak før man klikker.</p>
+  </div>
+</div>
+
+<div class="notes">
+  <div class="note"><span class="n">6</span><div><b>Antall per filter</b>
+    <p>Tallene finnes allerede i søkeindeksen. De koster ingenting å vise, og de forteller
+    brukeren om det er verdt å klikke.</p></div></div>
+  <div class="note"><span class="n">7</span><div><b>«Ukjent» nedtones</b>
+    <p>Sju spillere mangler posisjon. De bør være tilgjengelige, men ikke ta plass på øverste
+    nivå ved siden av Keeper.</p></div></div>
+  <div class="note"><span class="n">8</span><div><b>Segmentert kontroll i stedet for piller</b>
+    <p>Piller ser like ut enten de er valgt eller ikke. En segmentert kontroll viser tilstanden
+    i selve formen — og tåler mobil uten sidescroll.</p></div></div>
+</div>
+
+<h2>03 — Videre</h2>
+<h3>Fire ting som ville løftet helheten</h3>
+<div class="notes">
+  <div class="note"><span class="n">9</span><div><b>Skjelett ved lasting</b>
+    <p>I dag hopper innholdet på plass. Grå plassholdere i kortform gjør ventingen rolig i stedet
+    for hakkete — særlig merkbart på lagsider med mange spillere.</p></div></div>
+  <div class="note"><span class="n">10</span><div><b>Fremdrift i AI-chatten</b>
+    <p>Svaret tar 60–105 sekunder. I dag er det stille. Å vise hvilket verktøy den bruker
+    («henter sesongstatistikk…», «sammenligner…») gjør ventingen til noe interessant framfor
+    noe man mistenker har hengt seg.</p></div></div>
+  <div class="note"><span class="n">11</span><div><b>Mørk modus</b>
+    <p>Variablene finnes allerede i <code>index.css</code>. Sportsapper brukes ofte i halvmørke
+    haller — det er lavthengende frukt.</p></div></div>
+  <div class="note"><span class="n">12</span><div><b>Rolig bevegelse</b>
+    <p>Ett felles sett med overganger (0,35 s, myk kurve) på kort, faner og filtre får appen til
+    å kjennes sammensydd i stedet for at hver skjerm har sin egen rytme.</p></div></div>
+</div>
+
+<p class="foot">Skisse laget 27. august 2026 — kun til vurdering. Ingen filer i appen er rørt.
+Fargene, fontene (Space Grotesk / DM Sans) og radiusene er hentet fra appens egne
+design­variabler, så alt her kan bygges uten å innføre noe nytt.</p>
+</div></body></html>

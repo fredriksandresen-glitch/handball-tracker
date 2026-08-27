@@ -58,6 +58,9 @@ function normalize(value = "") {
 
 function mapPosition(position) {
   const value = normalize(position);
+  // Tom eller ukjent posisjon skal IKKE stille bli "Bakspiller".
+  // Da forsvinner spillere inn i feil gruppe og blir usynlige i filtre.
+  if (!value || value === "--" || value === "-") return "Ukjent";
   if (
     value.includes("keeper") ||
     value.includes("malvakt") ||
@@ -72,6 +75,14 @@ function mapPosition(position) {
     return "HoyreKant";
   }
   if (value.includes("linje") || value.includes("strek")) return "Linje";
+  if (value.includes("bakspiller")) {
+    if (value.includes("venstre")) return "BakspillerVenstre";
+    if (value.includes("hoyre")) return "BakspillerHoyre";
+    if (value.includes("midt") || value.includes("midte"))
+      return "BakspillerMidt";
+    return "Bakspiller";
+  }
+  if (value.includes("kant")) return "Ukjent";
   return "Bakspiller";
 }
 
@@ -165,6 +176,7 @@ const searchIndex = [...entriesById.values()].flatMap((entries) => {
     .slice(0, 1)
     .map(({ stats: _stats, rawPosition, ...entry }) => ({
       ...entry,
+      rawPosition,
       searchText:
         `${entry.name} ${entry.teamName} ${rawPosition}`.toLowerCase(),
       insight,

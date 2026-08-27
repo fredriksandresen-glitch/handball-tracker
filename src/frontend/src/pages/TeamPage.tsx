@@ -39,10 +39,14 @@ import {
   usePlayersByTeam,
   useTeam,
 } from "../hooks/useTeam";
-import { resolveImageUrl } from "../utils/playerImages";
+import {
+  resolveImageUrl,
+  resolvePlayerCardImageSources,
+} from "../utils/playerImages";
 import { getTeamLogoClassName } from "../utils/teamLogoStyles";
 import {
   CUP_SEASON,
+  SHOW_CUP_SECTION,
   describeCupMatch,
   getCupMatchesForTeam,
 } from "../utils/cupFixtures";
@@ -191,7 +195,9 @@ function RosterPlayerCard({
 
   const isMutating = followMutation.isPending || unfollowMutation.isPending;
   const following = isFollowing ?? false;
-  const imageUrl = resolveImageUrl(player.imageUrl);
+  // Bruk kortbilde (400/720w), ikke originalen paa 1,4 MB.
+  const cardImage = resolvePlayerCardImageSources(player.imageUrl);
+  const imageUrl = cardImage?.src;
   const [imageFailed, setImageFailed] = useState(false);
 
   return (
@@ -586,8 +592,8 @@ export default function TeamPage() {
         />
       )}
 
-      {/* ── NM (cup) ── */}
-      {cupMatches.length > 0 && team && (
+      {/* ── NM (cup) — skjult til dataene er synket, se SHOW_CUP_SECTION ── */}
+      {SHOW_CUP_SECTION && cupMatches.length > 0 && team && (
         <div className="space-y-3" data-ocid="team-nm-section">
           <button
             type="button"

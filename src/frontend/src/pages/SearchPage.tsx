@@ -24,16 +24,52 @@ const SORT_FILTERS: { value: SortMode; label: string }[] = [
   { value: "name", label: "Navn" },
 ];
 
-const POSITION_FILTERS: { value: PositionFilter; label: string }[] = [
-  { value: "all", label: "Alle" },
-  { value: "Keeper", label: POSITION_LABELS.Keeper },
-  { value: "VenstreKant", label: POSITION_LABELS.VenstreKant },
-  { value: "HoyreKant", label: POSITION_LABELS.HoyreKant },
-  { value: "Linje", label: POSITION_LABELS.Linje },
-  { value: "Bakspiller", label: POSITION_LABELS.Bakspiller },
+/**
+ * Grupperte posisjonsfiltre (designgjennomgang 2026-08-27).
+ * For var det ti like piller pa rad som ma scrolles horisontalt pa mobil.
+ * Na: fem hovedvalg, og undernivaaet for backer vises kun nar "Back" er valgt.
+ */
+type PositionGroup = {
+  id: string;
+  label: string;
+  members: string[];
+  subFilters?: { value: string; label: string }[];
+};
+
+const POSITION_GROUPS: PositionGroup[] = [
+  { id: "all", label: "Alle", members: [] },
+  { id: "Keeper", label: POSITION_LABELS.Keeper, members: ["Keeper"] },
+  {
+    id: "Kant",
+    label: "Kant",
+    members: ["VenstreKant", "HoyreKant"],
+    subFilters: [
+      { value: "VenstreKant", label: "Venstre" },
+      { value: "HoyreKant", label: "Høyre" },
+    ],
+  },
+  {
+    id: "Back",
+    label: "Back",
+    members: [
+      "Bakspiller",
+      "BakspillerVenstre",
+      "BakspillerMidt",
+      "BakspillerHoyre",
+    ],
+    subFilters: [
+      { value: "BakspillerVenstre", label: "Venstre" },
+      { value: "BakspillerMidt", label: "Midt" },
+      { value: "BakspillerHoyre", label: "Høyre" },
+    ],
+  },
+  { id: "Linje", label: POSITION_LABELS.Linje, members: ["Linje"] },
+  { id: "Ukjent", label: POSITION_LABELS.Ukjent, members: ["Ukjent"] },
 ];
 
 const INITIAL_RESULT_LIMIT = 12;
+/** Hvor mange nye spillere som lastes hver gang man scroller til bunnen. */
+const RESULT_PAGE_SIZE = 12;
 
 function getPositionValue(player: Player) {
   return String(player.position);
@@ -183,7 +219,8 @@ function SearchResult({
 export default function SearchPage() {
   const [inputValue, setInputValue] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [positionFilter, setPositionFilter] = useState<PositionFilter>("all");
+  const [positionGroup, setPositionGroup] = useState<string>("all");
+  const [positionSub, setPositionSub] = useState<string | null>(null);
   const [sortMode] = useState<SortMode>("hot");
   const [allPlayers, setAllPlayers] = useState<SearchPlayer[]>([]);
   const [playersLoading, setPlayersLoading] = useState(true);
@@ -221,20 +258,71 @@ export default function SearchPage() {
       )
     : allPlayers;
 
+  const activeGroup =
+    POSITION_GROUPS.find((group) => group.id === positionGroup) ??
+    POSITION_GROUPS[0];
+
+  // Teller pa hovedgruppene, basert pa gjeldende sokeresultat.
+  const groupCounts = new Map<string, number>();
+  for (const group of POSITION_GROUPS) {
+    groupCounts.set(
+      group.id,
+      group.id === "all"
+        ? sourcePlayers.length
+        : sourcePlayers.filter((player) =>
+            group.members.includes(getPositionValue(player)),
+          ).length,
+    );
+  }
+
   const filteredResults =
-    positionFilter === "all"
+    positionGroup === "all"
       ? sourcePlayers
-      : sourcePlayers.filter((p) => getPositionValue(p) === positionFilter);
+      : sourcePlayers.filter((player) => {
+          const position = getPositionValue(player);
+          return positionSub
+            ? position === positionSub
+            : activeGroup.members.includes(position);
+        });
 
   const sortedResults = [...filteredResults].sort((a, b) =>
     comparePlayersBySort(a, b, sortMode),
   );
 
   const isInitialBrowse = !hasQuery;
-  const results = isInitialBrowse
-    ? sortedResults.slice(0, INITIAL_RESULT_LIMIT)
-    : sortedResults;
   const totalResultCount = sortedResults.length;
+
+  // Uendelig scroll (2026-08-27): for viste vi kun 12 spillere og ba brukeren
+  // soke for aa se resten. Na lastes flere automatisk naar man scroller.
+  const [visibleCount, setVisibleCount] = useState(INITIAL_RESULT_LIMIT);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  // Start pa nytt naar sokeord eller filter endres.
+  useEffect(() => {
+    setVisibleCount(INITIAL_RESULT_LIMIT);
+  }, [debouncedQuery, positionGroup, positionSub]);
+
+  const results = sortedResults.slice(0, visibleCount);
+  const hasMore = visibleCount < totalResultCount;
+
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (!node || !hasMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setVisibleCount((current) =>
+            Math.min(current + RESULT_PAGE_SIZE, totalResultCount),
+          );
+        }
+      },
+      { rootMargin: "400px 0px" },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasMore, totalResultCount]);
 
   // Debounce input → query
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -293,27 +381,81 @@ export default function SearchPage() {
         )}
       </div>
 
-      {/* ── Position filter pills ─────────────────────────────────────── */}
-      <div
-        className="flex gap-2 overflow-x-auto pb-0.5 no-scrollbar"
-        data-ocid="position-filter-pills"
-      >
-        {POSITION_FILTERS.map(({ value, label }) => (
-          <button
-            key={value}
-            type="button"
-            onClick={() => setPositionFilter(value)}
-            className={cn(
-              "flex-shrink-0 h-7 px-3.5 rounded-full text-[11px] font-display font-semibold tracking-wide uppercase transition-smooth border",
-              positionFilter === value
-                ? "bg-primary text-primary-foreground border-primary"
-                : "bg-card border-border text-muted-foreground hover:border-primary/40 hover:text-foreground",
-            )}
-            data-ocid={`filter-pill-${value}`}
-          >
-            {label}
-          </button>
-        ))}
+      {/* ── Posisjonsfilter: gruppert segmentkontroll ────────────────────
+          Designgjennomgang 2026-08-27: erstatter ti like piller. Antall vises
+          per gruppe, og undernivaaet dukker opp kun for valgt gruppe. */}
+      <div className="space-y-2" data-ocid="position-filter-pills">
+        <div className="inline-flex flex-wrap gap-1 rounded-xl bg-muted p-1">
+          {POSITION_GROUPS.map((group) => {
+            const count = groupCounts.get(group.id) ?? 0;
+            const isActive = positionGroup === group.id;
+            if (group.id === "Ukjent" && count === 0) return null;
+            return (
+              <button
+                key={group.id}
+                type="button"
+                onClick={() => {
+                  setPositionGroup(group.id);
+                  setPositionSub(null);
+                }}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-display font-bold transition-smooth",
+                  isActive
+                    ? "bg-card text-foreground shadow-subtle"
+                    : "text-muted-foreground hover:text-foreground",
+                  group.id === "Ukjent" && !isActive && "opacity-60",
+                )}
+                data-ocid={`filter-pill-${group.id}`}
+              >
+                {group.label}
+                <span
+                  className={cn(
+                    "rounded-md px-1.5 text-[10px] font-bold tabular-nums",
+                    isActive
+                      ? "bg-accent text-accent-foreground"
+                      : "bg-card/70 text-muted-foreground",
+                  )}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {activeGroup.subFilters && (
+          <div className="inline-flex flex-wrap gap-1 rounded-xl bg-muted p-1">
+            <button
+              type="button"
+              onClick={() => setPositionSub(null)}
+              className={cn(
+                "rounded-lg px-3 py-1.5 text-xs font-display font-bold transition-smooth",
+                positionSub === null
+                  ? "bg-card text-foreground shadow-subtle"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+              data-ocid="filter-sub-all"
+            >
+              Alle {activeGroup.label.toLowerCase()}er
+            </button>
+            {activeGroup.subFilters.map((sub) => (
+              <button
+                key={sub.value}
+                type="button"
+                onClick={() => setPositionSub(sub.value)}
+                className={cn(
+                  "rounded-lg px-3 py-1.5 text-xs font-display font-bold transition-smooth",
+                  positionSub === sub.value
+                    ? "bg-card text-foreground shadow-subtle"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+                data-ocid={`filter-sub-${sub.value}`}
+              >
+                {sub.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* ── Empty prompt ──────────────────────────────────────────────── */}
@@ -374,7 +516,7 @@ export default function SearchPage() {
                 ? "Prøv igjen om litt."
                 : hasQuery
                   ? `Ingen spillere funnet for «${debouncedQuery}»`
-                  : `Ingen spillere funnet i ${POSITION_LABELS[positionFilter] ?? "filteret"}`}
+                  : `Ingen spillere funnet i ${activeGroup.label}`}
             </p>
           </div>
         </div>
