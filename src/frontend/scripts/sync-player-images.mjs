@@ -14,7 +14,10 @@ const __dirname = path.dirname(__filename);
 
 const DATA_DIR = path.resolve(__dirname, "../src/data");
 const IMAGE_DIR = path.resolve(__dirname, "../public/assets/player-images");
-const MANIFEST_PATH = path.resolve(__dirname, "../src/data/playerImageManifest.json");
+const MANIFEST_PATH = path.resolve(
+  __dirname,
+  "../src/data/playerImageManifest.json",
+);
 
 const EXT_BY_MIME = {
   "image/png": ".png",
@@ -47,12 +50,32 @@ function loadManifest() {
 }
 
 function saveManifest(manifest) {
-  fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2) + "\n");
+  fs.writeFileSync(MANIFEST_PATH, `${JSON.stringify(manifest, null, 2)}\n`);
 }
 
 function extractImageUrls() {
   const urls = new Set();
   const files = fs.readdirSync(DATA_DIR);
+
+  const collectJsonImages = (value) => {
+    if (Array.isArray(value)) {
+      value.forEach(collectJsonImages);
+      return;
+    }
+    if (!value || typeof value !== "object") return;
+
+    for (const [key, nestedValue] of Object.entries(value)) {
+      if (
+        ["imageUrl", "image", "image_hires"].includes(key) &&
+        typeof nestedValue === "string" &&
+        /^https?:\/\//.test(nestedValue)
+      ) {
+        urls.add(nestedValue);
+      } else {
+        collectJsonImages(nestedValue);
+      }
+    }
+  };
 
   for (const file of files) {
     const fullPath = path.join(DATA_DIR, file);
@@ -61,22 +84,26 @@ function extractImageUrls() {
     let content;
     if (file.endsWith(".json")) {
       content = fs.readFileSync(fullPath, "utf-8");
-    } else if (file.endsWith(".ts")) {
+      try {
+        collectJsonImages(JSON.parse(content));
+      } catch {
+        // Ugyldig JSON håndteres som en fil uten bildefelt.
+      }
+      continue;
+    }
+    if (file.endsWith(".ts")) {
       content = fs.readFileSync(fullPath, "utf-8");
     } else {
       continue;
     }
 
-    const matches = content.match(/https?:\/\/[^"'\s)]+/g) || [];
+    const matches = [
+      ...content.matchAll(
+        /image(?:Url|_hires)?\s*[:=]\s*["'](https?:\/\/[^"']+)["']/g,
+      ),
+    ].map((match) => match[1]);
     for (const url of matches) {
-      // Skip non-image URLs
-      if (
-        url.includes("finnhandball.net") ||
-        url.includes("default_male") ||
-        url.includes("w3.org")
-      ) {
-        continue;
-      }
+      if (url.includes("default_male")) continue;
       urls.add(url);
     }
   }
@@ -107,15 +134,15 @@ async function fetchImage(url) {
   const magic = buffer.slice(0, 8).toString("hex");
   const isPng = magic.startsWith("89504e47");
   const isJpeg = magic.startsWith("ffd8ff");
-  const isWebp = magic.startsWith("52494646") && buffer.slice(8, 12).toString("hex") === "57454250";
+  const isWebp =
+    magic.startsWith("52494646") &&
+    buffer.slice(8, 12).toString("hex") === "57454250";
   const isGif = magic.startsWith("47494638");
 
   if (!isPng && !isJpeg && !isWebp && !isGif) {
-    // Might be an HTML error page
-    const textStart = buffer.slice(0, 200).toString("utf-8").toLowerCase();
-    if (textStart.includes("<!doctype") || textStart.includes("<html")) {
-      throw new Error("Response is HTML, not an image");
-    }
+    throw new Error(
+      `Unsupported image response (${contentType || "unknown type"})`,
+    );
   }
 
   let ext = ".bin";
@@ -165,7 +192,9 @@ async function main() {
       fs.writeFileSync(localPath, buffer);
       manifest[url] = `/assets/player-images/${filename}`;
       downloaded++;
-      console.log(`✓ Downloaded: ${url} → ${filename} (${(buffer.length / 1024).toFixed(1)} KB)`);
+      console.log(
+        `✓ Downloaded: ${url} → ${filename} (${(buffer.length / 1024).toFixed(1)} KB)`,
+      );
     } catch (err) {
       console.error(`✗ Failed: ${url} — ${err.message}`);
       failed.push({ url, error: err.message });

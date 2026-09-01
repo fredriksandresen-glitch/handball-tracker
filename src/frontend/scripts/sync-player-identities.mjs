@@ -12,6 +12,8 @@ const CHECK_MODE = process.argv.includes("--check");
 const REGISTRY_VERSION = 1;
 const FIRST_CANONICAL_ID = 1_000_001n;
 const ALIAS_SOURCE = "club-roster";
+const CURRENT_SEASON_ADDITIONS_FILE =
+  "currentSeasonRosterAdditions2627.json";
 
 function normalizeName(value) {
   return value
@@ -65,7 +67,11 @@ async function exists(filePath) {
 
 async function readRosterObservations() {
   const rosterFiles = (await readdir(DATA_DIR))
-    .filter((fileName) => fileName.endsWith("Roster.json"))
+    .filter(
+      (fileName) =>
+        fileName.endsWith("Roster.json") ||
+        fileName === CURRENT_SEASON_ADDITIONS_FILE,
+    )
     .sort((left, right) => left.localeCompare(right));
   const observations = [];
 

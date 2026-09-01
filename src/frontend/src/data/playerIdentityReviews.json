@@ -2,6 +2,36 @@
   "version": 1,
   "merges": [
     {
+      "preferredName": "Freja Emilie Vinther Christensen",
+      "externalIds": ["4541169009972", "4533739009972"],
+      "currentExternalId": "4533739009972",
+      "reviewedAt": "2026-09-01",
+      "evidence": [
+        "https://gjerpenhandball.no/spillerstall",
+        "https://byaasen.no/spillerstall"
+      ]
+    },
+    {
+      "preferredName": "Frøydis Seierstad Eriksen",
+      "externalIds": ["2239948244551", "2239838244551"],
+      "currentExternalId": "2239838244551",
+      "reviewedAt": "2026-09-01",
+      "evidence": [
+        "https://sola-hk.no/spillerstall",
+        "https://www.larvikhk.no/spillerstall"
+      ]
+    },
+    {
+      "preferredName": "Janne Charlotte Thoresen Nordnes",
+      "externalIds": ["4541168030284", "4533738030284"],
+      "currentExternalId": "4533738030284",
+      "reviewedAt": "2026-09-01",
+      "evidence": [
+        "https://gjerpenhandball.no/spillerstall",
+        "https://byaasen.no/spillerstall"
+      ]
+    },
+    {
       "preferredName": "Alva Bjanes Iversen",
       "externalIds": ["4532759773860", "9288369773860"],
       "currentExternalId": "9288369773860",

@@ -1,0 +1,648 @@
+[
+  {
+    "id": "4541167828625",
+    "name": "Madelen Nilsskog Johnsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Madelen-Nilsskog-Johnsen-Byasen-Elite.png",
+    "position": "Bakspiller",
+    "shirtNumber": 7,
+    "teamName": "Byåsen",
+    "leagueId": "elite",
+    "sourceTeamId": "454116"
+  },
+  {
+    "id": "4541165921673",
+    "name": "Nora Aarnes Blomsøy",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Nora-Aarnes-Blomsoy-Byasen-Elite.png",
+    "position": "Målvakt",
+    "shirtNumber": 0,
+    "teamName": "Byåsen",
+    "leagueId": "elite",
+    "sourceTeamId": "454116"
+  },
+  {
+    "id": "2254746792680",
+    "name": "Celine Marie Solstad",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Celine-Marie-Solstad-Fana.png",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 17,
+    "teamName": "Fana",
+    "leagueId": "elite",
+    "sourceTeamId": "225474"
+  },
+  {
+    "id": "2254746204562",
+    "name": "Sofie Ege Grønlund",
+    "position": "Målvakt",
+    "shirtNumber": 1,
+    "teamName": "Fana",
+    "leagueId": "elite",
+    "sourceTeamId": "225474"
+  },
+  {
+    "id": "2239828420334",
+    "name": "Karoline Trollsaas Lundstad",
+    "position": "",
+    "shirtNumber": 0,
+    "teamName": "Fjellhammer",
+    "leagueId": "elite",
+    "sourceTeamId": "223982"
+  },
+  {
+    "id": "2239829538373",
+    "name": "Madelen Fjell Gjeisklid",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 0,
+    "teamName": "Fjellhammer",
+    "leagueId": "elite",
+    "sourceTeamId": "223982"
+  },
+  {
+    "id": "7104386230069",
+    "name": "Amalie Mogstad",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Amalie-Mogstad-Flint-Tonsberg.png",
+    "position": "Linjespiller",
+    "shirtNumber": 18,
+    "teamName": "Flint",
+    "leagueId": "elite",
+    "sourceTeamId": "710438"
+  },
+  {
+    "id": "7104388249551",
+    "name": "Embla Eriksen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Embla-Eriksen-Flint-Tonsberg.png",
+    "position": "Bakspiller midt",
+    "shirtNumber": 13,
+    "teamName": "Flint",
+    "leagueId": "elite",
+    "sourceTeamId": "710438"
+  },
+  {
+    "id": "7104388964637",
+    "name": "Emeli Sørvik-Hansen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Emeli-Sorvik-Hansen-Flint-Tonsberg.png",
+    "position": "Bakspiller",
+    "shirtNumber": 22,
+    "teamName": "Flint",
+    "leagueId": "elite",
+    "sourceTeamId": "710438"
+  },
+  {
+    "id": "7104389274868",
+    "name": "Emilie Alexandra Helgerud",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Emilie-Alexandra-Helgerud-Flint-Tonsberg.png",
+    "position": "Linjespiller",
+    "shirtNumber": 6,
+    "teamName": "Flint",
+    "leagueId": "elite",
+    "sourceTeamId": "710438"
+  },
+  {
+    "id": "7104388482237",
+    "name": "Ingrid Lauritzen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ingrid-Lauritzen-Flint-Tonsberg.png",
+    "position": "Målvakt",
+    "shirtNumber": 16,
+    "teamName": "Flint",
+    "leagueId": "elite",
+    "sourceTeamId": "710438"
+  },
+  {
+    "id": "7104386895511",
+    "name": "Leah Berg Pejby",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Leah-Berg-Pejby-Flint-Tonsberg.png",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 4,
+    "teamName": "Flint",
+    "leagueId": "elite",
+    "sourceTeamId": "710438"
+  },
+  {
+    "id": "7104387452896",
+    "name": "Lise Aggerholm Brunsvik",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Lise-Aggerholm-Brunsvik-Flint-Tonsberg.png",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 3,
+    "teamName": "Flint",
+    "leagueId": "elite",
+    "sourceTeamId": "710438"
+  },
+  {
+    "id": "7104386947822",
+    "name": "Marlin Swift-Johannessen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Marlin-Swift-Johannessen-Flint-Tonsberg.png",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 7,
+    "teamName": "Flint",
+    "leagueId": "elite",
+    "sourceTeamId": "710438"
+  },
+  {
+    "id": "7104388449067",
+    "name": "Marte Kraby Simenstad",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Marte-Kraby-Simenstad-Flint-Tonsberg.png",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 15,
+    "teamName": "Flint",
+    "leagueId": "elite",
+    "sourceTeamId": "710438"
+  },
+  {
+    "id": "7104389090438",
+    "name": "Mia Landsrød Haug",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Mia-Landsrod-Haug-Flint-Tonsberg.png",
+    "position": "Bakspiller",
+    "shirtNumber": 2,
+    "teamName": "Flint",
+    "leagueId": "elite",
+    "sourceTeamId": "710438"
+  },
+  {
+    "id": "7104387865741",
+    "name": "Mia Viljugrein",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mia-Viljugrein-Flint-Tonsberg.png",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 20,
+    "teamName": "Flint",
+    "leagueId": "elite",
+    "sourceTeamId": "710438"
+  },
+  {
+    "id": "7104386009781",
+    "name": "Vår Frøland Johansen",
+    "position": "Leder C",
+    "shirtNumber": 0,
+    "teamName": "Flint",
+    "leagueId": "elite",
+    "sourceTeamId": "710438"
+  },
+  {
+    "id": "7104386709115",
+    "name": "Ylva Vegard Aurmo",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ylva-Vegard-Aurmo-Flint-Tonsberg.png",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 9,
+    "teamName": "Flint",
+    "leagueId": "elite",
+    "sourceTeamId": "710438"
+  },
+  {
+    "id": "5838896919438",
+    "name": "Erle Hoel Olsen",
+    "position": "Målvakt",
+    "shirtNumber": 31,
+    "teamName": "Follo Damer",
+    "leagueId": "elite",
+    "sourceTeamId": "583889"
+  },
+  {
+    "id": "5838896956650",
+    "name": "Neah Pernille Kyrkjebø Lynghjem",
+    "position": "Bakspiller midt",
+    "shirtNumber": 27,
+    "teamName": "Follo Damer",
+    "leagueId": "elite",
+    "sourceTeamId": "583889"
+  },
+  {
+    "id": "4416518141433",
+    "name": "Helga Pedersen Lersveen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Helga-Pedersen-Lersveen-Fredrikstad-Bkl.png",
+    "position": "Linjespiller",
+    "shirtNumber": 3,
+    "teamName": "Fredrikstad",
+    "leagueId": "elite",
+    "sourceTeamId": "441651"
+  },
+  {
+    "id": "4416516860125",
+    "name": "June Bøttger",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/June-Bottger-Fredrikstad-Bkl.png",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 17,
+    "teamName": "Fredrikstad",
+    "leagueId": "elite",
+    "sourceTeamId": "441651"
+  },
+  {
+    "id": "4416518180849",
+    "name": "Vilde Tornes Finneide",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Vilde-Tornes-Finneide-Fredrikstad-Bkl.png",
+    "position": "Målvakt",
+    "shirtNumber": 16,
+    "teamName": "Fredrikstad",
+    "leagueId": "elite",
+    "sourceTeamId": "441651"
+  },
+  {
+    "id": "45337310596164",
+    "name": "Anna Vinther Veng Kristensen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Anna-Vinther-Veng-Kristensen-Gjerpen-Skien.png",
+    "position": "Målvakt",
+    "shirtNumber": 28,
+    "teamName": "Gjerpen",
+    "leagueId": "elite",
+    "sourceTeamId": "453373"
+  },
+  {
+    "id": "4533739009972",
+    "name": "Freja Emilie Vinther Christensen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Freja-Emilie-Vinther-Christensen-Gjerpen-Skien.png",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 22,
+    "teamName": "Gjerpen",
+    "leagueId": "elite",
+    "sourceTeamId": "453373"
+  },
+  {
+    "id": "4533738030284",
+    "name": "Janne Charlotte Thoresen Nordnes",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Janne-Charlotte-Thoresen-Nordnes-Gjerpen-Skien.png",
+    "position": "Linjespiller",
+    "shirtNumber": 17,
+    "teamName": "Gjerpen",
+    "leagueId": "elite",
+    "sourceTeamId": "453373"
+  },
+  {
+    "id": "4533739585439",
+    "name": "Karoline Helle Nilsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Karoline-Helle-Nilsen-Gjerpen-Skien.png",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 14,
+    "teamName": "Gjerpen",
+    "leagueId": "elite",
+    "sourceTeamId": "453373"
+  },
+  {
+    "id": "4533735874048",
+    "name": "Kjersti Vinjevoll",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Kjersti-Vinjevoll-Gjerpen-Skien.png",
+    "position": "Bakspiller",
+    "shirtNumber": 43,
+    "teamName": "Gjerpen",
+    "leagueId": "elite",
+    "sourceTeamId": "453373"
+  },
+  {
+    "id": "4533736871939",
+    "name": "Mia Kristin Syverud",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Mia-Kristin-Syverud-Gjerpen-Skien.png",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 20,
+    "teamName": "Gjerpen",
+    "leagueId": "elite",
+    "sourceTeamId": "453373"
+  },
+  {
+    "id": "4533739630696",
+    "name": "Sofie Donna Aasland Lae",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Sofie-Donna-Aasland-Lae-Gjerpen-Skien.png",
+    "position": "Bakspiller",
+    "shirtNumber": 5,
+    "teamName": "Gjerpen",
+    "leagueId": "elite",
+    "sourceTeamId": "453373"
+  },
+  {
+    "id": "45337310590954",
+    "name": "Sofie Lundsgaard Jørgensen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Sofie-Lundsgaard-Jorgensen-Gjerpen-Skien.png",
+    "position": "Bakspiller",
+    "shirtNumber": 21,
+    "teamName": "Gjerpen",
+    "leagueId": "elite",
+    "sourceTeamId": "453373"
+  },
+  {
+    "id": "2239947872764",
+    "name": "Dana Björg Gudmundsdottir",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Dana-Bjorg-Gudmundsdottir-Larvik.png",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 21,
+    "teamName": "Larvik",
+    "leagueId": "elite",
+    "sourceTeamId": "223994"
+  },
+  {
+    "id": "2239945524728",
+    "name": "Frida Haug Hoel",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Frida-Haug-Hoel-Larvik.png",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 9,
+    "teamName": "Larvik",
+    "leagueId": "elite",
+    "sourceTeamId": "223994"
+  },
+  {
+    "id": "77578910589793",
+    "name": "Anna Christina Lövgren Hallberg",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Anna-Christina-Lovgren-Hallberg-Molde-HK-Elite.png",
+    "position": "Målvakt",
+    "shirtNumber": 12,
+    "teamName": "Molde",
+    "leagueId": "elite",
+    "sourceTeamId": "775789"
+  },
+  {
+    "id": "77578910596943",
+    "name": "Clara Elma Linnéa Petersson Bergsten",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Clara-Elma-Linnea-Petersson-Bergsten-Molde-HK-Elite.png",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 9,
+    "teamName": "Molde",
+    "leagueId": "elite",
+    "sourceTeamId": "775789"
+  },
+  {
+    "id": "7757896794804",
+    "name": "Mira Ytterland Elnæs",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Mira-Ytterland-Elnaes-Molde-HK-Elite.png",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 19,
+    "teamName": "Molde",
+    "leagueId": "elite",
+    "sourceTeamId": "775789"
+  },
+  {
+    "id": "77578910591409",
+    "name": "Olivia Mathilde Simonsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Olivia-Mathilde-Simonsen-Molde-HK-Elite.png",
+    "position": "Bakspiller",
+    "shirtNumber": 27,
+    "teamName": "Molde",
+    "leagueId": "elite",
+    "sourceTeamId": "775789"
+  },
+  {
+    "id": "7757897403015",
+    "name": "Selin Kamburce",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Selin-Kamburce-Molde-HK-Elite.png",
+    "position": "Kantspiller",
+    "shirtNumber": 8,
+    "teamName": "Molde",
+    "leagueId": "elite",
+    "sourceTeamId": "775789"
+  },
+  {
+    "id": "7757898508651",
+    "name": "Sherin Obaidli",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Sherin-Obaidli-Molde-HK-Elite.png",
+    "position": "Linjespiller",
+    "shirtNumber": 10,
+    "teamName": "Molde",
+    "leagueId": "elite",
+    "sourceTeamId": "775789"
+  },
+  {
+    "id": "4419155117851",
+    "name": "Fredrikke Sundsby Kjølstad",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 17,
+    "teamName": "Oppsal",
+    "leagueId": "elite",
+    "sourceTeamId": "441915"
+  },
+  {
+    "id": "4419158467678",
+    "name": "Hedda Holm Midthus",
+    "position": "Målvakt",
+    "shirtNumber": 12,
+    "teamName": "Oppsal",
+    "leagueId": "elite",
+    "sourceTeamId": "441915"
+  },
+  {
+    "id": "2239837351709",
+    "name": "Angunn Gudmestad",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Angunn-Gudmestad-Sola.png",
+    "position": "Bakspiller",
+    "shirtNumber": 10,
+    "teamName": "Sola",
+    "leagueId": "elite",
+    "sourceTeamId": "223983"
+  },
+  {
+    "id": "2239838244551",
+    "name": "Frøydis Seierstad Eriksen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Froydis-Seierstad-Eriksen-Sola.png",
+    "position": "Bakspiller",
+    "shirtNumber": 8,
+    "teamName": "Sola",
+    "leagueId": "elite",
+    "sourceTeamId": "223983"
+  },
+  {
+    "id": "2239839851109",
+    "name": "Johanna Fossum",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Johanna-Fossum-Sola.png",
+    "position": "Målvakt",
+    "shirtNumber": 16,
+    "teamName": "Sola",
+    "leagueId": "elite",
+    "sourceTeamId": "223983"
+  },
+  {
+    "id": "22398310529942",
+    "name": "Noelle Isabella Osterwalder",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Noelle-Isabella-Osterwalder-Sola.png",
+    "position": "Bakspiller",
+    "shirtNumber": 18,
+    "teamName": "Sola",
+    "leagueId": "elite",
+    "sourceTeamId": "223983"
+  },
+  {
+    "id": "2239838226411",
+    "name": "Thea Årsvold",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Thea-Arsvold-Sola.png",
+    "position": "Bakspiller",
+    "shirtNumber": 27,
+    "teamName": "Sola",
+    "leagueId": "elite",
+    "sourceTeamId": "223983"
+  },
+  {
+    "id": "7462239625085",
+    "name": "Anastasija Marsenic",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Anastasija-Marsenic-Storhamar-Handball-Elite.png",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 28,
+    "teamName": "Storhamar",
+    "leagueId": "elite",
+    "sourceTeamId": "746223"
+  },
+  {
+    "id": "7462239588185",
+    "name": "Ane Cecilie Høgseth",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Ane-Cecilie-Hogseth-Storhamar-Handball-Elite.png",
+    "position": "Linjespiller",
+    "shirtNumber": 36,
+    "teamName": "Storhamar",
+    "leagueId": "elite",
+    "sourceTeamId": "746223"
+  },
+  {
+    "id": "7462239090565",
+    "name": "Marte Juuhl Svensson",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Marte-Juuhl-Svensson-Storhamar-Handball-Elite.png",
+    "position": "Bakspiller midt",
+    "shirtNumber": 18,
+    "teamName": "Storhamar",
+    "leagueId": "elite",
+    "sourceTeamId": "746223"
+  },
+  {
+    "id": "4705386223676",
+    "name": "Bertine Moldestad-Evensen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Bertine-Moldestad-Evensen-Tertnes-Elite.png",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 15,
+    "teamName": "Tertnes",
+    "leagueId": "elite",
+    "sourceTeamId": "470538"
+  },
+  {
+    "id": "4705388716943",
+    "name": "Ingrid Remøy Evjen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Ingrid-Remoy-Evjen-Tertnes-Elite.png",
+    "position": "Bakspiller midt",
+    "shirtNumber": 9,
+    "teamName": "Tertnes",
+    "leagueId": "elite",
+    "sourceTeamId": "470538"
+  },
+  {
+    "id": "4705387819268",
+    "name": "Malin Steinsvik",
+    "position": "",
+    "shirtNumber": 0,
+    "teamName": "Tertnes",
+    "leagueId": "elite",
+    "sourceTeamId": "470538"
+  },
+  {
+    "id": "4705388463116",
+    "name": "Sofie Nilssen Ekerhovd",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Sofie-Nilssen-Ekerhovd-Tertnes-Elite.png",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 14,
+    "teamName": "Tertnes",
+    "leagueId": "elite",
+    "sourceTeamId": "470538"
+  },
+  {
+    "id": "5321368140209",
+    "name": "Marin Sønstebø",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Marin-Sonstebo-Utleira.png",
+    "position": "Målvakt",
+    "shirtNumber": 16,
+    "teamName": "Utleira",
+    "leagueId": "elite",
+    "sourceTeamId": "532136"
+  },
+  {
+    "id": "5321368504388",
+    "name": "Marion Skei Kaspersen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Marion-Skei-Kaspersen-Utleira.png",
+    "position": "Bakspiller",
+    "shirtNumber": 9,
+    "teamName": "Utleira",
+    "leagueId": "elite",
+    "sourceTeamId": "532136"
+  },
+  {
+    "id": "2239858825436",
+    "name": "Erle Christine Solstad",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Erle-Christine-Solstad-Baekkelaget.png",
+    "position": "Linjespiller",
+    "shirtNumber": 26,
+    "teamName": "Bækkelaget",
+    "leagueId": "first-division",
+    "sourceTeamId": "223985"
+  },
+  {
+    "id": "2241747192973",
+    "name": "Andrine Dalen Øynes",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Andrine-Dalen-Oynes-Fyllingen.png",
+    "position": "Bakspiller",
+    "shirtNumber": 26,
+    "teamName": "Fyllingen",
+    "leagueId": "first-division",
+    "sourceTeamId": "224174"
+  },
+  {
+    "id": "2241747939038",
+    "name": "Elise Garaas",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Elise-Garaas-Fyllingen.png",
+    "position": "Bakspiller",
+    "shirtNumber": 4,
+    "teamName": "Fyllingen",
+    "leagueId": "first-division",
+    "sourceTeamId": "224174"
+  },
+  {
+    "id": "2241745773777",
+    "name": "Estefania Rodriguez Farfan",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Estefania-Rodriguez-Farfan-Fyllingen.png",
+    "position": "Bakspiller",
+    "shirtNumber": 63,
+    "teamName": "Fyllingen",
+    "leagueId": "first-division",
+    "sourceTeamId": "224174"
+  },
+  {
+    "id": "2241748710496",
+    "name": "Moa Madeleine Kvinge Johnsson",
+    "position": "Leder E",
+    "shirtNumber": 0,
+    "teamName": "Fyllingen",
+    "leagueId": "first-division",
+    "sourceTeamId": "224174"
+  },
+  {
+    "id": "2248609473036",
+    "name": "Erza Dreshaj",
+    "position": "Bakspiller",
+    "shirtNumber": 11,
+    "teamName": "Kjelsås",
+    "leagueId": "first-division",
+    "sourceTeamId": "224860"
+  },
+  {
+    "id": "22486010084950",
+    "name": "Frida Lippert",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 24,
+    "teamName": "Kjelsås",
+    "leagueId": "first-division",
+    "sourceTeamId": "224860"
+  },
+  {
+    "id": "2248607278153",
+    "name": "Kathrine Fjære",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 9,
+    "teamName": "Kjelsås",
+    "leagueId": "first-division",
+    "sourceTeamId": "224860"
+  },
+  {
+    "id": "2248607726437",
+    "name": "Miriann Sæther",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Miriann-Saether-Kjelsas.jpeg",
+    "position": "Leder E",
+    "shirtNumber": 0,
+    "teamName": "Kjelsås",
+    "leagueId": "first-division",
+    "sourceTeamId": "224860"
+  },
+  {
+    "id": "2248607728441",
+    "name": "Tess Demi",
+    "position": "Målvakt",
+    "shirtNumber": 1,
+    "teamName": "Kjelsås",
+    "leagueId": "first-division",
+    "sourceTeamId": "224860"
+  }
+]

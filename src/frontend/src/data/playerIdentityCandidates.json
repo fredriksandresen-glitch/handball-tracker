@@ -1,13 +1,13 @@
 {
   "version": 1,
   "summary": {
-    "rosterFiles": 26,
-    "rosterEntries": 472,
-    "distinctExternalIds": 462,
-    "canonicalPlayers": 452,
-    "candidateGroups": 13,
+    "rosterFiles": 27,
+    "rosterEntries": 538,
+    "distinctExternalIds": 528,
+    "canonicalPlayers": 515,
+    "candidateGroups": 15,
     "needsReview": 2,
-    "resolved": 11,
+    "resolved": 13,
     "confirmedDistinct": 1
   },
   "candidates": [
@@ -83,6 +83,41 @@
       ]
     },
     {
+      "normalizedName": "freja emilie vinther christensen",
+      "status": "resolved",
+      "sharedNumericSuffix": "9009972",
+      "review": {
+        "decision": "same",
+        "reviewedAt": "2026-09-01",
+        "evidence": [
+          "https://gjerpenhandball.no/spillerstall",
+          "https://byaasen.no/spillerstall"
+        ]
+      },
+      "entries": [
+        {
+          "externalId": "4533739009972",
+          "canonicalId": "1000058",
+          "names": [
+            "Freja Emilie Vinther Christensen"
+          ],
+          "rosterFiles": [
+            "currentSeasonRosterAdditions2627.json"
+          ]
+        },
+        {
+          "externalId": "4541169009972",
+          "canonicalId": "1000058",
+          "names": [
+            "Freja Emilie Vinther Christensen"
+          ],
+          "rosterFiles": [
+            "byaasenRoster.json"
+          ]
+        }
+      ]
+    },
+    {
       "normalizedName": "ina jatten",
       "status": "resolved",
       "sharedNumericSuffix": "92449679",
@@ -147,6 +182,41 @@
           ],
           "rosterFiles": [
             "moldeRoster.json"
+          ]
+        }
+      ]
+    },
+    {
+      "normalizedName": "janne charlotte thoresen nordnes",
+      "status": "resolved",
+      "sharedNumericSuffix": "8030284",
+      "review": {
+        "decision": "same",
+        "reviewedAt": "2026-09-01",
+        "evidence": [
+          "https://gjerpenhandball.no/spillerstall",
+          "https://byaasen.no/spillerstall"
+        ]
+      },
+      "entries": [
+        {
+          "externalId": "4533738030284",
+          "canonicalId": "1000046",
+          "names": [
+            "Janne Charlotte Thoresen Nordnes"
+          ],
+          "rosterFiles": [
+            "currentSeasonRosterAdditions2627.json"
+          ]
+        },
+        {
+          "externalId": "4541168030284",
+          "canonicalId": "1000046",
+          "names": [
+            "Janne Charlotte Thoresen Nordnes"
+          ],
+          "rosterFiles": [
+            "byaasenRoster.json"
           ]
         }
       ]

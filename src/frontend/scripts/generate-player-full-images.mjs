@@ -58,7 +58,9 @@ for (const localPath of new Set(Object.values(playerImageManifest))) {
   } else {
     await sharp(sourcePath)
       .rotate()
-      .webp({ quality: 90, alphaQuality: 95, effort: 6 })
+      // Effort påvirker komprimeringstid og filstørrelse, ikke bildekvalitet.
+      // Nivå 4 gjør store spillerimporter langt raskere på vanlige maskiner.
+      .webp({ quality: 90, alphaQuality: 95, effort: 4 })
       .toFile(outputPath);
     generated += 1;
   }

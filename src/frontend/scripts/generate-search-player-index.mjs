@@ -40,6 +40,7 @@ const teams = [
   ["Storhamar", "storhamarRoster.json", "storhamarPlayerStats.json"],
   ["Tertnes", "tertnesRoster.json", "tertnesPlayerStats.json"],
   ["Utleira", "utleiraRoster.json"],
+  ["Flint", null],
 ];
 
 function readJson(filename) {
@@ -141,9 +142,7 @@ function createInsight(stats = {}, position = "") {
   // (MEP) og ~25 for keepere (prosent). Ganget med 12 ga det keeperne 300 mot
   // 18, og de fylte hele topplista. Keepertall normaliseres na til MEP-skala:
   // 25 % redning tilsvarer 0, og hvert 8. prosentpoeng teller som 1 MEP.
-  const normalizedForm = isKeeper
-    ? ((formAvg ?? 25) - 25) / 8
-    : (formAvg ?? 0);
+  const normalizedForm = isKeeper ? ((formAvg ?? 25) - 25) / 8 : (formAvg ?? 0);
   const normalizedSeason = isKeeper
     ? ((keeperSeasonAvg ?? 25) - 25) / 8
     : (seasonStats.mepAvg ?? 0);
@@ -190,6 +189,15 @@ for (const file of [
 }
 
 const imageManifest = readJson("playerImageManifest.json");
+const currentSeasonRosterAdditions = readJson(
+  "currentSeasonRosterAdditions2627.json",
+);
+const currentSeasonAdditionsByTeam = new Map();
+for (const player of currentSeasonRosterAdditions) {
+  const additions = currentSeasonAdditionsByTeam.get(player.teamName) ?? [];
+  additions.push(player);
+  currentSeasonAdditionsByTeam.set(player.teamName, additions);
+}
 const identityReviews = readJson("playerIdentityReviews.json");
 const currentExternalIdByAlias = new Map();
 for (const review of identityReviews.merges) {
@@ -199,12 +207,14 @@ for (const review of identityReviews.merges) {
 }
 const entriesById = new Map();
 
-for (const [teamName, rosterFile, statsFile] of teams) {
-  const roster = readJson(rosterFile);
-  const statsById = statsFile
-    ? new Map(readJson(statsFile).map((stats) => [stats.playerId, stats]))
-    : new Map();
-
+for (const [teamName, rosterFile] of teams) {
+  const rosterById = new Map(
+    [
+      ...(rosterFile ? readJson(rosterFile) : []),
+      ...(currentSeasonAdditionsByTeam.get(teamName) ?? []),
+    ].map((player) => [String(player.id), player]),
+  );
+  const roster = [...rosterById.values()];
   for (const player of roster) {
     const originalImageUrl = player.imageUrl ?? undefined;
     const imageUrl = originalImageUrl

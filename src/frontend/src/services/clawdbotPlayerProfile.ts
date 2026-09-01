@@ -1,6 +1,7 @@
 import teamLogoManifest from "../data/teamLogoManifest.json";
 import elkjop2627StatsData from "../data/elkjop2627PlayerStats.json";
 import firstDivision2627StatsData from "../data/firstDivision2627PlayerStats.json";
+import currentSeasonRosterAdditions2627Data from "../data/currentSeasonRosterAdditions2627.json";
 import akerRosterData from "../data/akerRoster.json";
 import firstDivision2526StatsData from "../data/firstDivision2526PlayerStats.json";
 import playerSeasonSpells2526Data from "../data/playerSeasonSpells2526.json";
@@ -184,6 +185,12 @@ type StaticRosterPlayer = {
   shirtNumber: number;
 };
 
+type CurrentSeasonRosterAddition = StaticRosterPlayer & {
+  teamName: string;
+  leagueId: LeagueId;
+  sourceTeamId: string;
+};
+
 type StaticPlayerStats = {
   playerId: string;
   seasonStats: ClawdbotSeasonStats;
@@ -224,9 +231,8 @@ const FIRST_DIVISION_2526_STATS_BY_ID = Object.fromEntries(
 /**
  * Sesong 2026-27 hentet fra topphandball.no (import 2026-09-01).
  *
- * MERK: kilden gir kun sesongsummer, ingen kamp-for-kamp. Derfor er
- * recentMatches tom, og formkurver/«siste fem kamper» blir tomme for
- * inneværende sesong til vi finner et endepunkt med kampdata.
+ * Importen inneholder både sesongsummer og kamp-for-kamp for spillerne som
+ * har registrerte kamper. Spillere uten kampdetaljer beholder en tom kurve.
  */
 const ELKJOP_2627_STATS_BY_ID = Object.fromEntries(
   (elkjop2627StatsData as StaticPlayerStats[]).map((stats) => [
@@ -517,6 +523,15 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     dataSeason: CURRENT_SEASON_ID,
   },
 ];
+
+for (const addition of currentSeasonRosterAdditions2627Data as CurrentSeasonRosterAddition[]) {
+  const team = STATIC_TEAM_CONFIGS.find(
+    (candidate) => candidate.name === addition.teamName,
+  );
+  if (team && !team.roster.some((player) => player.id === addition.id)) {
+    team.roster = [...team.roster, addition];
+  }
+}
 
 function getTeamDataSeason(team: StaticTeamConfig): SeasonId {
   return team.dataSeason ?? DEFAULT_SEASON_ID;

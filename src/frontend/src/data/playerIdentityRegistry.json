@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "nextCanonicalId": "1000463",
+  "nextCanonicalId": "1000529",
   "players": [
     {
       "canonicalId": "1000001",
@@ -474,6 +474,10 @@
       "aliases": [
         {
           "source": "club-roster",
+          "externalId": "4533738030284"
+        },
+        {
+          "source": "club-roster",
           "externalId": "4541168030284"
         }
       ]
@@ -592,6 +596,10 @@
       "canonicalId": "1000058",
       "displayName": "Freja Emilie Vinther Christensen",
       "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "4533739009972"
+        },
         {
           "source": "club-roster",
           "externalId": "4541169009972"
@@ -2550,8 +2558,12 @@
     },
     {
       "canonicalId": "1000258",
-      "displayName": "Frøydis Wiik Seierstad",
+      "displayName": "Frøydis Seierstad Eriksen",
       "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2239838244551"
+        },
         {
           "source": "club-roster",
           "externalId": "2239948244551"
@@ -4565,6 +4577,636 @@
           "externalId": "5327887693417"
         }
       ]
+    },
+    {
+      "canonicalId": "1000463",
+      "displayName": "Madelen Nilsskog Johnsen",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "4541167828625"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000464",
+      "displayName": "Nora Aarnes Blomsøy",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "4541165921673"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000465",
+      "displayName": "Celine Marie Solstad",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2254746792680"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000466",
+      "displayName": "Sofie Ege Grønlund",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2254746204562"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000467",
+      "displayName": "Karoline Trollsaas Lundstad",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2239828420334"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000468",
+      "displayName": "Madelen Fjell Gjeisklid",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2239829538373"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000469",
+      "displayName": "Amalie Mogstad",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7104386230069"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000470",
+      "displayName": "Embla Eriksen",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7104388249551"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000471",
+      "displayName": "Emeli Sørvik-Hansen",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7104388964637"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000472",
+      "displayName": "Emilie Alexandra Helgerud",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7104389274868"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000473",
+      "displayName": "Ingrid Lauritzen",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7104388482237"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000474",
+      "displayName": "Leah Berg Pejby",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7104386895511"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000475",
+      "displayName": "Lise Aggerholm Brunsvik",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7104387452896"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000476",
+      "displayName": "Marlin Swift-Johannessen",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7104386947822"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000477",
+      "displayName": "Marte Kraby Simenstad",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7104388449067"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000478",
+      "displayName": "Mia Landsrød Haug",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7104389090438"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000479",
+      "displayName": "Mia Viljugrein",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7104387865741"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000480",
+      "displayName": "Vår Frøland Johansen",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7104386009781"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000481",
+      "displayName": "Ylva Vegard Aurmo",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7104386709115"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000482",
+      "displayName": "Erle Hoel Olsen",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "5838896919438"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000483",
+      "displayName": "Neah Pernille Kyrkjebø Lynghjem",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "5838896956650"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000484",
+      "displayName": "Helga Pedersen Lersveen",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "4416518141433"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000485",
+      "displayName": "June Bøttger",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "4416516860125"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000486",
+      "displayName": "Vilde Tornes Finneide",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "4416518180849"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000487",
+      "displayName": "Anna Vinther Veng Kristensen",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "45337310596164"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000490",
+      "displayName": "Karoline Helle Nilsen",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "4533739585439"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000491",
+      "displayName": "Kjersti Vinjevoll",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "4533735874048"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000492",
+      "displayName": "Mia Kristin Syverud",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "4533736871939"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000493",
+      "displayName": "Sofie Donna Aasland Lae",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "4533739630696"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000494",
+      "displayName": "Sofie Lundsgaard Jørgensen",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "45337310590954"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000495",
+      "displayName": "Dana Björg Gudmundsdottir",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2239947872764"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000496",
+      "displayName": "Frida Haug Hoel",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2239945524728"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000497",
+      "displayName": "Anna Christina Lövgren Hallberg",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "77578910589793"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000498",
+      "displayName": "Clara Elma Linnéa Petersson Bergsten",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "77578910596943"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000499",
+      "displayName": "Mira Ytterland Elnæs",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7757896794804"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000500",
+      "displayName": "Olivia Mathilde Simonsen",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "77578910591409"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000501",
+      "displayName": "Selin Kamburce",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7757897403015"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000502",
+      "displayName": "Sherin Obaidli",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7757898508651"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000503",
+      "displayName": "Fredrikke Sundsby Kjølstad",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "4419155117851"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000504",
+      "displayName": "Hedda Holm Midthus",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "4419158467678"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000505",
+      "displayName": "Angunn Gudmestad",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2239837351709"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000507",
+      "displayName": "Johanna Fossum",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2239839851109"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000508",
+      "displayName": "Noelle Isabella Osterwalder",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "22398310529942"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000509",
+      "displayName": "Thea Årsvold",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2239838226411"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000510",
+      "displayName": "Anastasija Marsenic",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7462239625085"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000511",
+      "displayName": "Ane Cecilie Høgseth",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7462239588185"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000512",
+      "displayName": "Marte Juuhl Svensson",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "7462239090565"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000513",
+      "displayName": "Bertine Moldestad-Evensen",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "4705386223676"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000514",
+      "displayName": "Ingrid Remøy Evjen",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "4705388716943"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000515",
+      "displayName": "Malin Steinsvik",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "4705387819268"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000516",
+      "displayName": "Sofie Nilssen Ekerhovd",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "4705388463116"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000517",
+      "displayName": "Marin Sønstebø",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "5321368140209"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000518",
+      "displayName": "Marion Skei Kaspersen",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "5321368504388"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000519",
+      "displayName": "Erle Christine Solstad",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2239858825436"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000520",
+      "displayName": "Andrine Dalen Øynes",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2241747192973"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000521",
+      "displayName": "Elise Garaas",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2241747939038"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000522",
+      "displayName": "Estefania Rodriguez Farfan",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2241745773777"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000523",
+      "displayName": "Moa Madeleine Kvinge Johnsson",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2241748710496"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000524",
+      "displayName": "Erza Dreshaj",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2248609473036"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000525",
+      "displayName": "Frida Lippert",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "22486010084950"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000526",
+      "displayName": "Kathrine Fjære",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2248607278153"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000527",
+      "displayName": "Miriann Sæther",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2248607726437"
+        }
+      ]
+    },
+    {
+      "canonicalId": "1000528",
+      "displayName": "Tess Demi",
+      "aliases": [
+        {
+          "source": "club-roster",
+          "externalId": "2248607728441"
+        }
+      ]
     }
   ],
   "redirects": {
@@ -4577,6 +5219,9 @@
     "1000336": "1000185",
     "1000378": "1000360",
     "1000450": "1000137",
-    "1000461": "1000306"
+    "1000461": "1000306",
+    "1000488": "1000058",
+    "1000489": "1000046",
+    "1000506": "1000258"
   }
 }

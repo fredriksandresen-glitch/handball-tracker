@@ -192,6 +192,10 @@ export function resolvePlayerCardImageSources(
     };
   }
 
+  if (resolved.startsWith("/assets/player-full-images/")) {
+    return { src: resolved };
+  }
+
   const cardUrl = resolvePlayerCardImageUrl(url);
   return cardUrl ? { src: cardUrl } : undefined;
 }
