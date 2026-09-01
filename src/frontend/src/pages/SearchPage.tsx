@@ -10,6 +10,7 @@ import {
   useSearchIsFollowing,
   useSearchUnfollowPlayer,
 } from "../hooks/useSearchFollowing";
+import { loadPlayerSearchIndex } from "../services/searchIndex";
 import type { Player } from "../types/handball";
 
 // ─── Position filter pills ────────────────────────────────────────────────────
@@ -78,6 +79,8 @@ function getPositionValue(player: Player) {
 type PlayerSearchInsight = {
   mepAvg?: number;
   sparkValues: number[];
+  /** Sesongsnitt paa samme skala som sparkValues — referanselinje i grafen. */
+  formReference?: number;
   formAvg?: number;
   latestMep?: number;
   hotScore: number;
@@ -134,10 +137,10 @@ function matchesSearchQuery(searchText: string, query: string) {
 }
 
 function loadSearchPlayers() {
-  searchPlayersPromise ??= fetch("/data/search-player-index.json").then(
-    async (response) => {
-      if (!response.ok) throw new Error("Search index unavailable");
-      const entries = (await response.json()) as SearchIndexEntry[];
+  // Deler nedlasting med aiChat og AiPlayerChips (2026-08-31).
+  searchPlayersPromise ??= loadPlayerSearchIndex().then(
+    async (entries) => {
+      if (entries.length === 0) throw new Error("Search index unavailable");
       return entries.map(
         (entry): SearchPlayer => ({
           id: BigInt(entry.id),
@@ -208,6 +211,7 @@ function SearchResult({
       latestSaves={insight.latestSaves}
       latestSavePct={insight.latestSavePct}
       sparkValues={insight.sparkValues}
+      sparkReference={insight.formReference}
       followOverlay
       imagePriority={imagePriority}
     />

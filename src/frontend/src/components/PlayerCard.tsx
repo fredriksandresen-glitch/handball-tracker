@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "@tanstack/react-router";
 import type { MouseEvent } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getNationalTeamInfo } from "../data/nationalTeamPlayers";
 import type { Player } from "../types/handball";
 import {
@@ -12,42 +12,102 @@ import {
 import { PositionBadge } from "./PositionBadge";
 
 /**
- * Formkurve som stolper i stedet for tynn linje (designgjennomgang 2026-08-27).
- * Siste kamp fremheves i hvitt, oppgang farges gront — gir kortet et svar paa
- * "er hun i form na?" uten at man maa klikke seg inn.
+ * Formkurve, variant C (2026-08-27): linje med fargede punkter.
+ *
+ * EN farge, EN betydning: gronn = bedre enn referansen, rod = svakere.
+ * Referansen er sesongsnittet for den maalestokken spilleren faktisk vises
+ * paa (MEP for utespillere, redningsprosent for keepere). Siste kamp markeres
+ * med storre punkt og hvit ring — aldri med farge, slik at de to signalene
+ * ikke krasjer slik de gjorde i soyleversjonen.
+ *
+ * Bredden maales i piksler (2026-08-27): tidligere brukte vi
+ * preserveAspectRatio="none", som strakk viewBoxen til kortbredden. Paa smale
+ * mobilkort saa det riktig ut, men paa brede skjermer ble punktene til ovaler.
+ * Na tegner vi i faktiske piksler, saa sirkler forblir sirkler i alle bredder.
  */
-function Sparkline({ values }: { values: number[] }) {
+function Sparkline({
+  values,
+  reference,
+}: {
+  values: number[];
+  reference?: number;
+}) {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const node = hostRef.current;
+    if (!node) return;
+    const update = () => setWidth(node.clientWidth);
+    update();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(update);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   if (values.length < 2) return null;
   const recent = values.slice(-5);
-  const max = Math.max(...recent, 1);
-  const average = recent.reduce((sum, v) => sum + v, 0) / recent.length;
+  const ref =
+    reference ?? recent.reduce((sum, v) => sum + v, 0) / recent.length;
+
+  const H = 28;
+  const pad = 5;
+  const W = width || 120;
+  const lo = Math.min(...recent, ref);
+  const hi = Math.max(...recent, ref);
+  const span = Math.max(hi - lo, 0.001);
+  const x = (i: number) => pad + (i / (recent.length - 1)) * (W - pad * 2);
+  const y = (v: number) => H - pad - ((v - lo) / span) * (H - pad * 2);
+  const line = recent
+    .map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)}`)
+    .join(" ");
 
   return (
-    <div
-      className="mt-2.5 flex h-6 items-end gap-[3px]"
-      role="img"
-      aria-label="Formkurve siste kamper"
-      title="Formkurve siste kamper"
-    >
-      {recent.map((value, index) => {
-        const height = Math.max(12, (value / max) * 100);
-        const isLast = index === recent.length - 1;
-        const isAbove = value >= average;
-        return (
-          <span
-            key={`spark-${index}-${value}`}
-            style={{ height: `${height}%` }}
-            className={cn(
-              "block flex-1 rounded-t-sm",
-              isLast
-                ? "bg-white"
-                : isAbove
-                  ? "bg-emerald-400/80"
-                  : "bg-white/30",
-            )}
+    <div ref={hostRef} className="mt-2.5 w-full">
+      {width > 0 && (
+        <svg
+          width={W}
+          height={H}
+          viewBox={`0 0 ${W} ${H}`}
+          className="block overflow-visible"
+          role="img"
+          aria-label="Formkurve siste kamper"
+        >
+          <title>Formkurve siste kamper</title>
+          <line
+            x1={pad}
+            y1={y(ref)}
+            x2={W - pad}
+            y2={y(ref)}
+            stroke="rgba(255,255,255,.3)"
+            strokeWidth="1"
+            strokeDasharray="3 3"
           />
-        );
-      })}
+          <path
+            d={line}
+            fill="none"
+            stroke="rgba(255,255,255,.5)"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {recent.map((v, i) => {
+            const isLast = i === recent.length - 1;
+            return (
+              <circle
+                key={`pt-${i}-${v}`}
+                cx={x(i)}
+                cy={y(v)}
+                r={isLast ? 3.4 : 2.4}
+                fill={v >= ref ? "#34d399" : "#f87171"}
+                stroke={isLast ? "#fff" : "none"}
+                strokeWidth={isLast ? 1.4 : 0}
+              />
+            );
+          })}
+        </svg>
+      )}
     </div>
   );
 }
@@ -101,6 +161,8 @@ interface Props {
   latestSavePct?: number;
   statItems?: CardStat[];
   sparkValues?: number[];
+  /** Sesongsnitt for samme maalestokk som sparkValues (MEP eller redning-%). */
+  sparkReference?: number;
   sparkLabel?: string;
   followOverlay?: boolean;
   imagePriority?: boolean;
@@ -122,6 +184,7 @@ export function PlayerCard({
   latestSavePct,
   statItems,
   sparkValues = [],
+  sparkReference,
   sparkLabel = "Form",
   followOverlay = false,
   imagePriority = false,
@@ -370,7 +433,7 @@ export function PlayerCard({
                   inn til hoyre. Gir plass til stolpene og et roligere kort. */}
               {hasSpark && (
                 <>
-                  <Sparkline values={sparkValues} />
+                  <Sparkline values={sparkValues} reference={sparkReference} />
                   <span className="sr-only">{sparkLabel}</span>
                 </>
               )}

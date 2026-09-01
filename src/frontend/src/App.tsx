@@ -24,6 +24,7 @@ const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
 const PlayerPage = lazy(() => import("./pages/PlayerPage"));
 const TeamPage = lazy(() => import("./pages/TeamPage"));
 const AiChatPage = lazy(() => import("./pages/AiChatPage"));
+const CoachPage = lazy(() => import("./pages/CoachPage"));
 
 function PageLoader() {
   return (
@@ -68,6 +69,15 @@ const searchRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/search",
   component: SearchPage,
+});
+const coachRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/trener",
+  component: () => (
+    <BackendBoundary>
+      <CoachPage />
+    </BackendBoundary>
+  ),
 });
 const teamsRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -119,6 +129,7 @@ const routeTree = rootRoute.addChildren([
   playerRoute,
   teamRoute,
   aiChatRoute,
+  coachRoute,
 ]);
 
 const router = createRouter({ routeTree, defaultPreload: "intent" });

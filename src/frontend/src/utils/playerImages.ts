@@ -154,14 +154,16 @@ export function resolvePlayerCardImageUrl(
     )
   ) {
     const cleanUrl = originalUrl.split("?")[0];
+    // Uskarpe kort (2026-09-01): vi tvang alle eksterne bilder ned til
+    // 200x300 px. Kortet vises paa ~310 px, som blir 620 px paa 2x-skjerm,
+    // saa 200 px ble synlig uskarpt. Spillersiden brukte originalen og var
+    // skarp — derav forskjellen. Bruk originalen ogsaa paa kortet naar vi
+    // ikke har en lokal, optimalisert kopi.
     if (/-(?:150x150|200x300)\.(?:png|jpe?g|webp)$/i.test(cleanUrl)) {
-      return cleanUrl;
+      return cleanUrl.replace(/-(?:150x150|200x300)(\.(?:png|jpe?g|webp))$/i, "$1");
     }
 
-    return cleanUrl.replace(
-      /\.(png|jpe?g|webp)$/i,
-      "-200x300.$1",
-    );
+    return cleanUrl;
   }
 
   if (originalUrl.startsWith("https://lhk.baksystem.no/assets/")) {

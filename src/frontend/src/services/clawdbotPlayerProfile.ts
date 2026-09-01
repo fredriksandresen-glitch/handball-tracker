@@ -1,3 +1,6 @@
+import teamLogoManifest from "../data/teamLogoManifest.json";
+import elkjop2627StatsData from "../data/elkjop2627PlayerStats.json";
+import firstDivision2627StatsData from "../data/firstDivision2627PlayerStats.json";
 import akerRosterData from "../data/akerRoster.json";
 import firstDivision2526StatsData from "../data/firstDivision2526PlayerStats.json";
 import playerSeasonSpells2526Data from "../data/playerSeasonSpells2526.json";
@@ -217,6 +220,51 @@ const FIRST_DIVISION_2526_STATS_BY_ID = Object.fromEntries(
     stats,
   ]),
 ) as Record<string, StaticPlayerStats>;
+
+/**
+ * Sesong 2026-27 hentet fra topphandball.no (import 2026-09-01).
+ *
+ * MERK: kilden gir kun sesongsummer, ingen kamp-for-kamp. Derfor er
+ * recentMatches tom, og formkurver/«siste fem kamper» blir tomme for
+ * inneværende sesong til vi finner et endepunkt med kampdata.
+ */
+const ELKJOP_2627_STATS_BY_ID = Object.fromEntries(
+  (elkjop2627StatsData as StaticPlayerStats[]).map((stats) => [
+    stats.playerId,
+    stats,
+  ]),
+) as Record<string, StaticPlayerStats>;
+
+const FIRST_DIVISION_2627_STATS_BY_ID = Object.fromEntries(
+  (firstDivision2627StatsData as StaticPlayerStats[]).map((stats) => [
+    stats.playerId,
+    stats,
+  ]),
+) as Record<string, StaticPlayerStats>;
+
+/**
+ * Samlet oppslag for 2026-27 der ligaen kommer fra IMPORTEN, ikke fra
+ * lagkonfigurasjonen (2026-09-01).
+ *
+ * Bakgrunn: STATIC_TEAM_CONFIGS mangler leagueId paa elitelagene, saa
+ * getTeamLeagueId() ga dem "elite" som standard mens dataSeason manglet.
+ * Resultatet var at kun Utleira og Flint passerte filteret for
+ * inneværende sesong. Kilden vet hvilken turnering spilleren faktisk
+ * spiller i, saa vi bruker den.
+ */
+const LIVE_2627_BY_ID: Record<
+  string,
+  { stats: StaticPlayerStats; league: LeagueId }
+> = {};
+for (const stats of elkjop2627StatsData as StaticPlayerStats[]) {
+  LIVE_2627_BY_ID[stats.playerId] = { stats, league: ELITE_LEAGUE_ID };
+}
+for (const stats of firstDivision2627StatsData as StaticPlayerStats[]) {
+  LIVE_2627_BY_ID[stats.playerId] = {
+    stats,
+    league: FIRST_DIVISION_LEAGUE_ID,
+  };
+}
 
 const PLAYER_SEASON_SPELLS =
   playerSeasonSpells2526Data as StaticPlayerSeasonSpell[];
@@ -478,6 +526,8 @@ function getTeamLeagueId(team: StaticTeamConfig): LeagueId {
   return team.leagueId ?? ELITE_LEAGUE_ID;
 }
 
+const TEAM_LOGO_MANIFEST = teamLogoManifest as Record<string, string>;
+
 function normalizeTeamLookup(value?: string | null) {
   return (value ?? "")
     .toLowerCase()
@@ -645,6 +695,13 @@ function getPlayerStatsForSeason(
   ) {
     return FIRST_DIVISION_2526_STATS_BY_ID[player.id];
   }
+  // Inneværende sesong kommer KUN fra topphandball.no-importen (2026-09-01).
+  // Ingen fallback: mangler spilleren 2026-27-tall, skal hun vises uten tall.
+  // Tidligere falt vi tilbake til loadTeamStats(), som ga 2025-26-tall
+  // presentert som om de var inneværende sesong.
+  if (seasonId === CURRENT_SEASON_ID) {
+    return LIVE_2627_BY_ID[player.id]?.stats;
+  }
   return loadTeamStats(team)[player.id];
 }
 
@@ -724,6 +781,12 @@ function getStaticPlayerEntry(playerId: bigint, seasonId?: SeasonId) {
           !!FIRST_DIVISION_2526_STATS_BY_ID[entry.player.id],
       ) ?? null
     );
+  }
+
+  // Spillere med importerte 2026-27-tall skal finnes selv om laget deres
+  // mangler dataSeason i konfigurasjonen (2026-09-01).
+  if (seasonId === CURRENT_SEASON_ID && LIVE_2627_BY_ID[playerId.toString()]) {
+    return entries[0] ?? null;
   }
 
   return null;
@@ -869,6 +932,16 @@ export function getPlayerSeasonScopes(
   ];
 }
 
+/**
+ * Bytter en ekstern logo-URL mot var egen lokale kopi (2026-08-27).
+ * Logoene la tidligere pa klubbenes egne nettsider; la de om siden sin,
+ * forsvant logoen fra appen. Se scripts/sync-team-logos.mjs.
+ */
+function toLocalLogo(url?: string) {
+  if (!url) return undefined;
+  return TEAM_LOGO_MANIFEST[url] ?? url;
+}
+
 export function getStaticTeamLogoUrl(team?: string | null) {
   const normalized = normalizeTeamLookup(team);
   const aliasLogo = Object.entries(STATIC_TEAM_LOGO_ALIASES).find(
@@ -876,11 +949,13 @@ export function getStaticTeamLogoUrl(team?: string | null) {
       normalized === key || normalized.includes(key) || key.includes(normalized),
   )?.[1];
 
-  if (aliasLogo) return aliasLogo;
+  if (aliasLogo) return toLocalLogo(aliasLogo);
 
-  return Object.entries(STATIC_TEAM_LOGOS).find(([key]) =>
-    normalized === key || normalized.includes(key) || key.includes(normalized),
-  )?.[1];
+  return toLocalLogo(
+    Object.entries(STATIC_TEAM_LOGOS).find(([key]) =>
+      normalized === key || normalized.includes(key) || key.includes(normalized),
+    )?.[1],
+  );
 }
 
 function sanitizeProfile(profile: ClawdbotPlayerProfile): ClawdbotPlayerProfile {
@@ -1019,14 +1094,20 @@ export function getStaticPlayers(
     .flat()
     .filter(({ player, team }) => {
       const teamLeagueId = getTeamLeagueId(team);
+      const live = LIVE_2627_BY_ID[player.id];
       const matchesSeason =
         !seasonId ||
         getTeamDataSeason(team) === seasonId ||
         (seasonId === ARCHIVE_SEASON_ID &&
           teamLeagueId === FIRST_DIVISION_LEAGUE_ID &&
-          !!FIRST_DIVISION_2526_STATS_BY_ID[player.id]);
+          !!FIRST_DIVISION_2526_STATS_BY_ID[player.id]) ||
+        (seasonId === CURRENT_SEASON_ID && !!live);
 
-      return matchesSeason && (!leagueId || teamLeagueId === leagueId);
+      // For 2026-27 er importens liga fasit — lagkonfigurasjonen er ufullstendig.
+      const effectiveLeague =
+        seasonId === CURRENT_SEASON_ID && live ? live.league : teamLeagueId;
+
+      return matchesSeason && (!leagueId || effectiveLeague === leagueId);
     })
     .map(({ player, team }) =>
       mapClawdbotPlayer(createStaticRosterProfile(player, team, seasonId)),

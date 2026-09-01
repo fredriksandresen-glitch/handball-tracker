@@ -1,26 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Users } from "lucide-react";
+import {
+  loadPlayerSearchIndex,
+  type SearchIndexEntry,
+} from "../services/searchIndex";
 
-type SearchIndexEntry = {
-  id: string;
-  name: string;
-  teamName: string;
-  position: string;
-  imageUrl?: string;
-};
-
-let indexPromise: Promise<SearchIndexEntry[]> | undefined;
-
-function loadIndex() {
-  indexPromise ??= fetch("/data/search-player-index.json")
-    .then(async (response) => {
-      if (!response.ok) return [];
-      return (await response.json()) as SearchIndexEntry[];
-    })
-    .catch(() => []);
-  return indexPromise;
-}
+// Deler cache med aiChat og SearchPage (2026-08-31) — tidligere lastet denne
+// komponenten ned de samme 181 kB en gang til pa AI-siden.
+const loadIndex = loadPlayerSearchIndex;
 
 /**
  * Viser spillerne AI-en faktisk slo opp, som klikkbare kort med lite bilde.

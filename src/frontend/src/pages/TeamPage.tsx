@@ -227,8 +227,14 @@ function RosterPlayerCard({
           />
         )}
 
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+        {/* Lettere gradient (designgjennomgang 2026-08-27) — samme som de andre kortene. */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(6,12,26,0.94) 0%, rgba(6,12,26,0.72) 18%, rgba(6,12,26,0.28) 42%, rgba(6,12,26,0.02) 62%, transparent 100%)",
+          }}
+        />
 
         {/* Follow button — top right */}
         <button
@@ -294,29 +300,31 @@ function RosterPlayerCard({
             (lastGoals !== null ||
               lastSaves !== null ||
               (lastMins !== null && lastMins > 0)) && (
-            <div className="flex items-center gap-3 mt-2 pt-2 border-t border-white/15">
-              {keeper && lastSaves !== null && (
-                <div>
-                  <span className={cn("font-display font-black text-base leading-none", lastSaves > 0 ? "text-primary" : "text-white/50")}>{lastSaves}</span>
-                  <p className="text-[9px] text-white/50 uppercase tracking-wide mt-0.5">Redn.</p>
-                </div>
-              )}
+            <div className="flex items-end gap-3.5 mt-2 pt-2 border-t border-white/15">
+              {/* Keeper: redningsprosent som hovedtall. Utespiller: mal.
+                  Ett stort tall, resten som stotte (designgjennomgang 2026-08-27). */}
               {keeper && lastSavePct !== undefined && (
                 <div>
-                  <span className="font-display font-bold text-sm leading-none text-white/80">{lastSavePct.toFixed(1)}%</span>
-                  <p className="text-[9px] text-white/50 uppercase tracking-wide mt-0.5">Red%</p>
+                  <span className="block font-display font-black text-2xl tracking-tight leading-none text-white tabular-nums">{lastSavePct.toFixed(0)}%</span>
+                  <p className="text-[9px] font-bold text-white/75 uppercase tracking-wide mt-1">Redning</p>
+                </div>
+              )}
+              {keeper && lastSaves !== null && (
+                <div>
+                  <span className="block font-display font-bold text-[15px] leading-none text-white/90 tabular-nums">{lastSaves}</span>
+                  <p className="text-[9px] text-white/55 uppercase tracking-wide mt-1">Redn.</p>
                 </div>
               )}
               {!keeper && lastGoals !== null && (
                 <div>
-                  <span className={cn("font-display font-black text-base leading-none", lastGoals > 0 ? "text-primary" : "text-white/50")}>{lastGoals}</span>
-                  <p className="text-[9px] text-white/50 uppercase tracking-wide mt-0.5">Mål</p>
+                  <span className="block font-display font-black text-2xl tracking-tight leading-none text-white tabular-nums">{lastGoals}</span>
+                  <p className="text-[9px] font-bold text-white/75 uppercase tracking-wide mt-1">Mål</p>
                 </div>
               )}
               {!keeper && lastMins !== null && lastMins > 0 && (
                 <div>
-                  <span className="font-display font-bold text-sm leading-none text-white/80">{lastMins}</span>
-                  <p className="text-[9px] text-white/50 uppercase tracking-wide mt-0.5">Min</p>
+                  <span className="block font-display font-bold text-[15px] leading-none text-white/90 tabular-nums">{lastMins}</span>
+                  <p className="text-[9px] text-white/55 uppercase tracking-wide mt-1">Min</p>
                 </div>
               )}
             </div>

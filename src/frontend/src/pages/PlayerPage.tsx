@@ -51,6 +51,7 @@ import {
   getStaticPlayerLeagueId,
   getStaticPlayers,
   getStaticProfile,
+  getStaticTeamLogoUrl,
   getPlayerSeasonScopes,
   mapClawdbotMatchStats,
   mapClawdbotPlayer,
@@ -105,6 +106,11 @@ const CLUB_LOGOS: Record<string, string> = {
 };
 
 function getClubLogo(teamName?: string) {
+  // Bruk de LOKALE logoene fra canisteren (2026-09-01). CLUB_LOGOS peker paa
+  // klubbenes egne nettsider; naar en av dem legger om, forsvinner logoen
+  // (Sola var borte). getStaticTeamLogoUrl slaar opp i teamLogoManifest.
+  const local = getStaticTeamLogoUrl(teamName);
+  if (local) return local;
   const normalized = teamName?.toLowerCase() ?? "";
   return Object.entries(CLUB_LOGOS).find(([key]) => normalized.includes(key))?.[1];
 }

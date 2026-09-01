@@ -8,6 +8,7 @@ import {
   normalizeSeasonId,
 } from "../data/seasons";
 import { AccountControl } from "./AccountControl";
+import { CoachNavSlot } from "./CoachNavSlot";
 
 const NAV_ITEMS = [
   { to: "/", label: "Hjem", icon: Home, ocid: "nav-hjem" },
@@ -67,6 +68,10 @@ export function Layout({ children, title, headerRight }: Props) {
   const search = useSearch({ from: "__root__" });
   const season = normalizeSeasonId(search.season);
   const league = normalizeLeagueId(search.league);
+  // MERK (2026-08-31): Layout rendres UTENFOR InternetIdentityProvider.
+  // Identity-hooks HER kaster og tar ned hele appen. Trenerfanen ligger
+  // derfor i CoachNavSlot, som har sin egen provider.
+  const navItems = NAV_ITEMS;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -123,7 +128,7 @@ export function Layout({ children, title, headerRight }: Props) {
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <div className="flex items-stretch max-w-2xl mx-auto">
-          {NAV_ITEMS.map(({ to, label, icon: Icon, ocid }) => {
+          {navItems.map(({ to, label, icon: Icon, ocid }) => {
             const isActive =
               to === "/" ? pathname === "/" : pathname.startsWith(to);
             return (
@@ -160,6 +165,11 @@ export function Layout({ children, title, headerRight }: Props) {
               </Link>
             );
           })}
+          <CoachNavSlot
+            isActive={pathname.startsWith("/trener")}
+            season={season}
+            league={league}
+          />
         </div>
       </nav>
     </div>

@@ -3,7 +3,7 @@ import { useActor } from "@caffeineai/core-infrastructure";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createActor } from "../backend";
 import { getNationalTeamInfo } from "../data/nationalTeamPlayers";
 import { formatMatchDate, getCountdown } from "../services/handballService";
@@ -17,37 +17,102 @@ import {
 import { PositionBadge } from "./PositionBadge";
 
 /**
- * Formkurve som stolper (designgjennomgang 2026-08-27) — samme uttrykk som
- * PlayerCard. Siste kamp i hvitt, kamper over snittet i gront.
+ * Formkurve, variant C (2026-08-27): linje med fargede punkter.
+ *
+ * EN farge, EN betydning: gronn = bedre enn referansen, rod = svakere.
+ * Referansen er sesongsnittet for den maalestokken spilleren faktisk vises
+ * paa (MEP for utespillere, redningsprosent for keepere). Siste kamp markeres
+ * med storre punkt og hvit ring — aldri med farge, slik at de to signalene
+ * ikke krasjer slik de gjorde i soyleversjonen.
+ *
+ * Bredden maales i piksler (2026-08-27): tidligere brukte vi
+ * preserveAspectRatio="none", som strakk viewBoxen til kortbredden. Paa smale
+ * mobilkort saa det riktig ut, men paa brede skjermer ble punktene til ovaler.
+ * Na tegner vi i faktiske piksler, saa sirkler forblir sirkler i alle bredder.
  */
-function Sparkline({ values }: { values: number[] }) {
+function Sparkline({
+  values,
+  reference,
+}: {
+  values: number[];
+  reference?: number;
+}) {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const node = hostRef.current;
+    if (!node) return;
+    const update = () => setWidth(node.clientWidth);
+    update();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(update);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   if (values.length < 2) return null;
   const recent = values.slice(-5);
-  const max = Math.max(...recent, 1);
-  const average = recent.reduce((sum, v) => sum + v, 0) / recent.length;
+  const ref =
+    reference ?? recent.reduce((sum, v) => sum + v, 0) / recent.length;
+
+  const H = 28;
+  const pad = 5;
+  const W = width || 120;
+  const lo = Math.min(...recent, ref);
+  const hi = Math.max(...recent, ref);
+  const span = Math.max(hi - lo, 0.001);
+  const x = (i: number) => pad + (i / (recent.length - 1)) * (W - pad * 2);
+  const y = (v: number) => H - pad - ((v - lo) / span) * (H - pad * 2);
+  const line = recent
+    .map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)}`)
+    .join(" ");
 
   return (
-    <div
-      className="mt-2.5 flex h-6 items-end gap-[3px]"
-      role="img"
-      aria-label="MEP-formkurve siste kamper"
-      title="MEP-form siste kamper"
-    >
-      {recent.map((value, index) => {
-        const height = Math.max(12, (value / max) * 100);
-        const isLast = index === recent.length - 1;
-        const isAbove = value >= average;
-        return (
-          <span
-            key={`spark-${index}-${value}`}
-            style={{ height: `${height}%` }}
-            className={cn(
-              "block flex-1 rounded-t-sm",
-              isLast ? "bg-white" : isAbove ? "bg-emerald-400/80" : "bg-white/30",
-            )}
+    <div ref={hostRef} className="mt-2.5 w-full">
+      {width > 0 && (
+        <svg
+          width={W}
+          height={H}
+          viewBox={`0 0 ${W} ${H}`}
+          className="block overflow-visible"
+          role="img"
+          aria-label="Formkurve siste kamper"
+        >
+          <title>Formkurve siste kamper</title>
+          <line
+            x1={pad}
+            y1={y(ref)}
+            x2={W - pad}
+            y2={y(ref)}
+            stroke="rgba(255,255,255,.3)"
+            strokeWidth="1"
+            strokeDasharray="3 3"
           />
-        );
-      })}
+          <path
+            d={line}
+            fill="none"
+            stroke="rgba(255,255,255,.5)"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {recent.map((v, i) => {
+            const isLast = i === recent.length - 1;
+            return (
+              <circle
+                key={`pt-${i}-${v}`}
+                cx={x(i)}
+                cy={y(v)}
+                r={isLast ? 3.4 : 2.4}
+                fill={v >= ref ? "#34d399" : "#f87171"}
+                stroke={isLast ? "#fff" : "none"}
+                strokeWidth={isLast ? 1.4 : 0}
+              />
+            );
+          })}
+        </svg>
+      )}
     </div>
   );
 }
@@ -189,13 +254,32 @@ export function FeedPlayerCard({
     .filter((e) => e.eventType === FeedEventType.MinutesPlayed)
     .at(-1);
 
-  const mepMatches = (matchStats as EnrichedPlayerMatchStats[])
-    .filter((match) => typeof match.mep === "number")
-    .sort((a, b) => getMatchDate(a).localeCompare(getMatchDate(b)))
-    .slice(-5);
-  const latestMatch = mepMatches.at(-1);
-  const sparkValues = mepMatches.map((match) => match.mep ?? 0);
   const keeper = player.position === Position.Keeper;
+  // Keepere maales paa redningsprosent, ikke MEP (2026-08-27). MEP er bygget
+  // for utespillere og sier lite om en keepers prestasjon.
+  // Keeperkamper med under 5 skudd mot gir ikke meningsfull prosent —
+  // en redning paa ett skudd blir 100 % og ser ut som en storkamp.
+  const qualifying = (matchStats as EnrichedPlayerMatchStats[])
+    .filter((match) =>
+      keeper
+        ? typeof match.savePct === "number" &&
+          Number(match.shotsAgainst ?? 0) >= 5
+        : typeof match.mep === "number",
+    )
+    .sort((a, b) => getMatchDate(a).localeCompare(getMatchDate(b)));
+  const formMatches = qualifying.slice(-5);
+  const mepMatches = formMatches;
+  const latestMatch = formMatches.at(-1);
+  const sparkValues = formMatches.map((match) =>
+    keeper ? (match.savePct ?? 0) : (match.mep ?? 0),
+  );
+  // Referanselinjen er sesongsnittet paa samme skala, ikke snittet av de fem.
+  const sparkReference = qualifying.length
+    ? qualifying.reduce(
+        (sum, m) => sum + (keeper ? (m.savePct ?? 0) : (m.mep ?? 0)),
+        0,
+      ) / qualifying.length
+    : undefined;
   const latestGoals = keeper ? undefined : latestMatch?.goals ?? lastGoalEvent?.statValue;
   const latestSaves = keeper ? latestMatch?.saves : undefined;
   const latestSavePct = keeper ? latestMatch?.savePct : undefined;
@@ -291,7 +375,18 @@ export function FeedPlayerCard({
               2026-08-27). Formkurven ligger i full bredde under. */}
           <div className="mt-2.5 sm:mt-2 pt-2.5 sm:pt-2 border-t border-white/15">
             <div className="flex items-end gap-3.5">
-              {latestMatch?.mep !== undefined && (
+              {/* Keepere: redningsprosent som hovedtall. Utespillere: MEP. */}
+              {keeper && latestSavePct !== undefined && (
+                <div>
+                  <span className="block font-display font-black text-[30px] sm:text-[26px] tracking-tight text-white leading-none tabular-nums">
+                    {latestSavePct.toFixed(0)}%
+                  </span>
+                  <span className="block text-[9px] font-bold uppercase tracking-wide text-white/75 mt-1">
+                    Redning
+                  </span>
+                </div>
+              )}
+              {!keeper && latestMatch?.mep !== undefined && (
                 <div>
                   <span className="block font-display font-black text-[30px] sm:text-[26px] tracking-tight text-white leading-none tabular-nums">
                     {formatDecimal(latestMatch.mep)}
@@ -325,13 +420,15 @@ export function FeedPlayerCard({
                   </span>
                 </div>
               )}
-              {latestSavePct !== undefined && (
+              {/* Skudd mot gir volumkontekst: 50 % paa 4 skudd og 50 % paa
+                  40 skudd er to helt ulike kamper. */}
+              {keeper && latestMatch?.shotsAgainst !== undefined && (
                 <div>
                   <span className="block font-display font-bold text-[15px] text-white/90 leading-none tabular-nums">
-                    {latestSavePct.toFixed(1)}%
+                    {latestMatch.shotsAgainst.toString()}
                   </span>
                   <span className="block text-[9px] uppercase tracking-wide text-white/55 mt-1">
-                    Red%
+                    Skudd mot
                   </span>
                 </div>
               )}
@@ -373,7 +470,7 @@ export function FeedPlayerCard({
 
             {sparkValues.length >= 2 && (
               <>
-                <Sparkline values={sparkValues} />
+                <Sparkline values={sparkValues} reference={sparkReference} />
                 <span className="sr-only">MEP-form</span>
               </>
             )}
