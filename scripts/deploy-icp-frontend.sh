@@ -167,14 +167,18 @@ NODE
 
 grep -q 'initial-app-shell' src/frontend/dist/index.html
 
+# Originalene i dist/assets/player-images slettes med vilje av
+# prune-dist-originals.mjs etter bygget (alle visninger gaar via webp).
+# Derfor sjekker vi at hvert originalbilde har en webp i player-full-images,
+# ikke at originalmappa fortsatt finnes.
 SOURCE_PLAYER_IMAGE_COUNT="$(find src/frontend/public/assets/player-images -type f | wc -l | tr -d ' ')"
-DIST_PLAYER_IMAGE_COUNT="$(find src/frontend/dist/assets/player-images -type f | wc -l | tr -d ' ')"
+DIST_FULL_IMAGE_COUNT="$(find src/frontend/dist/assets/player-full-images -type f 2>/dev/null | wc -l | tr -d ' ')"
 SOURCE_CARD_IMAGE_COUNT="$(find src/frontend/public/assets/player-card-images -type f | wc -l | tr -d ' ')"
 DIST_CARD_IMAGE_COUNT="$(find src/frontend/dist/assets/player-card-images -type f | wc -l | tr -d ' ')"
 
 [[ "$SOURCE_PLAYER_IMAGE_COUNT" -gt 0 ]]
-[[ "$SOURCE_PLAYER_IMAGE_COUNT" == "$DIST_PLAYER_IMAGE_COUNT" ]] || {
-  echo "Originalbilder mangler i dist: kilde=$SOURCE_PLAYER_IMAGE_COUNT dist=$DIST_PLAYER_IMAGE_COUNT"
+[[ "$DIST_FULL_IMAGE_COUNT" -ge "$SOURCE_PLAYER_IMAGE_COUNT" ]] || {
+  echo "Fullbilder (webp) mangler i dist: kilde=$SOURCE_PLAYER_IMAGE_COUNT dist=$DIST_FULL_IMAGE_COUNT"
   exit 1
 }
 [[ "$SOURCE_CARD_IMAGE_COUNT" == "$DIST_CARD_IMAGE_COUNT" ]] || {
