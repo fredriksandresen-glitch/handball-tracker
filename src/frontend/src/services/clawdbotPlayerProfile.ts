@@ -695,6 +695,22 @@ function getStaticPlayerEntry(playerId: bigint, seasonId?: SeasonId) {
   if (!entries) return null;
   if (!seasonId) return entries[0] ?? null;
 
+  // Laanespillere staar baade i dagens tropp og i klubben de spilte for i fjor.
+  // Konfigurasjoner uten eksplisitt dataSeason faller tilbake paa arkivsesongen,
+  // og vant derfor over det registrerte laaneoppholdet: Linnea Aula viste
+  // Fjellhammer-tall i stedet for Kjelsaas-tallene hun faktisk spilte inn.
+  // Et registrert laaneopphold (teamName satt i 1. divisjonsdataene) er en
+  // sterkere kilde enn en implisitt sesong-default, saa den sjekkes foerst.
+  // Spillere uten laane-teamName er upaavirket.
+  if (seasonId === ARCHIVE_SEASON_ID) {
+    const loanEntry = entries.find(
+      (entry) =>
+        getTeamLeagueId(entry.team) === FIRST_DIVISION_LEAGUE_ID &&
+        !!FIRST_DIVISION_2526_STATS_BY_ID[entry.player.id]?.teamName,
+    );
+    if (loanEntry) return loanEntry;
+  }
+
   const exactEntry = entries.find(
     (entry) => getTeamDataSeason(entry.team) === seasonId,
   );

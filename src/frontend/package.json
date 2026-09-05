@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/enrich-match-history.mjs && node scripts/copy-stats-to-public.mjs && node scripts/patch-national-team-profile.mjs && node scripts/generate-search-player-index.mjs && vite build && node scripts/generate-player-previews.mjs && pnpm copy:env",
-    "build:quick": "node scripts/copy-stats-to-public.mjs && node scripts/patch-national-team-profile.mjs && node scripts/generate-search-player-index.mjs && vite build && node scripts/generate-player-previews.mjs && pnpm copy:env",
+    "build": "node scripts/verify-data.mjs && node scripts/enrich-match-history.mjs && node scripts/copy-stats-to-public.mjs && node scripts/patch-national-team-profile.mjs && node scripts/generate-search-player-index.mjs && vite build && node scripts/generate-player-previews.mjs && pnpm copy:env",
+    "build:quick": "node scripts/verify-data.mjs && node scripts/copy-stats-to-public.mjs && node scripts/patch-national-team-profile.mjs && node scripts/generate-search-player-index.mjs && vite build && node scripts/generate-player-previews.mjs && pnpm copy:env",
     "copy:env": "node scripts/copy-env.mjs",
     "typecheck": "tsc --noEmit",
     "check": "biome check src",
@@ -14,7 +14,8 @@
     "generate:player-card-images": "node scripts/generate-player-card-images.mjs",
     "sync:player-identities": "node scripts/sync-player-identities.mjs",
     "check:player-identities": "node scripts/sync-player-identities.mjs --check",
-    "sync:player-images": "node scripts/sync-player-images.mjs && node scripts/generate-player-card-images.mjs"
+    "sync:player-images": "node scripts/sync-player-images.mjs && node scripts/generate-player-card-images.mjs",
+    "verify:data": "node scripts/verify-data.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.0",
