@@ -65,7 +65,7 @@ const TEAM_NAMES_BY_SEASON_AND_LEAGUE: Record<
       "Utleira",
       "Fjellhammer",
     ],
-    [FIRST_DIVISION_LEAGUE_ID]: ["Aker Topphåndball", "Kjelsås", "Volda", "Levanger", "Åsane", "Trondheim", "Gjøvik", "Ravens", "Stavanger", "Bækkelaget", "Haslum", "Fyllingen", "Byåsen Rekrutt", "Storhamar Rekrutt"],
+    [FIRST_DIVISION_LEAGUE_ID]: ["Aker Topphåndball", "Kjelsås", "Volda", "Levanger", "Åsane", "Trondheim", "Gjøvik", "HK Rygge", "Stavanger", "Bækkelaget", "Haslum", "Fyllingen", "Byåsen Rekrutt", "Storhamar Rekrutt"],
   },
   [ARCHIVE_SEASON_ID]: {
     [ELITE_LEAGUE_ID]: [

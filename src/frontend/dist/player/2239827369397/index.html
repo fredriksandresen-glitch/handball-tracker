@@ -1,17 +1,248 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="no">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" /><link rel="icon" type="image/x-icon" href="/favicon.ico" />
-  <!-- PWA / iPhone home screen -->
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Handball" />
-  <meta name="theme-color" content="#1a1f3a" />
-    <script type="module" crossorigin src="/assets/index-CPElKy7J.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CpBBe0uX.css">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Handball" />
+    <meta name="theme-color" content="#1a1f3a" />
+    <script>
+      (() => {
+        const root = document.documentElement;
+        root.dataset.initialRoute = location.pathname === "/" ? "home" : "other";
+        try {
+          const saved = localStorage.getItem("handball-tracker-theme");
+          const dark =
+            saved === "dark" ||
+            (saved !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+          root.classList.toggle("dark", dark);
+          root.style.colorScheme = dark ? "dark" : "light";
+
+          const followed = JSON.parse(
+            localStorage.getItem("handball-tracker-followed-player-ids") || "[]",
+          );
+          root.dataset.initialFollowed =
+            Array.isArray(followed) && followed.length > 0 ? "true" : "false";
+        } catch {
+          root.dataset.initialFollowed = "false";
+        }
+      })();
+    </script>
+    <style>
+      #initial-app-shell {
+        min-height: 100vh;
+        background: #f8f9fc;
+        color: #14172a;
+        font-family: Arial, sans-serif;
+      }
+      .dark #initial-app-shell {
+        background: #111426;
+        color: #f5f6fa;
+      }
+      html[data-initial-route="other"] #initial-app-shell {
+        display: none;
+      }
+      .initial-topbar {
+        height: 56px;
+        background: #1a1f3a;
+        color: #fff;
+        border-bottom: 1px solid #343957;
+      }
+      .initial-topbar-inner,
+      .initial-main,
+      .initial-bottom-inner {
+        width: 100%;
+        max-width: 672px;
+        margin: 0 auto;
+      }
+      .initial-topbar-inner {
+        height: 56px;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-sizing: border-box;
+      }
+      .initial-logo {
+        color: #fff;
+        font-size: 18px;
+        line-height: 1;
+        font-weight: 900;
+        text-decoration: none;
+      }
+      .initial-theme-placeholder {
+        width: 36px;
+        height: 36px;
+        border: 1px solid #414766;
+        border-radius: 50%;
+        background: #2c3150;
+      }
+      .initial-main {
+        padding: 16px 16px 96px;
+        box-sizing: border-box;
+      }
+      .initial-feed-header {
+        margin: -16px -16px 0;
+        padding: 16px 16px 12px;
+        background: #fff;
+        border-bottom: 1px solid #d4d7e2;
+      }
+      .dark .initial-feed-header {
+        background: #1c2038;
+        border-color: #3c4260;
+      }
+      .initial-feed-title {
+        margin: 0;
+        font-size: 20px;
+        line-height: 1;
+        font-weight: 900;
+      }
+      .initial-feed-subtitle {
+        margin: 5px 0 0;
+        color: #697086;
+        font-size: 12px;
+      }
+      .dark .initial-feed-subtitle,
+      .dark .initial-copy {
+        color: #b3b7c8;
+      }
+      .initial-empty {
+        min-height: 60vh;
+        padding: 72px 24px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      html[data-initial-followed="true"] .initial-empty {
+        display: none;
+      }
+      .initial-mark {
+        width: 72px;
+        height: 72px;
+        margin-bottom: 20px;
+        border: 1px solid #c9cddd;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: #1a1f3a;
+        font-size: 28px;
+        font-weight: 900;
+      }
+      .dark .initial-mark {
+        border-color: #464c68;
+        color: #fff;
+      }
+      .initial-heading {
+        margin: 0 0 8px;
+        font-size: 24px;
+        line-height: 1.2;
+        font-weight: 900;
+      }
+      .initial-copy {
+        max-width: 280px;
+        margin: 0 0 28px;
+        color: #697086;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .initial-actions {
+        width: 100%;
+        max-width: 280px;
+        display: grid;
+        gap: 12px;
+      }
+      .initial-action {
+        min-height: 48px;
+        padding: 0 20px;
+        border: 1px solid #d4d7e2;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #14172a;
+        background: #fff;
+        font-size: 15px;
+        font-weight: 700;
+        text-decoration: none;
+        box-sizing: border-box;
+      }
+      .initial-action-primary {
+        color: #fff;
+        background: #1a1f3a;
+        border-color: #1a1f3a;
+      }
+      .dark .initial-action {
+        color: #f5f6fa;
+        background: #1c2038;
+        border-color: #3c4260;
+      }
+      .dark .initial-action-primary {
+        color: #14172a;
+        background: #fff;
+        border-color: #fff;
+      }
+      .initial-followed-skeleton {
+        display: none;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        padding-top: 12px;
+      }
+      html[data-initial-followed="true"] .initial-followed-skeleton {
+        display: grid;
+      }
+      .initial-skeleton-card {
+        height: 220px;
+        border-radius: 8px;
+        background: #e9ebf2;
+      }
+      .dark .initial-skeleton-card {
+        background: #252a45;
+      }
+      .initial-bottom {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: #fff;
+        border-top: 1px solid #d4d7e2;
+      }
+      .dark .initial-bottom {
+        background: #1c2038;
+        border-color: #3c4260;
+      }
+      .initial-bottom-inner {
+        display: flex;
+      }
+      .initial-nav-link {
+        min-height: 56px;
+        flex: 1;
+        display: grid;
+        place-items: center;
+        color: #697086;
+        font-size: 10px;
+        font-weight: 700;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+      .initial-nav-link:first-child {
+        color: #1a1f3a;
+        border-top: 2px solid #1a1f3a;
+      }
+      .dark .initial-nav-link {
+        color: #b3b7c8;
+      }
+      .dark .initial-nav-link:first-child {
+        color: #fff;
+        border-color: #fff;
+      }
+    </style>
+    <script type="module" crossorigin src="/assets/index-DIca0bAU.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CNtQGxfu.css">
   
   <title>Sunniva Sogn-Johansen | Fjellhammer | REMA 1000-ligaen</title>
   <meta name="description" content="14 mål · 3 assist · 0.67 mål/kamp" />
@@ -27,6 +258,46 @@
   <meta name="twitter:image" content="https://nthapi.webcore.no/wp-content/uploads/2026/05/Sunniva-Sogn-Johansen-Fjellhammer.png?v=1773826257" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="initial-app-shell">
+        <header class="initial-topbar">
+          <div class="initial-topbar-inner">
+            <a class="initial-logo" href="/">Elkjøp-ligaen</a>
+            <span class="initial-theme-placeholder" aria-hidden="true"></span>
+          </div>
+        </header>
+        <main class="initial-main">
+          <section class="initial-feed-header">
+            <h1 class="initial-feed-title">Din feed</h1>
+            <p class="initial-feed-subtitle">Følg spillere for å bygge din feed</p>
+          </section>
+          <section class="initial-empty">
+            <div class="initial-mark" aria-hidden="true">+</div>
+            <h2 class="initial-heading">Ingen spillere fulgt ennå</h2>
+            <p class="initial-copy">
+              Følg spillere for å se dem her. Søk etter en spiller eller utforsk et lag.
+            </p>
+            <div class="initial-actions">
+              <a class="initial-action initial-action-primary" href="/search">Søk etter spillere</a>
+              <a class="initial-action" href="/teams">Se lag</a>
+            </div>
+          </section>
+          <section class="initial-followed-skeleton" aria-label="Laster spillerfeed">
+            <span class="initial-skeleton-card"></span>
+            <span class="initial-skeleton-card"></span>
+            <span class="initial-skeleton-card"></span>
+            <span class="initial-skeleton-card"></span>
+          </section>
+        </main>
+        <nav class="initial-bottom" aria-label="Hovedmeny">
+          <div class="initial-bottom-inner">
+            <a class="initial-nav-link" href="/">Hjem</a>
+            <a class="initial-nav-link" href="/search">Søk</a>
+            <a class="initial-nav-link" href="/teams">Lag</a>
+            <a class="initial-nav-link" href="/favorites">Toppliste</a>
+          </div>
+        </nav>
+      </div>
+    </div>
   </body>
 </html>

@@ -38,7 +38,10 @@ import {
   usePlayerMatchStats,
   usePlayerSeasonStats,
 } from "../hooks/usePlayer";
-import { resolveImageUrl } from "../utils/playerImages";
+import {
+  getPlayerImageVariants,
+  resolveImageUrl,
+} from "../utils/playerImages";
 import { getTeamLogoClassName } from "../utils/teamLogoStyles";
 import { useNextMatchForTeam, useTeam } from "../hooks/useTeam";
 import {
@@ -233,6 +236,17 @@ function PlayerHero({
     .toUpperCase();
   const nationalTeam = getNationalTeamInfo(player.id);
 
+  // Klubbene bytter portrettbilde på samme URL. Vi beholder forrige versjon
+  // lokalt, så her kan brukeren bla mellom nytt og gammelt bilde.
+  const imageVariants = getPlayerImageVariants(player.imageUrl);
+  const [variantIndex, setVariantIndex] = useState(0);
+  const activeImage = imageVariants[variantIndex] ?? imageVariants[0];
+  const hasMultipleImages = imageVariants.length > 1;
+
+  function showNextImage() {
+    setVariantIndex((current) => (current + 1) % imageVariants.length);
+  }
+
   function handleFollowClick() {
     if (isFollowing) unfollowMutation.mutate(player.id);
     else followMutation.mutate(player.id);
@@ -241,12 +255,32 @@ function PlayerHero({
   return (
     <section className="bg-card border-b border-border px-4 py-5">
       <div className="flex items-start gap-4">
-        {resolveImageUrl(player.imageUrl) ? (
-          <img
-            src={resolveImageUrl(player.imageUrl)}
-            alt={player.name}
-            className="size-28 rounded-2xl object-cover object-top border-2 border-primary/40 bg-muted"
-          />
+        {activeImage ? (
+          <div className="relative size-28 shrink-0">
+            <img
+              src={activeImage}
+              alt={player.name}
+              className="size-28 rounded-2xl object-cover object-top border-2 border-primary/40 bg-muted"
+            />
+            {hasMultipleImages && (
+              <>
+                <button
+                  type="button"
+                  onClick={showNextImage}
+                  aria-label={
+                    variantIndex === 0 ? "Vis forrige bilde" : "Vis nyeste bilde"
+                  }
+                  className="absolute inset-y-0 right-0 flex w-9 items-center justify-center rounded-r-2xl bg-gradient-to-l from-black/65 to-transparent text-white transition-opacity hover:opacity-90"
+                  data-ocid="player-image-next"
+                >
+                  <ArrowRight className="size-4" />
+                </button>
+                <span className="absolute bottom-1 left-1 rounded-full bg-black/65 px-1.5 py-0.5 text-[9px] font-display font-bold uppercase tracking-wide text-white">
+                  {variantIndex === 0 ? "Nytt" : "Gammelt"}
+                </span>
+              </>
+            )}
+          </div>
         ) : (
           <div className="size-28 rounded-2xl bg-gradient-to-br from-emerald-950 via-slate-900 to-cyan-950 border-2 border-primary/40 flex items-center justify-center">
             <span className="font-display font-black text-3xl text-primary">

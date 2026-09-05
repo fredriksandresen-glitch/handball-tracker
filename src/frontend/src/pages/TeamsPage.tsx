@@ -24,6 +24,7 @@ import {
   type SeasonId,
 } from "../data/seasons";
 import { useTeams } from "../hooks/useTeams";
+import { getStaticTeamByPrimeId } from "../services/clawdbotPlayerProfile";
 import type { Team } from "../types/handball";
 import { getTeamLogoClassName } from "../utils/teamLogoStyles";
 
@@ -129,6 +130,14 @@ export default function TeamsPage() {
   const teamByName = new Map<string, Team>();
   for (const team of teams ?? []) teamByName.set(normalizeName(team.name), team);
 
+  // Tabellnavn og lagnavn er ikke alltid like ("Aker" vs "Aker Topphåndball",
+  // "Trondheim TH" vs "Trondheim"). Navnematching gjorde slike rader
+  // uklikkbare. primeTeamId er den stabile nøkkelen, så den går først; navn
+  // beholdes kun som fallback.
+  const resolveTeam = (standing: LeagueStanding) =>
+    getStaticTeamByPrimeId(standing.primeTeamId, seasonId, leagueId) ??
+    teamByName.get(normalizeName(standing.name));
+
   return (
     <div className="space-y-5" data-ocid="teams-page">
       <div className="pt-1 flex items-start justify-between gap-4">
@@ -158,7 +167,7 @@ export default function TeamsPage() {
       ) : isTeamDirectory ? (
         <section className="rounded-xl border border-border bg-card overflow-hidden">
           {standings.map((standing, index) => (
-            <TeamDirectoryRow key={standing.primeTeamId} standing={standing} team={teamByName.get(normalizeName(standing.name))} index={index} season={seasonId} league={leagueId} />
+            <TeamDirectoryRow key={standing.primeTeamId} standing={standing} team={resolveTeam(standing)} index={index} season={seasonId} league={leagueId} />
           ))}
         </section>
       ) : (
@@ -169,7 +178,7 @@ export default function TeamsPage() {
             <span className="hidden md:block text-right">Mål</span><span className="text-right">+/-</span><span className="text-right">Form</span>
           </div>
           {standings.map((standing, index) => (
-            <StandingRow key={standing.primeTeamId} standing={standing} team={teamByName.get(normalizeName(standing.name))} index={index} season={seasonId} league={leagueId} />
+            <StandingRow key={standing.primeTeamId} standing={standing} team={resolveTeam(standing)} index={index} season={seasonId} league={leagueId} />
           ))}
         </section>
       )}

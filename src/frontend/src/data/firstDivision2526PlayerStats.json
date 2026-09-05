@@ -867,7 +867,8 @@
       "mepAvg": 0.5,
       "mepTotal": 1
     },
-    "recentMatches": []
+    "recentMatches": [],
+    "teamName": "Storhamar Rekrutt"
   },
   {
     "playerId": "9852988546807",
@@ -1008,7 +1009,8 @@
       "mepAvg": 1.5,
       "mepTotal": 37.7
     },
-    "recentMatches": []
+    "recentMatches": [],
+    "teamName": "Storhamar Rekrutt"
   },
   {
     "playerId": "2239997055656",
@@ -1023,7 +1025,8 @@
       "mepAvg": 0.6,
       "mepTotal": 1.2
     },
-    "recentMatches": []
+    "recentMatches": [],
+    "teamName": "Aker Topphandball"
   },
   {
     "playerId": "2239996787302",
@@ -1038,7 +1041,8 @@
       "mepAvg": 0.1,
       "mepTotal": 2.1
     },
-    "recentMatches": []
+    "recentMatches": [],
+    "teamName": "Åsane"
   },
   {
     "playerId": "2239996792624",
@@ -1437,7 +1441,8 @@
       "mepAvg": 0.6,
       "mepTotal": 9.3
     },
-    "recentMatches": []
+    "recentMatches": [],
+    "teamName": "Storhamar Rekrutt"
   },
   {
     "playerId": "2239857720634",
@@ -1488,7 +1493,8 @@
       "mepAvg": 1.3,
       "mepTotal": 33.3
     },
-    "recentMatches": []
+    "recentMatches": [],
+    "teamName": "Storhamar Rekrutt"
   },
   {
     "playerId": "2239858823383",
@@ -1518,7 +1524,8 @@
       "mepAvg": 1.7,
       "mepTotal": 9.9
     },
-    "recentMatches": []
+    "recentMatches": [],
+    "teamName": "Kjelsås"
   },
   {
     "playerId": "2239856203229",
@@ -1644,7 +1651,8 @@
       "mepAvg": 2.8,
       "mepTotal": 74
     },
-    "recentMatches": []
+    "recentMatches": [],
+    "teamName": "Kjelsås"
   },
   {
     "playerId": "9288368158679",
@@ -1659,7 +1667,8 @@
       "mepAvg": 1.4,
       "mepTotal": 6.8
     },
-    "recentMatches": []
+    "recentMatches": [],
+    "teamName": "Volda"
   },
   {
     "playerId": "9288368171349",
@@ -1674,7 +1683,8 @@
       "mepAvg": 1.4,
       "mepTotal": 32.9
     },
-    "recentMatches": []
+    "recentMatches": [],
+    "teamName": "Kjelsås"
   },
   {
     "playerId": "9288365720821",
@@ -1689,7 +1699,8 @@
       "mepAvg": 0.7,
       "mepTotal": 3.9
     },
-    "recentMatches": []
+    "recentMatches": [],
+    "teamName": "Glassverket"
   },
   {
     "playerId": "9288365856614",
@@ -1704,7 +1715,8 @@
       "mepAvg": 1.8,
       "mepTotal": 38.1
     },
-    "recentMatches": []
+    "recentMatches": [],
+    "teamName": "Glassverket"
   },
   {
     "playerId": "2241747138609",
@@ -1719,6 +1731,192 @@
       "mepAvg": 0.4,
       "mepTotal": 2.6
     },
-    "recentMatches": []
+    "recentMatches": [],
+    "teamName": "Åsane"
+  },
+  {
+    "playerId": "22398210032285",
+    "seasonStats": {
+      "matches": 7,
+      "goals": 18,
+      "shots": 29,
+      "shotPercentage": 62.1,
+      "assists": 1,
+      "technicalErrors": 2,
+      "suspensions": 0,
+      "mepAvg": 1.4,
+      "mepTotal": 10
+    },
+    "recentMatches": [
+      {
+        "matchId": "8214489",
+        "date": "2026-04-26",
+        "opponent": "Flint",
+        "homeAway": "home",
+        "goals": 1,
+        "shots": 2,
+        "shotPercentage": 50,
+        "fieldGoals": 1,
+        "fieldShots": 2,
+        "fieldShotPercentage": 50,
+        "sevenMeterGoals": 0,
+        "sevenMeterShots": 0,
+        "sevenMeterShotPercentage": 0,
+        "assists": 0,
+        "technicalErrors": 1,
+        "causedSevenMeters": 0,
+        "awardedSevenMeters": 0,
+        "warnings": 0,
+        "suspensions": 0,
+        "redCards": 0,
+        "playTime": "01:00:00",
+        "mep": 0.2
+      },
+      {
+        "matchId": "8214481",
+        "date": "2026-04-22",
+        "opponent": "Stavanger",
+        "homeAway": "away",
+        "goals": 1,
+        "shots": 3,
+        "shotPercentage": 33.3,
+        "fieldGoals": 1,
+        "fieldShots": 3,
+        "fieldShotPercentage": 33.3,
+        "sevenMeterGoals": 0,
+        "sevenMeterShots": 0,
+        "sevenMeterShotPercentage": 0,
+        "assists": 0,
+        "technicalErrors": 0,
+        "causedSevenMeters": 1,
+        "awardedSevenMeters": 0,
+        "warnings": 0,
+        "suspensions": 0,
+        "redCards": 0,
+        "playTime": "00:44:45",
+        "mep": 0
+      },
+      {
+        "matchId": "8214474",
+        "date": "2026-04-15",
+        "opponent": "Storhamar",
+        "homeAway": "home",
+        "goals": 6,
+        "shots": 8,
+        "shotPercentage": 75,
+        "fieldGoals": 6,
+        "fieldShots": 8,
+        "fieldShotPercentage": 75,
+        "sevenMeterGoals": 0,
+        "sevenMeterShots": 0,
+        "sevenMeterShotPercentage": 0,
+        "assists": 0,
+        "technicalErrors": 0,
+        "causedSevenMeters": 0,
+        "awardedSevenMeters": 0,
+        "warnings": 0,
+        "suspensions": 0,
+        "redCards": 0,
+        "playTime": "00:59:15",
+        "mep": 3.8
+      },
+      {
+        "matchId": "8214473",
+        "date": "2026-03-25",
+        "opponent": "Utleira",
+        "homeAway": "away",
+        "goals": 1,
+        "shots": 5,
+        "shotPercentage": 20,
+        "fieldGoals": 1,
+        "fieldShots": 5,
+        "fieldShotPercentage": 20,
+        "sevenMeterGoals": 0,
+        "sevenMeterShots": 0,
+        "sevenMeterShotPercentage": 0,
+        "assists": 0,
+        "technicalErrors": 0,
+        "causedSevenMeters": 0,
+        "awardedSevenMeters": 0,
+        "warnings": 0,
+        "suspensions": 0,
+        "redCards": 0,
+        "playTime": "00:56:03",
+        "mep": -0.6
+      },
+      {
+        "matchId": "8214460",
+        "date": "2026-03-22",
+        "opponent": "Aker",
+        "homeAway": "away",
+        "goals": 0,
+        "shots": 0,
+        "shotPercentage": 0,
+        "fieldGoals": 0,
+        "fieldShots": 0,
+        "fieldShotPercentage": 0,
+        "sevenMeterGoals": 0,
+        "sevenMeterShots": 0,
+        "sevenMeterShotPercentage": 0,
+        "assists": 0,
+        "technicalErrors": 0,
+        "causedSevenMeters": 0,
+        "awardedSevenMeters": 1,
+        "warnings": 0,
+        "suspensions": 0,
+        "redCards": 0,
+        "playTime": "01:00:00",
+        "mep": 0.4
+      },
+      {
+        "matchId": "8214447",
+        "date": "2026-03-01",
+        "opponent": "Pors",
+        "homeAway": "away",
+        "goals": 1,
+        "shots": 3,
+        "shotPercentage": 33.3,
+        "fieldGoals": 1,
+        "fieldShots": 3,
+        "fieldShotPercentage": 33.3,
+        "sevenMeterGoals": 0,
+        "sevenMeterShots": 0,
+        "sevenMeterShotPercentage": 0,
+        "assists": 0,
+        "technicalErrors": 0,
+        "causedSevenMeters": 1,
+        "awardedSevenMeters": 0,
+        "warnings": 0,
+        "suspensions": 0,
+        "redCards": 0,
+        "playTime": "01:00:00",
+        "mep": 0
+      },
+      {
+        "matchId": "8214440",
+        "date": "2026-02-18",
+        "opponent": "Gjøvik",
+        "homeAway": "home",
+        "goals": 8,
+        "shots": 8,
+        "shotPercentage": 100,
+        "fieldGoals": 8,
+        "fieldShots": 8,
+        "fieldShotPercentage": 100,
+        "sevenMeterGoals": 0,
+        "sevenMeterShots": 0,
+        "sevenMeterShotPercentage": 0,
+        "assists": 1,
+        "technicalErrors": 1,
+        "causedSevenMeters": 1,
+        "awardedSevenMeters": 1,
+        "warnings": 0,
+        "suspensions": 0,
+        "redCards": 0,
+        "playTime": "00:54:45",
+        "mep": 6.4
+      }
+    ],
+    "teamName": "Kjelsås"
   }
 ]

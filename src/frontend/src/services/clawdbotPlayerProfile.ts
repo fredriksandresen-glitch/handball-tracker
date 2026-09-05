@@ -6,7 +6,7 @@ import levangerRosterData from "../data/levangerRoster.json";
 import asaneRosterData from "../data/asaneRoster.json";
 import trondheimRosterData from "../data/trondheimRoster.json";
 import gjovikRosterData from "../data/gjovikRoster.json";
-import ravensRosterData from "../data/ravensRoster.json";
+import ryggeRosterData from "../data/ryggeRoster.json";
 import stavangerRosterData from "../data/stavangerRoster.json";
 import baekkelagetRosterData from "../data/baekkelagetRoster.json";
 import haslumCurrentRosterData from "../data/haslumCurrentRoster.json";
@@ -45,11 +45,18 @@ import type {
 } from "../types/handball";
 import { resolveImageUrl } from "../utils/playerImages";
 
-const DEFAULT_CLAWDBOT_API_BASE =
-  "https://statistical-fotos-return-importance.trycloudflare.com";
-
-const CLAWDBOT_API_BASE =
-  import.meta.env.VITE_CLAWDBOT_API_BASE ?? DEFAULT_CLAWDBOT_API_BASE;
+// Ingen default-URL her med vilje.
+//
+// Tidligere pekte denne paa en midlertidig trycloudflare.com-tunnel. Slike
+// tunneler doer av seg selv, og da forsvant profildata (f.eks. Linnea Aulas
+// laaneopphold i Kjelsaas) stille, uten feilmelding - fordi koden faller
+// tilbake paa statiske data uten aa si fra.
+//
+// Profildata skal derfor komme fra de versjonskontrollerte datafilene, som
+// holdes i synk med scripts/sync-loan-segments.mjs. Settes VITE_CLAWDBOT_API_BASE
+// til en STABIL adresse, brukes den som berikelse i tillegg - aldri som
+// eneste kilde.
+const CLAWDBOT_API_BASE = import.meta.env.VITE_CLAWDBOT_API_BASE ?? "";
 
 const DEFAULT_SEASON_ID = ARCHIVE_SEASON_ID;
 
@@ -67,8 +74,8 @@ const TRONDHEIM_LOGO_URL =
   "https://trondheim.admin.topphandball.no/wp-content/uploads/sites/73/2024/08/trondheim-e1737719517913.png";
 const GJOVIK_LOGO_URL =
   "https://gjovik.admin.topphandball.no/wp-content/uploads/sites/80/2025/05/Gjovik.png";
-const RAVENS_LOGO_URL =
-  "https://www.ravens.no/wp-content/uploads/sites/9/2022/10/ravens-1.svg";
+const RYGGE_LOGO_URL =
+  "";
 const STAVANGER_LOGO_URL =
   "https://stavanger.topphandball.no/wp-content/uploads/sites/81/2025/05/Stavanger.png";
 const BAEKKELAGET_LOGO_URL =
@@ -184,6 +191,13 @@ type StaticPlayerStats = {
   seasonStats: ClawdbotSeasonStats;
   goalkeeperStats?: ClawdbotGoalkeeperStats;
   recentMatches: ClawdbotRecentMatch[];
+  /**
+   * Klubben spilleren faktisk representerte i den aktuelle sesongen, naar
+   * den avviker fra dagens tropp (laan/overgang). Uten dette ville
+   * fjorarets tall blitt vist under dagens klubbnavn.
+   * Fylles av scripts/sync-loan-segments.mjs.
+   */
+  teamName?: string;
 };
 
 const FIRST_DIVISION_2526_STATS_BY_ID = Object.fromEntries(
@@ -216,6 +230,7 @@ export type EnrichedPlayerMatchStats = PlayerMatchStats & {
 
 type StaticTeamConfig = {
   name: string;
+  primeTeamId?: string;
   logoUrl: string;
   roster: StaticRosterPlayer[];
   statsUrl: string;
@@ -227,6 +242,7 @@ type StaticTeamConfig = {
 const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
   {
     name: "Aker Topphåndball",
+    primeTeamId: "816397",
     logoUrl: AKER_LOGO_URL,
     roster: akerRosterData as StaticRosterPlayer[],
     statsUrl: "",
@@ -235,6 +251,7 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
   },
   {
     name: "Kjelsås",
+    primeTeamId: "224860",
     logoUrl: KJELSAAS_LOGO_URL,
     roster: kjelsaasRosterData as StaticRosterPlayer[],
     statsUrl: "",
@@ -243,6 +260,7 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
   },
   {
     name: "Volda",
+    primeTeamId: "532788",
     logoUrl: VOLDA_LOGO_URL,
     roster: voldaRosterData as StaticRosterPlayer[],
     statsUrl: "",
@@ -251,6 +269,7 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
   },
   {
     name: "Levanger",
+    primeTeamId: "224372",
     logoUrl: LEVANGER_LOGO_URL,
     roster: levangerRosterData as StaticRosterPlayer[],
     statsUrl: "",
@@ -259,6 +278,7 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
   },
   {
     name: "Åsane",
+    primeTeamId: "453275",
     logoUrl: ASANE_LOGO_URL,
     roster: asaneRosterData as StaticRosterPlayer[],
     statsUrl: "",
@@ -267,6 +287,7 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
   },
   {
     name: "Trondheim",
+    primeTeamId: "985298",
     logoUrl: TRONDHEIM_LOGO_URL,
     roster: trondheimRosterData as StaticRosterPlayer[],
     statsUrl: "",
@@ -275,6 +296,7 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
   },
   {
     name: "Gjøvik",
+    primeTeamId: "223999",
     logoUrl: GJOVIK_LOGO_URL,
     roster: gjovikRosterData as StaticRosterPlayer[],
     statsUrl: "",
@@ -282,15 +304,17 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
     leagueId: FIRST_DIVISION_LEAGUE_ID,
   },
   {
-    name: "Ravens",
-    logoUrl: RAVENS_LOGO_URL,
-    roster: ravensRosterData as StaticRosterPlayer[],
+    name: "HK Rygge",
+    primeTeamId: "450329",
+    logoUrl: RYGGE_LOGO_URL,
+    roster: ryggeRosterData as StaticRosterPlayer[],
     statsUrl: "",
     dataSeason: CURRENT_SEASON_ID,
     leagueId: FIRST_DIVISION_LEAGUE_ID,
   },
   {
     name: "Stavanger",
+    primeTeamId: "224507",
     logoUrl: STAVANGER_LOGO_URL,
     roster: stavangerRosterData as StaticRosterPlayer[],
     statsUrl: "",
@@ -299,6 +323,7 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
   },
   {
     name: "Bækkelaget",
+    primeTeamId: "223985",
     logoUrl: BAEKKELAGET_LOGO_URL,
     roster: baekkelagetRosterData as StaticRosterPlayer[],
     statsUrl: "",
@@ -307,6 +332,7 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
   },
   {
     name: "Haslum",
+    primeTeamId: "928836",
     logoUrl: HASLUM_LOGO_URL,
     roster: haslumCurrentRosterData as StaticRosterPlayer[],
     statsUrl: "",
@@ -315,6 +341,7 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
   },
   {
     name: "Fyllingen",
+    primeTeamId: "224174",
     logoUrl: FYLLINGEN_LOGO_URL,
     roster: fyllingenRosterData as StaticRosterPlayer[],
     statsUrl: "",
@@ -323,6 +350,7 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
   },
   {
     name: "Byåsen Rekrutt",
+    primeTeamId: "223997",
     logoUrl: BYAASEN_LOGO_URL,
     roster: [],
     statsUrl: "",
@@ -331,6 +359,7 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
   },
   {
     name: "Storhamar Rekrutt",
+    primeTeamId: "224178",
     logoUrl: STORHAMAR_LOGO_URL,
     roster: [],
     statsUrl: "",
@@ -339,84 +368,98 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
   },
   {
     name: "Fjellhammer",
+    primeTeamId: "223982",
     logoUrl: FJELLHAMMER_LOGO_URL,
     roster: fjellhammerRosterData as StaticRosterPlayer[],
     statsUrl: "/data/player-stats/fjellhammerPlayerStats.json",
   },
   {
     name: "Larvik",
+    primeTeamId: "223994",
     logoUrl: LARVIK_LOGO_URL,
     roster: larvikRosterData as StaticRosterPlayer[],
     statsUrl: "/data/player-stats/larvikPlayerStats.json",
   },
   {
     name: "Fana",
+    primeTeamId: "225474",
     logoUrl: FANA_LOGO_URL,
     roster: fanaRosterData as StaticRosterPlayer[],
     statsUrl: "/data/player-stats/fanaPlayerStats.json",
   },
   {
     name: "Follo Damer",
+    primeTeamId: "583889",
     logoUrl: FOLLO_LOGO_URL,
     roster: folloRosterData as StaticRosterPlayer[],
     statsUrl: "/data/player-stats/folloPlayerStats.json",
   },
   {
     name: "Fredrikstad",
+    primeTeamId: "441651",
     logoUrl: FREDRIKSTAD_LOGO_URL,
     roster: fredrikstadRosterData as StaticRosterPlayer[],
     statsUrl: "/data/player-stats/fredrikstadPlayerStats.json",
   },
   {
     name: "Gjerpen",
+    primeTeamId: "453373",
     logoUrl: GJERPEN_LOGO_URL,
     roster: gjerpenRosterData as StaticRosterPlayer[],
     statsUrl: "/data/player-stats/gjerpenPlayerStats.json",
   },
   {
     name: "Haslum",
+    primeTeamId: "928836",
     logoUrl: HASLUM_LOGO_URL,
     roster: haslumRosterData as StaticRosterPlayer[],
     statsUrl: "/data/player-stats/haslumPlayerStats.json",
   },
   {
     name: "Byåsen",
+    primeTeamId: "454116",
     logoUrl: BYAASEN_LOGO_URL,
     roster: byaasenRosterData as StaticRosterPlayer[],
     statsUrl: "/data/player-stats/byaasenPlayerStats.json",
   },
   {
     name: "Molde",
+    primeTeamId: "775789",
     logoUrl: MOLDE_LOGO_URL,
     roster: moldeRosterData as StaticRosterPlayer[],
     statsUrl: "/data/player-stats/moldePlayerStats.json",
   },
   {
     name: "Oppsal",
+    primeTeamId: "441915",
     logoUrl: OPPSAL_LOGO_URL,
     roster: oppsalRosterData as StaticRosterPlayer[],
     statsUrl: "/data/player-stats/oppsalPlayerStats.json",
   },
   {
     name: "Sola",
+    primeTeamId: "223983",
     logoUrl: SOLA_LOGO_URL,
     roster: solaRosterData as StaticRosterPlayer[],
     statsUrl: "/data/player-stats/solaPlayerStats.json",
   },
   {
     name: "Storhamar",
+    primeTeamId: "746223",
     logoUrl: STORHAMAR_LOGO_URL,
     roster: storhamarRosterData as StaticRosterPlayer[],
     statsUrl: "/data/player-stats/storhamarPlayerStats.json",
   },
   {
     name: "Tertnes",
+    primeTeamId: "470538",
     logoUrl: TERTNES_LOGO_URL,
     roster: tertnesRosterData as StaticRosterPlayer[],
     statsUrl: "/data/player-stats/tertnesPlayerStats.json",
   },
   {
     name: "Utleira",
+    primeTeamId: "532136",
     logoUrl: UTLEIRA_LOGO_URL,
     roster: utleiraRosterData as StaticRosterPlayer[],
     statsUrl: "",
@@ -424,6 +467,7 @@ const STATIC_TEAM_CONFIGS: StaticTeamConfig[] = [
   },
   {
     name: "Flint",
+    primeTeamId: "710438",
     logoUrl: FLINT_LOGO_URL,
     roster: [],
     statsUrl: "",
@@ -533,7 +577,7 @@ const STATIC_TEAM_LOGO_ALIASES: Record<string, string> = {
   levanger: LEVANGER_LOGO_URL,
   asane: ASANE_LOGO_URL,
   trondheim: TRONDHEIM_LOGO_URL,
-  ravens: RAVENS_LOGO_URL,
+  "hk rygge": RYGGE_LOGO_URL,
   stavanger: STAVANGER_LOGO_URL,
   bækkelaget: BAEKKELAGET_LOGO_URL,
   fyllingen: FYLLINGEN_LOGO_URL,
@@ -598,7 +642,9 @@ function createStaticProfile(
       id: player.id,
       name: player.name,
       imageUrl: resolveImageUrl(player.imageUrl),
-      team: team.name,
+      // Bruk sesongens faktiske klubb naar den er kjent (laan/overgang),
+      // ellers dagens tropp.
+      team: playerStats?.teamName ?? team.name,
       position: player.position,
       shirtNumber: player.shirtNumber,
       season: getSeason(seasonId).statsCode,
@@ -874,6 +920,27 @@ export function getStaticTeams(
       logoUrl: getStaticTeamLogoUrl(team.name),
     };
   });
+}
+
+export function getStaticTeamByPrimeId(
+  primeTeamId: string,
+  seasonId?: SeasonId,
+  leagueId?: LeagueId,
+): Team | null {
+  if (!primeTeamId) return null;
+  const config = STATIC_TEAM_CONFIGS.find((team) => {
+    if (team.primeTeamId !== primeTeamId) return false;
+    const teamLeagueId = getTeamLeagueId(team);
+    if (leagueId && teamLeagueId !== leagueId) return false;
+    return !seasonId || isTeamInSeason(team.name, seasonId, teamLeagueId);
+  });
+  if (!config) return null;
+  return {
+    id: stableTeamId(config.name),
+    name: config.name,
+    slug: slugify(config.name),
+    logoUrl: getStaticTeamLogoUrl(config.name),
+  };
 }
 
 export function getStaticTeam(

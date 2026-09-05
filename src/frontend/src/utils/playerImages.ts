@@ -1,4 +1,5 @@
 import playerCardImageManifest from "../data/playerCardImageManifest.json";
+import playerImageLegacyManifest from "../data/playerImageLegacyManifest.json";
 import playerImageManifest from "../data/playerImageManifest.json";
 import type { Player } from "../types/handball";
 
@@ -14,6 +15,30 @@ const BROKEN_REMOTE_IMAGE_URLS = new Set([
   "https://nthapi.webcore.no/wp-content/uploads/2026/05/Martine-Karigstad-Andersen-Fana.png",
   "https://nthapi.webcore.no/wp-content/uploads/2026/05/Anniken-Obaidli-Storhamar-Handball-Elite.png",
 ]);
+
+// Klubbene bytter av og til portrettbilde på samme URL. Da forsvinner det
+// gamle bildet fra kilden for godt. Vi tar vare på den forrige versjonen
+// lokalt, slik at brukeren kan bla mellom nytt og gammelt bilde.
+const LEGACY_IMAGE_MANIFEST = playerImageLegacyManifest as Record<
+  string,
+  string
+>;
+
+/** Alle tilgjengelige bildevarianter for en spiller, nyeste først. */
+export function getPlayerImageVariants(
+  url: string | null | undefined,
+): string[] {
+  const current = resolveImageUrl(url);
+  if (!current) return [];
+
+  const originalUrl = (url ? (getOriginalImageUrl(url) ?? url) : "").split(
+    "?",
+  )[0];
+  const legacy = LEGACY_IMAGE_MANIFEST[originalUrl];
+
+  if (!legacy || legacy === current) return [current];
+  return [current, legacy];
+}
 
 const ORIGINAL_URL_BY_LOCAL_PATH = Object.fromEntries(
   Object.entries(IMAGE_MANIFEST).map(([originalUrl, localPath]) => [
