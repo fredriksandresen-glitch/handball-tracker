@@ -364,3 +364,20 @@
 .dark .team-logo-lightmode-navy {
   filter: none;
 }
+
+/* Spillerportrettene er utklipp med gjennomsiktig bakgrunn. Uten hjelp
+   flyter de ut i kortets gradient. drop-shadow foelger alfakanalen (ikke
+   bildekanten), saa konturen loeftes fra bakgrunnen, mens litt kontrast og
+   metning gjoer ansiktet tydeligere. Helt ugjennomsiktige bilder paavirkes
+   kun av farge-justeringen. */
+.player-portrait {
+  filter: contrast(1.08) saturate(1.14)
+    drop-shadow(0 2px 3px rgb(0 0 0 / 0.35))
+    drop-shadow(0 10px 22px rgb(0 0 0 / 0.4));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .player-portrait {
+    transition: none;
+  }
+}

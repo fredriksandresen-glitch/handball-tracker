@@ -185,10 +185,12 @@ export function PlayerCard({
           </div>
         )}
 
-        <PlayerImageFallback
-          initials={initials}
-          preserveBackground={nationalTeam?.countryCode === "FI"}
-        />
+        {(!displayedImageUrl || imageFailed) && (
+          <PlayerImageFallback
+            initials={initials}
+            preserveBackground={nationalTeam?.countryCode === "FI"}
+          />
+        )}
 
         {displayedImageUrl && !imageFailed && (
           <img
@@ -210,7 +212,7 @@ export function PlayerCard({
               }
               setImageFailed(true);
             }}
-            className="absolute inset-0 z-10 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+            className="player-portrait absolute inset-0 z-10 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />
         )}
 

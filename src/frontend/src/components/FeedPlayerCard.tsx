@@ -236,7 +236,7 @@ export function FeedPlayerCard({
             src={resolveImageUrl(player.imageUrl)}
             alt={player.name}
             onError={() => setImageFailed(true)}
-            className="absolute inset-0 z-10 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+            className="player-portrait absolute inset-0 z-10 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <PlayerImageFallback name={player.name} />
