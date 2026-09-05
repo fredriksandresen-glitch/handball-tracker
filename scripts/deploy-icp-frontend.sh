@@ -193,7 +193,7 @@ INDEX_ASSET="$(basename "$INDEX_ASSET_PATH")"
 echo "Build klar:"
 du -sh src/frontend/dist
 echo "Hovedfil: $INDEX_ASSET"
-echo "Originalbilder bevart: $DIST_PLAYER_IMAGE_COUNT"
+echo "Fullbilder (webp) bevart: $DIST_FULL_IMAGE_COUNT"
 echo "Kortbilder bevart: $DIST_CARD_IMAGE_COUNT"
 
 start_heartbeat "dfx asset-installering"
