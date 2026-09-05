@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "@tanstack/react-router";
 import type { MouseEvent } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getNationalTeamInfo } from "../data/nationalTeamPlayers";
 import type { Player } from "../types/handball";
 import {
@@ -11,38 +11,104 @@ import {
 } from "../utils/playerImages";
 import { PositionBadge } from "./PositionBadge";
 
-function Sparkline({ values }: { values: number[] }) {
-  if (values.length < 2) return null;
-  const max = Math.max(...values, 1);
-  const W = 40;
-  const H = 18;
+/**
+ * Formkurve, variant C (2026-08-27): linje med fargede punkter.
+ *
+ * EN farge, EN betydning: gronn = bedre enn referansen, rod = svakere.
+ * Referansen er sesongsnittet for den maalestokken spilleren faktisk vises
+ * paa (MEP for utespillere, redningsprosent for keepere). Siste kamp markeres
+ * med storre punkt og hvit ring — aldri med farge, slik at de to signalene
+ * ikke krasjer slik de gjorde i soyleversjonen.
+ *
+ * Bredden maales i piksler (2026-08-27): tidligere brukte vi
+ * preserveAspectRatio="none", som strakk viewBoxen til kortbredden. Paa smale
+ * mobilkort saa det riktig ut, men paa brede skjermer ble punktene til ovaler.
+ * Na tegner vi i faktiske piksler, saa sirkler forblir sirkler i alle bredder.
+ */
+function Sparkline({
+  values,
+  reference,
+}: {
+  values: number[];
+  reference?: number;
+}) {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
 
-  const pts = values.map((v, i) => {
-    const x = (i / (values.length - 1)) * W;
-    const y = H - (v / max) * (H - 3) - 2;
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
+  useEffect(() => {
+    const node = hostRef.current;
+    if (!node) return;
+    const update = () => setWidth(node.clientWidth);
+    update();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(update);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  if (values.length < 2) return null;
+  const recent = values.slice(-5);
+  const ref =
+    reference ?? recent.reduce((sum, v) => sum + v, 0) / recent.length;
+
+  const H = 28;
+  const pad = 5;
+  const W = width || 120;
+  const lo = Math.min(...recent, ref);
+  const hi = Math.max(...recent, ref);
+  const span = Math.max(hi - lo, 0.001);
+  const x = (i: number) => pad + (i / (recent.length - 1)) * (W - pad * 2);
+  const y = (v: number) => H - pad - ((v - lo) / span) * (H - pad * 2);
+  const line = recent
+    .map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)}`)
+    .join(" ");
 
   return (
-    <svg
-      width={W}
-      height={H}
-      viewBox={`0 0 ${W} ${H}`}
-      role="img"
-      aria-label="Formkurve"
-      className="flex-shrink-0 opacity-90"
-    >
-      <title>Formkurve siste kamper</title>
-      <polyline
-        points={pts.join(" ")}
-        fill="none"
-        strokeWidth="1.8"
-        stroke="white"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        opacity="0.85"
-      />
-    </svg>
+    <div ref={hostRef} className="mt-2.5 w-full">
+      {width > 0 && (
+        <svg
+          width={W}
+          height={H}
+          viewBox={`0 0 ${W} ${H}`}
+          className="block overflow-visible"
+          role="img"
+          aria-label="Formkurve siste kamper"
+        >
+          <title>Formkurve siste kamper</title>
+          <line
+            x1={pad}
+            y1={y(ref)}
+            x2={W - pad}
+            y2={y(ref)}
+            stroke="rgba(255,255,255,.3)"
+            strokeWidth="1"
+            strokeDasharray="3 3"
+          />
+          <path
+            d={line}
+            fill="none"
+            stroke="rgba(255,255,255,.5)"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {recent.map((v, i) => {
+            const isLast = i === recent.length - 1;
+            return (
+              <circle
+                key={`pt-${i}-${v}`}
+                cx={x(i)}
+                cy={y(v)}
+                r={isLast ? 3.4 : 2.4}
+                fill={v >= ref ? "#34d399" : "#f87171"}
+                stroke={isLast ? "#fff" : "none"}
+                strokeWidth={isLast ? 1.4 : 0}
+              />
+            );
+          })}
+        </svg>
+      )}
+    </div>
   );
 }
 
@@ -95,6 +161,8 @@ interface Props {
   latestSavePct?: number;
   statItems?: CardStat[];
   sparkValues?: number[];
+  /** Sesongsnitt for samme maalestokk som sparkValues (MEP eller redning-%). */
+  sparkReference?: number;
   sparkLabel?: string;
   followOverlay?: boolean;
   imagePriority?: boolean;
@@ -116,6 +184,7 @@ export function PlayerCard({
   latestSavePct,
   statItems,
   sparkValues = [],
+  sparkReference,
   sparkLabel = "Form",
   followOverlay = false,
   imagePriority = false,
@@ -216,20 +285,26 @@ export function PlayerCard({
           />
         )}
 
-        <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+        {/* Lettere gradient (designgjennomgang 2026-08-27): fire stopp i stedet
+            for ett hardt sprang, slik at ansiktet slipper fram uten at teksten
+            blir mindre lesbar. */}
+        <div
+          className="absolute inset-0 z-20"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(6,12,26,0.94) 0%, rgba(6,12,26,0.72) 18%, rgba(6,12,26,0.28) 42%, rgba(6,12,26,0.02) 62%, transparent 100%)",
+          }}
+        />
 
-        {nationalTeam && (
-          <div className="absolute left-3 top-3 z-30 rounded-full border border-white/20 bg-black/35 px-2.5 py-1 text-[10px] font-display font-black uppercase tracking-wide text-white shadow-subtle backdrop-blur-md">
-            {nationalTeam.countryCode}
-          </div>
-        )}
+        {/* Posisjon oppe til VENSTRE (2026-08-27): hoyre side er reservert til
+            folge-knappen, og landkoden er fjernet — flagget i bakgrunnen sier
+            allerede hvilket land spilleren tilhorer. */}
+        <div className="absolute left-3 top-3 z-30">
+          <PositionBadge position={player.position} variant="overlay" />
+        </div>
 
         <div className="absolute bottom-0 left-0 right-0 z-30 px-3.5 pb-3.5 pt-12">
-          <div className="mb-1.5">
-            <PositionBadge position={player.position} variant="overlay" />
-          </div>
-
-          <p className="font-display font-black text-white leading-tight text-base truncate drop-shadow-sm">
+          <p className="font-display font-black text-white leading-tight text-[17px] tracking-tight truncate drop-shadow-sm">
             {player.name}
           </p>
 
@@ -240,74 +315,115 @@ export function PlayerCard({
           )}
 
           {hasStats && (
-            <div className="flex items-end justify-between mt-2 pt-2 border-t border-white/15 gap-2">
-              <div className="flex gap-3 min-w-0">
+            <div className="mt-2 pt-2 border-t border-white/15">
+              {/* Ett hovedtall, resten som stottetall (designgjennomgang
+                  2026-08-27). For var alle like store, sa oyet visste ikke
+                  hvor det skulle. */}
+              <div className="flex items-end gap-3.5 min-w-0">
                 {hasGenericStats ? (
-                  genericStats.slice(0, 3).map((item) => (
-                    <div key={`${item.label}-${item.value}`} className="min-w-0">
-                      <span
-                        className={cn(
-                          "block leading-none tabular-nums truncate",
-                          item.emphasis
-                            ? "font-display font-black text-xl text-white"
-                            : "font-display font-bold text-lg text-white/90",
-                        )}
-                      >
-                        {item.value}
-                      </span>
-                      <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5 truncate">
-                        {item.label}
-                      </span>
-                    </div>
-                  ))
+                  genericStats.slice(0, 3).map((item, index) => {
+                    const isHero = item.emphasis ?? index === 0;
+                    return (
+                      <div key={`${item.label}-${item.value}`} className="min-w-0">
+                        <span
+                          className={cn(
+                            "block leading-none tabular-nums truncate",
+                            isHero
+                              ? "font-display font-black text-[30px] tracking-tight text-white"
+                              : "font-display font-bold text-[15px] text-white/90",
+                          )}
+                        >
+                          {item.value}
+                        </span>
+                        <span
+                          className={cn(
+                            "block text-[9px] uppercase tracking-wide mt-1 truncate",
+                            isHero
+                              ? "font-bold text-white/75"
+                              : "text-white/55",
+                          )}
+                        >
+                          {item.label}
+                        </span>
+                      </div>
+                    );
+                  })
                 ) : (
                   <>
                     {latestMep !== undefined && (
                       <div>
-                        <span className="block font-display font-black text-xl text-white leading-none tabular-nums">
+                        <span className="block font-display font-black text-[30px] tracking-tight text-white leading-none tabular-nums">
                           {latestMep.toFixed(1)}
                         </span>
-                        <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5">
+                        <span className="block text-[9px] font-bold uppercase tracking-wide text-white/75 mt-1">
                           MEP sist
                         </span>
                       </div>
                     )}
                     {latestSaves !== undefined && (
                       <div>
-                        <span className="block font-display font-bold text-lg text-white/90 leading-none tabular-nums">
+                        <span
+                          className={cn(
+                            "block font-display leading-none tabular-nums",
+                            latestMep === undefined
+                              ? "font-black text-[30px] tracking-tight text-white"
+                              : "font-bold text-[15px] text-white/90",
+                          )}
+                        >
                           {latestSaves}
                         </span>
-                        <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5">
+                        <span
+                          className={cn(
+                            "block text-[9px] uppercase tracking-wide mt-1",
+                            latestMep === undefined
+                              ? "font-bold text-white/75"
+                              : "text-white/55",
+                          )}
+                        >
                           Redn.
                         </span>
                       </div>
                     )}
                     {latestSavePct !== undefined && (
                       <div>
-                        <span className="block font-display font-bold text-lg text-white/90 leading-none tabular-nums">
+                        <span className="block font-display font-bold text-[15px] text-white/90 leading-none tabular-nums">
                           {latestSavePct.toFixed(1)}%
                         </span>
-                        <span className="block text-[8px] uppercase tracking-wide text-white/60 mt-0.5">
+                        <span className="block text-[9px] uppercase tracking-wide text-white/55 mt-1">
                           Red%
                         </span>
                       </div>
                     )}
                     {displayGoals !== undefined && latestSaves === undefined && (
                       <div>
-                        <span className="block font-display font-black text-xl text-white leading-none">
+                        <span
+                          className={cn(
+                            "block font-display leading-none tabular-nums",
+                            latestMep === undefined
+                              ? "font-black text-[30px] tracking-tight text-white"
+                              : "font-bold text-[15px] text-white/90",
+                          )}
+                        >
                           {displayGoals}
                         </span>
-                        <span className="block text-[9px] uppercase tracking-wide text-white/60 mt-0.5">
+                        <span
+                          className={cn(
+                            "block text-[9px] uppercase tracking-wide mt-1",
+                            latestMep === undefined
+                              ? "font-bold text-white/75"
+                              : "text-white/55",
+                          )}
+                        >
                           Mål
                         </span>
                       </div>
                     )}
                     {minutes !== undefined && (
                       <div>
-                        <span className="block font-display font-bold text-lg text-white/90 leading-none">
+                        <span className="block font-display font-bold text-[15px] text-white/90 leading-none tabular-nums">
                           {minutes}
                         </span>
-                        <span className="block text-[9px] uppercase tracking-wide text-white/60 mt-0.5">
+                        <span className="block text-[9px] uppercase tracking-wide text-white/55 mt-1">
                           Min
                         </span>
                       </div>
@@ -315,13 +431,13 @@ export function PlayerCard({
                   </>
                 )}
               </div>
+              {/* Formkurven ligger na i full bredde under tallene, ikke klemt
+                  inn til hoyre. Gir plass til stolpene og et roligere kort. */}
               {hasSpark && (
-                <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
-                  <Sparkline values={sparkValues} />
-                  <span className="text-[9px] uppercase tracking-wide text-white/50">
-                    {sparkLabel}
-                  </span>
-                </div>
+                <>
+                  <Sparkline values={sparkValues} reference={sparkReference} />
+                  <span className="sr-only">{sparkLabel}</span>
+                </>
               )}
             </div>
           )}

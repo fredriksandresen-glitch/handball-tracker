@@ -23,6 +23,7 @@ import {
   type LeagueId,
   type SeasonId,
 } from "../data/seasons";
+import { getStaticTeamLogoUrl } from "../services/clawdbotPlayerProfile";
 import { useTeams } from "../hooks/useTeams";
 import { getStaticTeamByPrimeId } from "../services/clawdbotPlayerProfile";
 import type { Team } from "../types/handball";
@@ -49,41 +50,103 @@ function Movement({ delta }: { delta: number }) {
   return <span className="inline-flex items-center justify-center text-muted-foreground"><Minus className="size-3.5" /></span>;
 }
 
-function TeamLogo({ team }: { team?: Team }) {
-  if (team?.logoUrl) {
-    return <span className="size-8 flex items-center justify-center shrink-0"><img src={team.logoUrl} alt="" className={cn("size-8 object-contain", getTeamLogoClassName(team?.name))} /></span>;
+function TeamLogo({ team, teamName }: { team?: Team; teamName?: string }) {
+  // Fallback til navneoppslag (2026-08-27): lag i tabellen som ikke matcher et
+  // Team-objekt fikk skjold selv om logoen finnes. Na slaar vi opp paa navn.
+  const name = team?.name ?? teamName;
+  const logoUrl = team?.logoUrl ?? getStaticTeamLogoUrl(name);
+  if (logoUrl) {
+    return <span className="size-8 flex items-center justify-center shrink-0"><img src={logoUrl} alt="" className={cn("size-8 object-contain", getTeamLogoClassName(name))} /></span>;
   }
   return <span className="size-8 rounded-lg bg-muted border border-border flex items-center justify-center shrink-0"><Shield className="size-4 text-muted-foreground" /></span>;
 }
 
 function StandingRow({
-  standing, team, index, season, league,
+  standing, team, index, season, league, totalTeams = 0,
 }: {
-  standing: LeagueStanding; team?: Team; index: number; season: SeasonId; league: LeagueId;
+  standing: LeagueStanding; team?: Team; index: number; season: SeasonId; league: LeagueId; totalTeams?: number;
 }) {
   const goalDifference = standing.goalsFor - standing.goalsAgainst;
+  const decided = standing.wins + standing.draws + standing.losses;
+  const pct = (value: number) => (decided > 0 ? (value / decided) * 100 : 0);
+  // Fargestripe til venstre. NB: grensene er ANTATT (topp 4 sluttspill,
+  // 5-6 kvalifisering, nederste 2 nedrykk) og ma verifiseres mot NHFs
+  // reglement for sesongen for dette presenteres som fasit.
+  const stripe =
+    standing.rank <= 4
+      ? "bg-chart-2"
+      : standing.rank <= 6
+        ? "bg-chart-4"
+        : totalTeams > 0 && standing.rank > totalTeams - 2
+          ? "bg-destructive"
+          : "bg-transparent";
+
   const content = (
-    <div className="grid grid-cols-[34px_minmax(140px,1fr)_46px_84px_44px_34px] md:grid-cols-[44px_minmax(220px,1fr)_60px_96px_80px_54px_40px] items-center gap-2 px-3 py-3 text-sm">
-      <div className="font-mono font-black text-foreground tabular-nums">{standing.rank}</div>
-      <div className="flex items-center gap-2 min-w-0">
-        <TeamLogo team={team} />
-        <div className="min-w-0">
-          <p className="font-display font-black text-foreground truncate">{standing.name}</p>
-          <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{standing.played} kamper</p>
+    <div className="relative grid grid-cols-[30px_minmax(0,1fr)_auto] md:grid-cols-[38px_minmax(0,1fr)_150px_92px_66px_auto] items-center gap-3 py-3 pl-3 pr-3.5 md:gap-4">
+      <span className={cn("absolute left-0 inset-y-0 w-[3px]", stripe)} aria-hidden="true" />
+
+      {/* Plassering med bevegelsespil under — sparer en egen kolonne. */}
+      <div className="flex flex-col items-center gap-0.5">
+        <span className="font-display font-black text-[15px] leading-none tabular-nums text-foreground">
+          {standing.rank}
+        </span>
+        <Movement delta={standing.rankDelta} />
+      </div>
+
+      <div className="min-w-0">
+        <div className="flex items-center gap-2 min-w-0">
+          <TeamLogo team={team} teamName={standing.name} />
+          <span className="font-display font-black text-foreground truncate">{standing.name}</span>
+        </div>
+        {/* Stablet S/U/T-soyle: tre tall pa 28px hver var uleselig pa mobil. */}
+        <div className="md:hidden mt-1.5 flex h-[5px] overflow-hidden rounded-full bg-muted" aria-hidden="true">
+          <span className="bg-chart-2" style={{ width: `${pct(standing.wins)}%` }} />
+          <span className="bg-chart-4" style={{ width: `${pct(standing.draws)}%` }} />
+          <span className="bg-destructive" style={{ width: `${pct(standing.losses)}%` }} />
+        </div>
+        <div className="md:hidden mt-1 flex items-center gap-1.5 font-mono text-[11px] tabular-nums text-muted-foreground">
+          <span className="font-bold text-chart-2">{standing.wins}S</span>
+          <span className="font-bold text-chart-4">{standing.draws}U</span>
+          <span className="font-bold text-destructive">{standing.losses}T</span>
+          <span className="size-[3px] rounded-full bg-border" />
+          <span>{standing.played} kamper</span>
+          <span className="size-[3px] rounded-full bg-border" />
+          <span className={cn("font-bold", goalDifference > 0 && "text-chart-2", goalDifference < 0 && "text-destructive")}>
+            {goalDifference > 0 ? `+${goalDifference}` : goalDifference}
+          </span>
         </div>
       </div>
-      <div className="text-right">
-        <p className="font-display font-black text-lg text-primary leading-none tabular-nums">{standing.points}</p>
-        <p className="text-[9px] uppercase tracking-widest text-muted-foreground">P</p>
+
+      {/* Fra md og opp far soyle, malscore og differanse egne kolonner. */}
+      <div className="hidden md:block">
+        <div className="flex h-[5px] overflow-hidden rounded-full bg-muted" aria-hidden="true">
+          <span className="bg-chart-2" style={{ width: `${pct(standing.wins)}%` }} />
+          <span className="bg-chart-4" style={{ width: `${pct(standing.draws)}%` }} />
+          <span className="bg-destructive" style={{ width: `${pct(standing.losses)}%` }} />
+        </div>
+        <div className="mt-1.5 flex items-center gap-2 font-mono text-[11px] tabular-nums">
+          <span className="font-bold text-chart-2">{standing.wins}S</span>
+          <span className="font-bold text-chart-4">{standing.draws}U</span>
+          <span className="font-bold text-destructive">{standing.losses}T</span>
+          <span className="text-muted-foreground">· {standing.played} kamper</span>
+        </div>
       </div>
-      <div className="grid grid-cols-3 text-center font-mono font-bold tabular-nums text-foreground">
-        <span>{standing.wins}</span><span>{standing.draws}</span><span>{standing.losses}</span>
+      <div className="hidden md:block text-right font-mono text-xs text-muted-foreground tabular-nums">
+        {standing.goalsFor}–{standing.goalsAgainst}
       </div>
-      <div className="hidden md:block text-right font-mono font-bold text-muted-foreground tabular-nums">{standing.goalsFor}-{standing.goalsAgainst}</div>
-      <div className={cn("text-right font-mono font-bold tabular-nums", goalDifference > 0 && "text-chart-2", goalDifference < 0 && "text-destructive", goalDifference === 0 && "text-muted-foreground")}>
+      <div className={cn("hidden md:block text-right font-mono font-bold tabular-nums", goalDifference > 0 && "text-chart-2", goalDifference < 0 && "text-destructive", goalDifference === 0 && "text-muted-foreground")}>
         {goalDifference > 0 ? `+${goalDifference}` : goalDifference}
       </div>
-      <div className="flex justify-end"><Movement delta={standing.rankDelta} /></div>
+
+      {/* Poeng er tallet folk leter etter — derfor storst og alene. */}
+      <div className="text-right shrink-0">
+        <span className="block font-display font-black text-2xl leading-none tracking-tight tabular-nums text-foreground">
+          {standing.points}
+        </span>
+        <span className="block text-[9px] font-bold uppercase tracking-widest text-muted-foreground mt-0.5">
+          Poeng
+        </span>
+      </div>
     </div>
   );
   return (
@@ -172,14 +235,24 @@ export default function TeamsPage() {
         </section>
       ) : (
         <section className="rounded-2xl border border-border bg-card overflow-hidden">
-          <div className="grid grid-cols-[34px_minmax(140px,1fr)_46px_84px_44px_34px] md:grid-cols-[44px_minmax(220px,1fr)_60px_96px_80px_54px_40px] items-center gap-2 px-3 py-2 border-b border-border bg-muted/30 text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold">
-            <span>#</span><span>Lag</span><span className="text-right">Poeng</span>
-            <span className="grid grid-cols-3 text-center"><span>S</span><span>U</span><span>T</span></span>
-            <span className="hidden md:block text-right">Mål</span><span className="text-right">+/-</span><span className="text-right">Form</span>
+          <div className="grid grid-cols-[30px_minmax(0,1fr)_auto] md:grid-cols-[38px_minmax(0,1fr)_150px_92px_66px_auto] items-center gap-3 md:gap-4 py-2 pl-3 pr-3.5 border-b border-border bg-muted/30 text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold">
+            <span>#</span>
+            <span>Lag</span>
+            <span className="hidden md:block">Resultater</span>
+            <span className="hidden md:block text-right">Mål</span>
+            <span className="hidden md:block text-right">+/-</span>
+            <span className="text-right">Poeng</span>
           </div>
           {standings.map((standing, index) => (
-            <StandingRow key={standing.primeTeamId} standing={standing} team={resolveTeam(standing)} index={index} season={seasonId} league={leagueId} />
+            <StandingRow key={standing.primeTeamId} standing={standing} team={resolveTeam(standing)} index={index} season={seasonId} league={leagueId} totalTeams={standings.length} />
           ))}
+          {/* Tegnforklaring for fargestripen til venstre. */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-border bg-muted/20 px-3 py-2.5 text-[11px] text-muted-foreground">
+            <span className="flex items-center gap-1.5"><i className="h-[3px] w-3 rounded-full bg-chart-2" />Seier</span>
+            <span className="flex items-center gap-1.5"><i className="h-[3px] w-3 rounded-full bg-chart-4" />Uavgjort</span>
+            <span className="flex items-center gap-1.5"><i className="h-[3px] w-3 rounded-full bg-destructive" />Tap</span>
+            <span className="ml-auto text-muted-foreground/70">Fargestripe: sluttspill / kvalifisering / nedrykk</span>
+          </div>
         </section>
       )}
     </div>

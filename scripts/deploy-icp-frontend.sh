@@ -63,18 +63,11 @@ if [[ "$BUILD_MODE" != "quick" && "$BUILD_MODE" != "full" ]]; then
   exit 1
 fi
 
-VITE_AI_CHAT_MODE="${VITE_AI_CHAT_MODE:-live}"
+VITE_AI_CHAT_MODE="${VITE_AI_CHAT_MODE:-auto}"
 VITE_CLAWDBOT_AI_URL="${VITE_CLAWDBOT_AI_URL:-}"
 VITE_AI_CHAT_REQUEST_TIMEOUT_MS="${VITE_AI_CHAT_REQUEST_TIMEOUT_MS:-45000}"
 VITE_ICP_NETWORK="${VITE_ICP_NETWORK:-ic}"
 VITE_ICP_BACKEND_CANISTER_ID="${VITE_ICP_BACKEND_CANISTER_ID:-lj6bx-dyaaa-aaaap-qumhq-cai}"
-
-if [[ "$VITE_AI_CHAT_MODE" == "live" ]]; then
-  [[ "$VITE_CLAWDBOT_AI_URL" =~ ^https:// ]] || {
-    echo "VITE_CLAWDBOT_AI_URL må være en offentlig HTTPS-URL i live-modus."
-    exit 1
-  }
-fi
 
 export VITE_AI_CHAT_MODE
 export VITE_CLAWDBOT_AI_URL
@@ -168,11 +161,8 @@ test -f src/frontend/dist/env.json
 node - <<'NODE'
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync('src/frontend/dist/env.json', 'utf8'));
-if (config.ai_chat_mode === 'live' && !String(config.clawdbot_ai_url || '').startsWith('https://')) {
-  throw new Error('dist/env.json mangler offentlig AI-endepunkt i live-modus');
-}
-console.log(`AI runtime-modus: ${config.ai_chat_mode}`);
-console.log(`AI runtime-endepunkt konfigurert: ${Boolean(config.clawdbot_ai_url)}`);
+console.log('AI-chattransport: ICP backend job queue');
+console.log(`Valgfritt rapportendepunkt konfigurert: ${Boolean(config.clawdbot_ai_url)}`);
 NODE
 
 grep -q 'initial-app-shell' src/frontend/dist/index.html

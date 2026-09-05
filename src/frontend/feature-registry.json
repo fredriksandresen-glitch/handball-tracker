@@ -1,0 +1,49 @@
+{
+  "_comment": "Feature registry: hver funksjon som MÅ finnes i et bygg. Fanger opp at man bygger fra feil branch og stille mister live-funksjonalitet.",
+  "features": [
+    {
+      "id": "form-curve",
+      "label": "Formkurve (myk SVG-kurve, ikke søyler)",
+      "bundle": "PlayerPage",
+      "requiredMarkers": [
+        "formArea",
+        "Formkurve",
+        "Stigende"
+      ],
+      "forbiddenMarkers": [
+        "rounded-t-lg"
+      ],
+      "note": "Gikk tapt 2026-08-25 ved bygg fra gammel branch 4a7081f."
+    },
+    {
+      "id": "club-spells",
+      "label": "Klubbopphold 3-delt med logo",
+      "bundle": "PlayerPage",
+      "requiredMarkers": [
+        "Klubbopphold",
+        "utlån"
+      ],
+      "forbiddenMarkers": []
+    },
+    {
+      "id": "nm-cup",
+      "label": "NM-seksjon på lagside",
+      "bundle": "TeamPage",
+      "requiredMarkers": [
+        "team-nm-section",
+        "team-nm-toggle"
+      ],
+      "forbiddenMarkers": [],
+      "note": "Fantes kun som minifisert JS på canister frem til 2026-08-25."
+    },
+    {
+      "id": "build-stamp",
+      "label": "Commit-SHA stemplet i bygget",
+      "bundle": "index.html",
+      "requiredMarkers": [
+        "build-commit"
+      ],
+      "forbiddenMarkers": []
+    }
+  ]
+}

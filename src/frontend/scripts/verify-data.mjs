@@ -82,30 +82,55 @@ for (const c of configs) {
 }
 
 // ── 1. Laanespillere beholder klubben de faktisk spilte for ─────────────────
-// Speiler getStaticPlayerEntry(playerId, ARCHIVE_SEASON_ID).
-function resolveArchive(playerId) {
-  const entries = [];
-  for (const c of configs) {
-    const r = rosters.get(c.name);
-    if (!Array.isArray(r)) continue;
-    if (r.some((p) => String(p.id) === playerId)) entries.push(c);
+// To mekanismer kan gi dette, og begge godtas:
+//   a) playerSeasonSpells2526.json (foretrukket) -> getPlayerSeasonScopes
+//   b) teamName paa 1. divisjons-statsoppforingen -> getStaticPlayerEntry
+// Sjekken maa akseptere begge; ellers slaar den falsk alarm naar
+// datamodellen forbedres.
+const spellsPath = path.join(D, "playerSeasonSpells2526.json");
+const spells = fs.existsSync(spellsPath) ? readJson(spellsPath) : [];
+const spellList = Array.isArray(spells) ? spells : Object.values(spells);
+
+function resolveArchiveClub(playerId) {
+  const spell = spellList.find(
+    (s) => String(s.canonicalPlayerId) === playerId && s.seasonId === "2025-26",
+  );
+  if (spell?.teamName) return { shows: spell.teamName, via: "spell/" + (spell.spellType ?? "ukjent") };
+
+  if (statsById[playerId]?.teamName) {
+    return { shows: statsById[playerId].teamName, via: "statsTeamName" };
   }
-  const loan = entries.find((c) => c.league === "first-division" && statsById[playerId]?.teamName);
-  if (loan) return { team: loan, via: "laan", shows: statsById[playerId].teamName };
-  const exact = entries.find((c) => c.dataSeason === "2025-26");
-  if (exact) return { team: exact, via: "sesong", shows: exact.name };
-  const fb = entries.find((c) => c.league === "first-division" && statsById[playerId]);
-  return fb ? { team: fb, via: "fallback", shows: statsById[playerId].teamName ?? fb.name } : null;
+  return null;
 }
 
 const LOAN_EXPECTATIONS = [
   { id: "22398210032285", name: "Linnea Isabel Ingeborg Aula", expect: "Kjelsås" },
 ];
 for (const exp of LOAN_EXPECTATIONS) {
-  const res = resolveArchive(exp.id);
-  if (!res) fail("Fjoraarssesong: " + exp.name + " gir INGEN treff (forventet " + exp.expect + ")");
+  const res = resolveArchiveClub(exp.id);
+  if (!res) fail("Fjoraarssesong: " + exp.name + " har ingen registrert klubb (forventet " + exp.expect + ")");
   else if (norm(res.shows) !== norm(exp.expect)) fail("Fjoraarssesong: " + exp.name + " viser " + res.shows + ", forventet " + exp.expect);
   else ok("Fjoraarssesong: " + exp.name + " -> " + res.shows + " (via " + res.via + ")");
+}
+
+// ── 1b. Toppliste maa ha data naar sesongen er i gang ───────────────────────
+// Fanger tilfellet der tabellen viser spilte kamper mens topplisten er tom
+// fordi sesongens spillerstatistikk aldri ble hentet inn.
+const playedNow = [...standingsSrc.matchAll(/played: (\d+),/g)]
+  .reduce((n, m) => n + Number(m[1]), 0);
+const seasonStatFiles = ["elkjop2627PlayerStats.json", "firstDivision2627PlayerStats.json"];
+let seasonPlayers = 0;
+for (const f of seasonStatFiles) {
+  const fp = path.join(D, f);
+  if (!fs.existsSync(fp)) continue;
+  const raw = readJson(fp);
+  const list = Array.isArray(raw) ? raw : Object.values(raw);
+  seasonPlayers += list.filter((p) => (p?.seasonStats?.matches ?? 0) > 0).length;
+}
+if (playedNow > 0 && seasonPlayers === 0) {
+  fail("Tabellen viser " + playedNow + " spilte kamper, men ingen spiller har statistikk for inneverende sesong - topplisten blir tom");
+} else if (playedNow > 0) {
+  ok("Toppliste har data: " + seasonPlayers + " spillere med kamper (tabell: " + playedNow + " spilte)");
 }
 
 // ── 2. Alle tabellrader kan aapnes ──────────────────────────────────────────

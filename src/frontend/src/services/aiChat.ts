@@ -3,6 +3,7 @@ import {
   loadRuntimeConfig,
   type RuntimeConfig,
 } from "./runtimeConfig";
+import { loadPlayerSearchIndex } from "./searchIndex";
 
 const MAX_CONVERSATION_MESSAGES = 8;
 const MAX_CONTEXT_MESSAGE_LENGTH = 600;
@@ -86,7 +87,8 @@ type SearchIndexEntry = {
   teamName: string;
 };
 
-let searchIndexPromise: Promise<SearchIndexEntry[]> | undefined;
+// Bruker den delte indekscachen (se services/searchIndex.ts) slik at
+// fila pa ~181 kB ikke lastes ned flere ganger per sidevisning.
 
 function normalize(value: string) {
   return value
@@ -101,16 +103,12 @@ function normalize(value: string) {
 }
 
 async function loadSearchIndex() {
-  searchIndexPromise ??= fetch("/data/search-player-index.json")
-    .then(async (response) => {
-      if (!response.ok) return [];
-      return (await response.json()) as SearchIndexEntry[];
-    })
-    .catch(() => []);
-  return searchIndexPromise;
+  return loadPlayerSearchIndex();
 }
 
-async function resolveEntities(question: string): Promise<AiChatEntity[]> {
+export async function resolveAiChatEntities(
+  question: string,
+): Promise<AiChatEntity[]> {
   const normalizedQuestion = normalize(question);
   if (!normalizedQuestion) return [];
 
@@ -360,7 +358,7 @@ export async function askAiChat(
     throw new Error("AI-tjenesten er ikke konfigurert for live analyse.");
   }
 
-  const entities = await resolveEntities(question);
+  const entities = await resolveAiChatEntities(question);
   return sendLiveRequest(
     endpoint,
     createRequest(input, entities, runtimeConfig),

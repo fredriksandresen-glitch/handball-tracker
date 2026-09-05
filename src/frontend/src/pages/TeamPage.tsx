@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCheck,
+  ChevronRight,
   Layers,
   ListFilter,
   Shield,
@@ -38,8 +39,17 @@ import {
   usePlayersByTeam,
   useTeam,
 } from "../hooks/useTeam";
-import { resolveImageUrl } from "../utils/playerImages";
+import {
+  resolveImageUrl,
+  resolvePlayerCardImageSources,
+} from "../utils/playerImages";
 import { getTeamLogoClassName } from "../utils/teamLogoStyles";
+import {
+  CUP_SEASON,
+  SHOW_CUP_SECTION,
+  describeCupMatch,
+  getCupMatchesForTeam,
+} from "../utils/cupFixtures";
 import { useTeams } from "../hooks/useTeams";
 import {
   getLeagueLabel,
@@ -185,7 +195,9 @@ function RosterPlayerCard({
 
   const isMutating = followMutation.isPending || unfollowMutation.isPending;
   const following = isFollowing ?? false;
-  const imageUrl = resolveImageUrl(player.imageUrl);
+  // Bruk kortbilde (400/720w), ikke originalen paa 1,4 MB.
+  const cardImage = resolvePlayerCardImageSources(player.imageUrl);
+  const imageUrl = cardImage?.src;
   const [imageFailed, setImageFailed] = useState(false);
 
   return (
@@ -215,8 +227,14 @@ function RosterPlayerCard({
           />
         )}
 
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+        {/* Lettere gradient (designgjennomgang 2026-08-27) — samme som de andre kortene. */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(6,12,26,0.94) 0%, rgba(6,12,26,0.72) 18%, rgba(6,12,26,0.28) 42%, rgba(6,12,26,0.02) 62%, transparent 100%)",
+          }}
+        />
 
         {/* Follow button — top right */}
         <button
@@ -282,29 +300,31 @@ function RosterPlayerCard({
             (lastGoals !== null ||
               lastSaves !== null ||
               (lastMins !== null && lastMins > 0)) && (
-            <div className="flex items-center gap-3 mt-2 pt-2 border-t border-white/15">
-              {keeper && lastSaves !== null && (
-                <div>
-                  <span className={cn("font-display font-black text-base leading-none", lastSaves > 0 ? "text-primary" : "text-white/50")}>{lastSaves}</span>
-                  <p className="text-[9px] text-white/50 uppercase tracking-wide mt-0.5">Redn.</p>
-                </div>
-              )}
+            <div className="flex items-end gap-3.5 mt-2 pt-2 border-t border-white/15">
+              {/* Keeper: redningsprosent som hovedtall. Utespiller: mal.
+                  Ett stort tall, resten som stotte (designgjennomgang 2026-08-27). */}
               {keeper && lastSavePct !== undefined && (
                 <div>
-                  <span className="font-display font-bold text-sm leading-none text-white/80">{lastSavePct.toFixed(1)}%</span>
-                  <p className="text-[9px] text-white/50 uppercase tracking-wide mt-0.5">Red%</p>
+                  <span className="block font-display font-black text-2xl tracking-tight leading-none text-white tabular-nums">{lastSavePct.toFixed(0)}%</span>
+                  <p className="text-[9px] font-bold text-white/75 uppercase tracking-wide mt-1">Redning</p>
+                </div>
+              )}
+              {keeper && lastSaves !== null && (
+                <div>
+                  <span className="block font-display font-bold text-[15px] leading-none text-white/90 tabular-nums">{lastSaves}</span>
+                  <p className="text-[9px] text-white/55 uppercase tracking-wide mt-1">Redn.</p>
                 </div>
               )}
               {!keeper && lastGoals !== null && (
                 <div>
-                  <span className={cn("font-display font-black text-base leading-none", lastGoals > 0 ? "text-primary" : "text-white/50")}>{lastGoals}</span>
-                  <p className="text-[9px] text-white/50 uppercase tracking-wide mt-0.5">Mål</p>
+                  <span className="block font-display font-black text-2xl tracking-tight leading-none text-white tabular-nums">{lastGoals}</span>
+                  <p className="text-[9px] font-bold text-white/75 uppercase tracking-wide mt-1">Mål</p>
                 </div>
               )}
               {!keeper && lastMins !== null && lastMins > 0 && (
                 <div>
-                  <span className="font-display font-bold text-sm leading-none text-white/80">{lastMins}</span>
-                  <p className="text-[9px] text-white/50 uppercase tracking-wide mt-0.5">Min</p>
+                  <span className="block font-display font-bold text-[15px] leading-none text-white/90 tabular-nums">{lastMins}</span>
+                  <p className="text-[9px] text-white/55 uppercase tracking-wide mt-1">Min</p>
                 </div>
               )}
             </div>
@@ -344,6 +364,12 @@ export default function TeamPage() {
   const { data: followedPlayers = [] } = useFollowedPlayers();
   const followPlayer = useFollowPlayer();
   const [rosterSort, setRosterSort] = useState<RosterSort>("position");
+  const [cupExpanded, setCupExpanded] = useState(false);
+
+  const cupMatches = useMemo(
+    () => getCupMatchesForTeam(team?.name),
+    [team?.name],
+  );
 
   const followedIds = useMemo(
     () => new Set(followedPlayers.map((p) => p.id.toString())),
@@ -574,6 +600,88 @@ export default function TeamPage() {
         />
       )}
 
+      {/* ── NM (cup) — skjult til dataene er synket, se SHOW_CUP_SECTION ── */}
+      {SHOW_CUP_SECTION && cupMatches.length > 0 && team && (
+        <div className="space-y-3" data-ocid="team-nm-section">
+          <button
+            type="button"
+            onClick={() => setCupExpanded((v) => !v)}
+            aria-expanded={cupExpanded}
+            className={cn(
+              "w-full flex items-center justify-between gap-3 rounded-xl border px-4 py-3 transition-colors",
+              cupExpanded
+                ? "border-primary/50 bg-primary/5"
+                : "border-border bg-card hover:border-primary/40",
+            )}
+            data-ocid="team-nm-toggle"
+          >
+            <span className="flex items-center gap-2">
+              <Trophy className="size-4 text-primary" />
+              <span className="text-sm font-display font-bold text-foreground">
+                {`NM ${CUP_SEASON.replace("-", "/")}`}
+              </span>
+              <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                {cupMatches.length} {cupMatches.length === 1 ? "kamp" : "kamper"}
+              </span>
+            </span>
+            <ChevronRight
+              className={cn(
+                "size-4 text-muted-foreground transition-transform",
+                cupExpanded && "rotate-90",
+              )}
+            />
+          </button>
+          {cupExpanded && (
+            <ul className="space-y-2" data-ocid="team-nm-list">
+              {cupMatches.map((match) => {
+                const view = describeCupMatch(match, team.name);
+                return (
+                  <li
+                    key={match.id}
+                    className="rounded-xl border border-border bg-card px-4 py-3"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                            {view.isHome ? "H" : "B"}
+                          </span>
+                          <span className="truncate text-sm font-display font-semibold text-foreground">
+                            {view.opponent}
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-muted-foreground">
+                          {match.kickoff
+                            ? new Date(match.kickoff * 1000).toLocaleDateString("nb-NO", {
+                                day: "2-digit",
+                                month: "short",
+                              })
+                            : "Dato ikke satt"}
+                        </span>
+                      </div>
+                      {match.played ? (
+                        <span
+                          className={cn(
+                            "shrink-0 font-display font-bold tabular-nums",
+                            view.won && "text-primary",
+                            view.lost && "text-muted-foreground",
+                          )}
+                        >
+                          {view.teamScore}–{view.opponentScore}
+                        </span>
+                      ) : (
+                        <span className="shrink-0 text-[11px] uppercase tracking-wide text-muted-foreground">
+                          Ikke spilt
+                        </span>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      )}
       {/* ── Roster ── */}
       {players.length > 0 ? (
         <div className="space-y-5" data-ocid="team-roster">

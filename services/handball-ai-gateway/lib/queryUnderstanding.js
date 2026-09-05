@@ -43,10 +43,62 @@ function tokenMatches(questionToken, nameToken) {
   }
 
   return (
-    questionToken.length >= 5 &&
-    nameToken.length >= 5 &&
+    questionToken.length >= 4 &&
+    nameToken.length >= 4 &&
     levenshteinDistance(questionToken, nameToken) <= 1
   );
+}
+
+function tokenSimilarity(left, right) {
+  if (tokenMatches(left, right)) return 1;
+  return 1 - levenshteinDistance(left, right) / Math.max(left.length, right.length);
+}
+
+function rankPlayerCandidates(question, players, limit = 12) {
+  const baseQuestionTokens = tokenize(question).filter(
+    (token) => token.length >= 3,
+  );
+  const questionTokens = [
+    ...baseQuestionTokens,
+    ...baseQuestionTokens.slice(0, -1).map(
+      (token, index) => `${token}${baseQuestionTokens[index + 1]}`,
+    ),
+  ];
+  if (questionTokens.length === 0) return [];
+
+  return players
+    .map((player) => {
+      const nameTokens = tokenize(player.name);
+      if (nameTokens.length < 2) return null;
+      const bestSimilarity = (nameToken) =>
+        Math.max(
+          ...questionTokens.map((questionToken) =>
+            tokenSimilarity(questionToken, nameToken),
+          ),
+        );
+      const firstNameSimilarity = bestSimilarity(nameTokens[0]);
+      const lastNameSimilarity = bestSimilarity(nameTokens.at(-1));
+      if (firstNameSimilarity < 0.45 || lastNameSimilarity < 0.55) return null;
+      return {
+        player,
+        score: Math.round(
+          (firstNameSimilarity * 0.45 + lastNameSimilarity * 0.55) * 1000,
+        ) / 1000,
+      };
+    })
+    .filter(Boolean)
+    .sort((left, right) => right.score - left.score)
+    .slice(0, limit);
+}
+
+function fuzzySurnameMatches(questionToken, nameToken) {
+  if (tokenMatches(questionToken, nameToken)) return true;
+  if (questionToken.length < 8 || nameToken.length < 8) return false;
+
+  const distance = levenshteinDistance(questionToken, nameToken);
+  const similarity =
+    1 - distance / Math.max(questionToken.length, nameToken.length);
+  return similarity >= 0.7;
 }
 
 function findPlayerByTokens(question, players) {
@@ -62,7 +114,7 @@ function findPlayerByTokens(question, players) {
       tokenMatches(token, nameTokens[0]),
     );
     const lastNameMatched = questionTokens.some((token) =>
-      tokenMatches(token, nameTokens[nameTokens.length - 1]),
+      fuzzySurnameMatches(token, nameTokens[nameTokens.length - 1]),
     );
     if (!firstNameMatched || !lastNameMatched) continue;
 
@@ -97,6 +149,25 @@ function isPlayerFollowUpQuestion(question) {
   );
 }
 
+function isDetailedPlayerQuestion(question) {
+  const normalized = normalizeText(question);
+  return /\b(detaljert|utdyp\w*|oppsummer\w*|vurder\w*|overgang\w*|spilletid|skuddprosent|aker|sammenlign\w*)\b|\bsamme posisjon\b|\bhvordan (gikk|spilte|presterte|gjorde)\b/.test(
+    normalized,
+  );
+}
+
+function isPositionBenchmarkQuestion(question) {
+  const normalized = normalizeText(question);
+  return (
+    /\b(sammenlign\w*|opp mot|i forhold til|snitt\w*|gjennomsnitt\w*)\b/.test(
+      normalized,
+    ) &&
+    /\b(andre|samme liga|hennes posisjon|samme posisjon|posisjon\w*|snitt\w*|gjennomsnitt\w*)\b/.test(
+      normalized,
+    )
+  );
+}
+
 function findPlayerFromConversation(conversation, players) {
   if (!Array.isArray(conversation)) return null;
 
@@ -110,6 +181,87 @@ function findPlayerFromConversation(conversation, players) {
   }
 
   return null;
+}
+
+function isComparisonReportFollowUp(question) {
+  const normalized = normalizeText(question);
+  return (
+    /\b(pdf|rapport(?:en)?)\b/.test(normalized) &&
+    /\b(send|sende|lag|lage|last|laste|naa|igjen|meg)\b/.test(normalized)
+  );
+}
+
+function isRecruitmentQuestion(question) {
+  const normalized = normalizeText(question);
+  const asksForCandidate = /\b(anbef\w*|kandidat\w*|hvilk\w*)\b/.test(
+    normalized,
+  );
+  const recruitmentIntent =
+    /\b(kontakt\w*|rekrut\w*|rekryt\w*|signer\w*|hent\w*)\b/.test(
+      normalized,
+    );
+  const mentionsPlayerRole = /\b(kant\w*|spiller\w*)\b/.test(normalized);
+  return asksForCandidate && recruitmentIntent && mentionsPlayerRole;
+}
+
+function findPreviousComparisonQuestion(conversation) {
+  if (!Array.isArray(conversation)) return null;
+  for (let index = conversation.length - 1; index >= 0; index -= 1) {
+    const message = conversation[index];
+    if (message?.role !== "user" || typeof message.content !== "string") {
+      continue;
+    }
+    const normalized = normalizeText(message.content);
+    if (
+      /\b(sammenlign(?:e|er|ing)?|rapport)\b/.test(normalized) &&
+      /\b(andre|annen|samme posisjon|venstrekant|hoyrekant|lagkamerat)\b/.test(
+        normalized,
+      )
+    ) {
+      return message.content;
+    }
+  }
+  return null;
+}
+
+function findTeamMention(question, teamNames) {
+  const normalizedQuestion = normalizeText(question);
+  const questionTokens = normalizedQuestion.split(/\s+/).filter(Boolean);
+  const ranked = [];
+
+  for (const teamName of [...new Set(teamNames.filter(Boolean))]) {
+    const normalizedTeam = normalizeText(teamName);
+    const shortTeam = normalizedTeam
+      .replace(/\b(topphaandball|topphandball|haandball|handball|elite|damer|hk|th)\b/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+    const aliases = [...new Set([normalizedTeam, shortTeam].filter(Boolean))];
+    let score = 0;
+    for (const alias of aliases) {
+      if (normalizedQuestion.includes(alias)) {
+        score = Math.max(score, 100 + alias.length);
+        continue;
+      }
+      const aliasTokens = alias.split(/\s+/).filter((token) => token.length >= 4);
+      const tokenMatches = aliasTokens.filter((teamToken) =>
+        questionTokens.some(
+          (questionToken) =>
+            questionToken === teamToken ||
+            (questionToken.length >= 5 &&
+              levenshteinDistance(questionToken, teamToken) <= 1),
+        ),
+      ).length;
+      if (tokenMatches > 0) {
+        score = Math.max(score, 60 + tokenMatches * 10 + aliasTokens.length);
+      }
+    }
+    if (score > 0) ranked.push({ teamName, score });
+  }
+
+  ranked.sort((left, right) => right.score - left.score);
+  if (ranked.length === 0) return null;
+  if (ranked.length > 1 && ranked[0].score === ranked[1].score) return null;
+  return ranked[0].teamName;
 }
 
 function isGroupTeamContextFollowUp(question) {
@@ -126,9 +278,28 @@ function isGroupTeamContextFollowUp(question) {
 function isBestFormQuestion(question) {
   const normalized = normalizeText(question);
   return (
-    /\bform\b/.test(normalized) &&
+    /\bform\w*\b/.test(normalized) &&
     /\b(best(?:e)?|topp)\b/.test(normalized) &&
-    /\b(siste|kamp(?:en|ene)?)\b/.test(normalized)
+    /\b(siste|kamp(?:en|ene)?|slutt\w*)\b/.test(normalized)
+  );
+}
+
+function isEndSeasonPotentialQuestion(question) {
+  const normalized = normalizeText(question);
+  const asksForPotential =
+    /\b(potensial\w*|potential\w*|utvikling\w*|lovende)\b/.test(
+      normalized,
+    ) ||
+    /\bpositiv\w*\b.*\bmep\b.*\bkurve\w*\b/.test(normalized) ||
+    /\bstart\w*\b.*\bdaarlig\w*\b.*\bavslut\w*\b.*\bbra\b/.test(
+      normalized,
+    );
+  return (
+    asksForPotential &&
+    /\b(mep|form|kurve\w*)\b/.test(normalized) &&
+    /\b(slutt\w*|siste|sesongslutt\w*|avslut\w*|sesong\w*)\b/.test(
+      normalized,
+    )
   );
 }
 
@@ -222,13 +393,14 @@ function extractClubFromQuestion(question) {
 }
 
 function resolveSeason(question, contextSeason) {
-  const normalized = String(question).toLocaleLowerCase("nb-NO");
-  const explicitSeason = normalized.match(/\b(20\d{2})\s*[-/]\s*(\d{2})\b/);
+  const raw = String(question).toLocaleLowerCase("nb-NO");
+  const normalized = normalizeText(question);
+  const explicitSeason = raw.match(/\b(20\d{2})\s*[-/]\s*(\d{2})\b/);
   if (explicitSeason) return `${explicitSeason[1]}-${explicitSeason[2]}`;
 
   if (
     contextSeason === "2026-27" &&
-    /\bi fjor\b|\bforr?i?g(?:e|ie) sesong\b|\bsist(?:e)? sesong\b|\bfjorårets?\b|\bfjorårs(?:sesong(?:en)?|statistikk(?:en)?)?\b/.test(
+    /\bi fjor\b|\b(?:forrige|forrgie|forgie|foerrige) sesong\b|\bsist(?:e)? sesong\b|\bfjoraarets?\b|\bfjoraars(?:sesong(?:en)?|statistikk(?:en)?)?\b/.test(
       normalized,
     )
   ) {
@@ -241,16 +413,24 @@ function resolveSeason(question, contextSeason) {
 module.exports = {
   extractClubFromQuestion,
   extractRequestedMatchCount,
+  findPreviousComparisonQuestion,
   findPreviousBestFormQuestion,
   findPlayerFromConversation,
   findPlayerByTokens,
+  findTeamMention,
   fuzzyMatchTeamName,
   isBestFormQuestion,
   isGroupTeamContextFollowUp,
+  isComparisonReportFollowUp,
+  isDetailedPlayerQuestion,
+  isEndSeasonPotentialQuestion,
+  isRecruitmentQuestion,
   isPreviousSeasonFormFollowUp,
   levenshteinDistance,
   normalizeText,
+  rankPlayerCandidates,
   isPlayerFollowUpQuestion,
+  isPositionBenchmarkQuestion,
   resolveSeason,
   tokenize,
 };

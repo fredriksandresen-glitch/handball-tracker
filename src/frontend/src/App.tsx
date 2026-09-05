@@ -1,9 +1,11 @@
 import {
+  Link,
   Outlet,
   RouterProvider,
   createRootRoute,
   createRoute,
   createRouter,
+  redirect,
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { Suspense, lazy } from "react";
@@ -24,6 +26,7 @@ const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
 const PlayerPage = lazy(() => import("./pages/PlayerPage"));
 const TeamPage = lazy(() => import("./pages/TeamPage"));
 const AiChatPage = lazy(() => import("./pages/AiChatPage"));
+const CoachPage = lazy(() => import("./pages/CoachPage"));
 
 function PageLoader() {
   return (
@@ -53,6 +56,40 @@ const rootRoute = createRootRoute({
       </Suspense>
     </Layout>
   ),
+  notFoundComponent: () => (
+    <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
+      <p className="text-5xl">🤷‍♀️</p>
+      <h1 className="text-xl font-semibold">Fant ikke siden</h1>
+      <p className="max-w-xs text-sm text-white/60">
+        Lenken peker et sted som ikke finnes lenger.
+      </p>
+      <Link
+        to="/"
+        className="rounded-full bg-white/10 px-5 py-2 text-sm font-medium transition hover:bg-white/20"
+      >
+        Til forsiden
+      </Link>
+    </div>
+  ),
+});
+
+// Gamle GitHub Pages-lenker laa under /handball-tracker/. Send dem hjem
+// i stedet for aa vise «Not Found».
+const legacyBaseRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/handball-tracker",
+  beforeLoad: () => {
+    throw redirect({ to: "/" });
+  },
+  component: () => null,
+});
+const legacyPathRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/handball-tracker/$",
+  beforeLoad: () => {
+    throw redirect({ to: "/" });
+  },
+  component: () => null,
 });
 
 const homeRoute = createRoute({
@@ -68,6 +105,15 @@ const searchRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/search",
   component: SearchPage,
+});
+const coachRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/trener",
+  component: () => (
+    <BackendBoundary>
+      <CoachPage />
+    </BackendBoundary>
+  ),
 });
 const teamsRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -119,6 +165,9 @@ const routeTree = rootRoute.addChildren([
   playerRoute,
   teamRoute,
   aiChatRoute,
+  coachRoute,
+  legacyBaseRoute,
+  legacyPathRoute,
 ]);
 
 const router = createRouter({ routeTree, defaultPreload: "intent" });

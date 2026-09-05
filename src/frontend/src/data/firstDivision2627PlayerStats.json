@@ -1,0 +1,1673 @@
+[
+  {
+    "playerId": "2239858711766",
+    "playerName": "Frida Landås Gabrielsen",
+    "position": "Bakspiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 1,
+      "shotPercentage": 0,
+      "assists": 1,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0,
+      "mepTotal": 0
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 0,
+        "shots": 1,
+        "shotPercentage": 0,
+        "assists": 1,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 0
+      }
+    ]
+  },
+  {
+    "playerId": "22398510041223",
+    "playerName": "Maja Ellen Sannholm",
+    "position": "Bakspiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 1,
+      "shots": 3,
+      "shotPercentage": 33.3,
+      "assists": 1,
+      "technicalErrors": 1,
+      "suspensions": 0,
+      "mepAvg": 0.1,
+      "mepTotal": 0.1
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 1,
+        "shots": 3,
+        "shotPercentage": 33.3,
+        "assists": 1,
+        "technicalErrors": 1,
+        "suspensions": 0,
+        "mep": 0.1
+      }
+    ]
+  },
+  {
+    "playerId": "2239998155058",
+    "playerName": "Andrea Tjosaas",
+    "position": "Kantspiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 4,
+      "shots": 7,
+      "shotPercentage": 57.1,
+      "assists": 0,
+      "technicalErrors": 2,
+      "suspensions": 0,
+      "mepAvg": 1.6,
+      "mepTotal": 1.6
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 4,
+        "shots": 7,
+        "shotPercentage": 57.1,
+        "assists": 0,
+        "technicalErrors": 2,
+        "suspensions": 0,
+        "mep": 1.6
+      }
+    ]
+  },
+  {
+    "playerId": "2239854437777",
+    "playerName": "Mari Lynne",
+    "position": "Kantspiller venstre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 5,
+      "shots": 7,
+      "shotPercentage": 71.4,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 1,
+      "mepAvg": 2.3,
+      "mepTotal": 2.3
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 5,
+        "shots": 7,
+        "shotPercentage": 71.4,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 1,
+        "mep": 2.3
+      }
+    ]
+  },
+  {
+    "playerId": "2239857009913",
+    "playerName": "Karoline Seligmann Andresen",
+    "position": "Kantspiller venstre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 1,
+      "shots": 1,
+      "shotPercentage": 100,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0.8,
+      "mepTotal": 0.8
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 1,
+        "shots": 1,
+        "shotPercentage": 100,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 0.8
+      }
+    ]
+  },
+  {
+    "playerId": "2239996930059",
+    "playerName": "Adna Kahric",
+    "position": "Linjespiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 4,
+      "shots": 5,
+      "shotPercentage": 80,
+      "assists": 0,
+      "technicalErrors": 1,
+      "suspensions": 0,
+      "mepAvg": 2.5,
+      "mepTotal": 2.5
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 4,
+        "shots": 5,
+        "shotPercentage": 80,
+        "assists": 0,
+        "technicalErrors": 1,
+        "suspensions": 0,
+        "mep": 2.5
+      }
+    ]
+  },
+  {
+    "playerId": "2239999529211",
+    "playerName": "Julie Aurora Gran-Holte",
+    "position": "Kantspiller høyre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 0,
+      "shotPercentage": 0,
+      "assists": 0,
+      "technicalErrors": 1,
+      "suspensions": 0,
+      "mepAvg": 0.1,
+      "mepTotal": 0.1
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 0,
+        "shots": 0,
+        "shotPercentage": 0,
+        "assists": 0,
+        "technicalErrors": 1,
+        "suspensions": 0,
+        "mep": 0.1
+      }
+    ]
+  },
+  {
+    "playerId": "2239856203229",
+    "playerName": "Kaja Løken",
+    "position": "Linjespiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 1,
+      "shotPercentage": 0,
+      "assists": 1,
+      "technicalErrors": 1,
+      "suspensions": 2,
+      "mepAvg": -0.8,
+      "mepTotal": -0.8
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 0,
+        "shots": 1,
+        "shotPercentage": 0,
+        "assists": 1,
+        "technicalErrors": 1,
+        "suspensions": 2,
+        "mep": -0.8
+      }
+    ]
+  },
+  {
+    "playerId": "2239999822571",
+    "playerName": "Thea Marie Johansen",
+    "position": "Kantspiller venstre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 2,
+      "shots": 3,
+      "shotPercentage": 66.7,
+      "assists": 0,
+      "technicalErrors": 1,
+      "suspensions": 0,
+      "mepAvg": 1,
+      "mepTotal": 1
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 2,
+        "shots": 3,
+        "shotPercentage": 66.7,
+        "assists": 0,
+        "technicalErrors": 1,
+        "suspensions": 0,
+        "mep": 1
+      }
+    ]
+  },
+  {
+    "playerId": "2239859841766",
+    "playerName": "Mia Lundberg Lersbryggen",
+    "position": "Bakspiller venstre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 2,
+      "shots": 4,
+      "shotPercentage": 50,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0.8,
+      "mepTotal": 0.8
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 2,
+        "shots": 4,
+        "shotPercentage": 50,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 0.8
+      }
+    ]
+  },
+  {
+    "playerId": "2239856942508",
+    "playerName": "Felicia Celine Tangen",
+    "position": "Bakspiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 7,
+      "shots": 10,
+      "shotPercentage": 70,
+      "assists": 1,
+      "technicalErrors": 2,
+      "suspensions": 0,
+      "mepAvg": 4.4,
+      "mepTotal": 4.4
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 7,
+        "shots": 10,
+        "shotPercentage": 70,
+        "assists": 1,
+        "technicalErrors": 2,
+        "suspensions": 0,
+        "mep": 4.4
+      }
+    ]
+  },
+  {
+    "playerId": "2239992449679",
+    "playerName": "Ina Jåtten",
+    "position": "Bakspiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 2,
+      "shots": 5,
+      "shotPercentage": 40,
+      "assists": 6,
+      "technicalErrors": 3,
+      "suspensions": 0,
+      "mepAvg": 1.5,
+      "mepTotal": 1.5
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 2,
+        "shots": 5,
+        "shotPercentage": 40,
+        "assists": 6,
+        "technicalErrors": 3,
+        "suspensions": 0,
+        "mep": 1.5
+      }
+    ]
+  },
+  {
+    "playerId": "2239997055656",
+    "playerName": "Oda Fikstvedt",
+    "position": "Bakspiller venstre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 4,
+      "shots": 9,
+      "shotPercentage": 44.4,
+      "assists": 5,
+      "technicalErrors": 2,
+      "suspensions": 0,
+      "mepAvg": 2.4,
+      "mepTotal": 2.4
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 4,
+        "shots": 9,
+        "shotPercentage": 44.4,
+        "assists": 5,
+        "technicalErrors": 2,
+        "suspensions": 0,
+        "mep": 2.4
+      }
+    ]
+  },
+  {
+    "playerId": "2239858823383",
+    "playerName": "Vilde Nilsen Hagen",
+    "position": "Kantspiller høyre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 4,
+      "shots": 5,
+      "shotPercentage": 80,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 2.8,
+      "mepTotal": 2.8
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 4,
+        "shots": 5,
+        "shotPercentage": 80,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 2.8
+      }
+    ]
+  },
+  {
+    "playerId": "2239998924620",
+    "playerName": "Lilly Momrak Mæhlum",
+    "position": "Bakspiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 1,
+      "shots": 2,
+      "shotPercentage": 50,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0.4,
+      "mepTotal": 0.4
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 1,
+        "shots": 2,
+        "shotPercentage": 50,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 0.4
+      }
+    ]
+  },
+  {
+    "playerId": "2239858825436",
+    "playerName": "Erle Christine Solstad",
+    "position": "Linjespiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 5,
+      "shots": 6,
+      "shotPercentage": 83.3,
+      "assists": 2,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 4.4,
+      "mepTotal": 4.4
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 5,
+        "shots": 6,
+        "shotPercentage": 83.3,
+        "assists": 2,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 4.4
+      }
+    ]
+  },
+  {
+    "playerId": "2239856231837",
+    "playerName": "Charlotte Pram Berger",
+    "position": "Kantspiller høyre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 1,
+      "shots": 1,
+      "shotPercentage": 100,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0.8,
+      "mepTotal": 0.8
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 1,
+        "shots": 1,
+        "shotPercentage": 100,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 0.8
+      }
+    ]
+  },
+  {
+    "playerId": "2239996914304",
+    "playerName": "Lisa Sydbøge",
+    "position": "Bakspiller midt",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 3,
+      "shots": 8,
+      "shotPercentage": 37.5,
+      "assists": 6,
+      "technicalErrors": 3,
+      "suspensions": 0,
+      "mepAvg": 1.7,
+      "mepTotal": 1.7
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 3,
+        "shots": 8,
+        "shotPercentage": 37.5,
+        "assists": 6,
+        "technicalErrors": 3,
+        "suspensions": 0,
+        "mep": 1.7
+      }
+    ]
+  },
+  {
+    "playerId": "2239857831265",
+    "playerName": "Hedda Dahl Bøhleng",
+    "position": "Bakspiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 0,
+      "shotPercentage": 0,
+      "assists": 0,
+      "technicalErrors": 1,
+      "suspensions": 1,
+      "mepAvg": -0.5,
+      "mepTotal": -0.5
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 0,
+        "shots": 0,
+        "shotPercentage": 0,
+        "assists": 0,
+        "technicalErrors": 1,
+        "suspensions": 1,
+        "mep": -0.5
+      }
+    ]
+  },
+  {
+    "playerId": "2239996787302",
+    "playerName": "Julia Pedersen",
+    "position": "Linjespiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 0,
+      "shotPercentage": 0,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": -0.1,
+      "mepTotal": -0.1
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 0,
+        "shots": 0,
+        "shotPercentage": 0,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": -0.1
+      }
+    ]
+  },
+  {
+    "playerId": "2239858483568",
+    "playerName": "Oda Kongssund",
+    "position": "Bakspiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 2,
+      "shotPercentage": 0,
+      "assists": 1,
+      "technicalErrors": 1,
+      "suspensions": 0,
+      "mepAvg": -0.6,
+      "mepTotal": -0.6
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 0,
+        "shots": 2,
+        "shotPercentage": 0,
+        "assists": 1,
+        "technicalErrors": 1,
+        "suspensions": 0,
+        "mep": -0.6
+      }
+    ]
+  },
+  {
+    "playerId": "2239859006800",
+    "playerName": "Annika Skrettingland",
+    "position": "Bakspiller høyre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 6,
+      "shots": 9,
+      "shotPercentage": 66.7,
+      "assists": 3,
+      "technicalErrors": 4,
+      "suspensions": 0,
+      "mepAvg": 3.6,
+      "mepTotal": 3.6
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 6,
+        "shots": 9,
+        "shotPercentage": 66.7,
+        "assists": 3,
+        "technicalErrors": 4,
+        "suspensions": 0,
+        "mep": 3.6
+      }
+    ]
+  },
+  {
+    "playerId": "2239858733817",
+    "playerName": "Charlotte Trondal Elisenberg",
+    "position": "Linjespiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 3,
+      "shots": 3,
+      "shotPercentage": 100,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 2.3,
+      "mepTotal": 2.3
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 3,
+        "shots": 3,
+        "shotPercentage": 100,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 2.3
+      }
+    ]
+  },
+  {
+    "playerId": "2239998705346",
+    "playerName": "Carmen Dahl",
+    "position": "Bakspiller venstre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 3,
+      "shots": 8,
+      "shotPercentage": 37.5,
+      "assists": 2,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 1.1,
+      "mepTotal": 1.1
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 3,
+        "shots": 8,
+        "shotPercentage": 37.5,
+        "assists": 2,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 1.1
+      }
+    ]
+  },
+  {
+    "playerId": "2239999413597",
+    "playerName": "Ida Grimsrud Steinslien",
+    "position": "Kantspiller venstre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 2,
+      "shots": 6,
+      "shotPercentage": 33.3,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0.4,
+      "mepTotal": 0.4
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 2,
+        "shots": 6,
+        "shotPercentage": 33.3,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 0.4
+      }
+    ]
+  },
+  {
+    "playerId": "2241747331603",
+    "playerName": "Emma Louise Grasdal",
+    "position": "Bakspiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 2,
+      "shots": 3,
+      "shotPercentage": 66.7,
+      "assists": 2,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 1.8,
+      "mepTotal": 1.8
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 2,
+        "shots": 3,
+        "shotPercentage": 66.7,
+        "assists": 2,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 1.8
+      }
+    ]
+  },
+  {
+    "playerId": "2248607278153",
+    "playerName": "Kathrine Fjære",
+    "position": "Kantspiller venstre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 1,
+      "shots": 3,
+      "shotPercentage": 33.3,
+      "assists": 1,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0.4,
+      "mepTotal": 0.4
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 1,
+        "shots": 3,
+        "shotPercentage": 33.3,
+        "assists": 1,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 0.4
+      }
+    ]
+  },
+  {
+    "playerId": "2241748048866",
+    "playerName": "Malin Tveiterås Nødtvedt",
+    "position": "Kantspiller venstre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 1,
+      "shots": 2,
+      "shotPercentage": 50,
+      "assists": 1,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0.7,
+      "mepTotal": 0.7
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 1,
+        "shots": 2,
+        "shotPercentage": 50,
+        "assists": 1,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 0.7
+      }
+    ]
+  },
+  {
+    "playerId": "2241747588269",
+    "playerName": "Maja Nordeide Thomsen",
+    "position": "Kantspiller høyre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 3,
+      "shotPercentage": 0,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": -1,
+      "mepTotal": -1
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 0,
+        "shots": 3,
+        "shotPercentage": 0,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": -1
+      }
+    ]
+  },
+  {
+    "playerId": "2248605551756",
+    "playerName": "Elisa Mulaj",
+    "position": "Kantspiller høyre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 5,
+      "shots": 7,
+      "shotPercentage": 71.4,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 3.1,
+      "mepTotal": 3.1
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 5,
+        "shots": 7,
+        "shotPercentage": 71.4,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 3.1
+      }
+    ]
+  },
+  {
+    "playerId": "2248609473036",
+    "playerName": "Erza Dreshaj",
+    "position": "Bakspiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 1,
+      "shots": 3,
+      "shotPercentage": 33.3,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0,
+      "mepTotal": 0
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 1,
+        "shots": 3,
+        "shotPercentage": 33.3,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 0
+      }
+    ]
+  },
+  {
+    "playerId": "2241747355514",
+    "playerName": "Elise Marie Trapness",
+    "position": "Linjespiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 0,
+      "shotPercentage": 0,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": -0.1,
+      "mepTotal": -0.1
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 0,
+        "shots": 0,
+        "shotPercentage": 0,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": -0.1
+      }
+    ]
+  },
+  {
+    "playerId": "2241747138609",
+    "playerName": "Aud Malin Gover",
+    "position": "Bakspiller midt",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 3,
+      "shots": 3,
+      "shotPercentage": 100,
+      "assists": 2,
+      "technicalErrors": 2,
+      "suspensions": 0,
+      "mepAvg": 2.5,
+      "mepTotal": 2.5
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 3,
+        "shots": 3,
+        "shotPercentage": 100,
+        "assists": 2,
+        "technicalErrors": 2,
+        "suspensions": 0,
+        "mep": 2.5
+      }
+    ]
+  },
+  {
+    "playerId": "2241745773777",
+    "playerName": "Estefania Rodriguez Farfan",
+    "position": "Bakspiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 1,
+      "shots": 2,
+      "shotPercentage": 50,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0.4,
+      "mepTotal": 0.4
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 1,
+        "shots": 2,
+        "shotPercentage": 50,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 0.4
+      }
+    ]
+  },
+  {
+    "playerId": "2248606882321",
+    "playerName": "Mirjam Sevland",
+    "position": "Linjespiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 1,
+      "shots": 1,
+      "shotPercentage": 100,
+      "assists": 0,
+      "technicalErrors": 2,
+      "suspensions": 0,
+      "mepAvg": 0.4,
+      "mepTotal": 0.4
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 1,
+        "shots": 1,
+        "shotPercentage": 100,
+        "assists": 0,
+        "technicalErrors": 2,
+        "suspensions": 0,
+        "mep": 0.4
+      }
+    ]
+  },
+  {
+    "playerId": "2248607230124",
+    "playerName": "Melisa Mulaj",
+    "position": "Bakspiller midt",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 2,
+      "shots": 2,
+      "shotPercentage": 100,
+      "assists": 3,
+      "technicalErrors": 1,
+      "suspensions": 1,
+      "mepAvg": 2.1,
+      "mepTotal": 2.1
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 2,
+        "shots": 2,
+        "shotPercentage": 100,
+        "assists": 3,
+        "technicalErrors": 1,
+        "suspensions": 1,
+        "mep": 2.1
+      }
+    ]
+  },
+  {
+    "playerId": "9484595079036",
+    "playerName": "Karin Mollatt",
+    "position": "Linjespiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 6,
+      "shots": 6,
+      "shotPercentage": 100,
+      "assists": 1,
+      "technicalErrors": 1,
+      "suspensions": 0,
+      "mepAvg": 4.6,
+      "mepTotal": 4.6
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 6,
+        "shots": 6,
+        "shotPercentage": 100,
+        "assists": 1,
+        "technicalErrors": 1,
+        "suspensions": 0,
+        "mep": 4.6
+      }
+    ],
+    "sourcePlayerId": "2248605079036"
+  },
+  {
+    "playerId": "22486010084950",
+    "playerName": "Frida Lippert",
+    "position": "Bakspiller venstre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 4,
+      "shots": 10,
+      "shotPercentage": 40,
+      "assists": 1,
+      "technicalErrors": 2,
+      "suspensions": 1,
+      "mepAvg": 0.6,
+      "mepTotal": 0.6
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 4,
+        "shots": 10,
+        "shotPercentage": 40,
+        "assists": 1,
+        "technicalErrors": 2,
+        "suspensions": 1,
+        "mep": 0.6
+      }
+    ]
+  },
+  {
+    "playerId": "2248605337162",
+    "playerName": "Rebecka Hagen",
+    "position": "Linjespiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 2,
+      "shots": 6,
+      "shotPercentage": 33.3,
+      "assists": 0,
+      "technicalErrors": 1,
+      "suspensions": 0,
+      "mepAvg": 0.3,
+      "mepTotal": 0.3
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 2,
+        "shots": 6,
+        "shotPercentage": 33.3,
+        "assists": 0,
+        "technicalErrors": 1,
+        "suspensions": 0,
+        "mep": 0.3
+      }
+    ]
+  },
+  {
+    "playerId": "4416516895423",
+    "playerName": "Anniken Maria Monsen",
+    "position": "Bakspiller venstre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 5,
+      "shots": 9,
+      "shotPercentage": 55.6,
+      "assists": 11,
+      "technicalErrors": 2,
+      "suspensions": 0,
+      "mepAvg": 5.3,
+      "mepTotal": 5.3
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 5,
+        "shots": 9,
+        "shotPercentage": 55.6,
+        "assists": 11,
+        "technicalErrors": 2,
+        "suspensions": 0,
+        "mep": 5.3
+      }
+    ],
+    "sourcePlayerId": "2241746895423"
+  },
+  {
+    "playerId": "2241747162257",
+    "playerName": "Malene Langeland Nord",
+    "position": "Kantspiller venstre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 4,
+      "shots": 4,
+      "shotPercentage": 100,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 2.6,
+      "mepTotal": 2.6
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 4,
+        "shots": 4,
+        "shotPercentage": 100,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 2.6
+      }
+    ]
+  },
+  {
+    "playerId": "2241747331566",
+    "playerName": "Maria Elisabeth Grasdal",
+    "position": "Linjespiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 0,
+      "shotPercentage": 0,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 0,
+      "mepTotal": 0
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 0,
+        "shots": 0,
+        "shotPercentage": 0,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 0
+      }
+    ]
+  },
+  {
+    "playerId": "2241747939038",
+    "playerName": "Elise Garaas",
+    "position": "Bakspiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 5,
+      "shots": 7,
+      "shotPercentage": 71.4,
+      "assists": 3,
+      "technicalErrors": 3,
+      "suspensions": 0,
+      "mepAvg": 3.4,
+      "mepTotal": 3.4
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 5,
+        "shots": 7,
+        "shotPercentage": 71.4,
+        "assists": 3,
+        "technicalErrors": 3,
+        "suspensions": 0,
+        "mep": 3.4
+      }
+    ]
+  },
+  {
+    "playerId": "2248607726437",
+    "playerName": "Miriann Sæther",
+    "position": "Bakspiller midt",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 3,
+      "shots": 6,
+      "shotPercentage": 50,
+      "assists": 10,
+      "technicalErrors": 4,
+      "suspensions": 0,
+      "mepAvg": 3.2,
+      "mepTotal": 3.2
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 3,
+        "shots": 6,
+        "shotPercentage": 50,
+        "assists": 10,
+        "technicalErrors": 4,
+        "suspensions": 0,
+        "mep": 3.2
+      }
+    ]
+  },
+  {
+    "playerId": "2248605117708",
+    "playerName": "Selma Skovseth Senga",
+    "position": "Bakspiller høyre",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 6,
+      "shots": 9,
+      "shotPercentage": 66.7,
+      "assists": 9,
+      "technicalErrors": 1,
+      "suspensions": 1,
+      "mepAvg": 5.3,
+      "mepTotal": 5.3
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 6,
+        "shots": 9,
+        "shotPercentage": 66.7,
+        "assists": 9,
+        "technicalErrors": 1,
+        "suspensions": 1,
+        "mep": 5.3
+      }
+    ]
+  },
+  {
+    "playerId": "2241747192973",
+    "playerName": "Andrine Dalen Øynes",
+    "position": "Bakspiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 7,
+      "shots": 14,
+      "shotPercentage": 50,
+      "assists": 5,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 4.6,
+      "mepTotal": 4.6
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 7,
+        "shots": 14,
+        "shotPercentage": 50,
+        "assists": 5,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 4.6
+      }
+    ]
+  },
+  {
+    "playerId": "2241747846195",
+    "playerName": "Karoline Sether",
+    "position": "Linjespiller",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 10,
+      "shots": 10,
+      "shotPercentage": 100,
+      "assists": 2,
+      "technicalErrors": 1,
+      "suspensions": 0,
+      "mepAvg": 8.3,
+      "mepTotal": 8.3
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 10,
+        "shots": 10,
+        "shotPercentage": 100,
+        "assists": 2,
+        "technicalErrors": 1,
+        "suspensions": 0,
+        "mep": 8.3
+      }
+    ]
+  },
+  {
+    "playerId": "2239996792624",
+    "playerName": "Silje Brendbakken",
+    "position": "",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 38,
+      "shotPercentage": 0,
+      "assists": 1,
+      "technicalErrors": 1,
+      "suspensions": 0,
+      "mepAvg": 0.3,
+      "mepTotal": 0.3,
+      "saves": 11,
+      "savePercentage": 28.9,
+      "goalsConceded": 27
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 0,
+        "shots": 38,
+        "shotPercentage": 0,
+        "assists": 1,
+        "technicalErrors": 1,
+        "suspensions": 0,
+        "mep": 0.3,
+        "saves": 11,
+        "savePercentage": 28.9,
+        "shotsAgainst": 38,
+        "goalsConceded": 27
+      }
+    ]
+  },
+  {
+    "playerId": "2239996914296",
+    "playerName": "Ingvild Thomassen Gusdal",
+    "position": "",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 8,
+      "shotPercentage": 0,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": -2.4,
+      "mepTotal": -2.4,
+      "saves": 0,
+      "savePercentage": 0,
+      "goalsConceded": 8
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 0,
+        "shots": 8,
+        "shotPercentage": 0,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": -2.4,
+        "saves": 0,
+        "savePercentage": 0,
+        "shotsAgainst": 8,
+        "goalsConceded": 8
+      }
+    ]
+  },
+  {
+    "playerId": "2239856074641",
+    "playerName": "Lotte Prøsch",
+    "position": "",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 43,
+      "shotPercentage": 0,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": 8.1,
+      "mepTotal": 8.1,
+      "saves": 20,
+      "savePercentage": 46.5,
+      "goalsConceded": 23
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 0,
+        "shots": 43,
+        "shotPercentage": 0,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": 8.1,
+        "saves": 20,
+        "savePercentage": 46.5,
+        "shotsAgainst": 43,
+        "goalsConceded": 23
+      }
+    ]
+  },
+  {
+    "playerId": "2248607728441",
+    "playerName": "Tess Demi",
+    "position": "",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 12,
+      "shotPercentage": 0,
+      "assists": 0,
+      "technicalErrors": 1,
+      "suspensions": 0,
+      "mepAvg": 2.5,
+      "mepTotal": 2.5,
+      "saves": 6,
+      "savePercentage": 50,
+      "goalsConceded": 6
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 0,
+        "shots": 12,
+        "shotPercentage": 0,
+        "assists": 0,
+        "technicalErrors": 1,
+        "suspensions": 0,
+        "mep": 2.5,
+        "saves": 6,
+        "savePercentage": 50,
+        "shotsAgainst": 12,
+        "goalsConceded": 6
+      }
+    ]
+  },
+  {
+    "playerId": "2241748710496",
+    "playerName": "Moa Johnsson",
+    "position": "",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 1,
+      "shotPercentage": 0,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": -0.3,
+      "mepTotal": -0.3,
+      "saves": 0,
+      "savePercentage": 0,
+      "goalsConceded": 1
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 0,
+        "shots": 1,
+        "shotPercentage": 0,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": -0.3,
+        "saves": 0,
+        "savePercentage": 0,
+        "shotsAgainst": 1,
+        "goalsConceded": 1
+      }
+    ]
+  },
+  {
+    "playerId": "2241748172030",
+    "playerName": "Ella Lien Strømme",
+    "position": "",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 41,
+      "shotPercentage": 0,
+      "assists": 1,
+      "technicalErrors": 1,
+      "suspensions": 0,
+      "mepAvg": 2.5,
+      "mepTotal": 2.5,
+      "saves": 14,
+      "savePercentage": 34.1,
+      "goalsConceded": 27
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 0,
+        "shots": 41,
+        "shotPercentage": 0,
+        "assists": 1,
+        "technicalErrors": 1,
+        "suspensions": 0,
+        "mep": 2.5,
+        "saves": 14,
+        "savePercentage": 34.1,
+        "shotsAgainst": 41,
+        "goalsConceded": 27
+      }
+    ]
+  },
+  {
+    "playerId": "2248601843684",
+    "playerName": "Cecilie Hansen Togba",
+    "position": "",
+    "season": "2026-27",
+    "league": "first-division",
+    "seasonStats": {
+      "matches": 1,
+      "goals": 0,
+      "shots": 24,
+      "shotPercentage": 0,
+      "assists": 0,
+      "technicalErrors": 0,
+      "suspensions": 0,
+      "mepAvg": -4.1,
+      "mepTotal": -4.1,
+      "saves": 3,
+      "savePercentage": 12.5,
+      "goalsConceded": 21
+    },
+    "recentMatches": [
+      {
+        "matchId": "0",
+        "goals": 0,
+        "shots": 24,
+        "shotPercentage": 0,
+        "assists": 0,
+        "technicalErrors": 0,
+        "suspensions": 0,
+        "mep": -4.1,
+        "saves": 3,
+        "savePercentage": 12.5,
+        "shotsAgainst": 24,
+        "goalsConceded": 21
+      }
+    ]
+  }
+]

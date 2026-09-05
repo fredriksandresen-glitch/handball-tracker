@@ -1,0 +1,42 @@
+// Schema for the Clawdbot version used by the current Linux server.
+// Merge the agent into agents.list. Do not replace existing list entries,
+// channels, providers, auth or bindings.
+{
+  gateway: {
+    http: {
+      endpoints: {
+        chatCompletions: { enabled: true },
+      },
+    },
+  },
+  agents: {
+    list: [
+      {
+        id: "handball-tracker",
+        workspace: "~/.clawdbot/workspace-handball-tracker",
+        model: "moonshot/kimi-k3",
+        sandbox: {
+          mode: "all",
+          scope: "agent",
+          workspaceAccess: "none",
+        },
+        tools: {
+          profile: "minimal",
+          deny: [
+            "session_status",
+            "group:fs",
+            "group:runtime",
+            "group:web",
+            "group:sessions",
+            "group:memory",
+            "group:messaging",
+            "group:nodes",
+            "group:automation",
+            "group:media",
+            "gateway",
+          ],
+        },
+      },
+    ],
+  },
+}

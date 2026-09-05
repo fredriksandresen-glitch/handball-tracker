@@ -4,8 +4,13 @@ import type { LeagueId } from "./seasons";
 
 export type NextMatchResult = {
   match: Match;
-  homeTeamName: string;
-  awayTeamName: string;
+  /**
+   * Lagnavn finnes kun i den statiske terminlisten. Backend-banen
+   * (actor.getNextMatchForTeam) returnerer bare kampen, derfor er disse
+   * valgfrie. MatchCard handterer allerede undefined.
+   */
+  homeTeamName?: string;
+  awayTeamName?: string;
 };
 
 type MatchEntry = {

@@ -67,7 +67,8 @@ type TopInsight = {
 
 type RankingRow = {
   player: Player;
-  teamName?: string;
+  /** Kan vaere null naar laget ikke er kjent i datagrunnlaget. */
+  teamName?: string | null;
   teamLogoUrl?: string;
   insight: TopInsight;
   rankChange: number;
@@ -83,11 +84,23 @@ const TOPLIST_MODES: { value: ToplistMode; label: string }[] = [
 
 const POSITION_OPTIONS: { value: PositionOption; label: string }[] = [
   { value: "all", label: "Alle" },
-  { value: Position.Keeper, label: "Keeper" },
-  { value: Position.VenstreKant, label: "V. kant" },
-  { value: Position.HoyreKant, label: "H. kant" },
-  { value: Position.Linje, label: "Linje" },
-  { value: Position.Bakspiller, label: "Bakspiller" },
+  { value: Position.Keeper, label: POSITION_LABELS.Keeper },
+  { value: Position.VenstreKant, label: POSITION_LABELS.VenstreKant },
+  { value: Position.HoyreKant, label: POSITION_LABELS.HoyreKant },
+  { value: Position.Linje, label: POSITION_LABELS.Linje },
+  { value: Position.Bakspiller, label: POSITION_LABELS.Bakspiller },
+  {
+    value: "BakspillerVenstre" as PositionOption,
+    label: POSITION_LABELS.BakspillerVenstre,
+  },
+  {
+    value: "BakspillerMidt" as PositionOption,
+    label: POSITION_LABELS.BakspillerMidt,
+  },
+  {
+    value: "BakspillerHoyre" as PositionOption,
+    label: POSITION_LABELS.BakspillerHoyre,
+  },
 ];
 
 const MODE_COPY: Record<ToplistMode, { title: string; text: string }> = {
@@ -137,19 +150,30 @@ function average(values: number[]) {
     : undefined;
 }
 
-function getTopInsight(player: Player): TopInsight {
-  const profile = getStaticProfile(player.id);
+// Sesong MAA sendes med (2026-09-01): uten den falt getStaticProfile til
+// DEFAULT_SEASON_ID = 2025-26, og topplisten viste fjorarets tall.
+function getTopInsight(player: Player, seasonId?: SeasonId): TopInsight {
+  const profile = getStaticProfile(player.id, seasonId);
   if (!profile) return { matches: [], sparkValues: [] };
 
   const seasonStats = mapClawdbotSeasonStats(profile);
+  // Keepere maales paa redningsprosent, ikke MEP (2026-08-27).
+  const isKeeper = player.position === Position.Keeper;
   const matches = (mapClawdbotMatchStats(profile) as EnrichedPlayerMatchStats[])
-    .filter((match) => typeof match.mep === "number")
+    .filter((match) =>
+      isKeeper
+        ? typeof match.savePct === "number" &&
+          Number(match.shotsAgainst ?? 0) >= 5
+        : typeof match.mep === "number",
+    )
     .sort((a, b) => getMatchDate(a).localeCompare(getMatchDate(b)));
   const currentWindow = matches.slice(-5);
   const previousWindow = matches.slice(-6, -1);
   const latestMatch = matches.at(-1);
   const previousMatch = matches.at(-2);
-  const sparkValues = currentWindow.map((match) => match.mep ?? 0);
+  const sparkValues = currentWindow.map((match) =>
+    isKeeper ? (match.savePct ?? 0) : (match.mep ?? 0),
+  );
   const totalGoals = asNumber(seasonStats.totalGoals);
   const totalAssists = asNumber(seasonStats.totalAssists);
   const mepTotal = seasonStats.mepTotal;
@@ -237,10 +261,11 @@ function sortRankedPlayers(
   mode: ToplistMode,
   insights: Map<string, TopInsight>,
   previous = false,
+  seasonId?: SeasonId,
 ) {
   return [...players].sort((a, b) => {
-    const ai = insights.get(a.id.toString()) ?? getTopInsight(a);
-    const bi = insights.get(b.id.toString()) ?? getTopInsight(b);
+    const ai = insights.get(a.id.toString()) ?? getTopInsight(a, seasonId);
+    const bi = insights.get(b.id.toString()) ?? getTopInsight(b, seasonId);
     const scoreA = previous ? getPreviousScore(mode, ai) : getCurrentScore(mode, ai);
     const scoreB = previous ? getPreviousScore(mode, bi) : getCurrentScore(mode, bi);
 
@@ -434,7 +459,7 @@ function RankingListItem({
       </div>
 
       <div className="min-w-0 flex items-center gap-3">
-        <TeamLogo teamName={row.teamName} logoUrl={row.teamLogoUrl} />
+        <TeamLogo teamName={row.teamName ?? undefined} logoUrl={row.teamLogoUrl} />
         <div className="min-w-0">
           <p className="font-display font-black text-sm text-foreground truncate group-hover:text-primary transition-colors">
             {row.player.name}
@@ -509,8 +534,14 @@ export default function FavoritesPage() {
   );
 
   const insights = useMemo(
-    () => new Map(players.map((player) => [player.id.toString(), getTopInsight(player)])),
-    [players],
+    () =>
+      new Map(
+        players.map((player) => [
+          player.id.toString(),
+          getTopInsight(player, seasonId),
+        ]),
+      ),
+    [players, seasonId],
   );
 
   const activePositionFilter =
@@ -522,14 +553,14 @@ export default function FavoritesPage() {
     const filtered = filterPlayers(players, mode, activePositionFilter).filter(
       (player) => (insights.get(player.id.toString())?.matchesPlayed ?? 0) > 0,
     );
-    const current = sortRankedPlayers(filtered, mode, insights);
-    const previous = sortRankedPlayers(filtered, mode, insights, true);
+    const current = sortRankedPlayers(filtered, mode, insights, false, seasonId);
+    const previous = sortRankedPlayers(filtered, mode, insights, true, seasonId);
     const previousRanks = new Map(
       previous.map((player, index) => [player.id.toString(), index + 1]),
     );
 
     return current.slice(0, 30).map((player, index) => {
-      const profile = getStaticProfile(player.id);
+      const profile = getStaticProfile(player.id, seasonId);
       const team = teamMap.get(player.teamId.toString());
       const teamName = team?.name ?? profile?.player.team;
       const previousRank = previousRanks.get(player.id.toString()) ?? index + 1;

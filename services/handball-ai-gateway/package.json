@@ -4,8 +4,11 @@
   "description": "Grounded AI gateway for Handball Tracker",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "check": "node --check index.js",
-    "test": "node --test"
+    "test": "node --test",
+    "worker": "node worker.js",
+    "worker:identity": "node scripts/create-worker-identity.js"
   },
   "keywords": [],
   "author": "",
@@ -13,11 +16,14 @@
   "dependencies": {
     "@dfinity/agent": "^3.4.3",
     "@dfinity/candid": "^3.4.3",
+    "@dfinity/identity": "^3.4.3",
     "@dfinity/principal": "^3.4.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-rate-limit": "^8.6.2",
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^2.7.0",
+    "pdfkit": "0.19.1",
+    "sharp": "0.34.5"
   }
 }

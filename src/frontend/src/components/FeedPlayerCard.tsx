@@ -3,49 +3,117 @@ import { useActor } from "@caffeineai/core-infrastructure";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createActor } from "../backend";
 import { getNationalTeamInfo } from "../data/nationalTeamPlayers";
 import { formatMatchDate, getCountdown } from "../services/handballService";
 import type { EnrichedPlayerMatchStats } from "../services/clawdbotPlayerProfile";
 import type { FeedEvent, Player, PlayerMatchStats } from "../types/handball";
 import { FeedEventType, Position } from "../types/handball";
-import { resolveImageUrl } from "../utils/playerImages";
+import {
+  resolveImageUrl,
+  resolvePlayerCardImageSources,
+} from "../utils/playerImages";
 import { PositionBadge } from "./PositionBadge";
 
-function Sparkline({ values }: { values: number[] }) {
-  if (values.length < 2) return null;
+/**
+ * Formkurve, variant C (2026-08-27): linje med fargede punkter.
+ *
+ * EN farge, EN betydning: gronn = bedre enn referansen, rod = svakere.
+ * Referansen er sesongsnittet for den maalestokken spilleren faktisk vises
+ * paa (MEP for utespillere, redningsprosent for keepere). Siste kamp markeres
+ * med storre punkt og hvit ring — aldri med farge, slik at de to signalene
+ * ikke krasjer slik de gjorde i soyleversjonen.
+ *
+ * Bredden maales i piksler (2026-08-27): tidligere brukte vi
+ * preserveAspectRatio="none", som strakk viewBoxen til kortbredden. Paa smale
+ * mobilkort saa det riktig ut, men paa brede skjermer ble punktene til ovaler.
+ * Na tegner vi i faktiske piksler, saa sirkler forblir sirkler i alle bredder.
+ */
+function Sparkline({
+  values,
+  reference,
+}: {
+  values: number[];
+  reference?: number;
+}) {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
 
-  const min = Math.min(...values, 0);
-  const max = Math.max(...values, 1);
-  const range = Math.max(max - min, 1);
-  const W = 48;
-  const H = 20;
-  const pts = values.map((v, i) => {
-    const x = (i / (values.length - 1)) * W;
-    const y = H - ((v - min) / range) * (H - 4) - 2;
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
+  useEffect(() => {
+    const node = hostRef.current;
+    if (!node) return;
+    const update = () => setWidth(node.clientWidth);
+    update();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(update);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  if (values.length < 2) return null;
+  const recent = values.slice(-5);
+  const ref =
+    reference ?? recent.reduce((sum, v) => sum + v, 0) / recent.length;
+
+  const H = 28;
+  const pad = 5;
+  const W = width || 120;
+  const lo = Math.min(...recent, ref);
+  const hi = Math.max(...recent, ref);
+  const span = Math.max(hi - lo, 0.001);
+  const x = (i: number) => pad + (i / (recent.length - 1)) * (W - pad * 2);
+  const y = (v: number) => H - pad - ((v - lo) / span) * (H - pad * 2);
+  const line = recent
+    .map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)}`)
+    .join(" ");
 
   return (
-    <svg
-      width={W}
-      height={H}
-      viewBox={`0 0 ${W} ${H}`}
-      role="img"
-      aria-label="MEP-formkurve"
-      className="flex-shrink-0 opacity-85"
-    >
-      <title>MEP-form siste kamper</title>
-      <polyline
-        points={pts.join(" ")}
-        fill="none"
-        strokeWidth="1.8"
-        stroke="white"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <div ref={hostRef} className="mt-2.5 w-full">
+      {width > 0 && (
+        <svg
+          width={W}
+          height={H}
+          viewBox={`0 0 ${W} ${H}`}
+          className="block overflow-visible"
+          role="img"
+          aria-label="Formkurve siste kamper"
+        >
+          <title>Formkurve siste kamper</title>
+          <line
+            x1={pad}
+            y1={y(ref)}
+            x2={W - pad}
+            y2={y(ref)}
+            stroke="rgba(255,255,255,.3)"
+            strokeWidth="1"
+            strokeDasharray="3 3"
+          />
+          <path
+            d={line}
+            fill="none"
+            stroke="rgba(255,255,255,.5)"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {recent.map((v, i) => {
+            const isLast = i === recent.length - 1;
+            return (
+              <circle
+                key={`pt-${i}-${v}`}
+                cx={x(i)}
+                cy={y(v)}
+                r={isLast ? 3.4 : 2.4}
+                fill={v >= ref ? "#34d399" : "#f87171"}
+                stroke={isLast ? "#fff" : "none"}
+                strokeWidth={isLast ? 1.4 : 0}
+              />
+            );
+          })}
+        </svg>
+      )}
+    </div>
   );
 }
 
@@ -176,6 +244,8 @@ export function FeedPlayerCard({
 }: Props) {
   const navigate = useNavigate();
   const [imageFailed, setImageFailed] = useState(false);
+  // Kortbilde (webp 400/720) i stedet for originalen paa ~1,4 MB PNG.
+  const playerCardImage = resolvePlayerCardImageSources(player.imageUrl);
 
   const lastGoalEvent = feedEvents
     .filter((e) => e.eventType === FeedEventType.GoalsScored)
@@ -184,13 +254,32 @@ export function FeedPlayerCard({
     .filter((e) => e.eventType === FeedEventType.MinutesPlayed)
     .at(-1);
 
-  const mepMatches = (matchStats as EnrichedPlayerMatchStats[])
-    .filter((match) => typeof match.mep === "number")
-    .sort((a, b) => getMatchDate(a).localeCompare(getMatchDate(b)))
-    .slice(-5);
-  const latestMatch = mepMatches.at(-1);
-  const sparkValues = mepMatches.map((match) => match.mep ?? 0);
   const keeper = player.position === Position.Keeper;
+  // Keepere maales paa redningsprosent, ikke MEP (2026-08-27). MEP er bygget
+  // for utespillere og sier lite om en keepers prestasjon.
+  // Keeperkamper med under 5 skudd mot gir ikke meningsfull prosent —
+  // en redning paa ett skudd blir 100 % og ser ut som en storkamp.
+  const qualifying = (matchStats as EnrichedPlayerMatchStats[])
+    .filter((match) =>
+      keeper
+        ? typeof match.savePct === "number" &&
+          Number(match.shotsAgainst ?? 0) >= 5
+        : typeof match.mep === "number",
+    )
+    .sort((a, b) => getMatchDate(a).localeCompare(getMatchDate(b)));
+  const formMatches = qualifying.slice(-5);
+  const mepMatches = formMatches;
+  const latestMatch = formMatches.at(-1);
+  const sparkValues = formMatches.map((match) =>
+    keeper ? (match.savePct ?? 0) : (match.mep ?? 0),
+  );
+  // Referanselinjen er sesongsnittet paa samme skala, ikke snittet av de fem.
+  const sparkReference = qualifying.length
+    ? qualifying.reduce(
+        (sum, m) => sum + (keeper ? (m.savePct ?? 0) : (m.mep ?? 0)),
+        0,
+      ) / qualifying.length
+    : undefined;
   const latestGoals = keeper ? undefined : latestMatch?.goals ?? lastGoalEvent?.statValue;
   const latestSaves = keeper ? latestMatch?.saves : undefined;
   const latestSavePct = keeper ? latestMatch?.savePct : undefined;
@@ -231,10 +320,14 @@ export function FeedPlayerCard({
           </div>
         )}
 
-        {resolveImageUrl(player.imageUrl) && !imageFailed ? (
+        {playerCardImage && !imageFailed ? (
           <img
-            src={resolveImageUrl(player.imageUrl)}
+            src={playerCardImage.src}
+            srcSet={playerCardImage.srcSet}
+            sizes="(max-width: 640px) 50vw, 320px"
             alt={player.name}
+            loading="lazy"
+            decoding="async"
             onError={() => setImageFailed(true)}
             className="player-portrait absolute inset-0 z-10 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
           />
@@ -242,13 +335,21 @@ export function FeedPlayerCard({
           <PlayerImageFallback name={player.name} />
         )}
 
-        <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
+        {/* Lettere gradient (designgjennomgang 2026-08-27): fire stopp slik at
+            ansiktet slipper fram uten at teksten blir mindre lesbar. */}
+        <div
+          className="absolute inset-0 z-20"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(6,12,26,0.94) 0%, rgba(6,12,26,0.72) 18%, rgba(6,12,26,0.28) 42%, rgba(6,12,26,0.02) 62%, transparent 100%)",
+          }}
+        />
 
-        {nationalTeam && (
-          <div className="absolute left-3 top-3 z-30 rounded-full border border-white/20 bg-black/35 px-2.5 py-1 text-[10px] font-display font-black uppercase tracking-wide text-white shadow-subtle backdrop-blur-md">
-            {nationalTeam.countryCode}
-          </div>
-        )}
+        {/* Landkode-chippen er fjernet 2026-08-27: flagget i bakgrunnen viser
+            allerede nasjonaliteten, og plassen brukes bedre til posisjonen. */}
+        <div className="absolute left-3 top-3 z-30">
+          <PositionBadge position={player.position} variant="overlay" />
+        </div>
 
         <button
           type="button"
@@ -262,11 +363,7 @@ export function FeedPlayerCard({
         </button>
 
         <div className="absolute bottom-0 left-0 right-0 z-30 px-3.5 sm:px-3 pb-3.5 sm:pb-3 pt-12 sm:pt-10">
-          <div className="mb-1">
-            <PositionBadge position={player.position} variant="overlay" />
-          </div>
-
-          <p className="font-display font-black text-white text-[15px] sm:text-sm leading-tight truncate drop-shadow-sm">
+          <p className="font-display font-black text-white text-[17px] sm:text-[15px] tracking-tight leading-tight truncate drop-shadow-sm">
             {player.name}
           </p>
 
@@ -274,54 +371,97 @@ export function FeedPlayerCard({
             {teamName}
           </p>
 
-          <div className="flex items-end justify-between mt-2.5 sm:mt-2 pt-2.5 sm:pt-2 border-t border-white/15">
-            <div className="flex gap-3">
-              {latestMatch?.mep !== undefined && (
+          {/* Ett hovedtall, resten som stottetall (designgjennomgang
+              2026-08-27). Formkurven ligger i full bredde under. */}
+          <div className="mt-2.5 sm:mt-2 pt-2.5 sm:pt-2 border-t border-white/15">
+            <div className="flex items-end gap-3.5">
+              {/* Keepere: redningsprosent som hovedtall. Utespillere: MEP. */}
+              {keeper && latestSavePct !== undefined && (
                 <div>
-                  <span className="block font-display font-black text-2xl sm:text-xl text-white leading-none tabular-nums">
+                  <span className="block font-display font-black text-[30px] sm:text-[26px] tracking-tight text-white leading-none tabular-nums">
+                    {latestSavePct.toFixed(0)}%
+                  </span>
+                  <span className="block text-[9px] font-bold uppercase tracking-wide text-white/75 mt-1">
+                    Redning
+                  </span>
+                </div>
+              )}
+              {!keeper && latestMatch?.mep !== undefined && (
+                <div>
+                  <span className="block font-display font-black text-[30px] sm:text-[26px] tracking-tight text-white leading-none tabular-nums">
                     {formatDecimal(latestMatch.mep)}
                   </span>
-                  <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
+                  <span className="block text-[9px] font-bold uppercase tracking-wide text-white/75 mt-1">
                     MEP sist
                   </span>
                 </div>
               )}
               {latestSaves !== undefined && (
                 <div>
-                  <span className="block font-display font-bold text-base text-white/85 leading-none tabular-nums">
+                  <span
+                    className={cn(
+                      "block font-display leading-none tabular-nums",
+                      latestMatch?.mep === undefined
+                        ? "font-black text-[30px] sm:text-[26px] tracking-tight text-white"
+                        : "font-bold text-[15px] text-white/90",
+                    )}
+                  >
                     {latestSaves.toString()}
                   </span>
-                  <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
+                  <span
+                    className={cn(
+                      "block text-[9px] uppercase tracking-wide mt-1",
+                      latestMatch?.mep === undefined
+                        ? "font-bold text-white/75"
+                        : "text-white/55",
+                    )}
+                  >
                     Redn.
                   </span>
                 </div>
               )}
-              {latestSavePct !== undefined && (
+              {/* Skudd mot gir volumkontekst: 50 % paa 4 skudd og 50 % paa
+                  40 skudd er to helt ulike kamper. */}
+              {keeper && latestMatch?.shotsAgainst !== undefined && (
                 <div>
-                  <span className="block font-display font-bold text-base text-white/85 leading-none tabular-nums">
-                    {latestSavePct.toFixed(1)}%
+                  <span className="block font-display font-bold text-[15px] text-white/90 leading-none tabular-nums">
+                    {latestMatch.shotsAgainst.toString()}
                   </span>
-                  <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
-                    Red%
+                  <span className="block text-[9px] uppercase tracking-wide text-white/55 mt-1">
+                    Skudd mot
                   </span>
                 </div>
               )}
               {latestGoals !== undefined && (
                 <div>
-                  <span className="block font-display font-bold text-base text-white/85 leading-none tabular-nums">
+                  <span
+                    className={cn(
+                      "block font-display leading-none tabular-nums",
+                      latestMatch?.mep === undefined
+                        ? "font-black text-[30px] sm:text-[26px] tracking-tight text-white"
+                        : "font-bold text-[15px] text-white/90",
+                    )}
+                  >
                     {latestGoals.toString()}
                   </span>
-                  <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
+                  <span
+                    className={cn(
+                      "block text-[9px] uppercase tracking-wide mt-1",
+                      latestMatch?.mep === undefined
+                        ? "font-bold text-white/75"
+                        : "text-white/55",
+                    )}
+                  >
                     Mål
                   </span>
                 </div>
               )}
               {lastMinEvent?.statValue !== undefined && (
                 <div>
-                  <span className="block font-display font-bold text-base text-white/85 leading-none">
+                  <span className="block font-display font-bold text-[15px] text-white/90 leading-none tabular-nums">
                     {lastMinEvent.statValue.toString()}
                   </span>
-                  <span className="block text-[8px] uppercase tracking-wide text-white/55 mt-0.5">
+                  <span className="block text-[9px] uppercase tracking-wide text-white/55 mt-1">
                     Min
                   </span>
                 </div>
@@ -329,12 +469,10 @@ export function FeedPlayerCard({
             </div>
 
             {sparkValues.length >= 2 && (
-              <div className="flex flex-col items-end gap-0.5">
-                <Sparkline values={sparkValues} />
-                <span className="text-[8px] uppercase tracking-wide text-white/45">
-                  MEP-form
-                </span>
-              </div>
+              <>
+                <Sparkline values={sparkValues} reference={sparkReference} />
+                <span className="sr-only">MEP-form</span>
+              </>
             )}
           </div>
 

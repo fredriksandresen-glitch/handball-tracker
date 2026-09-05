@@ -21,6 +21,7 @@ export function LeagueSelect() {
   useEffect(() => {
     if (search.league !== league) {
       void navigate({
+        to: ".",
         search: (previous) => ({ ...previous, league: ELITE_LEAGUE_ID }),
         replace: true,
       });
@@ -29,6 +30,7 @@ export function LeagueSelect() {
 
   function handleChange(nextLeague: LeagueId) {
     void navigate({
+      to: ".",
       search: (previous) => ({ ...previous, league: nextLeague }),
     });
   }

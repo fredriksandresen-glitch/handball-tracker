@@ -9,6 +9,8 @@ import {
   BarChart3,
   CalendarDays,
   ChevronDown,
+  FileDown,
+  LoaderCircle,
   Search,
   Shield,
   Target,
@@ -16,7 +18,7 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MatchCard } from "../components/MatchCard";
 import { PositionBadge } from "../components/PositionBadge";
 import { useSelectedLeague } from "../components/LeagueSelect";
@@ -41,6 +43,8 @@ import {
 import {
   getPlayerImageVariants,
   resolveImageUrl,
+  resolvePlayerCardImageSources,
+  resolvePlayerFullImageUrl,
 } from "../utils/playerImages";
 import { getTeamLogoClassName } from "../utils/teamLogoStyles";
 import { useNextMatchForTeam, useTeam } from "../hooks/useTeam";
@@ -48,9 +52,15 @@ import {
   getStaticPlayerLeagueId,
   getStaticPlayers,
   getStaticProfile,
+  getStaticTeamLogoUrl,
+  getPlayerSeasonScopes,
+  mapClawdbotMatchStats,
+  mapClawdbotPlayer,
   mapClawdbotSeasonStats,
   type EnrichedPlayerMatchStats,
+  type PlayerSeasonScope,
 } from "../services/clawdbotPlayerProfile";
+import { downloadComparisonReport } from "../services/comparisonReports";
 import type {
   Player,
   PlayerMatchStats,
@@ -97,6 +107,11 @@ const CLUB_LOGOS: Record<string, string> = {
 };
 
 function getClubLogo(teamName?: string) {
+  // Bruk de LOKALE logoene fra canisteren (2026-09-01). CLUB_LOGOS peker paa
+  // klubbenes egne nettsider; naar en av dem legger om, forsvinner logoen
+  // (Sola var borte). getStaticTeamLogoUrl slaar opp i teamLogoManifest.
+  const local = getStaticTeamLogoUrl(teamName);
+  if (local) return local;
   const normalized = teamName?.toLowerCase() ?? "";
   return Object.entries(CLUB_LOGOS).find(([key]) => normalized.includes(key))?.[1];
 }
@@ -169,6 +184,77 @@ function TeamLogo({ teamName, size = "sm" }: { teamName?: string; size?: "sm" | 
     >
       <img src={logoUrl} alt="" className={cn("object-contain", imgClass, getTeamLogoClassName(teamName))} />
     </span>
+  );
+}
+
+function SeasonScopeSelector({
+  scopes,
+  activeScopeId,
+  seasonLabel,
+  onChange,
+}: {
+  scopes: PlayerSeasonScope[];
+  activeScopeId: string;
+  seasonLabel: string;
+  onChange: (scopeId: string) => void;
+}) {
+  if (scopes.length < 3) return null;
+
+  return (
+    <section className="px-4 pt-4" aria-label={`Klubbopphold ${seasonLabel}`}>
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <div>
+          <p className="text-[10px] font-display font-bold uppercase tracking-widest text-muted-foreground">
+            Klubbopphold {seasonLabel}
+          </p>
+          <p className="mt-0.5 text-xs text-foreground">
+            Statistikken kan vises samlet eller per lag.
+          </p>
+        </div>
+        <span className="shrink-0 rounded-full border border-primary/30 bg-primary/10 px-2 py-1 text-[10px] font-display font-bold uppercase text-primary">
+          Utlån
+        </span>
+      </div>
+
+      <fieldset
+        className="grid grid-cols-3 overflow-hidden rounded-lg border border-border bg-card"
+      >
+        <legend className="sr-only">Velg statistikkgrunnlag</legend>
+        {scopes.map((scope) => {
+          const isActive = scope.id === activeScopeId;
+          const matches = Number(scope.profile.seasonStats.matches ?? 0);
+
+          return (
+            <button
+              key={scope.id}
+              type="button"
+              aria-pressed={isActive}
+              onClick={() => onChange(scope.id)}
+              className={cn(
+                "min-w-0 border-r border-border px-2 py-2.5 text-center transition-colors last:border-r-0",
+                isActive
+                  ? "bg-primary/15 text-primary"
+                  : "text-muted-foreground hover:bg-muted/35 hover:text-foreground",
+              )}
+            >
+              <span className="flex min-h-5 items-center justify-center gap-1.5">
+                {scope.teamName ? (
+                  <TeamLogo teamName={scope.teamName} />
+                ) : (
+                  <BarChart3 className="size-4" />
+                )}
+                <span className="truncate text-xs font-display font-black">
+                  {scope.label}
+                </span>
+              </span>
+              <span className="mt-1 block text-[10px] tabular-nums">
+                {matches} kamper{scope.spellType === "loan" ? " · utlån" : ""}
+              </span>
+            </button>
+          );
+        })}
+      </fieldset>
+    </section>
   );
 }
 
@@ -423,6 +509,40 @@ function KeyStats({
   );
 }
 
+function buildSmoothPath(points: { x: number; y: number }[]) {
+  if (points.length === 0) return "";
+  if (points.length === 1) return `M ${points[0].x} ${points[0].y}`;
+  if (points.length === 2)
+    return `M ${points[0].x} ${points[0].y} L ${points[1].x} ${points[1].y}`;
+
+  let path = `M ${points[0].x} ${points[0].y}`;
+  for (let i = 0; i < points.length - 1; i += 1) {
+    const prev = points[i - 1] ?? points[i];
+    const current = points[i];
+    const next = points[i + 1];
+    const after = points[i + 2] ?? next;
+    const cp1x = current.x + ((next.x - prev.x) / 6) * 1.2;
+    const cp1y = current.y + ((next.y - prev.y) / 6) * 1.2;
+    const cp2x = next.x - ((after.x - current.x) / 6) * 1.2;
+    const cp2y = next.y - ((after.y - current.y) / 6) * 1.2;
+    path += ` C ${cp1x.toFixed(2)} ${cp1y.toFixed(2)}, ${cp2x.toFixed(2)} ${cp2y.toFixed(2)}, ${next.x.toFixed(2)} ${next.y.toFixed(2)}`;
+  }
+  return path;
+}
+
+function shortenOpponent(name?: string) {
+  if (!name) return "-";
+  const cleaned = name
+    .replace(/\s+(damer|elite|topphåndball|håndball|il|hk|rekrutt)\b/gi, "")
+    .trim();
+  return (cleaned || name).slice(0, 6);
+}
+
+function mean(values: number[]) {
+  if (values.length === 0) return 0;
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
 function FormOverview({
   player,
   stats,
@@ -435,66 +555,246 @@ function FormOverview({
     return (stats as EnrichedPlayerMatchStats[])
       .filter((match) => typeof match.mep === "number")
       .sort((a, b) => getMatchDate(a).localeCompare(getMatchDate(b)))
-      .slice(-5);
+      .slice(-10);
   }, [stats]);
 
-  const values = recent.map((match) => match.mep ?? 0);
-  const min = Math.min(...values, 0);
-  const max = Math.max(...values, 1);
-  const range = Math.max(max - min, 1);
-  const avg = values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
-  const last = values.at(-1);
-  const best = values.length ? Math.max(...values) : undefined;
+  const chart = useMemo(() => {
+    const values = recent.map((match) => match.mep ?? 0);
+    if (values.length === 0) return null;
 
-  if (recent.length === 0) return null;
+    const width = 320;
+    const height = 132;
+    const padX = 10;
+    const padY = 14;
+    const rawMin = Math.min(...values, 0);
+    const rawMax = Math.max(...values, 1);
+    const headroom = Math.max((rawMax - rawMin) * 0.15, 0.3);
+    const minValue = rawMin - headroom;
+    const maxValue = rawMax + headroom;
+    const span = Math.max(maxValue - minValue, 0.5);
+
+    const toY = (value: number) =>
+      padY + (1 - (value - minValue) / span) * (height - padY * 2);
+    const toX = (index: number) =>
+      values.length === 1
+        ? width / 2
+        : padX + (index / (values.length - 1)) * (width - padX * 2);
+
+    const points = values.map((value, index) => ({
+      x: toX(index),
+      y: toY(value),
+      value,
+    }));
+    const line = buildSmoothPath(points);
+    const area = `${line} L ${points[points.length - 1].x.toFixed(2)} ${height - padY} L ${points[0].x.toFixed(2)} ${height - padY} Z`;
+
+    return {
+      width,
+      height,
+      points,
+      line,
+      area,
+      zeroY: toY(0),
+      avgY: toY(mean(values)),
+      showZero: minValue < 0 && maxValue > 0,
+    };
+  }, [recent]);
+
+  if (recent.length === 0 || !chart) return null;
+
+  const values = recent.map((match) => match.mep ?? 0);
+  const avg = mean(values);
+  const last = values[values.length - 1];
+  const best = Math.max(...values);
+  const trend =
+    values.length >= 4
+      ? mean(values.slice(-3)) - mean(values.slice(0, -3))
+      : undefined;
 
   return (
     <section className="mx-4 space-y-3" data-ocid="form-overview">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold">MEP siste {recent.length} kamper</p>
-          <h2 className="font-display font-black text-lg text-foreground">Formkurve basert på prestasjonsscore</h2>
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+        <div className="px-4 py-3 border-b border-border bg-muted/25 flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="font-display font-black text-sm text-foreground">Formkurve</p>
+            <p className="text-[11px] text-muted-foreground">
+              MEP siste {recent.length} kamper
+            </p>
+          </div>
+          {trend !== undefined && (
+            <span
+              className={cn(
+                "shrink-0 rounded-lg px-2.5 py-1 text-[11px] font-display font-bold tabular-nums",
+                trend >= 0
+                  ? "bg-chart-2/12 text-chart-2 border border-chart-2/30"
+                  : "bg-destructive/12 text-destructive border border-destructive/30",
+              )}
+            >
+              {trend >= 0 ? "Stigende" : "Fallende"} {formatSigned(trend)}
+            </span>
+          )}
         </div>
-        <Activity className="size-5 text-primary" />
+
+        <div className="px-4 pt-4">
+          <svg
+            viewBox={`0 0 ${chart.width} ${chart.height}`}
+            className="w-full h-36"
+            preserveAspectRatio="none"
+            role="img"
+            aria-label={`Formkurve, MEP siste ${recent.length} kamper`}
+          >
+            <defs>
+              <linearGradient id="formArea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="currentColor" stopOpacity="0.28" />
+                <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <g className="text-primary">
+              <line
+                x1="0"
+                x2={chart.width}
+                y1={chart.avgY}
+                y2={chart.avgY}
+                stroke="currentColor"
+                strokeOpacity="0.28"
+                strokeWidth="1"
+                strokeDasharray="4 4"
+              />
+              {chart.showZero && (
+                <line
+                  x1="0"
+                  x2={chart.width}
+                  y1={chart.zeroY}
+                  y2={chart.zeroY}
+                  className="text-muted-foreground"
+                  stroke="currentColor"
+                  strokeOpacity="0.35"
+                  strokeWidth="1"
+                />
+              )}
+              <path d={chart.area} fill="url(#formArea)" />
+              <path
+                d={chart.line}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                vectorEffect="non-scaling-stroke"
+              />
+              {chart.points.map((point, index) => {
+                const isLast = index === chart.points.length - 1;
+                return (
+                  <circle
+                    key={recent[index].id.toString()}
+                    cx={point.x}
+                    cy={point.y}
+                    r={isLast ? 5 : 3}
+                    fill={isLast ? "currentColor" : "var(--card)"}
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    vectorEffect="non-scaling-stroke"
+                  />
+                );
+              })}
+            </g>
+          </svg>
+
+          <div className="flex justify-between gap-1 pb-3 pt-1">
+            {recent.map((match, index) => {
+              const isLast = index === recent.length - 1;
+              return (
+                <div
+                  key={match.id.toString() + "-axis"}
+                  className="min-w-0 flex-1 text-center"
+                >
+                  <p
+                    className={cn(
+                      "truncate text-[9px] uppercase tracking-wide",
+                      isLast
+                        ? "text-primary font-display font-bold"
+                        : "text-muted-foreground",
+                    )}
+                  >
+                    {shortenOpponent(match.opponent)}
+                  </p>
+                  <p
+                    className={cn(
+                      "truncate font-mono text-[10px] tabular-nums",
+                      isLast ? "text-primary" : "text-muted-foreground/70",
+                    )}
+                  >
+                    {formatDecimal(match.mep ?? 0)}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 border-t border-border divide-x divide-border">
+          <div className="px-3 py-3 text-center">
+            <p className="text-[9px] uppercase tracking-widest text-muted-foreground">Siste</p>
+            <p className="font-display font-black text-xl text-primary leading-none tabular-nums mt-1">
+              {formatDecimal(last)}
+            </p>
+          </div>
+          <div className="px-3 py-3 text-center">
+            <p className="text-[9px] uppercase tracking-widest text-muted-foreground">Snitt</p>
+            <p className="font-display font-black text-xl text-foreground leading-none tabular-nums mt-1">
+              {avg.toFixed(1)}
+            </p>
+          </div>
+          <div className="px-3 py-3 text-center">
+            <p className="text-[9px] uppercase tracking-widest text-muted-foreground">Beste</p>
+            <p className="font-display font-black text-xl text-foreground leading-none tabular-nums mt-1">
+              {formatDecimal(best)}
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div className="rounded-2xl border border-border bg-card p-4 space-y-4">
-        <div className="grid grid-cols-3 gap-2">
-          <div className="rounded-xl bg-primary/12 border border-primary/35 px-3 py-2"><p className="text-[9px] uppercase tracking-widest text-muted-foreground">Siste</p><p className="font-display font-black text-2xl text-primary leading-none tabular-nums">{formatDecimal(last)}</p></div>
-          <div className="rounded-xl bg-muted/35 border border-border px-3 py-2"><p className="text-[9px] uppercase tracking-widest text-muted-foreground">Snitt</p><p className="font-display font-black text-2xl text-foreground leading-none tabular-nums">{avg.toFixed(1)}</p></div>
-          <div className="rounded-xl bg-muted/35 border border-border px-3 py-2"><p className="text-[9px] uppercase tracking-widest text-muted-foreground">Beste</p><p className="font-display font-black text-2xl text-foreground leading-none tabular-nums">{formatDecimal(best)}</p></div>
-        </div>
-
-        <div className="h-28 rounded-xl bg-background/45 border border-border/60 px-3 pt-3 pb-2 flex items-end gap-2">
-          {recent.map((match) => {
-            const value = match.mep ?? 0;
-            const height = 18 + ((value - min) / range) * 70;
-            const isLast = match === recent.at(-1);
-            return (
-              <div key={match.id.toString()} className="flex-1 h-full flex flex-col justify-end gap-1 min-w-0">
-                <div className="flex-1 flex items-end justify-center">
-                  <div className={cn("w-full max-w-12 rounded-t-lg transition-all duration-500", value < 0 ? "bg-destructive/70" : isLast ? "bg-primary" : "bg-primary/45")} style={{ height: height + "%" }} />
-                </div>
-                <p className={cn("text-center text-[11px] font-mono font-bold tabular-nums truncate", isLast ? "text-primary" : "text-muted-foreground")}>{formatDecimal(value)}</p>
+      <div className="space-y-2">
+        {[...recent].reverse().map((match, index) => {
+          const value = match.mep ?? 0;
+          const isLast = index === 0;
+          const detail = keeper
+            ? `${formatNumber(match.saves)} redninger · ${formatPct(match.savePct)}`
+            : `${formatNumber(match.goals)} mål · ${formatNumber(match.assists)} assist`;
+          return (
+            <div
+              key={match.id.toString() + "-row"}
+              className={cn(
+                "rounded-xl border px-3 py-2.5 flex items-center justify-between gap-3",
+                isLast ? "border-primary/40 bg-primary/8" : "border-border bg-card",
+              )}
+            >
+              <div className="min-w-0">
+                <p className="font-display font-bold text-sm text-foreground truncate">
+                  {match.opponent ? "mot " + match.opponent : "Kamp"}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {(match.date ?? "Ukjent dato") + " · " + detail}
+                </p>
               </div>
-            );
-          })}
-        </div>
-
-        <div className="space-y-2">
-          {recent.map((match) => {
-            const value = match.mep ?? 0;
-            const isLast = match === recent.at(-1);
-            const keeperLine = (match.date ?? "Siste kamp") + " · " + formatNumber(match.saves) + " redninger · " + formatPct(match.savePct);
-            const playerLine = (match.date ?? "Siste kamp") + " · " + formatNumber(match.goals) + " mål · " + formatNumber(match.assists) + " assist";
-            return (
-              <div key={match.id.toString() + "-row"} className={cn("rounded-xl border px-3 py-2 flex items-center justify-between gap-3", isLast ? "border-primary/45 bg-primary/8" : "border-border bg-background/35")}>
-                <div className="min-w-0"><p className="font-display font-bold text-sm text-foreground truncate">{match.opponent ? "mot " + match.opponent : "Kamp"}</p><p className="text-xs text-muted-foreground">{keeper ? keeperLine : playerLine}</p></div>
-                <div className="text-right shrink-0"><p className={cn("font-display font-black text-2xl leading-none tabular-nums", value < 0 ? "text-destructive" : isLast ? "text-primary" : "text-foreground")}>{formatSigned(value)}</p><p className="text-[9px] uppercase tracking-widest text-muted-foreground">MEP</p></div>
+              <div className="text-right shrink-0">
+                <p
+                  className={cn(
+                    "font-display font-black text-xl leading-none tabular-nums",
+                    value < 0
+                      ? "text-destructive"
+                      : isLast
+                        ? "text-primary"
+                        : "text-foreground",
+                  )}
+                >
+                  {formatSigned(value)}
+                </p>
+                <p className="text-[9px] uppercase tracking-widest text-muted-foreground">MEP</p>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
@@ -619,7 +919,14 @@ function MatchHistory({
             >
               <span className="min-w-0">
                 <span className="block font-display font-bold text-foreground truncate">{match.opponent ? "mot " + match.opponent : "Kamp"}</span>
-                <span className="block text-xs text-muted-foreground truncate">{match.date ?? "Kamp " + match.matchId.toString()}</span>
+                <span className="block text-xs text-muted-foreground truncate">
+                  {[
+                    match.date ?? `Kamp ${match.matchId.toString()}`,
+                    match.teamName,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </span>
               </span>
               <span className="text-right font-bold text-primary tabular-nums">{formatDecimal(match.mep)}</span>
               <span className="text-right text-foreground tabular-nums">{keeper ? formatNumber(match.saves) : formatNumber(match.goals)}</span>
@@ -651,13 +958,21 @@ function MatchHistory({
 function PlayerComparison({
   player,
   seasonStats,
+  season,
+  league,
+  teamName,
 }: {
   player: Player;
   seasonStats: PlayerSeasonStats | null | undefined;
+  season: SeasonId;
+  league: LeagueId;
+  teamName?: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [reportLoading, setReportLoading] = useState(false);
+  const [reportError, setReportError] = useState<string | null>(null);
 
   const candidates = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -710,7 +1025,7 @@ function PlayerComparison({
   if (!seasonStats) return null;
 
   const keeper = isGK(player.position);
-  const currentTeam = getStaticTeamName(player.id);
+  const currentTeam = teamName ?? getStaticTeamName(player.id);
   const rows =
     selected === null
       ? []
@@ -840,6 +1155,7 @@ function PlayerComparison({
                 setIsOpen(false);
                 setQuery("");
                 setSelectedId(null);
+                setReportError(null);
               }}
               className="size-9 rounded-full border border-border bg-background/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
               aria-label="Lukk sammenligning"
@@ -878,10 +1194,20 @@ function PlayerComparison({
                     )}
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      {resolveImageUrl(candidate.player.imageUrl) ? (
+                      {resolvePlayerCardImageSources(
+                        candidate.player.imageUrl,
+                      )?.src ? (
                         <img
-                          src={resolveImageUrl(candidate.player.imageUrl)}
+                          src={
+                            resolvePlayerCardImageSources(
+                              candidate.player.imageUrl,
+                            )?.src
+                          }
                           alt=""
+                          loading="lazy"
+                          decoding="async"
+                          width={40}
+                          height={40}
                           className="size-10 rounded-lg object-cover object-top bg-muted shrink-0"
                         />
                       ) : (
@@ -972,6 +1298,46 @@ function PlayerComparison({
                 );
               })}
             </div>
+
+            <div className="border-t border-border bg-muted/15 p-4">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full justify-center"
+                disabled={reportLoading}
+                onClick={async () => {
+                  setReportLoading(true);
+                  setReportError(null);
+                  try {
+                    await downloadComparisonReport({
+                      playerIds: [player.id.toString(), selected.player.id.toString()],
+                      season,
+                      league,
+                    });
+                  } catch (error) {
+                    setReportError(
+                      error instanceof Error
+                        ? error.message
+                        : "Kunne ikke lage rapporten.",
+                    );
+                  } finally {
+                    setReportLoading(false);
+                  }
+                }}
+              >
+                {reportLoading ? (
+                  <LoaderCircle className="size-4 animate-spin" />
+                ) : (
+                  <FileDown className="size-4" />
+                )}
+                {reportLoading ? "Lager dybderapport..." : "Last ned dybderapport"}
+              </Button>
+              {reportError && (
+                <p className="mt-2 text-center text-xs text-destructive" role="alert">
+                  {reportError}
+                </p>
+              )}
+            </div>
           </>
         ) : (
           <div className="px-4 py-5 text-center text-sm text-muted-foreground">
@@ -1021,33 +1387,58 @@ export default function PlayerPage() {
   const { id } = useParams({ from: "/player/$id" });
   const router = useRouter();
   const playerId = BigInt(id);
-  const leagueId =
-    getStaticPlayerLeagueId(playerId, seasonId) ?? selectedLeagueId;
-  const leagueLabel = getLeagueLabel(leagueId, seasonId);
   const [activeTab, setActiveTab] = useState<Tab>("season");
+  const seasonScopes = useMemo(
+    () => getPlayerSeasonScopes(playerId, seasonId),
+    [playerId, seasonId],
+  );
+  const [activeScopeId, setActiveScopeId] = useState("combined");
+
+  useEffect(() => {
+    setActiveScopeId(seasonScopes[0]?.id ?? "combined");
+  }, [id, seasonId, seasonScopes]);
+
+  const activeScope =
+    seasonScopes.find((scope) => scope.id === activeScopeId) ??
+    seasonScopes[0];
+  const leagueId =
+    activeScope?.leagueId ??
+    getStaticPlayerLeagueId(playerId, seasonId) ??
+    selectedLeagueId;
+  const leagueLabel = getLeagueLabel(leagueId, seasonId);
 
   const { data: player, isLoading: playerLoading } = usePlayer(playerId, seasonId);
   const { data: seasonStats, isLoading: seasonLoading } =
     usePlayerSeasonStats(playerId, seasonId);
   const { data: matchStats = [], isLoading: matchLoading } =
     usePlayerMatchStats(playerId, seasonId);
-  const hasSeasonSnapshot = !!getStaticProfile(playerId, seasonId);
+  const scopedProfile = activeScope?.profile;
+  const displayPlayer = scopedProfile ? mapClawdbotPlayer(scopedProfile) : player;
+  const displaySeasonStats = scopedProfile
+    ? mapClawdbotSeasonStats(scopedProfile)
+    : seasonStats;
+  const displayMatchStats = scopedProfile
+    ? mapClawdbotMatchStats(scopedProfile)
+    : matchStats;
+  const hasSeasonSnapshot = !!scopedProfile || !!getStaticProfile(playerId, seasonId);
   const { data: team } = useTeam(
-    hasSeasonSnapshot ? (player?.teamId ?? 0n) : 0n,
+    hasSeasonSnapshot ? (displayPlayer?.teamId ?? 0n) : 0n,
     seasonId,
     leagueId,
   );
   const { data: nextMatchResult } = useNextMatchForTeam(
-    player?.teamId ?? 0n,
+    displayPlayer?.teamId ?? 0n,
     seasonId,
     leagueId,
   );
 
   const isLoading = playerLoading || seasonLoading || matchLoading;
   const visibleSeasonStats =
-    seasonStats && hasUsefulStats(seasonStats) ? seasonStats : null;
+    displaySeasonStats && hasUsefulStats(displaySeasonStats)
+      ? displaySeasonStats
+      : null;
 
-  if (isLoading && !player) {
+  if (isLoading && !displayPlayer) {
     return (
       <div className="px-4 py-20 text-center text-muted-foreground">
         Laster spillerprofil...
@@ -1055,7 +1446,7 @@ export default function PlayerPage() {
     );
   }
 
-  if (!player) {
+  if (!displayPlayer) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
         <Shield className="size-12 text-muted-foreground" />
@@ -1087,18 +1478,25 @@ export default function PlayerPage() {
       </div>
 
       <PlayerHero
-        player={player}
-        teamName={team?.name}
-        teamId={player.teamId}
+        player={displayPlayer}
+        teamName={team?.name ?? activeScope?.teamName}
+        teamId={displayPlayer.teamId}
         season={seasonId}
         league={leagueId}
+      />
+
+      <SeasonScopeSelector
+        scopes={seasonScopes}
+        activeScopeId={activeScope?.id ?? activeScopeId}
+        seasonLabel={season.label}
+        onChange={setActiveScopeId}
       />
 
       {nextMatchResult && (
         <div className="px-4 pt-4">
           <MatchCard
             match={nextMatchResult.match}
-            teamId={player.teamId}
+            teamId={displayPlayer.teamId}
             homeTeamName={nextMatchResult.homeTeamName}
             awayTeamName={nextMatchResult.awayTeamName}
           />
@@ -1106,29 +1504,39 @@ export default function PlayerPage() {
       )}
 
       <div className="flex flex-col gap-5 pt-5">
-        <KeyStats player={player} stats={visibleSeasonStats} />
-        <InsightCards player={player} stats={visibleSeasonStats} />
+        <KeyStats player={displayPlayer} stats={visibleSeasonStats} />
+        <InsightCards player={displayPlayer} stats={visibleSeasonStats} />
         {!hasSeasonSnapshot && (
           <div className="mx-4 rounded-xl border border-border bg-card px-4 py-4 text-sm text-muted-foreground">
             Spilleren har ingen registrert lagtilknytning eller statistikk for {season.label}.
           </div>
         )}
-        <PlayerComparison player={player} seasonStats={visibleSeasonStats} />
-        <FormOverview player={player} stats={matchStats} />
+        <PlayerComparison
+          player={displayPlayer}
+          seasonStats={visibleSeasonStats}
+          season={seasonId}
+          league={leagueId}
+          teamName={activeScope?.label ?? team?.name}
+        />
+        <FormOverview player={displayPlayer} stats={displayMatchStats} />
 
         <Tabs active={activeTab} onChange={setActiveTab} />
 
         <div className="px-4">
           {activeTab === "season" &&
             (visibleSeasonStats ? (
-              <SeasonDetails player={player} stats={visibleSeasonStats} />
+              <SeasonDetails player={displayPlayer} stats={visibleSeasonStats} />
             ) : (
               <div className="py-10 text-center text-sm text-muted-foreground">
                 Ingen sesongstatistikk tilgjengelig
               </div>
             ))}
-          {activeTab === "matches" && <MatchHistory player={player} stats={matchStats} />}
-          {activeTab === "form" && <FormOverview player={player} stats={matchStats} />}
+          {activeTab === "matches" && (
+            <MatchHistory player={displayPlayer} stats={displayMatchStats} />
+          )}
+          {activeTab === "form" && (
+            <FormOverview player={displayPlayer} stats={displayMatchStats} />
+          )}
         </div>
       </div>
     </div>

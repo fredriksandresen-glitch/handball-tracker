@@ -1,0 +1,16 @@
+[
+  { "name": "Flint Tønsberg", "rank": 1, "played": 26, "wins": 22, "draws": 0, "losses": 4, "goalsFor": 901, "goalsAgainst": 715, "goalDifference": 186, "points": 44 },
+  { "name": "Utleira", "rank": 2, "played": 26, "wins": 20, "draws": 3, "losses": 3, "goalsFor": 792, "goalsAgainst": 638, "goalDifference": 154, "points": 43 },
+  { "name": "Aker Topphåndball", "rank": 3, "played": 26, "wins": 19, "draws": 1, "losses": 6, "goalsFor": 839, "goalsAgainst": 681, "goalDifference": 158, "points": 39 },
+  { "name": "Åsane", "rank": 4, "played": 26, "wins": 18, "draws": 2, "losses": 6, "goalsFor": 780, "goalsAgainst": 703, "goalDifference": 77, "points": 38 },
+  { "name": "Volda", "rank": 5, "played": 26, "wins": 17, "draws": 1, "losses": 8, "goalsFor": 810, "goalsAgainst": 686, "goalDifference": 124, "points": 35 },
+  { "name": "Levanger", "rank": 6, "played": 26, "wins": 16, "draws": 1, "losses": 9, "goalsFor": 826, "goalsAgainst": 752, "goalDifference": 74, "points": 33 },
+  { "name": "Storhamar", "rank": 7, "played": 26, "wins": 13, "draws": 1, "losses": 12, "goalsFor": 725, "goalsAgainst": 736, "goalDifference": -11, "points": 27 },
+  { "name": "Bækkelaget Håndball Elite", "rank": 8, "played": 26, "wins": 12, "draws": 2, "losses": 12, "goalsFor": 801, "goalsAgainst": 776, "goalDifference": 25, "points": 26 },
+  { "name": "Stavanger", "rank": 9, "played": 26, "wins": 10, "draws": 1, "losses": 15, "goalsFor": 805, "goalsAgainst": 823, "goalDifference": -18, "points": 21 },
+  { "name": "Gjøvik HK", "rank": 10, "played": 26, "wins": 8, "draws": 1, "losses": 17, "goalsFor": 668, "goalsAgainst": 728, "goalDifference": -60, "points": 17 },
+  { "name": "Kjelsås", "rank": 11, "played": 26, "wins": 7, "draws": 0, "losses": 19, "goalsFor": 700, "goalsAgainst": 811, "goalDifference": -111, "points": 14 },
+  { "name": "Trondheim Topphåndball", "rank": 12, "played": 26, "wins": 7, "draws": 1, "losses": 18, "goalsFor": 761, "goalsAgainst": 809, "goalDifference": -48, "points": 13, "pointsStart": -2 },
+  { "name": "Glassverket", "rank": 13, "played": 26, "wins": 5, "draws": 2, "losses": 19, "goalsFor": 664, "goalsAgainst": 774, "goalDifference": -110, "points": 12 },
+  { "name": "Pors", "rank": 14, "played": 26, "wins": 0, "draws": 0, "losses": 26, "goalsFor": 511, "goalsAgainst": 951, "goalDifference": -440, "points": 0 }
+]
