@@ -1,0 +1,1 @@
+import"./useInternetIdentity-B_nLEmyD.js";import{u as e}from"./useQuery-C0m0N1yH.js";import"./index-tu27q0Ld.js";import"./backend-Bgdkr8tO.js";import{h as m}from"./clawdbotPlayerProfile-FnPtIHJ0.js";function p(t,a){const r=m(t,a);return e({queryKey:["teams",t??"all",a??"all"],queryFn:async()=>r,initialData:r,staleTime:Number.POSITIVE_INFINITY})}export{p as u};

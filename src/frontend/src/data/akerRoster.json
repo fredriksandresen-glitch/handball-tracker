@@ -1,15 +1,142 @@
 [
-  {"id":"8163979773868","name":"Martine Ertvaag Brekke","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Martine-Ertvaag-Brekke-Aker-Topphandball.png?v=1773826257","position":"Kantspiller høyre","shirtNumber":6},
-  {"id":"8163978083300","name":"Linnea Hareton","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Linnea-Hareton-Aker-Topphandball.png?v=1773826257","position":"Kantspiller høyre","shirtNumber":8},
-  {"id":"8163978717973","name":"Milla Haugerstuen Breen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Milla-Haugerstuen-Breen-Aker-Topphandball.png?v=1773826257","position":"Kantspiller venstre","shirtNumber":9},
-  {"id":"8163976457589","name":"Othilie Liodden Holte","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Othilie-Liodden-Holte-Aker-Topphandball.png?v=1773826257","position":"Bakspiller venstre","shirtNumber":11},
-  {"id":"8163974643040","name":"Tyra Elise Fjellvang","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Tyra-Elise-Fjellvang-Aker-Topphandball.png?v=1773826257","position":"Linjespiller","shirtNumber":13},
-  {"id":"8163978768264","name":"Oda Haugland Røse","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Oda-Haugland-Rose-Aker-Topphandball.png?v=1773826257","position":"Bakspiller høyre","shirtNumber":14},
-  {"id":"8163979739026","name":"Minken Charlotte Maltau","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Minken-Charlotte-Maltau-Aker-Topphandball.png?v=1773826257","position":"Målvakt","shirtNumber":16},
-  {"id":"8163975351518","name":"Marit Ova Bøyum","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Marit-Ova-Boyum-Aker-Topphandball.png?v=1773826257","position":"Bakspiller høyre","shirtNumber":17},
-  {"id":"8163979630702","name":"Una Edholm Straith","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Una-Edholm-Straith-Aker-Topphandball.png?v=1773826257","position":"Linjespiller","shirtNumber":18},
-  {"id":"8163976438181","name":"Ine Marie Terland","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Ine-Marie-Terland-Aker-Topphandball.png?v=1773826257","position":"Kantspiller høyre","shirtNumber":19},
-  {"id":"8163978768276","name":"Mira Torp","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Mira-Torp-Aker-Topphandball.png?v=1773826257","position":"Bakspiller","shirtNumber":20},
-  {"id":"8163978808065","name":"Thilla Karoline Molle Langseth","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Thilla-Karoline-Molle-Langseth-Aker-Topphandball.png?v=1773826257","position":"Bakspiller","shirtNumber":22},
-  {"id":"22398210032285","name":"Linnea Isabel Ingeborg Aula","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Linnea-Isabel-Ingeborg-Aula-Fjellhammer.png?v=1773826257","position":"Kantspiller venstre","shirtNumber":0}
+  {
+    "id": "22398210032285",
+    "name": "Linnea Isabel Ingeborg Aula",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Linnea-Isabel-Ingeborg-Aula-Aker-Topphandball.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 2
+  },
+  {
+    "id": "8163976779840",
+    "name": "Margit Andrea Lidal",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Margit-Andrea-Lidal-Aker-Topphandball.png?v=1773826257",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 3
+  },
+  {
+    "id": "8163978974141",
+    "name": "Mia Amalie Sandvik",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mia-Amalie-Sandvik-Aker-Topphandball.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 4
+  },
+  {
+    "id": "8163978808065",
+    "name": "Thilla Karoline Molle Langseth",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Thilla-Karoline-Molle-Langseth-Aker-Topphandball.png?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 5
+  },
+  {
+    "id": "8163979773868",
+    "name": "Martine Ertvaag Brekke",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Martine-Ertvaag-Brekke-Aker-Topphandball.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 6
+  },
+  {
+    "id": "8163978083300",
+    "name": "Linnea Hareton",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Linnea-Hareton-Aker-Topphandball.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 8
+  },
+  {
+    "id": "8163978717973",
+    "name": "Milla Haugerstuen Breen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Milla-Haugerstuen-Breen-Aker-Topphandball.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 9
+  },
+  {
+    "id": "8163978561202",
+    "name": "Vilde Bjørnsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Vilde-Bjornsen-Aker-Topphandball.png?v=1773826257",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 10
+  },
+  {
+    "id": "8163976457589",
+    "name": "Othilie Liodden Holte",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Othilie-Liodden-Holte-Aker-Topphandball.png?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 11
+  },
+  {
+    "id": "8163974643040",
+    "name": "Tyra Elise Fjellvang",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Tyra-Elise-Fjellvang-Aker-Topphandball.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 13
+  },
+  {
+    "id": "8163978768264",
+    "name": "Oda Haugland Røse",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Oda-Haugland-Rose-Aker-Topphandball.png?v=1773826257",
+    "position": "Bakspiller midt",
+    "shirtNumber": 14
+  },
+  {
+    "id": "8163975687875",
+    "name": "Frida Haugen Toft",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Frida-Haugen-Toft-Aker-Topphandball.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 15
+  },
+  {
+    "id": "8163979739026",
+    "name": "Minken Charlotte Maltau",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Minken-Charlotte-Maltau-Aker-Topphandball.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 16
+  },
+  {
+    "id": "8163975351518",
+    "name": "Marit Ova Bøyum",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Marit-Ova-Boyum-Aker-Topphandball.png?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 17
+  },
+  {
+    "id": "8163979630702",
+    "name": "Una Edholm Straith",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Una-Edholm-Straith-Aker-Topphandball.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 18
+  },
+  {
+    "id": "8163976438181",
+    "name": "Ine Marie Terland",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ine-Marie-Terland-Aker-Topphandball.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 19
+  },
+  {
+    "id": "8163978768276",
+    "name": "Mira Torp",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mira-Torp-Aker-Topphandball.png?v=1773826257",
+    "position": "Bakspiller midt",
+    "shirtNumber": 20
+  },
+  {
+    "id": "8163979369507",
+    "name": "Matilde Mørk Eikland",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Matilde-Mork-Eikland-Aker-Topphandball.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 28
+  },
+  {
+    "id": "8163978129633",
+    "name": "Solveig Husemoen Rese",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Solveig-Husemoen-Rese-Aker-Topphandball.png?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 38
+  },
+  {
+    "id": "8163979318138",
+    "name": "Malin Haugen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Malin-Haugen-Aker-Topphandball.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 40
+  }
 ]

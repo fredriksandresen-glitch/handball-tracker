@@ -734,5 +734,469 @@
   "/assets/player-images/2c8161df764b65e1.png": {
     "400": "/assets/player-card-images/2c8161df764b65e1-400.webp",
     "720": "/assets/player-card-images/2c8161df764b65e1-720.webp"
+  },
+  "/assets/player-images/40e5c78a3b65fe5f.png": {
+    "400": "/assets/player-card-images/40e5c78a3b65fe5f-400.webp",
+    "720": "/assets/player-card-images/40e5c78a3b65fe5f-720.webp"
+  },
+  "/assets/player-images/8a9bee8fd6da5aea.png": {
+    "400": "/assets/player-card-images/8a9bee8fd6da5aea-400.webp",
+    "720": "/assets/player-card-images/8a9bee8fd6da5aea-720.webp"
+  },
+  "/assets/player-images/0e8a34f1e137cc42.png": {
+    "400": "/assets/player-card-images/0e8a34f1e137cc42-400.webp",
+    "720": "/assets/player-card-images/0e8a34f1e137cc42-720.webp"
+  },
+  "/assets/player-images/b11819207cf65f18.png": {
+    "400": "/assets/player-card-images/b11819207cf65f18-400.webp",
+    "720": "/assets/player-card-images/b11819207cf65f18-720.webp"
+  },
+  "/assets/player-images/a8cf301700e11123.png": {
+    "400": "/assets/player-card-images/a8cf301700e11123-400.webp",
+    "720": "/assets/player-card-images/a8cf301700e11123-720.webp"
+  },
+  "/assets/player-images/224d601a2221a8c3.png": {
+    "400": "/assets/player-card-images/224d601a2221a8c3-400.webp",
+    "720": "/assets/player-card-images/224d601a2221a8c3-720.webp"
+  },
+  "/assets/player-images/aa1e63f390db8de6.png": {
+    "400": "/assets/player-card-images/aa1e63f390db8de6-400.webp",
+    "720": "/assets/player-card-images/aa1e63f390db8de6-720.webp"
+  },
+  "/assets/player-images/06e7bc1abe0db47a.png": {
+    "400": "/assets/player-card-images/06e7bc1abe0db47a-400.webp",
+    "720": "/assets/player-card-images/06e7bc1abe0db47a-720.webp"
+  },
+  "/assets/player-images/b6855fe762452000.png": {
+    "400": "/assets/player-card-images/b6855fe762452000-400.webp",
+    "720": "/assets/player-card-images/b6855fe762452000-720.webp"
+  },
+  "/assets/player-images/e7eecb6413f4fed1.png": {
+    "400": "/assets/player-card-images/e7eecb6413f4fed1-400.webp",
+    "720": "/assets/player-card-images/e7eecb6413f4fed1-720.webp"
+  },
+  "/assets/player-images/108dfa4c9e2fdf0f.png": {
+    "400": "/assets/player-card-images/108dfa4c9e2fdf0f-400.webp",
+    "720": "/assets/player-card-images/108dfa4c9e2fdf0f-720.webp"
+  },
+  "/assets/player-images/d03e001e646d3eee.png": {
+    "400": "/assets/player-card-images/d03e001e646d3eee-400.webp",
+    "720": "/assets/player-card-images/d03e001e646d3eee-720.webp"
+  },
+  "/assets/player-images/9790479ac9c61902.png": {
+    "400": "/assets/player-card-images/9790479ac9c61902-400.webp",
+    "720": "/assets/player-card-images/9790479ac9c61902-720.webp"
+  },
+  "/assets/player-images/0cb37f1971bbcab0.png": {
+    "400": "/assets/player-card-images/0cb37f1971bbcab0-400.webp",
+    "720": "/assets/player-card-images/0cb37f1971bbcab0-720.webp"
+  },
+  "/assets/player-images/80b7fe3b26e355f1.png": {
+    "400": "/assets/player-card-images/80b7fe3b26e355f1-400.webp",
+    "720": "/assets/player-card-images/80b7fe3b26e355f1-720.webp"
+  },
+  "/assets/player-images/53e5f34dc149a004.png": {
+    "400": "/assets/player-card-images/53e5f34dc149a004-400.webp",
+    "720": "/assets/player-card-images/53e5f34dc149a004-720.webp"
+  },
+  "/assets/player-images/0dc27d44e7cbe61d.png": {
+    "400": "/assets/player-card-images/0dc27d44e7cbe61d-400.webp",
+    "720": "/assets/player-card-images/0dc27d44e7cbe61d-720.webp"
+  },
+  "/assets/player-images/180330b618d02901.png": {
+    "400": "/assets/player-card-images/180330b618d02901-400.webp",
+    "720": "/assets/player-card-images/180330b618d02901-720.webp"
+  },
+  "/assets/player-images/d56758b85cfc0889.jpg": {
+    "400": "/assets/player-card-images/d56758b85cfc0889-400.webp",
+    "720": "/assets/player-card-images/d56758b85cfc0889-720.webp"
+  },
+  "/assets/player-images/828bc6a8537fc9cc.png": {
+    "400": "/assets/player-card-images/828bc6a8537fc9cc-400.webp",
+    "720": "/assets/player-card-images/828bc6a8537fc9cc-720.webp"
+  },
+  "/assets/player-images/ef3e5825d13e9202.png": {
+    "400": "/assets/player-card-images/ef3e5825d13e9202-400.webp",
+    "720": "/assets/player-card-images/ef3e5825d13e9202-720.webp"
+  },
+  "/assets/player-images/6f08b30ca7ccb118.png": {
+    "400": "/assets/player-card-images/6f08b30ca7ccb118-400.webp",
+    "720": "/assets/player-card-images/6f08b30ca7ccb118-720.webp"
+  },
+  "/assets/player-images/d7bec9cd9c2e9900.png": {
+    "400": "/assets/player-card-images/d7bec9cd9c2e9900-400.webp",
+    "720": "/assets/player-card-images/d7bec9cd9c2e9900-720.webp"
+  },
+  "/assets/player-images/064afbcb56a29aec.png": {
+    "400": "/assets/player-card-images/064afbcb56a29aec-400.webp",
+    "720": "/assets/player-card-images/064afbcb56a29aec-720.webp"
+  },
+  "/assets/player-images/806f9d5b05e36e8a.png": {
+    "400": "/assets/player-card-images/806f9d5b05e36e8a-400.webp",
+    "720": "/assets/player-card-images/806f9d5b05e36e8a-720.webp"
+  },
+  "/assets/player-images/cb62449245433dbe.png": {
+    "400": "/assets/player-card-images/cb62449245433dbe-400.webp",
+    "720": "/assets/player-card-images/cb62449245433dbe-720.webp"
+  },
+  "/assets/player-images/b835fb000f146521.png": {
+    "400": "/assets/player-card-images/b835fb000f146521-400.webp",
+    "720": "/assets/player-card-images/b835fb000f146521-720.webp"
+  },
+  "/assets/player-images/6e580a165c7db0ef.png": {
+    "400": "/assets/player-card-images/6e580a165c7db0ef-400.webp",
+    "720": "/assets/player-card-images/6e580a165c7db0ef-720.webp"
+  },
+  "/assets/player-images/9a90dab6b93d20ed.png": {
+    "400": "/assets/player-card-images/9a90dab6b93d20ed-400.webp",
+    "720": "/assets/player-card-images/9a90dab6b93d20ed-720.webp"
+  },
+  "/assets/player-images/844ea2b44b036c6c.png": {
+    "400": "/assets/player-card-images/844ea2b44b036c6c-400.webp",
+    "720": "/assets/player-card-images/844ea2b44b036c6c-720.webp"
+  },
+  "/assets/player-images/ba1708586e71b324.png": {
+    "400": "/assets/player-card-images/ba1708586e71b324-400.webp",
+    "720": "/assets/player-card-images/ba1708586e71b324-720.webp"
+  },
+  "/assets/player-images/f40d6dab619b95e6.png": {
+    "400": "/assets/player-card-images/f40d6dab619b95e6-400.webp",
+    "720": "/assets/player-card-images/f40d6dab619b95e6-720.webp"
+  },
+  "/assets/player-images/854f670e231493cf.png": {
+    "400": "/assets/player-card-images/854f670e231493cf-400.webp",
+    "720": "/assets/player-card-images/854f670e231493cf-720.webp"
+  },
+  "/assets/player-images/4ecfa608fe861e4c.png": {
+    "400": "/assets/player-card-images/4ecfa608fe861e4c-400.webp",
+    "720": "/assets/player-card-images/4ecfa608fe861e4c-720.webp"
+  },
+  "/assets/player-images/c29635104e852568.png": {
+    "400": "/assets/player-card-images/c29635104e852568-400.webp",
+    "720": "/assets/player-card-images/c29635104e852568-720.webp"
+  },
+  "/assets/player-images/fdb94154e56f808c.png": {
+    "400": "/assets/player-card-images/fdb94154e56f808c-400.webp",
+    "720": "/assets/player-card-images/fdb94154e56f808c-720.webp"
+  },
+  "/assets/player-images/0ca1cfc79329b9ae.png": {
+    "400": "/assets/player-card-images/0ca1cfc79329b9ae-400.webp",
+    "720": "/assets/player-card-images/0ca1cfc79329b9ae-720.webp"
+  },
+  "/assets/player-images/d19a9a49ebc1e652.png": {
+    "400": "/assets/player-card-images/d19a9a49ebc1e652-400.webp",
+    "720": "/assets/player-card-images/d19a9a49ebc1e652-720.webp"
+  },
+  "/assets/player-images/168c77d9a0353558.jpg": {
+    "400": "/assets/player-card-images/168c77d9a0353558-400.webp",
+    "720": "/assets/player-card-images/168c77d9a0353558-720.webp"
+  },
+  "/assets/player-images/3b86aee08b2c7e33.png": {
+    "400": "/assets/player-card-images/3b86aee08b2c7e33-400.webp",
+    "720": "/assets/player-card-images/3b86aee08b2c7e33-720.webp"
+  },
+  "/assets/player-images/e4bb9a234d4e1ee4.jpg": {
+    "400": "/assets/player-card-images/e4bb9a234d4e1ee4-400.webp",
+    "720": "/assets/player-card-images/e4bb9a234d4e1ee4-720.webp"
+  },
+  "/assets/player-images/a0c0e15daec2bd9c.png": {
+    "400": "/assets/player-card-images/a0c0e15daec2bd9c-400.webp",
+    "720": "/assets/player-card-images/a0c0e15daec2bd9c-720.webp"
+  },
+  "/assets/player-images/ed747e870894f234.jpg": {
+    "400": "/assets/player-card-images/ed747e870894f234-400.webp",
+    "720": "/assets/player-card-images/ed747e870894f234-720.webp"
+  },
+  "/assets/player-images/309363676b724ac4.png": {
+    "400": "/assets/player-card-images/309363676b724ac4-400.webp",
+    "720": "/assets/player-card-images/309363676b724ac4-720.webp"
+  },
+  "/assets/player-images/a353d30b9b807f53.jpg": {
+    "400": "/assets/player-card-images/a353d30b9b807f53-400.webp",
+    "720": "/assets/player-card-images/a353d30b9b807f53-720.webp"
+  },
+  "/assets/player-images/a1ad4009add3e8f5.jpg": {
+    "400": "/assets/player-card-images/a1ad4009add3e8f5-400.webp",
+    "720": "/assets/player-card-images/a1ad4009add3e8f5-720.webp"
+  },
+  "/assets/player-images/76da9c0d8aecdd5c.png": {
+    "400": "/assets/player-card-images/76da9c0d8aecdd5c-400.webp",
+    "720": "/assets/player-card-images/76da9c0d8aecdd5c-720.webp"
+  },
+  "/assets/player-images/c4bb3c519a20b09e.jpg": {
+    "400": "/assets/player-card-images/c4bb3c519a20b09e-400.webp",
+    "720": "/assets/player-card-images/c4bb3c519a20b09e-720.webp"
+  },
+  "/assets/player-images/97bed237d5553cbb.png": {
+    "400": "/assets/player-card-images/97bed237d5553cbb-400.webp",
+    "720": "/assets/player-card-images/97bed237d5553cbb-720.webp"
+  },
+  "/assets/player-images/299d18e5261ab0c0.png": {
+    "400": "/assets/player-card-images/299d18e5261ab0c0-400.webp",
+    "720": "/assets/player-card-images/299d18e5261ab0c0-720.webp"
+  },
+  "/assets/player-images/1c589f1bdfaab95a.png": {
+    "400": "/assets/player-card-images/1c589f1bdfaab95a-400.webp",
+    "720": "/assets/player-card-images/1c589f1bdfaab95a-720.webp"
+  },
+  "/assets/player-images/06ff6590631049e3.png": {
+    "400": "/assets/player-card-images/06ff6590631049e3-400.webp",
+    "720": "/assets/player-card-images/06ff6590631049e3-720.webp"
+  },
+  "/assets/player-images/ddead18504ce4492.png": {
+    "400": "/assets/player-card-images/ddead18504ce4492-400.webp",
+    "720": "/assets/player-card-images/ddead18504ce4492-720.webp"
+  },
+  "/assets/player-images/5e177d3e1c1f8ac1.png": {
+    "400": "/assets/player-card-images/5e177d3e1c1f8ac1-400.webp",
+    "720": "/assets/player-card-images/5e177d3e1c1f8ac1-720.webp"
+  },
+  "/assets/player-images/be497b9b571aa779.png": {
+    "400": "/assets/player-card-images/be497b9b571aa779-400.webp",
+    "720": "/assets/player-card-images/be497b9b571aa779-720.webp"
+  },
+  "/assets/player-images/3217bfc062698df2.png": {
+    "400": "/assets/player-card-images/3217bfc062698df2-400.webp",
+    "720": "/assets/player-card-images/3217bfc062698df2-720.webp"
+  },
+  "/assets/player-images/d8e40e130df5069f.png": {
+    "400": "/assets/player-card-images/d8e40e130df5069f-400.webp",
+    "720": "/assets/player-card-images/d8e40e130df5069f-720.webp"
+  },
+  "/assets/player-images/2550d3d985188670.png": {
+    "400": "/assets/player-card-images/2550d3d985188670-400.webp",
+    "720": "/assets/player-card-images/2550d3d985188670-720.webp"
+  },
+  "/assets/player-images/2e8c7a95a90e0029.png": {
+    "400": "/assets/player-card-images/2e8c7a95a90e0029-400.webp",
+    "720": "/assets/player-card-images/2e8c7a95a90e0029-720.webp"
+  },
+  "/assets/player-images/3880b63bff6e10ff.png": {
+    "400": "/assets/player-card-images/3880b63bff6e10ff-400.webp",
+    "720": "/assets/player-card-images/3880b63bff6e10ff-720.webp"
+  },
+  "/assets/player-images/8578ea8c574ef981.png": {
+    "400": "/assets/player-card-images/8578ea8c574ef981-400.webp",
+    "720": "/assets/player-card-images/8578ea8c574ef981-720.webp"
+  },
+  "/assets/player-images/d7628edfc59ba411.png": {
+    "400": "/assets/player-card-images/d7628edfc59ba411-400.webp",
+    "720": "/assets/player-card-images/d7628edfc59ba411-720.webp"
+  },
+  "/assets/player-images/844118639519b8e4.png": {
+    "400": "/assets/player-card-images/844118639519b8e4-400.webp",
+    "720": "/assets/player-card-images/844118639519b8e4-720.webp"
+  },
+  "/assets/player-images/5db2d15ec2c6fd28.png": {
+    "400": "/assets/player-card-images/5db2d15ec2c6fd28-400.webp",
+    "720": "/assets/player-card-images/5db2d15ec2c6fd28-720.webp"
+  },
+  "/assets/player-images/ca69f3b9c401b391.png": {
+    "400": "/assets/player-card-images/ca69f3b9c401b391-400.webp",
+    "720": "/assets/player-card-images/ca69f3b9c401b391-720.webp"
+  },
+  "/assets/player-images/2e10c913c2268110.png": {
+    "400": "/assets/player-card-images/2e10c913c2268110-400.webp",
+    "720": "/assets/player-card-images/2e10c913c2268110-720.webp"
+  },
+  "/assets/player-images/6094924b5a066d45.png": {
+    "400": "/assets/player-card-images/6094924b5a066d45-400.webp",
+    "720": "/assets/player-card-images/6094924b5a066d45-720.webp"
+  },
+  "/assets/player-images/ec0ba3088cc327cd.png": {
+    "400": "/assets/player-card-images/ec0ba3088cc327cd-400.webp",
+    "720": "/assets/player-card-images/ec0ba3088cc327cd-720.webp"
+  },
+  "/assets/player-images/effc9982d0617c9d.png": {
+    "400": "/assets/player-card-images/effc9982d0617c9d-400.webp",
+    "720": "/assets/player-card-images/effc9982d0617c9d-720.webp"
+  },
+  "/assets/player-images/7358fb53f4bf8219.png": {
+    "400": "/assets/player-card-images/7358fb53f4bf8219-400.webp",
+    "720": "/assets/player-card-images/7358fb53f4bf8219-720.webp"
+  },
+  "/assets/player-images/2df002510883315a.png": {
+    "400": "/assets/player-card-images/2df002510883315a-400.webp",
+    "720": "/assets/player-card-images/2df002510883315a-720.webp"
+  },
+  "/assets/player-images/d54ca798f586a21b.png": {
+    "400": "/assets/player-card-images/d54ca798f586a21b-400.webp",
+    "720": "/assets/player-card-images/d54ca798f586a21b-720.webp"
+  },
+  "/assets/player-images/157a4343691210d8.png": {
+    "400": "/assets/player-card-images/157a4343691210d8-400.webp",
+    "720": "/assets/player-card-images/157a4343691210d8-720.webp"
+  },
+  "/assets/player-images/b7a2419b7076c1b6.png": {
+    "400": "/assets/player-card-images/b7a2419b7076c1b6-400.webp",
+    "720": "/assets/player-card-images/b7a2419b7076c1b6-720.webp"
+  },
+  "/assets/player-images/c12b2ddf5819c4dc.png": {
+    "400": "/assets/player-card-images/c12b2ddf5819c4dc-400.webp",
+    "720": "/assets/player-card-images/c12b2ddf5819c4dc-720.webp"
+  },
+  "/assets/player-images/5c746e010e7d9c6c.png": {
+    "400": "/assets/player-card-images/5c746e010e7d9c6c-400.webp",
+    "720": "/assets/player-card-images/5c746e010e7d9c6c-720.webp"
+  },
+  "/assets/player-images/de8507990d04177d.png": {
+    "400": "/assets/player-card-images/de8507990d04177d-400.webp",
+    "720": "/assets/player-card-images/de8507990d04177d-720.webp"
+  },
+  "/assets/player-images/7c7f821a228eaaea.png": {
+    "400": "/assets/player-card-images/7c7f821a228eaaea-400.webp",
+    "720": "/assets/player-card-images/7c7f821a228eaaea-720.webp"
+  },
+  "/assets/player-images/9c16408c11b2b14d.png": {
+    "400": "/assets/player-card-images/9c16408c11b2b14d-400.webp",
+    "720": "/assets/player-card-images/9c16408c11b2b14d-720.webp"
+  },
+  "/assets/player-images/d076015b46e1831e.png": {
+    "400": "/assets/player-card-images/d076015b46e1831e-400.webp",
+    "720": "/assets/player-card-images/d076015b46e1831e-720.webp"
+  },
+  "/assets/player-images/e17d2614c390245b.png": {
+    "400": "/assets/player-card-images/e17d2614c390245b-400.webp",
+    "720": "/assets/player-card-images/e17d2614c390245b-720.webp"
+  },
+  "/assets/player-images/78c992315d95bae0.png": {
+    "400": "/assets/player-card-images/78c992315d95bae0-400.webp",
+    "720": "/assets/player-card-images/78c992315d95bae0-720.webp"
+  },
+  "/assets/player-images/a994c2e8e021a609.png": {
+    "400": "/assets/player-card-images/a994c2e8e021a609-400.webp",
+    "720": "/assets/player-card-images/a994c2e8e021a609-720.webp"
+  },
+  "/assets/player-images/b07a409c6b1eb747.png": {
+    "400": "/assets/player-card-images/b07a409c6b1eb747-400.webp",
+    "720": "/assets/player-card-images/b07a409c6b1eb747-720.webp"
+  },
+  "/assets/player-images/7cb3ec66493c32a3.png": {
+    "400": "/assets/player-card-images/7cb3ec66493c32a3-400.webp",
+    "720": "/assets/player-card-images/7cb3ec66493c32a3-720.webp"
+  },
+  "/assets/player-images/bd081b3d2b2dc28f.jpg": {
+    "400": "/assets/player-card-images/bd081b3d2b2dc28f-400.webp",
+    "720": "/assets/player-card-images/bd081b3d2b2dc28f-720.webp"
+  },
+  "/assets/player-images/cfbe1fbf471f48f7.png": {
+    "400": "/assets/player-card-images/cfbe1fbf471f48f7-400.webp",
+    "720": "/assets/player-card-images/cfbe1fbf471f48f7-720.webp"
+  },
+  "/assets/player-images/e738d9514152c5cc.png": {
+    "400": "/assets/player-card-images/e738d9514152c5cc-400.webp",
+    "720": "/assets/player-card-images/e738d9514152c5cc-720.webp"
+  },
+  "/assets/player-images/335a138c235cbdbb.png": {
+    "400": "/assets/player-card-images/335a138c235cbdbb-400.webp",
+    "720": "/assets/player-card-images/335a138c235cbdbb-720.webp"
+  },
+  "/assets/player-images/83187cdc3289b344.png": {
+    "400": "/assets/player-card-images/83187cdc3289b344-400.webp",
+    "720": "/assets/player-card-images/83187cdc3289b344-720.webp"
+  },
+  "/assets/player-images/8e1480e44a5bfcd5.png": {
+    "400": "/assets/player-card-images/8e1480e44a5bfcd5-400.webp",
+    "720": "/assets/player-card-images/8e1480e44a5bfcd5-720.webp"
+  },
+  "/assets/player-images/d4e6d1ded04fdf7d.png": {
+    "400": "/assets/player-card-images/d4e6d1ded04fdf7d-400.webp",
+    "720": "/assets/player-card-images/d4e6d1ded04fdf7d-720.webp"
+  },
+  "/assets/player-images/dc7942329216fbbe.png": {
+    "400": "/assets/player-card-images/dc7942329216fbbe-400.webp",
+    "720": "/assets/player-card-images/dc7942329216fbbe-720.webp"
+  },
+  "/assets/player-images/74271924054ed263.png": {
+    "400": "/assets/player-card-images/74271924054ed263-400.webp",
+    "720": "/assets/player-card-images/74271924054ed263-720.webp"
+  },
+  "/assets/player-images/d86b929ae0118e2d.png": {
+    "400": "/assets/player-card-images/d86b929ae0118e2d-400.webp",
+    "720": "/assets/player-card-images/d86b929ae0118e2d-720.webp"
+  },
+  "/assets/player-images/308d773f293bd835.png": {
+    "400": "/assets/player-card-images/308d773f293bd835-400.webp",
+    "720": "/assets/player-card-images/308d773f293bd835-720.webp"
+  },
+  "/assets/player-images/88bef12516adc7d6.png": {
+    "400": "/assets/player-card-images/88bef12516adc7d6-400.webp",
+    "720": "/assets/player-card-images/88bef12516adc7d6-720.webp"
+  },
+  "/assets/player-images/c31e77fc03f3f2d8.png": {
+    "400": "/assets/player-card-images/c31e77fc03f3f2d8-400.webp",
+    "720": "/assets/player-card-images/c31e77fc03f3f2d8-720.webp"
+  },
+  "/assets/player-images/63483f3c36705afd.jpg": {
+    "400": "/assets/player-card-images/63483f3c36705afd-400.webp",
+    "720": "/assets/player-card-images/63483f3c36705afd-720.webp"
+  },
+  "/assets/player-images/e094f3dc323674fd.png": {
+    "400": "/assets/player-card-images/e094f3dc323674fd-400.webp",
+    "720": "/assets/player-card-images/e094f3dc323674fd-720.webp"
+  },
+  "/assets/player-images/3bd6c68a96d9bb3b.png": {
+    "400": "/assets/player-card-images/3bd6c68a96d9bb3b-400.webp",
+    "720": "/assets/player-card-images/3bd6c68a96d9bb3b-720.webp"
+  },
+  "/assets/player-images/3cb8d87d917360c2.png": {
+    "400": "/assets/player-card-images/3cb8d87d917360c2-400.webp",
+    "720": "/assets/player-card-images/3cb8d87d917360c2-720.webp"
+  },
+  "/assets/player-images/3e0d3a5bf70002ac.png": {
+    "400": "/assets/player-card-images/3e0d3a5bf70002ac-400.webp",
+    "720": "/assets/player-card-images/3e0d3a5bf70002ac-720.webp"
+  },
+  "/assets/player-images/f79376fb14bfe76a.png": {
+    "400": "/assets/player-card-images/f79376fb14bfe76a-400.webp",
+    "720": "/assets/player-card-images/f79376fb14bfe76a-720.webp"
+  },
+  "/assets/player-images/dca70bcb84f807c3.png": {
+    "400": "/assets/player-card-images/dca70bcb84f807c3-400.webp",
+    "720": "/assets/player-card-images/dca70bcb84f807c3-720.webp"
+  },
+  "/assets/player-images/990aa683c8b9e76c.png": {
+    "400": "/assets/player-card-images/990aa683c8b9e76c-400.webp",
+    "720": "/assets/player-card-images/990aa683c8b9e76c-720.webp"
+  },
+  "/assets/player-images/d52728b01ff22e23.png": {
+    "400": "/assets/player-card-images/d52728b01ff22e23-400.webp",
+    "720": "/assets/player-card-images/d52728b01ff22e23-720.webp"
+  },
+  "/assets/player-images/9f2d67c9fecc6319.png": {
+    "400": "/assets/player-card-images/9f2d67c9fecc6319-400.webp",
+    "720": "/assets/player-card-images/9f2d67c9fecc6319-720.webp"
+  },
+  "/assets/player-images/4db6dcb65a358760.png": {
+    "400": "/assets/player-card-images/4db6dcb65a358760-400.webp",
+    "720": "/assets/player-card-images/4db6dcb65a358760-720.webp"
+  },
+  "/assets/player-images/1be033837064d93f.png": {
+    "400": "/assets/player-card-images/1be033837064d93f-400.webp",
+    "720": "/assets/player-card-images/1be033837064d93f-720.webp"
+  },
+  "/assets/player-images/f4d5693d3d49553c.png": {
+    "400": "/assets/player-card-images/f4d5693d3d49553c-400.webp",
+    "720": "/assets/player-card-images/f4d5693d3d49553c-720.webp"
+  },
+  "/assets/player-images/53ce5bb5cb66fd28.png": {
+    "400": "/assets/player-card-images/53ce5bb5cb66fd28-400.webp",
+    "720": "/assets/player-card-images/53ce5bb5cb66fd28-720.webp"
+  },
+  "/assets/player-images/88f33ddd123ce0c7.png": {
+    "400": "/assets/player-card-images/88f33ddd123ce0c7-400.webp",
+    "720": "/assets/player-card-images/88f33ddd123ce0c7-720.webp"
+  },
+  "/assets/player-images/c2629125213cb88c.png": {
+    "400": "/assets/player-card-images/c2629125213cb88c-400.webp",
+    "720": "/assets/player-card-images/c2629125213cb88c-720.webp"
+  },
+  "/assets/player-images/27bc8579232031d9.png": {
+    "400": "/assets/player-card-images/27bc8579232031d9-400.webp",
+    "720": "/assets/player-card-images/27bc8579232031d9-720.webp"
+  },
+  "/assets/player-images/aa80372ca0f93575.png": {
+    "400": "/assets/player-card-images/aa80372ca0f93575-400.webp",
+    "720": "/assets/player-card-images/aa80372ca0f93575-720.webp"
   }
 }
