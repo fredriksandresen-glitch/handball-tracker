@@ -8,6 +8,9 @@ import AiChatLib "lib/ai-chat";
 import HandballApi "mixins/handball-data-api";
 import ProfixioApi "mixins/profixio-api";
 import AiChatApi "mixins/ai-chat-api";
+import RolesLib "lib/roles";
+import RolesApi "mixins/roles-api";
+import Principal "mo:core/Principal";
 
 
 
@@ -51,6 +54,14 @@ actor Main {
     nextId;
   };
 
+  // F11: rollestyrt tilgang. Overlever upgrade via enhanced orthogonal
+  // persistence (bekreftet i backend.most).
+  let rolesState : RolesLib.State = {
+    var assignments = Map.empty<Principal, RolesLib.Assignment>();
+    var audit = List.empty<RolesLib.AuditEntry>();
+    var nextAuditId = 1;
+  };
+
   let profixioCache : ProfixioTypes.ProfixioCache = {
     var lastSync = null;
     var isLive = false;
@@ -65,4 +76,5 @@ actor Main {
   include HandballApi(state);
   include ProfixioApi(state, profixioCache);
   include AiChatApi(aiChatState, aiReportState);
+  include RolesApi(rolesState);
 };

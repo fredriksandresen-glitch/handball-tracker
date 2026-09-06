@@ -1,3 +1,19 @@
+type WorkerStatus = 
+ record {
+   configured: bool;
+   pendingJobs: nat;
+   processingJobs: nat;
+ };
+type WorkItem = 
+ record {
+   attempts: nat;
+   context: Context;
+   conversation: vec ConversationMessage;
+   id: nat;
+   owner: principal;
+   question: text;
+   threadId: nat;
+ };
 type Team = 
  record {
    goalDifference: opt int;
@@ -8,6 +24,81 @@ type Team =
    points: opt nat;
    slug: text;
    standingsRank: opt nat;
+ };
+type SubmitResult = 
+ record {
+   jobId: nat;
+   threadId: nat;
+   userMessageId: nat;
+ };
+type Source = 
+ record {
+   entityIds: vec text;
+   method: text;
+   observedAt: opt text;
+   title: text;
+ };
+type Role__1 = 
+ variant {
+   assistant;
+   user;
+ };
+type Role = 
+ variant {
+   admin;
+   supporter;
+   trener;
+ };
+type ReportUpload = 
+ record {
+   content: blob;
+   filename: text;
+   mimeType: text;
+ };
+type ReportMetadata = 
+ record {
+   createdAt: int;
+   filename: text;
+   id: nat;
+   messageId: nat;
+   mimeType: text;
+   size: nat;
+ };
+type PublicThread = 
+ record {
+   createdAt: int;
+   id: nat;
+   title: text;
+   updatedAt: int;
+ };
+type PublicReport = 
+ record {
+   content: blob;
+   metadata: ReportMetadata;
+ };
+type PublicMessage = 
+ record {
+   answerStatus: opt AnswerStatus;
+   content: text;
+   createdAt: int;
+   evidence: vec Evidence;
+   followUpQuestions: vec text;
+   generatedByAi: bool;
+   id: nat;
+   missingData: vec text;
+   role: Role__1;
+   sources: vec Source;
+   status: MessageStatus;
+   threadId: nat;
+ };
+type PublicJob = 
+ record {
+   createdAt: int;
+   error: opt text;
+   id: nat;
+   status: JobStatus;
+   threadId: nat;
+   updatedAt: int;
  };
 type ProfixioStatus = 
  record {
@@ -86,6 +177,11 @@ type Player =
    slug: text;
    teamId: nat;
  };
+type MessageStatus = 
+ variant {
+   complete;
+   failed;
+ };
 type MatchStatus = 
  variant {
    Finished;
@@ -101,6 +197,13 @@ type Match =
    startTime: int;
    status: MatchStatus;
    venue: opt text;
+ };
+type JobStatus = 
+ variant {
+   complete;
+   failed;
+   pending;
+   processing;
  };
 type FeedEventType = 
  variant {
@@ -124,8 +227,71 @@ type FeedEvent =
    title: text;
    userId: principal;
  };
+type Evidence = 
+ record {
+   matchId: opt text;
+   playerId: opt text;
+   teamId: opt text;
+   title: text;
+   unit: opt text;
+   value: text;
+ };
+type ConversationMessage = 
+ record {
+   content: text;
+   role: Role__1;
+ };
+type Context = 
+ record {
+   league: text;
+   playerIds: vec text;
+   route: text;
+   season: text;
+   teamIds: vec text;
+ };
+type Completion = 
+ record {
+   answer: text;
+   answerStatus: AnswerStatus;
+   evidence: vec Evidence;
+   followUpQuestions: vec text;
+   generatedByAi: bool;
+   missingData: vec text;
+   report: opt ReportUpload;
+   sources: vec Source;
+ };
+type AuditEntry = 
+ record {
+   at: int;
+   changedBy: principal;
+   id: nat;
+   newRole: Role;
+   previousRole: opt Role;
+   subject: principal;
+   teamId: opt nat;
+ };
+type Assignment = 
+ record {
+   assignedAt: int;
+   assignedBy: principal;
+   role: Role;
+   subject: principal;
+   teamId: opt nat;
+ };
+type AnswerStatus = 
+ variant {
+   answered;
+   insufficientData;
+ };
 service : {
+  claimNextAiJob: () -> (opt WorkItem);
+  completeAiJob: (jobId: nat, completion: Completion) -> ();
+  configureAiWorker: (worker: principal) -> ();
+  createAiThread: (title: text) -> (PublicThread);
+  deleteMyAiThread: (threadId: nat) -> ();
+  failAiJob: (jobId: nat, error: text) -> ();
   followPlayer: (playerId: nat) -> ();
+  getAiWorkerStatus: () -> (WorkerStatus) query;
   getAllPlayerSeasonStats: () -> (vec PlayerSeasonStats) query;
   getDataStatus: () ->
    (record {
@@ -140,6 +306,17 @@ service : {
   getFollowedPlayerIds: () -> (vec nat) query;
   getFollowedPlayers: () -> (vec Player) query;
   getMatches: () -> (vec Match) query;
+  getMyActiveAiJob: (threadId: nat) -> (opt PublicJob) query;
+  getMyAiJob: (jobId: nat) -> (opt PublicJob) query;
+  getMyAiMessages: (threadId: nat) -> (vec PublicMessage) query;
+  getMyAiReport: (reportId: nat) -> (opt PublicReport) query;
+  getMyAiReports: (threadId: nat) -> (vec ReportMetadata) query;
+  getMyAiThreads: () -> (vec PublicThread) query;
+  getMyRole: () -> (record {
+                      isAdmin: bool;
+                      role: Role;
+                      teamId: opt nat;
+                    }) query;
   getNextMatchForTeam: (teamId: nat) -> (opt Match) query;
   getPlayer: (id: nat) -> (opt Player) query;
   getPlayerCount: () -> (nat) query;
@@ -153,9 +330,15 @@ service : {
   getUpcomingMatches: () -> (vec Match) query;
   initUserFollows: () -> ();
   isFollowing: (playerId: nat) -> (bool) query;
+  listRoleAssignments: () -> (vec Assignment) query;
+  listRoleAuditLog: () -> (vec AuditEntry) query;
   refreshFromProfixio: () -> (text);
   refreshPlayerStats: () -> (text);
   searchPlayers: (term: text) -> (vec Player) query;
   searchTeams: (term: text) -> (vec Team) query;
+  setUserRole: (subject: principal, role: Role, teamId: opt nat) ->
+   (Assignment);
+  submitAiQuestion: (threadId: opt nat, question: text, context: Context) ->
+   (SubmitResult);
   unfollowPlayer: (playerId: nat) -> ();
 }

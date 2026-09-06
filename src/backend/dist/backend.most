@@ -1,6 +1,44 @@
 // Version: 1.0.0
+type AnswerStatus__259834698 = {#answered; #insufficientData};
+type Assignment__108487805 =
+  {
+    assignedAt : Int;
+    assignedBy : Principal;
+    role : Role__836646564;
+    subject : Principal;
+    teamId : ?Nat
+  };
+type Assignment__758526806 = Assignment__108487805;
+type AuditEntry__521421694 = AuditEntry__57443074;
+type AuditEntry__57443074 =
+  {
+    at : Int;
+    changedBy : Principal;
+    id : Nat;
+    newRole : Role__836646564;
+    previousRole : ?Role__836646564;
+    subject : Principal;
+    teamId : ?Nat
+  };
+type Context__332473305 =
+  {
+    league : Text;
+    playerIds : [Text];
+    route : Text;
+    season : Text;
+    teamIds : [Text]
+  };
 type Data__791452850<K, V> =
   {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type Evidence__833071809 =
+  {
+    matchId : ?Text;
+    playerId : ?Text;
+    teamId : ?Text;
+    title : Text;
+    unit : ?Text;
+    value : Text
+  };
 type FeedEventType__696867549 =
   {
     #GamePlayed;
@@ -26,6 +64,21 @@ type FeedEvent__214152838 =
 type Follow__127524499 = {id : Nat; playerId : Nat; userId : Principal};
 type Internal__8484328<K, V> =
   {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type JobStatus__385607719 = {#complete; #failed; #pending; #processing};
+type Job__142260938 =
+  {
+    attempts : Nat;
+    context : Context__332473305;
+    createdAt : Int;
+    error : ?Text;
+    id : Nat;
+    owner : Principal;
+    question : Text;
+    status : JobStatus__385607719;
+    threadId : Nat;
+    updatedAt : Int;
+    userMessageId : Nat
+  };
 type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
 type List__415060402<T> = List__790383201<T>;
 type List__790383201<T> =
@@ -48,6 +101,23 @@ type Match__720243418 =
     startTime : Int;
     status : MatchStatus__796575733;
     venue : ?Text
+  };
+type MessageStatus__750107995 = {#complete; #failed};
+type Message__539802363 =
+  {
+    answerStatus : ?AnswerStatus__259834698;
+    content : Text;
+    createdAt : Int;
+    evidence : [Evidence__833071809];
+    followUpQuestions : [Text];
+    generatedByAi : Bool;
+    id : Nat;
+    missingData : [Text];
+    owner : Principal;
+    role : Role__421279638;
+    sources : [Source__199250136];
+    status : MessageStatus__750107995;
+    threadId : Nat
   };
 type Nat__490723111 = Nat__920180692;
 type Nat__920180692 = Nat;
@@ -116,6 +186,21 @@ type Player__546789466 =
   };
 type Position__363278747 =
   {#Bakspiller; #HoyreKant; #Keeper; #Linje; #VenstreKant};
+type Report__547848533 =
+  {
+    content : Blob;
+    createdAt : Int;
+    filename : Text;
+    id : Nat;
+    messageId : Nat;
+    mimeType : Text;
+    owner : Principal;
+    threadId : Nat
+  };
+type Role__421279638 = {#assistant; #user};
+type Role__836646564 = {#admin; #supporter; #trener};
+type Source__199250136 =
+  {entityIds : [Text]; method : Text; observedAt : ?Text; title : Text};
 type Team__173907276 =
   {
     goalDifference : ?Int;
@@ -127,7 +212,30 @@ type Team__173907276 =
     slug : Text;
     standingsRank : ?Nat
   };
+type Thread__404782838 =
+  {
+    createdAt : Int;
+    id : Nat;
+    owner : Principal;
+    title : Text;
+    updatedAt : Int
+  };
 actor {
+  stable aiChatState :
+    {
+      var jobs : List__415060402<Job__142260938>;
+      var messages : List__415060402<Message__539802363>;
+      var nextJobId : Nat;
+      var nextMessageId : Nat;
+      var nextThreadId : Nat;
+      var threads : List__415060402<Thread__404782838>;
+      var workerPrincipal : ?Principal
+    };
+  stable aiReportState :
+    {
+      var nextReportId : Nat;
+      var reports : List__415060402<Report__547848533>
+    };
   stable feedEvents :
     {
       var blockIndex : Nat__490723111;
@@ -173,6 +281,12 @@ actor {
       var lastMessage : Text;
       var lastSync : ?Int;
       var liveStatsCount : Nat
+    };
+  stable rolesState :
+    {
+      var assignments : Map__605269027<Principal, Assignment__758526806>;
+      var audit : List__415060402<AuditEntry__521421694>;
+      var nextAuditId : Nat
     };
   stable state :
     {
