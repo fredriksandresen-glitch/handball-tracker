@@ -318,6 +318,7 @@ const playerSeasonStats: Record<string, PlayerSeasonStats> = {
   // Sola
   "1":  { id: BigInt(1),  playerId: BigInt(1),  season: "2025-26", matchesPlayed: BigInt(18), totalMinutes: BigInt(1080), totalSaves: BigInt(98),  totalYellowCards: BigInt(0), totalTwoMin: BigInt(0),  totalRedCards: BigInt(0) },
   "3":  { id: BigInt(3),  playerId: BigInt(3),  season: "2025-26", matchesPlayed: BigInt(20), totalMinutes: BigInt(1050), totalGoals: BigInt(78),  totalShots: BigInt(130), totalYellowCards: BigInt(0), totalTwoMin: BigInt(0), totalAssists: BigInt(32), totalRedCards: BigInt(0), shootingPercent: 60.0 },
+
   "5":  { id: BigInt(5),  playerId: BigInt(5),  season: "2025-26", matchesPlayed: BigInt(16), totalMinutes: BigInt(820),  totalGoals: BigInt(72),  totalShots: BigInt(130), totalYellowCards: BigInt(2), totalTwoMin: BigInt(1), totalAssists: BigInt(19), totalRedCards: BigInt(0) },
   "6":  { id: BigInt(6),  playerId: BigInt(6),  season: "2025-26", matchesPlayed: BigInt(17), totalMinutes: BigInt(900),  totalGoals: BigInt(65),  totalShots: BigInt(118), totalYellowCards: BigInt(1), totalTwoMin: BigInt(2), totalAssists: BigInt(24), totalRedCards: BigInt(0) },
   // Larvik → Byåsen: Ida Alstad (id 14)
@@ -408,4 +409,16 @@ export const mockBackend: backendInterface = {
     playersWithStats: BigInt(players.length),
   }),
   initUserFollows: async () => {},
+  // F11: mock-backend maa speile grensesnittet. Rollestyring finnes kun i
+  // ekte backend - i mock-modus er alle supportere uten admin-tilgang.
+  getMyRole: async () => ({
+    role: { supporter: null } as const,
+    teamId: [] as [],
+    isAdmin: false,
+  }),
+  listRoleAssignments: async () => [],
+  listRoleAuditLog: async () => [],
+  setUserRole: async () => {
+    throw new Error("Rollestyring er ikke tilgjengelig i mock-modus");
+  },
 };

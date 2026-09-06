@@ -238,6 +238,33 @@ export interface backendInterface {
     searchPlayers(term: string): Promise<Array<Player>>;
     searchTeams(term: string): Promise<Array<Team>>;
     unfollowPlayer(playerId: bigint): Promise<void>;
+    getMyRole(): Promise<{ role: BackendRoleVariant; teamId: [] | [bigint]; isAdmin: boolean }>;
+    listRoleAssignments(): Promise<Array<BackendAssignment>>;
+    listRoleAuditLog(): Promise<Array<BackendAuditEntry>>;
+    setUserRole(subject: Principal, role: BackendRoleVariant, teamId: [] | [bigint]): Promise<BackendAssignment>;
+}
+
+// F11: rolletyper. Lagt til manuelt fordi caffeine-bindgen ikke er installert
+// i dette miljoeet. Speiler src/backend/dist/backend.did.
+export type BackendRoleVariant =
+    | { supporter: null }
+    | { trener: null }
+    | { admin: null };
+export interface BackendAssignment {
+    subject: Principal;
+    role: BackendRoleVariant;
+    teamId: [] | [bigint];
+    assignedBy: Principal;
+    assignedAt: bigint;
+}
+export interface BackendAuditEntry {
+    id: bigint;
+    changedBy: Principal;
+    subject: Principal;
+    previousRole: [] | [BackendRoleVariant];
+    newRole: BackendRoleVariant;
+    teamId: [] | [bigint];
+    at: bigint;
 }
 import type { FeedEvent as _FeedEvent, FeedEventType as _FeedEventType, Match as _Match, MatchStatus as _MatchStatus, Player as _Player, PlayerMatchStats as _PlayerMatchStats, PlayerSeasonStats as _PlayerSeasonStats, Position as _Position, ProfixioStatus as _ProfixioStatus, Team as _Team } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
@@ -597,6 +624,54 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.unfollowPlayer(arg0);
             return result;
+        }
+    }
+    async getMyRole(): Promise<{ role: BackendRoleVariant; teamId: [] | [bigint]; isAdmin: boolean }> {
+        if (this.processError) {
+            try {
+                return await this.actor.getMyRole();
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            return await this.actor.getMyRole();
+        }
+    }
+    async listRoleAssignments(): Promise<Array<BackendAssignment>> {
+        if (this.processError) {
+            try {
+                return await this.actor.listRoleAssignments();
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            return await this.actor.listRoleAssignments();
+        }
+    }
+    async listRoleAuditLog(): Promise<Array<BackendAuditEntry>> {
+        if (this.processError) {
+            try {
+                return await this.actor.listRoleAuditLog();
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            return await this.actor.listRoleAuditLog();
+        }
+    }
+    async setUserRole(arg0: Principal, arg1: BackendRoleVariant, arg2: [] | [bigint]): Promise<BackendAssignment> {
+        if (this.processError) {
+            try {
+                return await this.actor.setUserRole(arg0, arg1, arg2);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            return await this.actor.setUserRole(arg0, arg1, arg2);
         }
     }
 }

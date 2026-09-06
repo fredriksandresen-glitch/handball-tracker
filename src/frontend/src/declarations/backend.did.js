@@ -298,6 +298,30 @@ export const idlFactory = ({ IDL }) => {
     'points' : IDL.Opt(IDL.Nat),
   });
   
+  // F11: rollestyring. Lagt til manuelt fordi caffeine-bindgen ikke er
+  // installert i dette miljoeet. Speiler src/backend/dist/backend.did.
+  const Role = IDL.Variant({
+    'admin' : IDL.Null,
+    'trener' : IDL.Null,
+    'supporter' : IDL.Null,
+  });
+  const Assignment = IDL.Record({
+    'subject' : IDL.Principal,
+    'role' : Role,
+    'teamId' : IDL.Opt(IDL.Nat),
+    'assignedBy' : IDL.Principal,
+    'assignedAt' : IDL.Int,
+  });
+  const AuditEntry = IDL.Record({
+    'id' : IDL.Nat,
+    'changedBy' : IDL.Principal,
+    'subject' : IDL.Principal,
+    'previousRole' : IDL.Opt(Role),
+    'newRole' : Role,
+    'teamId' : IDL.Opt(IDL.Nat),
+    'at' : IDL.Int,
+  });
+
   return IDL.Service({
     'followPlayer' : IDL.Func([IDL.Nat], [], []),
     'getAllPlayerSeasonStats' : IDL.Func(
@@ -348,6 +372,24 @@ export const idlFactory = ({ IDL }) => {
     'refreshPlayerStats' : IDL.Func([], [IDL.Text], []),
     'searchPlayers' : IDL.Func([IDL.Text], [IDL.Vec(Player)], ['query']),
     'searchTeams' : IDL.Func([IDL.Text], [IDL.Vec(Team)], ['query']),
+    'getMyRole' : IDL.Func(
+        [],
+        [
+          IDL.Record({
+            'role' : Role,
+            'teamId' : IDL.Opt(IDL.Nat),
+            'isAdmin' : IDL.Bool,
+          }),
+        ],
+        ['query'],
+      ),
+    'listRoleAssignments' : IDL.Func([], [IDL.Vec(Assignment)], ['query']),
+    'listRoleAuditLog' : IDL.Func([], [IDL.Vec(AuditEntry)], ['query']),
+    'setUserRole' : IDL.Func(
+        [IDL.Principal, Role, IDL.Opt(IDL.Nat)],
+        [Assignment],
+        [],
+      ),
     'unfollowPlayer' : IDL.Func([IDL.Nat], [], []),
   });
 };

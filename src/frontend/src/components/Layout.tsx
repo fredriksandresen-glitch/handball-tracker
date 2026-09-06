@@ -8,6 +8,7 @@ import {
   normalizeSeasonId,
 } from "../data/seasons";
 import { AccountControl } from "./AccountControl";
+import { AdminNavSlot } from "./AdminNavSlot";
 import { CoachNavSlot } from "./CoachNavSlot";
 
 const NAV_ITEMS = [
@@ -167,6 +168,11 @@ export function Layout({ children, title, headerRight }: Props) {
           })}
           <CoachNavSlot
             isActive={pathname.startsWith("/trener")}
+            season={season}
+            league={league}
+          />
+          <AdminNavSlot
+            isActive={pathname.startsWith("/admin")}
             season={season}
             league={league}
           />

@@ -120,6 +120,24 @@ export interface Team {
   'standingsRank' : [] | [bigint],
   'points' : [] | [bigint],
 }
+export type Role = { 'admin' : null } | { 'trener' : null } |
+  { 'supporter' : null };
+export interface Assignment {
+  'subject' : Principal,
+  'role' : Role,
+  'teamId' : [] | [bigint],
+  'assignedBy' : Principal,
+  'assignedAt' : bigint,
+}
+export interface AuditEntry {
+  'id' : bigint,
+  'changedBy' : Principal,
+  'subject' : Principal,
+  'previousRole' : [] | [Role],
+  'newRole' : Role,
+  'teamId' : [] | [bigint],
+  'at' : bigint,
+}
 export interface _SERVICE {
   'followPlayer' : ActorMethod<[bigint], undefined>,
   'getAllPlayerSeasonStats' : ActorMethod<[], Array<PlayerSeasonStats>>,
@@ -155,6 +173,16 @@ export interface _SERVICE {
   'refreshPlayerStats' : ActorMethod<[], string>,
   'searchPlayers' : ActorMethod<[string], Array<Player>>,
   'searchTeams' : ActorMethod<[string], Array<Team>>,
+  'getMyRole' : ActorMethod<
+    [],
+    { 'role' : Role, 'teamId' : [] | [bigint], 'isAdmin' : boolean }
+  >,
+  'listRoleAssignments' : ActorMethod<[], Array<Assignment>>,
+  'listRoleAuditLog' : ActorMethod<[], Array<AuditEntry>>,
+  'setUserRole' : ActorMethod<
+    [Principal, Role, [] | [bigint]],
+    Assignment
+  >,
   'unfollowPlayer' : ActorMethod<[bigint], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;

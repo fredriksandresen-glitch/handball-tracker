@@ -27,6 +27,7 @@ const PlayerPage = lazy(() => import("./pages/PlayerPage"));
 const TeamPage = lazy(() => import("./pages/TeamPage"));
 const AiChatPage = lazy(() => import("./pages/AiChatPage"));
 const CoachPage = lazy(() => import("./pages/CoachPage"));
+const AdminPage = lazy(() => import("./pages/AdminPage"));
 
 function PageLoader() {
   return (
@@ -115,6 +116,15 @@ const coachRoute = createRoute({
     </BackendBoundary>
   ),
 });
+const adminRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/admin",
+  component: () => (
+    <BackendBoundary>
+      <AdminPage />
+    </BackendBoundary>
+  ),
+});
 const teamsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/teams",
@@ -166,6 +176,7 @@ const routeTree = rootRoute.addChildren([
   teamRoute,
   aiChatRoute,
   coachRoute,
+  adminRoute,
   legacyBaseRoute,
   legacyPathRoute,
 ]);
