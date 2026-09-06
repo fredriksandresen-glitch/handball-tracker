@@ -15,6 +15,8 @@ export type AppRole = "supporter" | "trener";
 const ROLE_BY_PRINCIPAL: Record<string, AppRole> = {
   // Fredriks trenerkonto (lagt inn 2026-08-31)
   "qawja-zqpe7-54fec-umnik-ylxtj-2nhxv-st2ln-4dap7-zkhtw-oqeuf-iqe": "trener",
+  // Demo-/visningskonto for trenerrollen (lagt inn 2026-09-06)
+  "hmulj-qav6g-lktiw-7e74g-u6p2k-blsdd-twvjx-5zm7f-h4zkz-wu7ch-qae": "trener",
 };
 
 export function getRoleForPrincipal(principal?: string): AppRole {

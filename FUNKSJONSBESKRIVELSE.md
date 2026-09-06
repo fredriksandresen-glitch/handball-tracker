@@ -55,6 +55,13 @@ Rollen bestemmes av hvilket Internet Identity-principal som er logget inn.
 Ingen brukerdatabase, ingen passord. Registeret ligger i
 `src/frontend/src/data/roles.ts`.
 
+**Registrerte trenere:**
+- `qawja-...-iqe` — Fredriks trenerkonto (2026-08-31)
+- `hmulj-...-qae` — demo-/visningskonto for trenerrollen (2026-09-06)
+
+Begge ser nøyaktig samme Trener-fane. Det finnes én trenerrolle, ikke én
+fane per konto.
+
 **Viktig om principals:** Internet Identity gir ULIKT principal per origin.
 Et principal registrert via `icp0.io` virker ikke via `raw.icp0.io` eller et
 eventuelt eget domene. `.well-known/ii-alternative-origins` lister hvilke
@@ -187,3 +194,4 @@ grave i nettleserkonsollen.
 | 2026-09-06 | Dokumentet opprettet. F1–F8 beskrevet. | Fredrik ✅ |
 | 2026-09-06 | F9 lagt til: fullt principal synlig og kopierbart. | Fredrik ✅ |
 | 2026-09-06 | feature-guard koblet inn i deploy-skriptet (kjørte ikke før). | Fredrik ✅ |
+| 2026-09-06 | Demo-trenerkonto `hmulj-...-qae` registrert som trener. | Fredrik ✅ |
