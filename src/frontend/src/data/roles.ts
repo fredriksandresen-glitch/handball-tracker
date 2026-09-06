@@ -35,11 +35,13 @@ export function hasCoachAccounts(): boolean {
 }
 
 /**
- * Admin ser alt en trener ser, pluss rolleadministrasjon. Derfor spoer vi paa
- * kapabilitet framfor aa sammenligne rollestrenger rundt om i koden.
+ * Rene roller (endret 2026-09-06 etter tilbakemelding fra Fredrik):
+ * admin arver IKKE trenertilgang. En administrator styrer tilgang, hen er
+ * ikke automatisk trener for et lag. Skal samme person ha begge deler, maa
+ * hen ha to kontoer - eller vi maa innfoere flere roller per principal.
  */
 export function canAccessCoachTools(role: AppRole): boolean {
-  return role === "trener" || role === "admin";
+  return role === "trener";
 }
 
 export function canAdministerRoles(role: AppRole): boolean {
