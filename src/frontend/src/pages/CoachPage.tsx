@@ -307,9 +307,11 @@ function NextOpponent({
             <h2 className="font-display text-sm font-black text-foreground">
               Neste motstander
             </h2>
-            <p className="mt-0.5 text-[11px] text-muted-foreground">
-              {teamName} står ikke i terminlisten for øyeblikket. Vi viser
-              ingenting framfor å gjette.
+            <p className="mt-0.5 text-[11px] leading-relaxed text-muted-foreground">
+              Ingen kommende kamper for {teamName} i terminlisten. Alle
+              registrerte kamper er spilt — terminlisten må oppdateres fra
+              kilden. Vi viser heller ingenting enn en kamp som allerede har
+              vært.
             </p>
           </div>
         </div>

@@ -153,16 +153,30 @@ function toMatch(entry: MatchEntry, leagueId?: LeagueId): Match {
   } as unknown as Match;
 }
 
+/**
+ * Lagets neste kamp — den FOERSTE som ligger fram i tid.
+ *
+ * Tidligere tok denne bare foerste treff i lista uten aa se paa datoen, og
+ * viste derfor spilte kamper som "neste kamp" (Molde-Fjellhammer 30.08 ble
+ * vist 06.09). Naa filtreres spilte kamper bort og resten sorteres kronologisk.
+ *
+ * Returnerer null naar terminlisten ikke har flere kamper for laget. Da skal
+ * den som kaller si det rett ut, ikke vise en gammel kamp.
+ */
 export function getStaticNextMatchForTeam(
   teamName: string,
   leagueId?: LeagueId,
+  now: number = Date.now(),
 ): NextMatchResult | null {
   const matches =
     leagueId === "elite" ? ELITE_UPCOMING_MATCHES : UPCOMING_MATCHES;
-  const entry = matches.find(
-    (match) =>
-      match.homeTeamName === teamName || match.awayTeamName === teamName,
-  );
+  const entry = matches
+    .filter(
+      (match) =>
+        match.homeTeamName === teamName || match.awayTeamName === teamName,
+    )
+    .filter((match) => Date.parse(match.startTime) > now)
+    .sort((a, b) => Date.parse(a.startTime) - Date.parse(b.startTime))[0];
   if (!entry) return null;
 
   return {
