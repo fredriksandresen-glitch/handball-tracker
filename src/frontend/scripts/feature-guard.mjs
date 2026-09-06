@@ -25,7 +25,13 @@ function readBundle(bundleName) {
 let failed = 0;
 console.log("Feature guard: sjekker " + registry.features.length + " funksjoner mot dist/\n");
 
+let warned = 0;
+
 for (const feature of registry.features) {
+  // "hidden-by-design" = funksjonen er bevisst slaatt av i UI (feature flag).
+  // Den skal fortsatt staa i registeret og i FUNKSJONSBESKRIVELSE.md, men den
+  // skal ikke stoppe deploy. Krever at noten forklarer hvorfor.
+  const hiddenByDesign = feature.status === "hidden-by-design";
   const source = readBundle(feature.bundle);
   if (source === null) {
     console.error("FAIL  " + feature.id + " - fant ikke bundle " + feature.bundle);
@@ -41,6 +47,13 @@ for (const feature of registry.features) {
     continue;
   }
 
+  if (hiddenByDesign) {
+    warned += 1;
+    console.warn("SKJULT " + feature.id + " - " + feature.label);
+    console.warn("        bevisst av: " + (feature.note ?? "(ingen note)"));
+    continue;
+  }
+
   failed += 1;
   console.error("FAIL  " + feature.id + " - " + feature.label);
   if (missing.length) console.error("        mangler: " + missing.join(", "));
@@ -53,4 +66,10 @@ if (failed > 0) {
   console.error("Bygger du fra riktig branch? Sjekk: git log --oneline -1");
   process.exit(1);
 }
-console.log("\nAlle funksjoner til stede. Klar for deploy.");
+if (warned > 0) {
+  console.log(
+    "\n" + warned + " funksjon(er) bevisst skjult. Resten er til stede. Klar for deploy.",
+  );
+} else {
+  console.log("\nAlle funksjoner til stede. Klar for deploy.");
+}

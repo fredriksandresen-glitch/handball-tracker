@@ -186,6 +186,11 @@ DIST_CARD_IMAGE_COUNT="$(find src/frontend/dist/assets/player-card-images -type 
   exit 1
 }
 
+# Feature guard: FUNKSJONSBESKRIVELSE.md handhevet mot faktisk dist/.
+# Exit 1 = en beskrevet funksjon mangler i bygget => ingen deploy.
+echo "Kjorer feature-guard mot bygget:"
+( cd src/frontend && node scripts/feature-guard.mjs )
+
 INDEX_ASSET_PATH="$(find src/frontend/dist/assets -maxdepth 1 -type f -name 'index-*.js' | head -n 1)"
 [[ -n "$INDEX_ASSET_PATH" ]]
 INDEX_ASSET="$(basename "$INDEX_ASSET_PATH")"

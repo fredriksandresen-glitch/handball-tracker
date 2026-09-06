@@ -34,7 +34,8 @@
         "team-nm-toggle"
       ],
       "forbiddenMarkers": [],
-      "note": "Fantes kun som minifisert JS på canister frem til 2026-08-25."
+      "note": "SHOW_CUP_SECTION=false i src/utils/cupFixtures.ts. Bevisst skjult til cupdata er synket. Se FUNKSJONSBESKRIVELSE.md F3.",
+      "status": "hidden-by-design"
     },
     {
       "id": "build-stamp",
@@ -44,6 +45,40 @@
         "build-commit"
       ],
       "forbiddenMarkers": []
+    },
+    {
+      "id": "coach-page",
+      "label": "Trener-fane (rollestyrt tilgang)",
+      "bundle": "useAppRole",
+      "requiredMarkers": [
+        "trener",
+        "supporter",
+        "qawja-zqpe7-54fec"
+      ],
+      "note": "Forsvant 2026-09-05 ved bygg fra branch 29 commits bak. Se FUNKSJONSBESKRIVELSE.md F5."
+    },
+    {
+      "id": "clickable-rows",
+      "label": "Klikkbare tabellrader til lagside",
+      "bundle": "TeamsPage",
+      "requiredMarkers": [
+        "primeTeamId"
+      ],
+      "note": "Kobling via primeTeamId, ikke navnematching. Se FUNKSJONSBESKRIVELSE.md F7."
+    },
+    {
+      "id": "principal-copy",
+      "label": "Fullt principal synlig og kopierbart i kontomenyen",
+      "bundle": "AccountMenu",
+      "requiredMarkers": [
+        "Kopier principal",
+        "principal-copy-button",
+        "Din ID (principal)"
+      ],
+      "forbiddenMarkers": [
+        "shortenPrincipal"
+      ],
+      "note": "Forkortet principal gjorde trener-registrering umulig. Se FUNKSJONSBESKRIVELSE.md F9."
     }
   ]
 }
