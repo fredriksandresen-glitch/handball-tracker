@@ -1,18 +1,23 @@
 /**
- * Rollestyrt tilgang (2026-08-31).
+ * Rollestyrt tilgang.
  *
  * Samme datagrunnlag, ulik inngang: en trener trenger noe helt annet enn en
  * supporter. Rollen bestemmes av hvilket Internet Identity-principal som er
  * logget inn — ingen egen brukerdatabase, ingen passord aa forvalte.
  *
- * SLIK LEGGER DU TIL EN TRENER:
- * 1. Logg inn med kontoen i appen
- * 2. Aapne kontomenyen oppe til hoyre og kopier principalet
- * 3. Lim det inn under, med rollen "trener"
+ * OVERGANGSFASE (F11): denne fila er i ferd med aa bli erstattet av
+ * rollelagring i backend-canisteren, slik at admin kan gi tilgang direkte i
+ * appen uten redeploy. Fila beholdes som fallback til backend-rollene er
+ * verifisert live. Se FUNKSJONSBESKRIVELSE.md F11.
+ *
+ * MERK: Internet Identity gir ULIKT principal per origin. Et principal hentet
+ * paa icp0.io virker ikke paa raw.icp0.io eller et eget domene.
  */
-export type AppRole = "supporter" | "trener";
+export type AppRole = "supporter" | "trener" | "admin";
 
 const ROLE_BY_PRINCIPAL: Record<string, AppRole> = {
+  // Administrator — kan tildele roller til andre (lagt inn 2026-09-06)
+  "uzelm-nlsyn-dklu2-lesds-h4vsy-6yiab-hbxxc-omxaa-kgkfe-mmkjp-wae": "admin",
   // Fredriks trenerkonto (lagt inn 2026-08-31)
   "qawja-zqpe7-54fec-umnik-ylxtj-2nhxv-st2ln-4dap7-zkhtw-oqeuf-iqe": "trener",
   // Demo-/visningskonto for trenerrollen (lagt inn 2026-09-06)
@@ -27,4 +32,16 @@ export function getRoleForPrincipal(principal?: string): AppRole {
 /** Sant naar minst ett principal er registrert som trener. */
 export function hasCoachAccounts(): boolean {
   return Object.keys(ROLE_BY_PRINCIPAL).length > 0;
+}
+
+/**
+ * Admin ser alt en trener ser, pluss rolleadministrasjon. Derfor spoer vi paa
+ * kapabilitet framfor aa sammenligne rollestrenger rundt om i koden.
+ */
+export function canAccessCoachTools(role: AppRole): boolean {
+  return role === "trener" || role === "admin";
+}
+
+export function canAdministerRoles(role: AppRole): boolean {
+  return role === "admin";
 }

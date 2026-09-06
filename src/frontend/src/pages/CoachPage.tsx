@@ -6,6 +6,8 @@ import {
   ArrowUp,
   ClipboardList,
   Minus,
+  Shield,
+  Swords,
   TrendingUp,
   Users,
 } from "lucide-react";
@@ -14,6 +16,11 @@ import { PositionBadge } from "../components/PositionBadge";
 import { LeagueSelect, useSelectedLeague } from "../components/LeagueSelect";
 import { SeasonSelect, useSelectedSeason } from "../components/SeasonSelect";
 import { useAppRole } from "../hooks/useAppRole";
+import { getStaticNextMatchForTeam } from "../data/nextMatches";
+import {
+  leagueStandingsBySeasonAndLeague,
+  type LeagueStanding,
+} from "../data/leagueStandings";
 import { usePlayers } from "../hooks/usePlayers";
 import { useTeams } from "../hooks/useTeams";
 import {
@@ -40,8 +47,15 @@ type CoachRow = {
   assists?: number;
   minutesPerMatch?: number;
   technicalErrors?: number;
+  suspensions?: number;
+  shots?: number;
+  shotPercent?: number;
+  mepAvg?: number;
+  mepTotal?: number;
   savePct?: number;
+  saves?: number;
   isKeeper: boolean;
+  group: string;
   lastOpponent?: string;
   lastDate?: string;
 };
@@ -102,11 +116,92 @@ function buildRow(player: Player, season: string): CoachRow | null {
     minutesPerMatch:
       minutes !== undefined && played > 0 ? minutes / played : undefined,
     technicalErrors: num(stats.technicalFaults),
+    suspensions: num(stats.totalTwoMin),
+    shots: num(stats.totalShots),
+    shotPercent: stats.shootingPercent ?? undefined,
+    mepAvg: stats.mepAvg ?? undefined,
+    mepTotal: stats.mepTotal ?? undefined,
     savePct: isKeeper ? form : undefined,
+    saves: num(stats.totalSaves),
     isKeeper,
+    group: positionGroup(player.position),
     lastOpponent: last?.opponent,
     lastDate: last?.date,
   };
+}
+
+/**
+ * F10.2: fargekoding skjer innenfor posisjonsgruppe, ikke mot en absolutt
+ * grense. En linjespiller og en kant skal ikke maales med samme linjal.
+ */
+function positionGroup(position: unknown): string {
+  const p = String(position ?? "").toLowerCase();
+  if (p.includes("keeper") || p.includes("m\u00e5lvakt")) return "keeper";
+  if (p.includes("kant")) return "kant";
+  if (p.includes("linje")) return "linje";
+  if (p.includes("bak")) return "bak";
+  return "annet";
+}
+
+type Tone = "good" | "neutral" | "bad" | "none";
+
+const TONE_CLASS: Record<Tone, string> = {
+  good: "text-chart-2 font-bold",
+  neutral: "text-foreground",
+  bad: "text-destructive font-bold",
+  none: "text-muted-foreground",
+};
+
+const TONE_LABEL: Record<Tone, string> = {
+  good: "Blant de beste i posisjonsgruppa",
+  neutral: "Midt på treet i posisjonsgruppa",
+  bad: "Blant de svakeste i posisjonsgruppa",
+  none: "For få kamper til å vurderes",
+};
+
+/** Minst 3 kamper kreves for at et tall fargelegges. */
+const MIN_MATCHES_FOR_TONE = 3;
+
+/**
+ * Deler verdiene i gruppa i tredjedeler. lowerIsBetter snur skalaen, slik at
+ * faa tekniske feil og faa utvisninger blir groent.
+ */
+function toneFor(
+  value: number | undefined,
+  peers: number[],
+  matches: number,
+  lowerIsBetter = false,
+): Tone {
+  if (value === undefined || matches < MIN_MATCHES_FOR_TONE) return "none";
+  const sorted = peers.filter((v) => Number.isFinite(v)).sort((a, b) => a - b);
+  if (sorted.length < 3) return "none";
+  const lowCut = sorted[Math.floor(sorted.length / 3)];
+  const highCut = sorted[Math.floor((sorted.length * 2) / 3)];
+  if (value >= highCut) return lowerIsBetter ? "bad" : "good";
+  if (value <= lowCut) return lowerIsBetter ? "good" : "bad";
+  return "neutral";
+}
+
+function Stat({
+  value,
+  tone,
+  digits = 0,
+  suffix = "",
+}: {
+  value?: number;
+  tone: Tone;
+  digits?: number;
+  suffix?: string;
+}) {
+  if (value === undefined) {
+    return <span className="text-muted-foreground">-</span>;
+  }
+  return (
+    <span className={cn("tabular-nums", TONE_CLASS[tone])} title={TONE_LABEL[tone]}>
+      {value.toFixed(digits)}
+      {suffix}
+    </span>
+  );
 }
 
 function Trend({ delta }: { delta?: number }) {
@@ -186,6 +281,280 @@ function RowCard({ row, season, league }: { row: CoachRow; season: string; leagu
   );
 }
 
+/** F10.4: lagets neste kamp med motstanderens noekkeltall. */
+function NextOpponent({
+  teamName,
+  seasonId,
+  leagueId,
+}: {
+  teamName?: string;
+  seasonId: string;
+  leagueId: string;
+}) {
+  const result = teamName
+    ? getStaticNextMatchForTeam(teamName, leagueId as never)
+    : null;
+
+  if (!teamName) return null;
+
+  // Ingen tom boks som ser ut som data: si det rett ut.
+  if (!result) {
+    return (
+      <section className="rounded-2xl border border-border bg-card px-4 py-4">
+        <div className="flex items-start gap-2.5">
+          <Swords className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+          <div>
+            <h2 className="font-display text-sm font-black text-foreground">
+              Neste motstander
+            </h2>
+            <p className="mt-0.5 text-[11px] text-muted-foreground">
+              {teamName} står ikke i terminlisten for øyeblikket. Vi viser
+              ingenting framfor å gjette.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const isHome = result.homeTeamName === teamName;
+  const opponent = isHome ? result.awayTeamName : result.homeTeamName;
+  const startMs = Number(result.match.startTime / 1_000_000n);
+  const kickoff = new Date(startMs).toLocaleString("nb-NO", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  // Oppslaget er noekklet paa SeasonId/LeagueId, men her kommer de inn som
+  // string. Vi typer tabellen eksplisitt framfor `as never`, som gjorde
+  // resultatet til `never` og fjernet .find().
+  const standingsBySeason = leagueStandingsBySeasonAndLeague as unknown as Record<
+    string,
+    Record<string, LeagueStanding[]>
+  >;
+  const table: LeagueStanding[] = standingsBySeason[seasonId]?.[leagueId] ?? [];
+  const standing = table.find((row) => row.name === opponent);
+  const ours = table.find((row) => row.name === teamName);
+
+  return (
+    <section
+      className="rounded-2xl border border-border bg-card"
+      data-ocid="coach-next-opponent"
+    >
+      <div className="flex items-start gap-2.5 border-b border-border px-4 py-3">
+        <Swords className="mt-0.5 size-4 shrink-0 text-primary" />
+        <div className="min-w-0">
+          <h2 className="font-display text-sm font-black text-foreground">
+            Neste kamp · {isHome ? "hjemme" : "borte"} mot {opponent}
+          </h2>
+          <p className="text-[11px] text-muted-foreground">
+            {kickoff}
+            {result.match.venue ? ` · ${result.match.venue}` : ""}
+          </p>
+        </div>
+      </div>
+
+      {standing ? (
+        <div className="grid grid-cols-3 gap-px bg-border sm:grid-cols-6">
+          {[
+            { label: "Plass", value: `${standing.rank}.` },
+            { label: "Kamper", value: standing.played },
+            { label: "Poeng", value: standing.points },
+            { label: "Mål for", value: standing.goalsFor },
+            { label: "Mål mot", value: standing.goalsAgainst },
+            {
+              label: "Diff",
+              value:
+                standing.goalsFor - standing.goalsAgainst > 0
+                  ? `+${standing.goalsFor - standing.goalsAgainst}`
+                  : standing.goalsFor - standing.goalsAgainst,
+            },
+          ].map((cell) => (
+            <div key={cell.label} className="bg-card px-3 py-2.5 text-center">
+              <span className="block font-display text-base font-black tabular-nums text-foreground">
+                {cell.value}
+              </span>
+              <span className="mt-0.5 block text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
+                {cell.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="px-4 py-3 text-[11px] text-muted-foreground">
+          {opponent} står ikke i tabellen for {seasonId} ennå.
+        </p>
+      )}
+
+      {standing && ours && (
+        <p className="border-t border-border px-4 py-2.5 text-[11px] text-muted-foreground">
+          {teamName} er nr. {ours.rank} med {ours.points} poeng ·{" "}
+          {opponent} er nr. {standing.rank} med {standing.points} poeng.
+        </p>
+      )}
+    </section>
+  );
+}
+
+type Col = {
+  key: string;
+  label: string;
+  get: (r: CoachRow) => number | undefined;
+  digits?: number;
+  suffix?: string;
+  lowerIsBetter?: boolean;
+};
+
+const OUTFIELD_COLS: Col[] = [
+  { key: "matches", label: "K", get: (r) => r.matches },
+  { key: "goals", label: "Mål", get: (r) => r.goals },
+  { key: "shots", label: "Skudd", get: (r) => r.shots },
+  { key: "shotPct", label: "Skudd%", get: (r) => r.shotPercent, digits: 0, suffix: "%" },
+  { key: "assists", label: "Assist", get: (r) => r.assists },
+  { key: "tech", label: "Tekn", get: (r) => r.technicalErrors, lowerIsBetter: true },
+  { key: "susp", label: "2min", get: (r) => r.suspensions, lowerIsBetter: true },
+  { key: "mepAvg", label: "MEP", get: (r) => r.mepAvg, digits: 1 },
+  { key: "mepTot", label: "MEP tot", get: (r) => r.mepTotal, digits: 0 },
+];
+
+/**
+ * F10.3: keepere maales ikke paa skudd og mal. De feltene som finnes vises;
+ * redningstall vises kun naar de faktisk er i datagrunnlaget.
+ */
+const KEEPER_COLS: Col[] = [
+  { key: "matches", label: "K", get: (r) => r.matches },
+  { key: "saves", label: "Redn", get: (r) => r.saves },
+  { key: "savePct", label: "Redn%", get: (r) => r.savePct, digits: 0, suffix: "%" },
+  { key: "mepAvg", label: "MEP", get: (r) => r.mepAvg, digits: 1 },
+  { key: "mepTot", label: "MEP tot", get: (r) => r.mepTotal, digits: 0 },
+];
+
+function StatTable({
+  rows,
+  cols,
+  season,
+  league,
+}: {
+  rows: CoachRow[];
+  cols: Col[];
+  season: string;
+  league: string;
+}) {
+  const [sortKey, setSortKey] = useState<string>(cols[cols.length - 2]?.key ?? "matches");
+  const [desc, setDesc] = useState(true);
+
+  // Fjerner kolonner der ingen har data, slik at vi ikke viser tomme felt
+  // som ser ut som statistikk (gjelder saerlig keepernes redningstall).
+  const liveCols = useMemo(
+    () => cols.filter((col) => rows.some((r) => col.get(r) !== undefined)),
+    [cols, rows],
+  );
+
+  // F10.2: sammenligningsgrunnlaget er spillere i samme posisjonsgruppe.
+  const peersByCol = useMemo(() => {
+    const map = new Map<string, Map<string, number[]>>();
+    for (const col of liveCols) {
+      const byGroup = new Map<string, number[]>();
+      for (const r of rows) {
+        const v = col.get(r);
+        if (v === undefined || r.matches < MIN_MATCHES_FOR_TONE) continue;
+        const list = byGroup.get(r.group) ?? [];
+        list.push(v);
+        byGroup.set(r.group, list);
+      }
+      map.set(col.key, byGroup);
+    }
+    return map;
+  }, [liveCols, rows]);
+
+  const sorted = useMemo(() => {
+    const col = liveCols.find((c2) => c2.key === sortKey);
+    if (!col) return rows;
+    return [...rows].sort((a, b) => {
+      const av = col.get(a);
+      const bv = col.get(b);
+      if (av === undefined) return 1;
+      if (bv === undefined) return -1;
+      return desc ? bv - av : av - bv;
+    });
+  }, [rows, liveCols, sortKey, desc]);
+
+  function toggle(key: string) {
+    if (key === sortKey) setDesc((d) => !d);
+    else {
+      setSortKey(key);
+      setDesc(true);
+    }
+  }
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-right text-xs" data-ocid="coach-stat-table">
+        <thead>
+          <tr className="border-b border-border">
+            <th className="sticky left-0 bg-card px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Spiller
+            </th>
+            {liveCols.map((col) => (
+              <th key={col.key} className="px-2 py-2">
+                <button
+                  type="button"
+                  onClick={() => toggle(col.key)}
+                  className={cn(
+                    "text-[10px] font-bold uppercase tracking-wider transition-colors hover:text-foreground",
+                    sortKey === col.key ? "text-foreground" : "text-muted-foreground",
+                  )}
+                  title={`Sorter på ${col.label}`}
+                >
+                  {col.label}
+                  {sortKey === col.key ? (desc ? " ↓" : " ↑") : ""}
+                </button>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {sorted.map((r) => (
+            <tr
+              key={r.player.id.toString()}
+              className="border-b border-border/50 last:border-0 hover:bg-muted/30"
+            >
+              <td className="sticky left-0 bg-card px-3 py-2 text-left">
+                <Link
+                  to="/player/$id"
+                  params={{ id: r.player.id.toString() }}
+                  search={{ season, league } as never}
+                  className="block max-w-[150px] truncate font-display text-xs font-bold text-foreground hover:underline"
+                >
+                  {r.player.name}
+                </Link>
+              </td>
+              {liveCols.map((col) => (
+                <td key={col.key} className="px-2 py-2">
+                  <Stat
+                    value={col.get(r)}
+                    digits={col.digits}
+                    suffix={col.suffix}
+                    tone={toneFor(
+                      col.get(r),
+                      peersByCol.get(col.key)?.get(r.group) ?? [],
+                      r.matches,
+                      col.lowerIsBetter,
+                    )}
+                  />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 function Section({
   title,
   subtitle,
@@ -235,6 +604,9 @@ export default function CoachPage() {
     }
     return out;
   }, [squad, seasonId]);
+
+  const outfield = useMemo(() => rows.filter((r) => !r.isKeeper), [rows]);
+  const keepers = useMemo(() => rows.filter((r) => r.isKeeper), [rows]);
 
   const byForm = useMemo(
     () => [...rows].sort((a, b) => (b.form ?? -99) - (a.form ?? -99)),
@@ -346,6 +718,53 @@ export default function CoachPage() {
         </div>
       ) : (
         <>
+          <NextOpponent
+            teamName={teamName}
+            seasonId={seasonId}
+            leagueId={leagueId}
+          />
+
+          <Section
+            title="Sesongstatistikk · utespillere"
+            subtitle="Farge viser hvor spilleren ligger mot lagkameratene i samme posisjonsgruppe. Trykk på en kolonne for å sortere."
+            icon={ClipboardList}
+          >
+            {outfield.length > 0 ? (
+              <StatTable
+                rows={outfield}
+                cols={OUTFIELD_COLS}
+                season={seasonId}
+                league={leagueId}
+              />
+            ) : (
+              <p className="px-4 py-4 text-[11px] text-muted-foreground">
+                Ingen utespillere med kampdata.
+              </p>
+            )}
+          </Section>
+
+          <Section
+            title="Keepere"
+            subtitle="Keepere måles ikke på skudd og mål"
+            icon={Shield}
+          >
+            {keepers.length > 0 ? (
+              <StatTable
+                rows={keepers}
+                cols={KEEPER_COLS}
+                season={seasonId}
+                league={leagueId}
+              />
+            ) : (
+              <p className="px-4 py-4 text-[11px] leading-relaxed text-muted-foreground">
+                Ingen keepere med kampdata for {teamName ?? "laget"} i{" "}
+                {seasonId}. Redningsstatistikk (redninger og redningsprosent)
+                finnes ikke i datagrunnlaget ennå — kolonnene dukker opp av seg
+                selv når tallene hentes inn fra kilden.
+              </p>
+            )}
+          </Section>
+
           <Section
             title="Formtabell"
             subtitle={`${teamName ?? "Laget"} · snitt siste 5 kamper, med endring mot de fem før`}

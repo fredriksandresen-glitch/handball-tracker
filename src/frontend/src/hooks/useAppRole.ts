@@ -1,14 +1,24 @@
 import { useInternetIdentity } from "@caffeineai/core-infrastructure";
-import { getRoleForPrincipal, type AppRole } from "../data/roles";
+import {
+  canAccessCoachTools,
+  canAdministerRoles,
+  getRoleForPrincipal,
+  type AppRole,
+} from "../data/roles";
 
 /**
- * Leser rollen til den innloggede brukeren (2026-08-31).
- * Returnerer ogsaa principalet, slik at det kan kopieres fra kontomenyen.
+ * Leser rollen til den innloggede brukeren.
+ *
+ * MERK: dette er kosmetikk, ikke tilgangskontroll. Aa skjule en fane hindrer
+ * ingen i aa kalle backend direkte. Naar F11 lander maa hvert kall som endrer
+ * roller eller leser trenerdata sjekke caller i backend.
+ * Se FUNKSJONSBESKRIVELSE.md F11.3.
  */
 export function useAppRole(): {
   principal?: string;
   role: AppRole;
   isCoach: boolean;
+  isAdmin: boolean;
   isAuthenticated: boolean;
 } {
   const { identity } = useInternetIdentity();
@@ -16,5 +26,12 @@ export function useAppRole(): {
   const isAuthenticated = Boolean(raw && !raw.isAnonymous());
   const principal = isAuthenticated ? raw?.toText() : undefined;
   const role = getRoleForPrincipal(principal);
-  return { principal, role, isCoach: role === "trener", isAuthenticated };
+  return {
+    principal,
+    role,
+    // Admin ser alt treneren ser. Derfor kapabilitet, ikke rollesammenligning.
+    isCoach: canAccessCoachTools(role),
+    isAdmin: canAdministerRoles(role),
+    isAuthenticated,
+  };
 }
