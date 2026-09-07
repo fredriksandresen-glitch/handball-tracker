@@ -1,31 +1,87 @@
 [
   {
-    "id": "2241747528239",
-    "name": "Adine Malen Andreassen",
-    "imageUrl": "",
-    "position": "Bakspiller",
-    "shirtNumber": 17
+    "id": "2241748172030",
+    "name": "Ella Lien Strømme",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ella-Lien-Stromme-Fyllingen.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 1
   },
   {
-    "id": "2241749135753",
-    "name": "Sara Barsnes",
-    "imageUrl": "",
+    "id": "2241747588269",
+    "name": "Maja Nordeide Thomsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Maja-Nordeide-Thomsen-Fyllingen.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 2
+  },
+  {
+    "id": "2241748048866",
+    "name": "Malin Tveiterås Nødtvedt",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Malin-Tveiteras-Nodtvedt-Fyllingen.png?v=1773826257",
     "position": "Kantspiller venstre",
-    "shirtNumber": 13
+    "shirtNumber": 3
   },
   {
-    "id": "2241746783198",
-    "name": "Hannah Emilie Bergsjø",
-    "imageUrl": "",
-    "position": "Bakspiller midt",
-    "shirtNumber": 7
+    "id": "2241747939038",
+    "name": "Elise Garaas",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Elise-Garaas-Fyllingen.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 4
   },
   {
     "id": "2241747138609",
     "name": "Aud Malin Gover",
-    "imageUrl": "",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Aud-Malin-Gover-Fyllingen.png?v=1773826257",
     "position": "Bakspiller midt",
     "shirtNumber": 5
+  },
+  {
+    "id": "2241748855429",
+    "name": "Emilie Einarsen Olsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Emilie-Einarsen-Olsen-Fyllingen.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 8
+  },
+  {
+    "id": "2241742031082",
+    "name": "Mona Skjærpe Klungtveit",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mona-Skjaerpe-Klungtveit-Fyllingen.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 15
+  },
+  {
+    "id": "2241747355514",
+    "name": "Elise Marie Trapness",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Elise-Marie-Trapness-Fyllingen.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 18
+  },
+  {
+    "id": "2241746895423",
+    "name": "Anniken Maria Monsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Anniken-Maria-Monsen-Fyllingen.png?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 25
+  },
+  {
+    "id": "2241747192973",
+    "name": "Andrine Dalen Øynes",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Andrine-Dalen-Oynes-Fyllingen.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 26
+  },
+  {
+    "id": "2241749819632",
+    "name": "Maren Busterud Grelland",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Maren-Busterud-Grelland-Fyllingen.png?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 28
+  },
+  {
+    "id": "2241747846195",
+    "name": "Karoline Sether",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Karoline-Sether-Fyllingen.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 29
   },
   {
     "id": "2241747331566",
@@ -35,101 +91,17 @@
     "shirtNumber": 35
   },
   {
-    "id": "2241747331603",
-    "name": "Emma Louise Grasdal",
-    "imageUrl": "",
+    "id": "2241745773777",
+    "name": "Estefania Rodriguez Farfan",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Estefania-Rodriguez-Farfan-Fyllingen.png?v=1773826257",
     "position": "Bakspiller",
-    "shirtNumber": 33
-  },
-  {
-    "id": "2241742031082",
-    "name": "Mona Skjærpe Klungtveit",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mona-Skjaerpe-Klungtveit-Fyllingen.jpeg",
-    "position": "Kantspiller høyre",
-    "shirtNumber": 15
+    "shirtNumber": 63
   },
   {
     "id": "2241747162257",
     "name": "Malene Langeland Nord",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Malene-Langeland-Nord-Fyllingen.jpeg",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Malene-Langeland-Nord-Fyllingen.png?v=1773826257",
     "position": "Kantspiller venstre",
     "shirtNumber": 66
-  },
-  {
-    "id": "2241748944950",
-    "name": "Ellinor Høgh Nordtveit",
-    "imageUrl": "",
-    "position": "Målvakt",
-    "shirtNumber": 16
-  },
-  {
-    "id": "2241749010637",
-    "name": "Ebba Kjetildatter Nossen",
-    "imageUrl": "",
-    "position": "Bakspiller høyre",
-    "shirtNumber": 9
-  },
-  {
-    "id": "2241748048866",
-    "name": "Malin Tveiterås Nødtvedt",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Malin-Tveiteras-Nodtvedt-Fyllingen.jpeg",
-    "position": "Kantspiller venstre",
-    "shirtNumber": 3
-  },
-  {
-    "id": "2241748855429",
-    "name": "Emilie Einarsen Olsen",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Emilie-Einarsen-Olsen-Fyllingen.jpeg",
-    "position": "Bakspiller",
-    "shirtNumber": 8
-  },
-  {
-    "id": "2241748145954",
-    "name": "Leah Osa",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Leah-Osa-Fyllingen.jpeg",
-    "position": "Bakspiller",
-    "shirtNumber": 6
-  },
-  {
-    "id": "2241747323367",
-    "name": "Elise Ruth Osborne",
-    "imageUrl": "",
-    "position": "Bakspiller venstre",
-    "shirtNumber": 10
-  },
-  {
-    "id": "2241747846195",
-    "name": "Karoline Sether",
-    "imageUrl": "",
-    "position": "Linjespiller",
-    "shirtNumber": 29
-  },
-  {
-    "id": "2241748172030",
-    "name": "Ella Lien Strømme",
-    "imageUrl": "",
-    "position": "Målvakt",
-    "shirtNumber": 1
-  },
-  {
-    "id": "2241747588269",
-    "name": "Maja Nordeide Thomsen",
-    "imageUrl": "",
-    "position": "Kantspiller høyre",
-    "shirtNumber": 2
-  },
-  {
-    "id": "2241747355514",
-    "name": "Elise Marie Trapness",
-    "imageUrl": "",
-    "position": "Linjespiller",
-    "shirtNumber": 18
-  },
-  {
-    "id": "2241747715765",
-    "name": "Nora Hagerup Aarmo",
-    "imageUrl": "",
-    "position": "Bakspiller høyre",
-    "shirtNumber": 26
   }
 ]

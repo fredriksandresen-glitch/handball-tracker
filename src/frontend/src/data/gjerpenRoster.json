@@ -1,1 +1,177 @@
-[{"id":"4533737325254","name":"Vilde Amalie Klaussen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Vilde-Amalie-Klaussen-Gjerpen-Skien.png?v=1773826257","position":"Målvakt","shirtNumber":1},{"id":"4533736762572","name":"Oda Olsen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Oda-Olsen-Gjerpen-Skien.png?v=1773826257","position":"Bakspiller","shirtNumber":2},{"id":"4533736096209","name":"Lea Tidemann Stenvik","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Lea-Tidemann-Stenvik-Gjerpen-Skien.png?v=1773826257","position":"Bakspiller","shirtNumber":4},{"id":"4533736846014","name":"Hannah Kjelstad Høsøien","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Hannah-Kjelstad-Hosoien-Gjerpen-Skien.png?v=1773826257","position":"Bakspiller","shirtNumber":5},{"id":"4533737526528","name":"Oda Jeanette Burhol","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Oda-Jeanette-Burhol-Gjerpen-Skien.png?v=1773826257","position":"Bakspiller venstre","shirtNumber":6},{"id":"4533737395165","name":"Ingeborg Rolseth Holt","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Ingeborg-Rolseth-Holt-Gjerpen-Skien.png?v=1773826257","position":"Bakspiller","shirtNumber":7},{"id":"4533736225454","name":"Henriette Jarnang","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Henriette-Jarnang-Gjerpen-Skien.png?v=1773826257","position":"Kantspiller høyre","shirtNumber":8},{"id":"4533738140021","name":"Hedda Skjelbreid Rønningen","imageUrl":"","position":"Bakspiller","shirtNumber":9},{"id":"4533736088529","name":"Caroline Wikheim Aas","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Caroline-Wikheim-Aas-Gjerpen-Skien.png?v=1773826257","position":"Kantspiller høyre","shirtNumber":10},{"id":"4533736179974","name":"Mia Kristin Vinje Horgøien","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Mia-Kristin-Vinje-Horgoien-Gjerpen-Skien.png?v=1773826257","position":"Linjespiller","shirtNumber":11},{"id":"4533736180786","name":"Mia Stensland","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Mia-Stensland-Gjerpen-Skien.png?v=1773826257","position":"Målvakt","shirtNumber":12},{"id":"4533736337941","name":"Viktoria Odinokova Eilertsen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Viktoria-Odinokova-Eilertsen-Gjerpen-Skien.png?v=1773826257","position":"Bakspiller","shirtNumber":13},{"id":"4533736967341","name":"Linn Andresen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Linn-Andresen-Gjerpen-Skien.png?v=1773826257","position":"Bakspiller midt","shirtNumber":15},{"id":"4533737104159","name":"Mia Tvedte Johannessen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Mia-Tvedte-Johannessen-Gjerpen-Skien.png?v=1773826257","position":"Målvakt","shirtNumber":16},{"id":"4533735557011","name":"Ingvild Bersås Westersjø","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Ingvild-Bersas-Westersjo-Gjerpen-Skien.png?v=1773826257","position":"Linjespiller","shirtNumber":17},{"id":"4533739878868","name":"Anne Malin Antonsen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Anne-Malin-Antonsen-Gjerpen-Skien.png?v=1773826257","position":"Bakspiller midt","shirtNumber":18},{"id":"4533739439348","name":"Maja Rame","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Maja-Rame-Gjerpen-Skien.png?v=1773826257","position":"Kantspiller venstre","shirtNumber":19},{"id":"4533738483568","name":"Oda Kongssund","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Oda-Kongssund-Gjerpen-Skien.png?v=1773826257","position":"Bakspiller","shirtNumber":20},{"id":"4533737426296","name":"Kaja Stavdal Bækkevar","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Kaja-Stavdal-Baekkevar-Gjerpen-Skien.png?v=1773826257","position":"Linjespiller","shirtNumber":24},{"id":"4533738650888","name":"Emma Christine Gudmundsen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Emma-Christine-Gudmundsen-Gjerpen-Skien.png?v=1773826257","position":"Linjespiller","shirtNumber":29},{"id":"4533738472882","name":"Madeleine Bakke","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Madeleine-Bakke-Gjerpen-Skien.png?v=1773826257","position":"Kantspiller høyre","shirtNumber":31},{"id":"4533737306503","name":"Heidi Bildøy Østvold","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Heidi-Bildoy-Ostvold-Gjerpen-Skien.png?v=1773826257","position":"Linjespiller","shirtNumber":33},{"id":"4533737066516","name":"Sofie Magdalena Plich","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Sofie-Magdalena-Plich-Gjerpen-Skien.png?v=1773826257","position":"Kantspiller venstre","shirtNumber":34}]
+[
+  {
+    "id": "4533737325254",
+    "name": "Vilde Amalie Klaussen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Vilde-Amalie-Klaussen-Gjerpen-Skien.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 1
+  },
+  {
+    "id": "4533736762572",
+    "name": "Oda Olsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Oda-Olsen-Gjerpen-Skien.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 2
+  },
+  {
+    "id": "4533735720799",
+    "name": "Emilie Bech",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Emilie-Bech-Gjerpen-Skien.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 3
+  },
+  {
+    "id": "4533736096209",
+    "name": "Lea Tidemann Stenvik",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Lea-Tidemann-Stenvik-Gjerpen-Skien.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 4
+  },
+  {
+    "id": "4533739630696",
+    "name": "Sofie Donna Aasland Lae",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Sofie-Donna-Aasland-Lae-Gjerpen-Skien.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 5
+  },
+  {
+    "id": "4533737526528",
+    "name": "Oda Jeanette Burhol",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Oda-Jeanette-Burhol-Gjerpen-Skien.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 6
+  },
+  {
+    "id": "4533738140021",
+    "name": "Hedda Skjelbreid Rønningen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Hedda-Skjelbreid-Ronningen-Gjerpen-Skien.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 9
+  },
+  {
+    "id": "4533736088529",
+    "name": "Caroline Wikheim Aas",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Caroline-Wikheim-Aas-Gjerpen-Skien.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 10
+  },
+  {
+    "id": "4533736179974",
+    "name": "Mia Kristin Vinje Horgøien",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mia-Kristin-Vinje-Horgoien-Gjerpen-Skien.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 11
+  },
+  {
+    "id": "4533739686183",
+    "name": "Liv Tvedte Johannessen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Liv-Tvedte-Johannessen-Gjerpen-Skien.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 12
+  },
+  {
+    "id": "4533736337941",
+    "name": "Viktoria Odinokova Eilertsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Viktoria-Odinokova-Eilertsen-Gjerpen-Skien.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 13
+  },
+  {
+    "id": "4533739585439",
+    "name": "Karoline Helle Nilsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Karoline-Helle-Nilsen-Gjerpen-Skien.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 14
+  },
+  {
+    "id": "45337310573325",
+    "name": "Lova Ekengren",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Lova-Ekengren-Gjerpen-Skien.png?v=1773826257",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 15
+  },
+  {
+    "id": "4533737104159",
+    "name": "Mia Tvedte Johannessen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mia-Tvedte-Johannessen-Gjerpen-Skien.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 16
+  },
+  {
+    "id": "4533738030284",
+    "name": "Janne Charlotte Thoresen Nordnes",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Janne-Charlotte-Thoresen-Nordnes-Gjerpen-Skien.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 17
+  },
+  {
+    "id": "4533739878868",
+    "name": "Anne Malin Antonsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Anne-Malin-Antonsen-Gjerpen-Skien.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 18
+  },
+  {
+    "id": "4533738229903",
+    "name": "Louisa Abigail Jonsaas Sargeant",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Louisa-Abigail-Jonsaas-Sargeant-Gjerpen-Skien.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 19
+  },
+  {
+    "id": "4533736871939",
+    "name": "Mia Kristin Syverud",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Mia-Kristin-Syverud-Gjerpen-Skien.png?v=1773826257",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 20
+  },
+  {
+    "id": "45337310590954",
+    "name": "Sofie Lundsgaard Jørgensen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Sofie-Lundsgaard-Jorgensen-Gjerpen-Skien.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 21
+  },
+  {
+    "id": "4533739009972",
+    "name": "Freja Emilie Vinther Christensen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Freja-Emilie-Vinther-Christensen-Gjerpen-Skien.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 22
+  },
+  {
+    "id": "4533739400312",
+    "name": "Tania-Maria Taran",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Tania-Maria-Taran-Gjerpen-Skien.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 25
+  },
+  {
+    "id": "45337310596164",
+    "name": "Anna Vinther Veng Kristensen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Anna-Vinther-Veng-Kristensen-Gjerpen-Skien.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 28
+  },
+  {
+    "id": "4533737306503",
+    "name": "Heidi Bildøy Østvold",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Heidi-Bildoy-Ostvold-Gjerpen-Skien.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 33
+  },
+  {
+    "id": "4533737066516",
+    "name": "Sofie Magdalena Plich",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Sofie-Magdalena-Plich-Gjerpen-Skien.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 34
+  },
+  {
+    "id": "4533735874048",
+    "name": "Kjersti Vinjevoll",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Kjersti-Vinjevoll-Gjerpen-Skien.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 43
+  }
+]

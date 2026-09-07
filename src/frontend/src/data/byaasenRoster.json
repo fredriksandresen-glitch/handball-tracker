@@ -1,1 +1,142 @@
-[{"id":"4541168510352","name":"Emma Henden Foosnæs","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Emma-Henden-Foosnaes-Byasen-Elite.png","position":"Kantspiller høyre","shirtNumber":27},{"id":"4541167531409","name":"Ine Fremo","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Ine-Fremo-Byasen-Elite.png","position":"Bakspiller midt","shirtNumber":3},{"id":"4541168136540","name":"Johanna Dahl Haugan","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Johanna-Dahl-Haugan-Byasen-Elite.png","position":"Bakspiller venstre","shirtNumber":25},{"id":"4541167952147","name":"Sofie Sandø Kleiven","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Sofie-Sando-Kleiven-Byasen-Elite.png","position":"Bakspiller høyre","shirtNumber":23},{"id":"4541168764752","name":"Kristin Nordløkken Kounchou","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Kristin-Nordlokken-Kounchou-Byasen-Elite.png","position":"Kantspiller venstre","shirtNumber":26},{"id":"4541167892860","name":"Fride Lunne Mastad","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Fride-Lunne-Mastad-Byasen-Elite.png","position":"Bakspiller midt","shirtNumber":20},{"id":"4541168030284","name":"Janne Charlotte Thoresen Nordnes","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Janne-Charlotte-Thoresen-Nordnes-Byasen-Elite.png","position":"Linjespiller","shirtNumber":7},{"id":"4541167300447","name":"Marte Lausund Nornes","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Marte-Lausund-Nornes-Byasen-Elite.png","position":"Bakspiller midt","shirtNumber":18},{"id":"4541168165097","name":"Andrea Austmo Pedersen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Andrea-Austmo-Pedersen-Byasen-Elite.png","position":"Målvakt","shirtNumber":16},{"id":"4541165319222","name":"Maren Austmo Pedersen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Maren-Austmo-Pedersen-Byasen-Elite.png","position":"Målvakt","shirtNumber":1},{"id":"4541166723590","name":"Pernille Rø","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Pernille-Ro-Byasen-Elite.png","position":"Målvakt","shirtNumber":24},{"id":"4541167465819","name":"Dina Salih","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Dina-Salih-Byasen-Elite.png","position":"Kantspiller venstre","shirtNumber":5},{"id":"4541167170514","name":"Frida Molaup Selnes","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Frida-Molaup-Selnes-Byasen-Elite.png","position":"Målvakt","shirtNumber":12},{"id":"4541165620658","name":"Live Sønstebø","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Live-Sonstebo-Byasen-Elite.png","position":"Linjespiller","shirtNumber":28},{"id":"4541162748847","name":"Helene Lovise Wesche-Rø","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Helene-Lovise-Wesche-Ro-Byasen-Elite.png","position":"Linjespiller","shirtNumber":13},{"id":"4541168140447","name":"Silje Katrine Waade","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Silje-Katrine-Waade-Byasen-Elite.png","position":"Bakspiller høyre","shirtNumber":10},{"id":"4541166918281","name":"Hedda Lauvås Aasen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Hedda-Lauvas-Aasen-Byasen-Elite.png","position":"Kantspiller høyre","shirtNumber":9},{"id":"4541169218083","name":"Mathilde Arnstad","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Mathilde-Arnstad-Byasen-Elite.png","position":"Linjespiller","shirtNumber":4},{"id":"4541169009972","name":"Freja Emilie Vinther Christensen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Freja-Emilie-Vinther-Christensen-Byasen-Elite.png","position":"Kantspiller venstre","shirtNumber":22},{"id":"4541165415067","name":"Malin Smevik Dahl","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Malin-Smevik-Dahl-Byasen-Elite.png","position":"Kantspiller høyre","shirtNumber":21},{"id":"4541166867073","name":"Janne Håvelsrud Eklo","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Janne-Havelsrud-Eklo-Byasen-Elite.png","position":"Bakspiller venstre","shirtNumber":17},{"id":"4541168145440","name":"Mathea Enger","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Mathea-Enger-Byasen-Elite.png","position":"Bakspiller høyre","shirtNumber":19}]
+[
+  {
+    "id": "4541167531409",
+    "name": "Ine Fremo",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ine-Fremo-Byasen-Elite.png?v=1773826257",
+    "position": "Bakspiller midt",
+    "shirtNumber": 3
+  },
+  {
+    "id": "4541169218083",
+    "name": "Mathilde Arnstad",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mathilde-Arnstad-Byasen-Elite.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 4
+  },
+  {
+    "id": "4541167465819",
+    "name": "Dina Salih",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Dina-Salih-Byasen-Elite.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 5
+  },
+  {
+    "id": "4541167828625",
+    "name": "Madelen Nilsskog Johnsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Madelen-Nilsskog-Johnsen-Byasen-Elite.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 7
+  },
+  {
+    "id": "4541167589799",
+    "name": "Arja Døsvik",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Arja-Dosvik-Byasen-Elite.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 9
+  },
+  {
+    "id": "4541168140447",
+    "name": "Silje Katrine Waade",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Silje-Katrine-Waade-Byasen-Elite.png?v=1773826257",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 10
+  },
+  {
+    "id": "4541167170514",
+    "name": "Frida Molaup Selnes",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Frida-Molaup-Selnes-Byasen-Elite.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 12
+  },
+  {
+    "id": "4541162748847",
+    "name": "Helene Lovise Wesche-Rø",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Helene-Lovise-Wesche-Ro-Byasen-Elite.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 13
+  },
+  {
+    "id": "4541168165097",
+    "name": "Andrea Austmo Pedersen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Andrea-Austmo-Pedersen-Byasen-Elite.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 16
+  },
+  {
+    "id": "4541167300447",
+    "name": "Marte Lausund Nornes",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Marte-Lausund-Nornes-Byasen-Elite.png?v=1773826257",
+    "position": "Bakspiller midt",
+    "shirtNumber": 18
+  },
+  {
+    "id": "4541168145440",
+    "name": "Mathea Enger",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mathea-Enger-Byasen-Elite.png?v=1773826257",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 19
+  },
+  {
+    "id": "4541167892860",
+    "name": "Fride Lunne Mastad",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Fride-Lunne-Mastad-Byasen-Elite.png?v=1773826257",
+    "position": "Bakspiller midt",
+    "shirtNumber": 20
+  },
+  {
+    "id": "4541165415067",
+    "name": "Malin Smevik Dahl",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Malin-Smevik-Dahl-Byasen-Elite.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 21
+  },
+  {
+    "id": "4541167585748",
+    "name": "Hanna Blystad",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Hanna-Blystad-Byasen-Elite.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 22
+  },
+  {
+    "id": "4541167952147",
+    "name": "Sofie Sandø Kleiven",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Sofie-Sando-Kleiven-Byasen-Elite.png?v=1773826257",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 23
+  },
+  {
+    "id": "4541165921673",
+    "name": "Nora Aarnes Blomsøy",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Nora-Aarnes-Blomsoy-Byasen-Elite.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 24
+  },
+  {
+    "id": "4541168136540",
+    "name": "Johanna Dahl Haugan",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Johanna-Dahl-Haugan-Byasen-Elite.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 25
+  },
+  {
+    "id": "4541168764752",
+    "name": "Kristin Nordløkken Kounchou",
+    "imageUrl": "",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 26
+  },
+  {
+    "id": "4541168510352",
+    "name": "Emma Henden Foosnæs",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Emma-Henden-Foosnaes-Byasen-Elite.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 27
+  },
+  {
+    "id": "4541165620658",
+    "name": "Live Sønstebø",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Live-Sonstebo-Byasen-Elite.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 28
+  }
+]

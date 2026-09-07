@@ -1,66 +1,59 @@
 [
   {
-    "id": "9852988546807",
-    "name": "Liv Alva Dypvik Aspli",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Liv-Alva-Dypvik-Aspli-Trondheim-Topphandballklubb-.png",
-    "position": "Kantspiller venstre",
-    "shirtNumber": 7
-  },
-  {
-    "id": "9852987815299",
-    "name": "Helena Bekken",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Helena-Bekken-Trondheim-Topphandballklubb-.png",
-    "position": "Kantspiller venstre",
-    "shirtNumber": 17
-  },
-  {
-    "id": "9852986956796",
-    "name": "Silje Fure",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Silje-Fure-Trondheim-Topphandballklubb-.png",
-    "position": "Linjespiller",
-    "shirtNumber": 9
-  },
-  {
     "id": "9852988504385",
     "name": "Bertine Johansen",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Bertine-Johansen-Trondheim-Topphandballklubb-.png",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Bertine-Johansen-Trondheim-Topphandballklubb.png?v=1773826257",
     "position": "Bakspiller høyre",
     "shirtNumber": 5
   },
   {
-    "id": "9852988081223",
-    "name": "Oda Marie Veum",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Oda-Marie-Veum-Trondheim-Topphandballklubb-.jpeg",
-    "position": "Bakspiller venstre",
-    "shirtNumber": 11
-  },
-  {
-    "id": "9852988223822",
-    "name": "Sanna Annette Wheeler",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Sanna-Annette-Wheeler-Trondheim-Topphandballklubb-.png",
-    "position": "Målvakt",
-    "shirtNumber": 24
-  },
-  {
-    "id": "9852986766937",
-    "name": "Martine Malo Windstad",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Martine-Malo-Windstad-Trondheim-Topphandballklubb-.png",
+    "id": "9852986868630",
+    "name": "Julie Eriksson Rostad",
+    "imageUrl": "",
     "position": "Linjespiller",
-    "shirtNumber": 28
+    "shirtNumber": 6
   },
   {
-    "id": "98529810358626",
-    "name": "Sofie Winther-Hansen",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Sofie-Winther-Hansen-Trondheim-Topphandballklubb-.png",
-    "position": "Bakspiller midt",
-    "shirtNumber": 18
+    "id": "9852988546807",
+    "name": "Liv Alva Dypvik Aspli",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Liv-Alva-Dypvik-Aspli-Trondheim-Topphandballklubb.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 7
   },
   {
     "id": "9852989001827",
     "name": "Live Dahl Åbelvold",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Live-Dahl-Abelvold-Trondheim-Topphandballklubb-.png",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Live-Dahl-Abelvold-Trondheim-Topphandballklubb.png?v=1773826257",
     "position": "Kantspiller høyre",
     "shirtNumber": 8
+  },
+  {
+    "id": "9852986956796",
+    "name": "Silje Fure",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Silje-Fure-Trondheim-Topphandballklubb.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 9
+  },
+  {
+    "id": "9852988015243",
+    "name": "Josefine Moen",
+    "imageUrl": "",
+    "position": "Bakspiller midt",
+    "shirtNumber": 10
+  },
+  {
+    "id": "9852988081223",
+    "name": "Oda Marie Veum",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Oda-Marie-Veum-Trondheim-Topphandballklubb.jpeg?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 11
+  },
+  {
+    "id": "9852987819190",
+    "name": "Victoria Simavik Andersen",
+    "imageUrl": "",
+    "position": "Målvakt",
+    "shirtNumber": 12
   },
   {
     "id": "9852988018007",
@@ -70,17 +63,31 @@
     "shirtNumber": 14
   },
   {
-    "id": "9852988015243",
-    "name": "Josefine Moen",
-    "imageUrl": "",
-    "position": "Bakspiller midt",
-    "shirtNumber": 4
+    "id": "9852987815299",
+    "name": "Helena Bekken",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/09/Helena-Bekken-Trondheim-Topphandballklubb.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 17
   },
   {
-    "id": "9852986868630",
-    "name": "Julie Eriksson Rostad",
+    "id": "9852985240323",
+    "name": "Victoria Sande Petersen",
+    "imageUrl": "",
+    "position": "Bakspiller midt",
+    "shirtNumber": 19
+  },
+  {
+    "id": "9852985519817",
+    "name": "Ingrid Elise Veum",
     "imageUrl": "",
     "position": "Linjespiller",
-    "shirtNumber": 6
+    "shirtNumber": 23
+  },
+  {
+    "id": "9852988223822",
+    "name": "Sanna Annette Wheeler",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Sanna-Annette-Wheeler-Trondheim-Topphandballklubb.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 24
   }
 ]

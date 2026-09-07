@@ -1,64 +1,106 @@
 [
   {
-    "id": "2248605526197",
-    "name": "Sofie Steinnes-Eriksen",
+    "id": "2248607728441",
+    "name": "Tess Demi",
     "imageUrl": "",
     "position": "Målvakt",
     "shirtNumber": 1
   },
   {
+    "id": "2248609022378",
+    "name": "Eva Berg Stensrud",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Eva-Berg-Stensrud-Kjelsas.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 4
+  },
+  {
     "id": "2248608208083",
     "name": "Lotte Homleid Løchen",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Lotte-Homleid-Lochen-Kjelsas.jpeg?v=1773826257",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Lotte-Homleid-Lochen-Kjelsas-2.jpeg?v=1773826257",
     "position": "Bakspiller venstre",
     "shirtNumber": 5
   },
   {
     "id": "2248605551756",
     "name": "Elisa Mulaj",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Elisa-Mulaj-Kjelsas.png?v=1773826257",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Elisa-Mulaj-Kjelsas-2.png?v=1773826257",
     "position": "Kantspiller høyre",
     "shirtNumber": 7
   },
   {
+    "id": "2248609152319",
+    "name": "Frederikke Arneberg",
+    "imageUrl": "",
+    "position": "Bakspiller",
+    "shirtNumber": 8
+  },
+  {
+    "id": "2248607278153",
+    "name": "Kathrine Fjære",
+    "imageUrl": "",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 9
+  },
+  {
     "id": "2248606882321",
     "name": "Mirjam Sevland",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mirjam-Sevland-Kjelsas.jpeg?v=1773826257",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mirjam-Sevland-Kjelsas-2.jpeg?v=1773826257",
     "position": "Linjespiller",
     "shirtNumber": 10
   },
   {
-    "id": "2248608808547",
-    "name": "Caroline Gruer",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Caroline-Gruer-Kjelsas.png?v=1773826257",
-    "position": "Målvakt",
-    "shirtNumber": 12
+    "id": "2248609473036",
+    "name": "Erza Dreshaj",
+    "imageUrl": "",
+    "position": "Bakspiller",
+    "shirtNumber": 11
   },
   {
-    "id": "2248606814454",
-    "name": "Oda Linnes",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Oda-Linnes-Kjelsas.jpeg?v=1773826257",
-    "position": "Kantspiller høyre",
+    "id": "2248606223297",
+    "name": "Hansine Brune Skorgevik",
+    "imageUrl": "",
+    "position": "Bakspiller venstre",
     "shirtNumber": 14
   },
   {
     "id": "2248601843684",
     "name": "Cecilie Hansen Togba",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Cecilie-Hansen-Togba-Kjelsas.png?v=1773826257",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Cecilie-Hansen-Togba-Kjelsas-2.png?v=1773826257",
     "position": "Målvakt",
     "shirtNumber": 16
   },
   {
     "id": "2248605337162",
     "name": "Rebecka Hagen",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Rebecka-Hagen-Kjelsas.jpeg?v=1773826257",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Rebecka-Hagen-Kjelsas-2.jpeg?v=1773826257",
     "position": "Linjespiller",
     "shirtNumber": 18
   },
   {
+    "id": "2248607201030",
+    "name": "Lina Cvitanovic",
+    "imageUrl": "",
+    "position": "Linjespiller",
+    "shirtNumber": 21
+  },
+  {
+    "id": "2248608157487",
+    "name": "Mathilde Brenne",
+    "imageUrl": "",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 23
+  },
+  {
+    "id": "22486010084950",
+    "name": "Frida Lippert",
+    "imageUrl": "",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 24
+  },
+  {
     "id": "2248606963710",
     "name": "Andrine With Dahle",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Andrine-With-Dahle-Kjelsas.jpeg?v=1773826257",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Andrine-With-Dahle-Kjelsas-2.jpeg?v=1773826257",
     "position": "Bakspiller venstre",
     "shirtNumber": 25
   },
@@ -70,23 +112,30 @@
     "shirtNumber": 26
   },
   {
-    "id": "2248608154402",
-    "name": "Maya Ystenes",
+    "id": "2248605079036",
+    "name": "Karin Mollatt",
     "imageUrl": "",
-    "position": "Målvakt",
-    "shirtNumber": 30
+    "position": "Linjespiller",
+    "shirtNumber": 27
+  },
+  {
+    "id": "2248608190950",
+    "name": "Pernille Ramsrud Johannessen",
+    "imageUrl": "",
+    "position": "Bakspiller",
+    "shirtNumber": 28
   },
   {
     "id": "2248607230124",
     "name": "Melisa Mulaj",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Melisa-Mulaj-Kjelsas.png?v=1773826257",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Melisa-Mulaj-Kjelsas-2.png?v=1773826257",
     "position": "Bakspiller midt",
     "shirtNumber": 35
   },
   {
     "id": "2248605117708",
     "name": "Selma Skovseth Senga",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Selma-Skovseth-Senga-Kjelsas.jpeg?v=1773826257",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Selma-Skovseth-Senga-Kjelsas-2.jpeg?v=1773826257",
     "position": "Bakspiller høyre",
     "shirtNumber": 44
   }

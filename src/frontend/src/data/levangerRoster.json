@@ -1,86 +1,107 @@
 [
   {
+    "id": "2243729336977",
+    "name": "Frederikke Waagbø Brun",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Frederikke-Waagbo-Brun-Levanger.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 2
+  },
+  {
+    "id": "2243728820165",
+    "name": "Maria Keiserås Haugen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Maria-Keiseras-Haugen-Levanger.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 3
+  },
+  {
+    "id": "2243726792244",
+    "name": "Julia Hessen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Julia-Hessen-Levanger.png?v=1773826257",
+    "position": "Bakspiller midt",
+    "shirtNumber": 10
+  },
+  {
     "id": "2243726155158",
     "name": "Sigrid Marie Jenssen",
-    "imageUrl": "https://lhk.baksystem.no/assets/67ca57b3-4f57-437c-9d72-4922b999d257",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Sigrid-Marie-Jenssen-Levanger.png?v=1773826257",
     "position": "Målvakt",
     "shirtNumber": 12
   },
   {
-    "id": "2243727812115",
-    "name": "Antonie Solbakken Skjervø",
-    "imageUrl": "https://lhk.baksystem.no/assets/3832a310-b772-4f2e-9cf3-72e039e5c9c6",
-    "position": "Bakspiller venstre",
-    "shirtNumber": 0
+    "id": "2243727369479",
+    "name": "Sina Marie Ulvang Loktu",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Sina-Marie-Ulvang-Loktu-Levanger.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 13
+  },
+  {
+    "id": "2243729211342",
+    "name": "Emma Sagvold",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Emma-Sagvold-Levanger.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 15
+  },
+  {
+    "id": "2243726890003",
+    "name": "Agnes Kristine Andersen-Nerby",
+    "imageUrl": "",
+    "position": "Målvakt",
+    "shirtNumber": 16
+  },
+  {
+    "id": "2243728979079",
+    "name": "Vilde Grut Sakshaug",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Vilde-Grut-Sakshaug-Levanger.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 17
   },
   {
     "id": "2243729430271",
     "name": "Åsa Grønning Almberg",
-    "imageUrl": "https://lhk.baksystem.no/assets/678d347a-dd02-4eea-a430-e843474232a3",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Asa-Gronning-Almberg-Levanger.png?v=1773826257",
     "position": "Bakspiller høyre",
     "shirtNumber": 18
   },
   {
-    "id": "2243728375767",
-    "name": "Hanne Olsvik",
-    "imageUrl": "https://lhk.baksystem.no/assets/596c7647-8594-4146-8671-eae207d7de75",
-    "position": "Bakspiller midt",
-    "shirtNumber": 21
-  },
-  {
     "id": "2243729243428",
     "name": "Sarah Karlsen Kullerud",
-    "imageUrl": "https://lhk.baksystem.no/assets/9c2f1570-f8eb-4be5-bdeb-c8e49eb989e4",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Sarah-Karlsen-Kullerud-Levanger.png?v=1773826257",
     "position": "Bakspiller venstre",
     "shirtNumber": 22
   },
   {
     "id": "2243728877813",
     "name": "Marie Anderssen Vollan",
-    "imageUrl": "https://lhk.baksystem.no/assets/e346906d-3472-450f-ba73-2a1d495efb3b",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Marie-Anderssen-Vollan-Levanger.png?v=1773826257",
     "position": "Bakspiller venstre",
     "shirtNumber": 23
   },
   {
     "id": "2243729200180",
     "name": "Cornelia Bielenberg Haugen",
-    "imageUrl": "https://lhk.baksystem.no/assets/953b0e03-b2b3-44d7-98ee-ee907af66343",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Cornelia-Bielenberg-Haugen-Levanger.png?v=1773826257",
     "position": "Bakspiller venstre",
     "shirtNumber": 24
   },
   {
-    "id": "2243726043589",
-    "name": "Lone Forbord",
-    "imageUrl": "https://lhk.baksystem.no/assets/29b1bf3f-2ab5-4a11-8e5f-898c647fc8af",
-    "position": "Kantspiller venstre",
-    "shirtNumber": 0
-  },
-  {
-    "id": "2243729336977",
-    "name": "Frederikke Waagbø Brun",
-    "imageUrl": "https://lhk.baksystem.no/assets/cff8242c-3d03-4a1b-9433-7bbdfed721bd",
-    "position": "Kantspiller venstre",
-    "shirtNumber": 2
-  },
-  {
-    "id": "2243729211342",
-    "name": "Emma Sagvold",
-    "imageUrl": "https://lhk.baksystem.no/assets/9ed3bcf3-2f0a-41ae-81ca-a6e9326e53bb",
-    "position": "Kantspiller høyre",
-    "shirtNumber": 15
-  },
-  {
-    "id": "2243728820165",
-    "name": "Maria Keiserås Haugen",
-    "imageUrl": "https://lhk.baksystem.no/assets/961757e4-e17d-4ef3-a31a-c300d41be39f",
-    "position": "Linjespiller",
-    "shirtNumber": 3
-  },
-  {
     "id": "2243725016581",
     "name": "Eline Bratteberg Steen",
-    "imageUrl": "https://lhk.baksystem.no/assets/6fc59079-eb3b-4f87-ac08-e623f02ad26c",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Eline-Bratteberg-Steen-Levanger.png?v=1773826257",
     "position": "Linjespiller",
     "shirtNumber": 27
+  },
+  {
+    "id": "2243728486601",
+    "name": "Hennie Nygård Hellebust",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Hennie-Nygard-Hellebust-Levanger.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 28
+  },
+  {
+    "id": "2243729001725",
+    "name": "Oda Elsbeth Kjus Skippervold",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Oda-Elsbeth-Kjus-Skippervold-Levanger.png?v=1773826257",
+    "position": "Bakspiller midt",
+    "shirtNumber": 47
   }
 ]

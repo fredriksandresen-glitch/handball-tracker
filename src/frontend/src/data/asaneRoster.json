@@ -1,72 +1,93 @@
 [
   {
-    "id": "4532757101512",
-    "name": "Leyna Hauge Isik",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Leyna-Hauge-Isik-Asane.png",
-    "position": "Kantspiller venstre",
-    "shirtNumber": 58
-  },
-  {
-    "id": "4532758871052",
-    "name": "Marte Brubakken Johannessen",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Marte-Brubakken-Johannessen-Asane.png",
-    "position": "Bakspiller venstre",
-    "shirtNumber": 7
-  },
-  {
-    "id": "4532755592265",
-    "name": "Tuva Tefre Kalstad",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Tuva-Tefre-Kalstad-Asane.png",
-    "position": "Kantspiller høyre",
-    "shirtNumber": 15
-  },
-  {
-    "id": "4532758194838",
-    "name": "Nathalie Rabenorolahy",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Nathalie-Rabenorolahy-Asane.png",
-    "position": "Kantspiller venstre",
-    "shirtNumber": 3
-  },
-  {
-    "id": "4532757820157",
-    "name": "Karin Steen",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Karin-Steen-Asane.png",
-    "position": "Bakspiller høyre",
-    "shirtNumber": 5
-  },
-  {
-    "id": "4532757012581",
-    "name": "Karina Tjore",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Karina-Tjore-Asane.png",
-    "position": "Kantspiller høyre",
-    "shirtNumber": 4
-  },
-  {
-    "id": "4532759206528",
-    "name": "Kine Tveter",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Kine-Tveter-Asane.png",
-    "position": "Bakspiller midt",
-    "shirtNumber": 10
+    "id": "4532758516709",
+    "name": "Marthe Vedøy Uthaug",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Marthe-Vedoy-Uthaug-Asane.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 1
   },
   {
     "id": "4532756444370",
     "name": "Tilde Amalia Grönvall",
-    "imageUrl": "",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Tilde-Amalia-Gronvall-Asane.png?v=1773826257",
     "position": "Linjespiller",
-    "shirtNumber": 0
+    "shirtNumber": 2
   },
   {
-    "id": "4532759773860",
-    "name": "Alva Bjanes Iversen",
-    "imageUrl": "",
-    "position": "Målvakt",
-    "shirtNumber": 0
+    "id": "4532757095912",
+    "name": "Martine Larsen Danielsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Martine-Larsen-Danielsen-Asane.jpeg?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 3
+  },
+  {
+    "id": "4532757012581",
+    "name": "Karina Tjore",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Karina-Tjore-Asane.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 4
+  },
+  {
+    "id": "4532757820157",
+    "name": "Karin Steen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Karin-Steen-Asane.png?v=1773826257",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 5
+  },
+  {
+    "id": "4532758871052",
+    "name": "Marte Brubakken Johannessen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Marte-Brubakken-Johannessen-Asane.png?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 7
   },
   {
     "id": "4532758237023",
     "name": "Elise Vestrum",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Elise-Vestrum-Asane.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 9
+  },
+  {
+    "id": "4532759078288",
+    "name": "Erica Johnsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Erica-Johnsen-Asane.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 12
+  },
+  {
+    "id": "4532755592265",
+    "name": "Tuva Tefre Kalstad",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Tuva-Tefre-Kalstad-Asane.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 15
+  },
+  {
+    "id": "4532759773860",
+    "name": "Alva Bjanes Iversen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Alva-Bjanes-Iversen-Asane.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 16
+  },
+  {
+    "id": "4532758194838",
+    "name": "Nathalie Rabenorolahy",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Nathalie-Rabenorolahy-Asane.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 19
+  },
+  {
+    "id": "4532758980305",
+    "name": "Alma Oline Gilleshammer",
     "imageUrl": "",
-    "position": "",
-    "shirtNumber": 0
+    "position": "Bakspiller",
+    "shirtNumber": 43
+  },
+  {
+    "id": "4532757101512",
+    "name": "Leyna Hauge Isik",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Leyna-Hauge-Isik-Asane.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 58
   }
 ]

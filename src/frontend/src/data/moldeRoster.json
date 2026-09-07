@@ -1,1 +1,128 @@
-[{"id":"7757898078185","name":"Yazmin Yamundow Marie Ceesay","imageUrl":"","position":"Kantspiller høyre","shirtNumber":34},{"id":"7757896694073","name":"Torine Hjelme Dalen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Torine-Hjelme-Dalen-Molde-HK-Elite.png","position":"Kantspiller venstre","shirtNumber":18},{"id":"7757896455758","name":"Liv Annik Drechsler","imageUrl":"","position":"Linjespiller","shirtNumber":49},{"id":"77578910389269","name":"Fanny Alma Elovson","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Fanny-Alma-Elovson-Molde-HK-Elite.png","position":"Bakspiller venstre","shirtNumber":11},{"id":"7757898540449","name":"Lise Slemmen Gussiås","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Lise-Slemmen-Gussias-Molde-HK-Elite.png","position":"Målvakt","shirtNumber":24},{"id":"77578910393941","name":"Sakura Hauge","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Sakura-Hauge-Molde-HK-Elite.png","position":"Målvakt","shirtNumber":87},{"id":"7757896792244","name":"Julia Hessen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Julia-Hessen-Molde-HK-Elite.png","position":"Bakspiller midt","shirtNumber":30},{"id":"7757897327443","name":"Julie Bøe Jacobsen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Julie-Boe-Jacobsen-Molde-HK-Elite.png","position":"Bakspiller midt","shirtNumber":33},{"id":"7757899176335","name":"Henrikke Hauge Kjølholdt","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Henrikke-Hauge-Kjolholdt-Molde-HK-Elite.png","position":"Kantspiller høyre","shirtNumber":15},{"id":"7757896659518","name":"Tonje Løseth","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Tonje-Loseth-Molde-HK-Elite.png","position":"Bakspiller venstre","shirtNumber":25},{"id":"7757897553947","name":"Maja Sofie Muri","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Maja-Sofie-Muri-Molde-HK-Elite.png","position":"Linjespiller","shirtNumber":20},{"id":"7757895539952","name":"Johanne Halseth Nypan","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Johanne-Halseth-Nypan-Molde-HK-Elite.png","position":"Bakspiller høyre","shirtNumber":7},{"id":"7757895352216","name":"Kaja Røhne","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Kaja-Rohne-Molde-HK-Elite.png","position":"Linjespiller","shirtNumber":26},{"id":"7757897018645","name":"Runa Heimsjø Sand","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Runa-Heimsjo-Sand-Molde-HK-Elite.png","position":"Bakspiller venstre","shirtNumber":9},{"id":"7757899822148","name":"Eli Smørgrav Skogstrand","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Eli-Smorgrav-Skogstrand-Molde-HK-Elite.png","position":"Målvakt","shirtNumber":1},{"id":"7757896019321","name":"Mia Kristine Strand","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Mia-Kristine-Strand-Molde-HK-Elite.png","position":"Kantspiller høyre","shirtNumber":2},{"id":"7757897338288","name":"Lene Kristiansen Tveiten","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Lene-Kristiansen-Tveiten-Molde-HK-Elite.png","position":"Bakspiller midt","shirtNumber":10},{"id":"7757897661392","name":"Ingeborg Johanne Nyborg Tømmervåg","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Ingeborg-Johanne-Nyborg-Tommervag-Molde-HK-Elite.png","position":"Linjespiller","shirtNumber":39},{"id":"7757895757038","name":"Susanne Liberg Amundsen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Susanne-Liberg-Amundsen-Molde-HK-Elite.png","position":"Kantspiller venstre","shirtNumber":44}]
+[
+  {
+    "id": "7757899822148",
+    "name": "Eli Smørgrav Skogstrand",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Eli-Smorgrav-Skogstrand-Molde-HK-Elite.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 1
+  },
+  {
+    "id": "7757896019321",
+    "name": "Mia Kristine Strand",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mia-Kristine-Strand-Molde-HK-Elite.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 2
+  },
+  {
+    "id": "7757897534679",
+    "name": "Anniken Wollik",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Anniken-Wollik-Molde-HK-Elite.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 5
+  },
+  {
+    "id": "7757895539952",
+    "name": "Johanne Halseth Nypan",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Johanne-Halseth-Nypan-Molde-HK-Elite.png?v=1773826257",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 7
+  },
+  {
+    "id": "7757897403015",
+    "name": "Selin Kamburce",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Selin-Kamburce-Molde-HK-Elite.png?v=1773826257",
+    "position": "Kantspiller",
+    "shirtNumber": 8
+  },
+  {
+    "id": "77578910596943",
+    "name": "Clara Elma Linnéa Petersson Bergsten",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Clara-Elma-Linnea-Petersson-Bergsten-Molde-HK-Elite.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 9
+  },
+  {
+    "id": "7757898508651",
+    "name": "Sherin Obaidli",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Sherin-Obaidli-Molde-HK-Elite.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 10
+  },
+  {
+    "id": "77578910589793",
+    "name": "Anna Christina Lövgren Hallberg",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Anna-Christina-Lovgren-Hallberg-Molde-HK-Elite.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 12
+  },
+  {
+    "id": "7757898825240",
+    "name": "Kristin Loraas Eiriksson",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Kristin-Loraas-Eiriksson-Molde-HK-Elite.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 13
+  },
+  {
+    "id": "7757897338288",
+    "name": "Lene Kristiansen Tveiten",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Lene-Kristiansen-Tveiten-Molde-HK-Elite.png?v=1773826257",
+    "position": "Bakspiller midt",
+    "shirtNumber": 15
+  },
+  {
+    "id": "7757897889336",
+    "name": "Christine Neumann Strøm",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Christine-Neumann-Strom-Molde-HK-Elite.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 16
+  },
+  {
+    "id": "7757896694073",
+    "name": "Torine Hjelme Dalen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Torine-Hjelme-Dalen-Molde-HK-Elite.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 18
+  },
+  {
+    "id": "7757896794804",
+    "name": "Mira Ytterland Elnæs",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Mira-Ytterland-Elnaes-Molde-HK-Elite.png?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 19
+  },
+  {
+    "id": "7757894213924",
+    "name": "Anniken Obaidli",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Anniken-Obaidli-Molde-HK-Elite.png?v=1773826257",
+    "position": "Bakspiller midt",
+    "shirtNumber": 22
+  },
+  {
+    "id": "7757896659518",
+    "name": "Tonje Løseth",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Tonje-Loseth-Molde-HK-Elite.png?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 25
+  },
+  {
+    "id": "7757895352216",
+    "name": "Kaja Røhne",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Kaja-Rohne-Molde-HK-Elite.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 26
+  },
+  {
+    "id": "77578910591409",
+    "name": "Olivia Mathilde Simonsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Olivia-Mathilde-Simonsen-Molde-HK-Elite.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 27
+  },
+  {
+    "id": "7757899409665",
+    "name": "Vilde Ellingseter",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Vilde-Ellingseter-Molde-HK-Elite.png?v=1773826257",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 56
+  }
+]

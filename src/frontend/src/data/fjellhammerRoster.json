@@ -1,8 +1,8 @@
 [
   {
-    "id": "2239826783348",
-    "name": "My Lervold",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/My-Lervold-Fjellhammer.png?v=1773826257",
+    "id": "2239828683162",
+    "name": "Tuva Skaalerud Nordnes",
+    "imageUrl": "",
     "position": "Kantspiller venstre",
     "shirtNumber": 2
   },
@@ -14,13 +14,6 @@
     "shirtNumber": 4
   },
   {
-    "id": "2239829220488",
-    "name": "Julie Rensmoen Benterud",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Julie-Rensmoen-Benterud-Fjellhammer.png?v=1773826257",
-    "position": "Kantspiller høyre",
-    "shirtNumber": 5
-  },
-  {
     "id": "2239826718083",
     "name": "Tuva Knai",
     "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Tuva-Knai-Fjellhammer.png?v=1773826257",
@@ -28,11 +21,18 @@
     "shirtNumber": 6
   },
   {
-    "id": "2239828127509",
-    "name": "Inga Sandvold",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Inga-Sandvold-Fjellhammer.png?v=1773826257",
-    "position": "Linjespiller",
+    "id": "2239829175115",
+    "name": "Christina Midtdal Nummestad",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Christina-Midtdal-Nummestad-Fjellhammer.png?v=1773826257",
+    "position": "Bakspiller venstre",
     "shirtNumber": 7
+  },
+  {
+    "id": "2239829226617",
+    "name": "Constance Hedenstad",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/09/Constance-Hedenstad-Fjellhammer.png?v=1773826257",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 8
   },
   {
     "id": "2239827803540",
@@ -42,17 +42,17 @@
     "shirtNumber": 9
   },
   {
-    "id": "2239829841766",
-    "name": "Mia Lundberg Lersbryggen",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mia-Lundberg-Lersbryggen-Fjellhammer.png?v=1773826257",
-    "position": "Bakspiller venstre",
+    "id": "2239829538373",
+    "name": "Madelen Fjell Gjeisklid",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/09/Madelen-Fjell-Gjeisklid-Fjellhammer.png?v=1773826257",
+    "position": "Kantspiller høyre",
     "shirtNumber": 10
   },
   {
-    "id": "2239826764122",
-    "name": "Sara Ashuri",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Sara-Ashuri-Fjellhammer.png?v=1773826257",
-    "position": "Kantspiller venstre",
+    "id": "2239827051011",
+    "name": "Sofie Fosnæss Hanssen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/09/Sofie-Fosnaess-Hanssen-Fjellhammer.png?v=1773826257",
+    "position": "",
     "shirtNumber": 11
   },
   {
@@ -70,25 +70,11 @@
     "shirtNumber": 14
   },
   {
-    "id": "2239829175115",
-    "name": "Christina Midtdal Nummestad",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Christina-Midtdal-Nummestad-Fjellhammer.png?v=1773826257",
-    "position": "Bakspiller venstre",
-    "shirtNumber": 15
-  },
-  {
-    "id": "2239828158679",
-    "name": "Marie Elstrand Munthe",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Marie-Elstrand-Munthe-Fjellhammer.png?v=1773826257",
-    "position": "Bakspiller høyre",
-    "shirtNumber": 17
-  },
-  {
-    "id": "22398210032285",
-    "name": "Linnea Isabel Ingeborg Aula",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Linnea-Isabel-Ingeborg-Aula-Fjellhammer.png?v=1773826257",
-    "position": "Kantspiller venstre",
-    "shirtNumber": 18
+    "id": "2239827733174",
+    "name": "Marthe Davidsen Hellevik",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/09/Marthe-Davidsen-Hellevik-Fjellhammer.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 16
   },
   {
     "id": "2239826890365",
@@ -124,13 +110,6 @@
     "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mathilde-Aas-Fjelddalen-Fjellhammer.png?v=1773826257",
     "position": "Bakspiller venstre",
     "shirtNumber": 33
-  },
-  {
-    "id": "2239825215136",
-    "name": "Ida Wall Bakken",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ida-Wall-Bakken-Fjellhammer.png?v=1773826257",
-    "position": "Målvakt",
-    "shirtNumber": 37
   },
   {
     "id": "2239829957836",

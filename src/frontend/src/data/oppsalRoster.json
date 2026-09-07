@@ -1,1 +1,135 @@
-[{"id":"4419158065215","name":"Martine Skudvig Mork","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Martine-Skudvig-Mork-Oppsal.png?v=1773826257","position":"Bakspiller midt","shirtNumber":2},{"id":"4419156962809","name":"Hanna Karoline Hernes G\u00e5sv\u00e6r","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Hanna-Karoline-Hernes-Gasvaer-Oppsal.png?v=1773826257","position":"Bakspiller midt","shirtNumber":3},{"id":"4419156772561","name":"Mille Tveit Porsmyr","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Mille-Tveit-Porsmyr-Oppsal.png?v=1773826257","position":"Bakspiller midt","shirtNumber":5},{"id":"4419158527572","name":"Mali Halldorsson","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Mali-Halldorsson-Oppsal.png?v=1773826257","position":"Bakspiller venstre","shirtNumber":6},{"id":"4419156705305","name":"Emily Andersen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Emily-Andersen-Oppsal.png?v=1773826257","position":"Bakspiller midt","shirtNumber":7},{"id":"4419157008086","name":"Nora L\u00f8ken","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Nora-Loken-Oppsal.png?v=1773826257","position":"Kantspiller venstre","shirtNumber":11},{"id":"4419158825240","name":"Kristin Loraas Eiriksson","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Kristin-Loraas-Eiriksson-Oppsal.png?v=1773826257","position":"Bakspiller venstre","shirtNumber":13},{"id":"4419155613642","name":"Aleksandra Mandic","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Aleksandra-Mandic-Oppsal.png?v=1773826257","position":"Linjespiller","shirtNumber":14},{"id":"4419156925789","name":"Ida Marie Syversen Kallhovd","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Ida-Marie-Syversen-Kallhovd-Oppsal.png?v=1773826257","position":"Kantspiller h\u00f8yre","shirtNumber":19},{"id":"4419158773732","name":"Mille Constanse Brekken Daae","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Mille-Constanse-Brekken-Daae-Oppsal.png?v=1773826257","position":"Bakspiller midt","shirtNumber":21},{"id":"4419156789070","name":"Kristin Halvorsen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Kristin-Halvorsen-Oppsal.png?v=1773826257","position":"Linjespiller","shirtNumber":23},{"id":"4419156004805","name":"Marthine Svendsberget","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Marthine-Svendsberget-Oppsal.png?v=1773826257","position":"Kantspiller venstre","shirtNumber":24},{"id":"4419158313130","name":"Elika Nodland Meiland","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Elika-Nodland-Meiland-Oppsal.png?v=1773826257","position":"Bakspiller midt","shirtNumber":25},{"id":"4419158243249","name":"Vanessa Br\u00e5ten Gulbrandsen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Vanessa-Braten-Gulbrandsen-Oppsal.png?v=1773826257","position":"Kantspiller h\u00f8yre","shirtNumber":27},{"id":"4419156979410","name":"Silje Leikfoss Solbakken","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Silje-Leikfoss-Solbakken-Oppsal.png?v=1773826257","position":"Kantspiller venstre","shirtNumber":28},{"id":"4419156979394","name":"Maja Linnea Gulliksen","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Maja-Linnea-Gulliksen-Oppsal.png?v=1773826257","position":"M\u00e5lvakt","shirtNumber":30},{"id":"4419156329681","name":"Maja Leinan","imageUrl":"https://nthapi.webcore.no/wp-content/uploads/2026/05/Maja-Leinan-Oppsal.png?v=1773826257","position":"Linjespiller","shirtNumber":35},{"id":"4419155637843","name":"Thea Ellen L\u00f6fstedt","imageUrl":"","position":"Bakspiller midt","shirtNumber":64}]
+[
+  {
+    "id": "4419158065215",
+    "name": "Martine Skudvig Mork",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Martine-Skudvig-Mork-Oppsal.png?v=1773826257",
+    "position": "Bakspiller midt",
+    "shirtNumber": 2
+  },
+  {
+    "id": "4419156962809",
+    "name": "Hanna Karoline Hernes Gåsvær",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Hanna-Karoline-Hernes-Gasvaer-Oppsal.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 3
+  },
+  {
+    "id": "4419158527572",
+    "name": "Mali Halldorsson",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mali-Halldorsson-Oppsal.png?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 6
+  },
+  {
+    "id": "4419155637843",
+    "name": "Thea Ellen Löfstedt",
+    "imageUrl": "",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 9
+  },
+  {
+    "id": "4419158467678",
+    "name": "Hedda Holm Midthus",
+    "imageUrl": "",
+    "position": "Målvakt",
+    "shirtNumber": 12
+  },
+  {
+    "id": "4419155613642",
+    "name": "Aleksandra Mandic",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Aleksandra-Mandic-Oppsal.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 14
+  },
+  {
+    "id": "4419156783348",
+    "name": "My Lervold",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/My-Lervold-Oppsal.jpeg?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 14
+  },
+  {
+    "id": "4419157950023",
+    "name": "Oda Therese Austad Henriksen",
+    "imageUrl": "",
+    "position": "Målvakt",
+    "shirtNumber": 16
+  },
+  {
+    "id": "4419155117851",
+    "name": "Fredrikke Sundsby Kjølstad",
+    "imageUrl": "",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 17
+  },
+  {
+    "id": "4419156232672",
+    "name": "Marie Elde Selvaag",
+    "imageUrl": "",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 18
+  },
+  {
+    "id": "4419158773732",
+    "name": "Mille Constanse Brekken Daae",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mille-Constanse-Brekken-Daae-Oppsal.png?v=1773826257",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 21
+  },
+  {
+    "id": "4419156708876",
+    "name": "Veriana Veliqi",
+    "imageUrl": "",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 22
+  },
+  {
+    "id": "4419156004805",
+    "name": "Marthine Svendsberget",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Marthine-Svendsberget-Oppsal.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 24
+  },
+  {
+    "id": "4419158313130",
+    "name": "Elika Nodland Meiland",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Elika-Nodland-Meiland-Oppsal.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 25
+  },
+  {
+    "id": "4419158243249",
+    "name": "Vanessa Bråten Gulbrandsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Vanessa-Braten-Gulbrandsen-Oppsal.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 27
+  },
+  {
+    "id": "4419156979410",
+    "name": "Silje Leikfoss Solbakken",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Silje-Leikfoss-Solbakken-Oppsal.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 28
+  },
+  {
+    "id": "4419156979394",
+    "name": "Maja Linnea Gulliksen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Maja-Linnea-Gulliksen-Oppsal.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 30
+  },
+  {
+    "id": "4419157791367",
+    "name": "Andrea Nalbant Moe",
+    "imageUrl": "",
+    "position": "Bakspiller",
+    "shirtNumber": 33
+  },
+  {
+    "id": "4419156329681",
+    "name": "Maja Leinan",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Maja-Leinan-Oppsal.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 35
+  }
+]

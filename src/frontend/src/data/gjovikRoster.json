@@ -1,5 +1,75 @@
 [
   {
+    "id": "2239996792624",
+    "name": "Silje Brendbakken",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Silje-Brendbakken-Gjovik-HK.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 1
+  },
+  {
+    "id": "2239996914304",
+    "name": "Lisa Sydbøge",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Lisa-Sydboge-Gjovik-HK.png?v=1773826257",
+    "position": "Bakspiller midt",
+    "shirtNumber": 4
+  },
+  {
+    "id": "2239999413597",
+    "name": "Ida Grimsrud Steinslien",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ida-Grimsrud-Steinslien-Gjovik-HK.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 6
+  },
+  {
+    "id": "2239999529211",
+    "name": "Julie Aurora Gran-Holte",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Julie-Aurora-Gran-Holte-Gjovik-HK.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 7
+  },
+  {
+    "id": "2239999822571",
+    "name": "Thea Marie Johansen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Thea-Marie-Johansen-Gjovik-HK.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 9
+  },
+  {
+    "id": "2239996787302",
+    "name": "Julia Pedersen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Julia-Pedersen-Gjovik-HK.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 10
+  },
+  {
+    "id": "2239998705346",
+    "name": "Carmen Dahl",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Carmen-Dahl-Gjovik-HK.png?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 11
+  },
+  {
+    "id": "2239996100619",
+    "name": "Pia Marlen Elind",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Pia-Marlen-Elind-Gjovik-HK.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 12
+  },
+  {
+    "id": "2239999022266",
+    "name": "Pernille Tomter",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Pernille-Tomter-Gjovik-HK.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 14
+  },
+  {
+    "id": "2239996914296",
+    "name": "Ingvild Thomassen Gusdal",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ingvild-Thomassen-Gusdal-Gjovik-HK.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 16
+  },
+  {
     "id": "2239992449679",
     "name": "Ina Jåtten",
     "imageUrl": "",
@@ -7,122 +77,52 @@
     "shirtNumber": 17
   },
   {
-    "id": "2239997211051",
-    "name": "Marielle Lervold Danielsen",
-    "imageUrl": "",
-    "position": "Bakspiller venstre",
-    "shirtNumber": 29
-  },
-  {
-    "id": "2239997055656",
-    "name": "Oda Fikstvedt",
-    "imageUrl": "",
-    "position": "Bakspiller venstre",
-    "shirtNumber": 24
-  },
-  {
-    "id": "2239996967923",
-    "name": "Anna Bjeglerud Furuseth",
-    "imageUrl": "",
-    "position": "Linjespiller",
-    "shirtNumber": 32
-  },
-  {
-    "id": "2239999529211",
-    "name": "Julie Aurora Gran-Holte",
-    "imageUrl": "",
-    "position": "Kantspiller høyre",
-    "shirtNumber": 7
-  },
-  {
-    "id": "2239998924620",
-    "name": "Lilly Momrak Mæhlum",
-    "imageUrl": "",
-    "position": "Bakspiller",
-    "shirtNumber": 20
-  },
-  {
-    "id": "2239996787302",
-    "name": "Julia Pedersen",
-    "imageUrl": "",
-    "position": "Linjespiller",
-    "shirtNumber": 10
-  },
-  {
-    "id": "2239996792624",
-    "name": "Silje Brendbakken",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Silje-Brendbakken-Gjovik-HK.png",
-    "position": "Målvakt",
-    "shirtNumber": 1
-  },
-  {
-    "id": "2239998705346",
-    "name": "Carmen Dahl",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Carmen-Dahl-Gjovik-HK.png",
-    "position": "Bakspiller venstre",
-    "shirtNumber": 11
-  },
-  {
-    "id": "2239996100619",
-    "name": "Pia Marlen Elind",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Pia-Marlen-Elind-Gjovik-HK.png",
-    "position": "Målvakt",
-    "shirtNumber": 12
-  },
-  {
-    "id": "2239996914296",
-    "name": "Ingvild Thomassen Gusdal",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ingvild-Thomassen-Gusdal-Gjovik-HK.png",
-    "position": "Målvakt",
-    "shirtNumber": 16
-  },
-  {
-    "id": "2239999822571",
-    "name": "Thea Marie Johansen",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Thea-Marie-Johansen-Gjovik-HK.png",
-    "position": "Kantspiller venstre",
-    "shirtNumber": 9
-  },
-  {
-    "id": "2239996930059",
-    "name": "Adna Kahric",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Adna-Kahric-Gjovik-HK.png",
-    "position": "Linjespiller",
-    "shirtNumber": 23
-  },
-  {
-    "id": "2239997531655",
-    "name": "Anette Michelsen Kirkeby",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Anette-Michelsen-Kirkeby-Gjovik-HK.png",
-    "position": "Bakspiller venstre",
-    "shirtNumber": 25
-  },
-  {
-    "id": "2239999413597",
-    "name": "Ida Grimsrud Steinslien",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ida-Grimsrud-Steinslien-Gjovik-HK.png",
-    "position": "Kantspiller venstre",
-    "shirtNumber": 6
-  },
-  {
-    "id": "2239996914304",
-    "name": "Lisa Sydbøge",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Lisa-Sydboge-Gjovik-HK.png",
-    "position": "Bakspiller midt",
-    "shirtNumber": 4
-  },
-  {
     "id": "2239998155058",
     "name": "Andrea Emilie Grøndalen Tjosaas",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Andrea-Emilie-Grondalen-Tjosaas-Gjovik-HK.png",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Andrea-Emilie-Grondalen-Tjosaas-Gjovik-HK.png?v=1773826257",
     "position": "Kantspiller",
     "shirtNumber": 18
   },
   {
-    "id": "2239999022266",
-    "name": "Pernille Tomter",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Pernille-Tomter-Gjovik-HK.png",
-    "position": "Kantspiller høyre",
-    "shirtNumber": 14
+    "id": "2239998924620",
+    "name": "Lilly Momrak Mæhlum",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Lilly-Momrak-Maehlum-Gjovik-HK.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 20
+  },
+  {
+    "id": "2239996930059",
+    "name": "Adna Kahric",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Adna-Kahric-Gjovik-HK.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 23
+  },
+  {
+    "id": "2239997055656",
+    "name": "Oda Fikstvedt",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Oda-Fikstvedt-Gjovik-HK.png?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 24
+  },
+  {
+    "id": "2239997531655",
+    "name": "Anette Michelsen Kirkeby",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Anette-Michelsen-Kirkeby-Gjovik-HK.png?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 25
+  },
+  {
+    "id": "2239997211051",
+    "name": "Marielle Lervold Danielsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Marielle-Lervold-Danielsen-Gjovik-HK.png?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 29
+  },
+  {
+    "id": "2239996967923",
+    "name": "Anna Bjeglerud Furuseth",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Anna-Bjeglerud-Furuseth-Gjovik-HK.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 32
   }
 ]

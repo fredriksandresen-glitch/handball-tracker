@@ -1,0 +1,114 @@
+[
+  {
+    "id": "7104388684292",
+    "name": "Emili Hoff Markgren",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Emili-Hoff-Markgren-Flint-Tonsberg.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 1
+  },
+  {
+    "id": "7104389090438",
+    "name": "Mia Landsrød Haug",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Mia-Landsrod-Haug-Flint-Tonsberg.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 2
+  },
+  {
+    "id": "7104387452896",
+    "name": "Lise Aggerholm Brunsvik",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Lise-Aggerholm-Brunsvik-Flint-Tonsberg.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 3
+  },
+  {
+    "id": "7104386895511",
+    "name": "Leah Berg Pejby",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Leah-Berg-Pejby-Flint-Tonsberg.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 4
+  },
+  {
+    "id": "7104389274868",
+    "name": "Emilie Alexandra Helgerud",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Emilie-Alexandra-Helgerud-Flint-Tonsberg.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 6
+  },
+  {
+    "id": "7104386947822",
+    "name": "Marlin Swift-Johannessen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Marlin-Swift-Johannessen-Flint-Tonsberg.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 7
+  },
+  {
+    "id": "7104386959734",
+    "name": "Ona Vegard Aurmo",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ona-Vegard-Aurmo-Flint-Tonsberg.png?v=1773826257",
+    "position": "Bakspiller midt",
+    "shirtNumber": 8
+  },
+  {
+    "id": "7104386709115",
+    "name": "Ylva Vegard Aurmo",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ylva-Vegard-Aurmo-Flint-Tonsberg.png?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 9
+  },
+  {
+    "id": "7104387872681",
+    "name": "Mia Kvarme",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Mia-Kvarme-Flint-Tonsberg.png?v=1773826257",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 10
+  },
+  {
+    "id": "7104388249551",
+    "name": "Embla Eriksen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Embla-Eriksen-Flint-Tonsberg.png?v=1773826257",
+    "position": "Bakspiller midt",
+    "shirtNumber": 13
+  },
+  {
+    "id": "7104387057548",
+    "name": "Karoline Kleven",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Karoline-Kleven-Flint-Tonsberg.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 14
+  },
+  {
+    "id": "7104388449067",
+    "name": "Marte Kraby Simenstad",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Marte-Kraby-Simenstad-Flint-Tonsberg.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 15
+  },
+  {
+    "id": "7104388482237",
+    "name": "Ingrid Lauritzen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Ingrid-Lauritzen-Flint-Tonsberg.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 16
+  },
+  {
+    "id": "7104386230069",
+    "name": "Amalie Mogstad",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Amalie-Mogstad-Flint-Tonsberg.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 18
+  },
+  {
+    "id": "7104387865741",
+    "name": "Mia Viljugrein",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mia-Viljugrein-Flint-Tonsberg.png?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 20
+  },
+  {
+    "id": "7104388964637",
+    "name": "Emeli Sørvik-Hansen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Emeli-Sorvik-Hansen-Flint-Tonsberg.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 22
+  }
+]

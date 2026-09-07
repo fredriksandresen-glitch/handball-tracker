@@ -1,37 +1,16 @@
 [
   {
-    "id": "2239947188144",
-    "name": "Olivia Lykke Nygaard",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Olivia-Lykke-Nygaard-Larvik.png?v=1773826257",
-    "position": "Målvakt",
-    "shirtNumber": 1
-  },
-  {
-    "id": "2239947684507",
-    "name": "Mari Kirkeby Stensrud",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Mari-Kirkeby-Stensrud-Larvik.jpeg?v=1773826257",
+    "id": "2239946846014",
+    "name": "Hannah Kjelstad Høsøien",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Hannah-Kjelstad-Hosoien-Larvik.png?v=1773826257",
     "position": "Bakspiller venstre",
-    "shirtNumber": 3
-  },
-  {
-    "id": "2239948104037",
-    "name": "Charlotte Koffeld Iversen",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Charlotte-Koffeld-Iversen-Larvik.png?v=1773826257",
-    "position": "Kantspiller høyre",
-    "shirtNumber": 4
-  },
-  {
-    "id": "2239946743267",
-    "name": "Kine Hauge Kvalsund",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Kine-Hauge-Kvalsund-Larvik.png?v=1773826257",
-    "position": "Kantspiller venstre",
     "shirtNumber": 5
   },
   {
-    "id": "2239949226617",
-    "name": "Constance Hedenstad",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Constance-Hedenstad-Larvik.png?v=1773826257",
-    "position": "Bakspiller høyre",
+    "id": "2239946343490",
+    "name": "Amalie Gram",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Amalie-Gram-Larvik.png?v=1773826257",
+    "position": "Bakspiller",
     "shirtNumber": 6
   },
   {
@@ -42,25 +21,11 @@
     "shirtNumber": 7
   },
   {
-    "id": "2239946764458",
-    "name": "Martine Wolff",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Martine-Wolff-Larvik.png?v=1773826257",
-    "position": "Linjespiller",
-    "shirtNumber": 8
-  },
-  {
-    "id": "2239946301272",
-    "name": "Julie Hulleberg",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Julie-Hulleberg-Larvik.png?v=1773826257",
-    "position": "Bakspiller venstre",
-    "shirtNumber": 10
-  },
-  {
-    "id": "2239948244551",
-    "name": "Frøydis Wiik Seierstad",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Froydis-Wiik-Seierstad-Larvik.png?v=1773826257",
-    "position": "Bakspiller",
-    "shirtNumber": 11
+    "id": "2239945524728",
+    "name": "Frida Haug Hoel",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Frida-Haug-Hoel-Larvik.png?v=1773826257",
+    "position": "Bakspiller høyre",
+    "shirtNumber": 9
   },
   {
     "id": "2239945035367",
@@ -84,10 +49,10 @@
     "shirtNumber": 16
   },
   {
-    "id": "2239945597402",
-    "name": "Tuva Engh Auby",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Tuva-Engh-Auby-Larvik.png?v=1773826257",
-    "position": "Målvakt",
+    "id": "2239947616834",
+    "name": "Mari Myrland",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Mari-Myrland-Larvik.png?v=1773826257",
+    "position": "Bakspiller midt",
     "shirtNumber": 17
   },
   {
@@ -105,6 +70,13 @@
     "shirtNumber": 20
   },
   {
+    "id": "2239947872764",
+    "name": "Dana Björg Gudmundsdottir",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Dana-Bjorg-Gudmundsdottir-Larvik.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 21
+  },
+  {
     "id": "2239948122484",
     "name": "Andrea Rønning",
     "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Andrea-Ronning-Larvik.png?v=1773826257",
@@ -112,10 +84,10 @@
     "shirtNumber": 22
   },
   {
-    "id": "2239947889336",
-    "name": "Christine Neumann Strøm",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Christine-Neumann-Strom-Larvik.png?v=1773826257",
-    "position": "Målvakt",
+    "id": "2239948104037",
+    "name": "Charlotte Koffeld Iversen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Charlotte-Koffeld-Iversen-Larvik.png?v=1773826257",
+    "position": "Kantspiller høyre",
     "shirtNumber": 23
   },
   {
@@ -128,7 +100,7 @@
   {
     "id": "2239948820983",
     "name": "Tiril Birgitte Rosenberg",
-    "imageUrl": "https://topphandball.nth2025.webcore.no/wp-content/themes/nth-5.3/resources/assets/images/default_male.jpg?v=1773826257",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Tiril-Birgitte-Rosenberg-Larvik.png?v=1773826257",
     "position": "Linjespiller",
     "shirtNumber": 25
   },
@@ -140,52 +112,10 @@
     "shirtNumber": 26
   },
   {
-    "id": "2239946756460",
-    "name": "Signe Andreassen",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Signe-Andreassen-Larvik.png?v=1773826257",
-    "position": "Bakspiller",
-    "shirtNumber": 29
-  },
-  {
-    "id": "2239946910111",
-    "name": "Sanna Langmo Wold",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Sanna-Langmo-Wold-Larvik.png?v=1773826257",
-    "position": "Målvakt",
-    "shirtNumber": 30
-  },
-  {
-    "id": "2239949230318",
-    "name": "Sigrid Ellingsen",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Sigrid-Ellingsen-Larvik.png?v=1773826257",
-    "position": "Målvakt",
-    "shirtNumber": 30
-  },
-  {
     "id": "2239948451839",
     "name": "Nea Angelina Holand Frydenlund",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Nea-Angelina-Holand-Frydenlund-Larvik.png?v=1773826257",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Nea-Angelina-Holand-Frydenlund-Larvik.png?v=1773826257",
     "position": "Kantspiller venstre",
-    "shirtNumber": 32
-  },
-  {
-    "id": "2239946343490",
-    "name": "Amalie Gram",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Amalie-Gram-Larvik.png?v=1773826257",
-    "position": "Bakspiller",
-    "shirtNumber": 33
-  },
-  {
-    "id": "22399410355605",
-    "name": "Sarah Römhild",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Sarah-Romhild-Larvik.png?v=1773826257",
-    "position": "Bakspiller",
-    "shirtNumber": 33
-  },
-  {
-    "id": "22399410390061",
-    "name": "Christina Pedersen",
-    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Christina-Pedersen-Larvik.png?v=1773826257",
-    "position": "Bakspiller midt",
-    "shirtNumber": 66
+    "shirtNumber": 67
   }
 ]

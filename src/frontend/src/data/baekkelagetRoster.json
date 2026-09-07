@@ -1,121 +1,114 @@
 [
   {
-    "id": "2239856231837",
-    "name": "Charlotte Pram Berger",
-    "imageUrl": "",
-    "position": "Kantspiller høyre",
-    "shirtNumber": 0
-  },
-  {
-    "id": "2239857831265",
-    "name": "Hedda Dahl Bøhleng",
-    "imageUrl": "",
-    "position": "Bakspiller",
-    "shirtNumber": 0
-  },
-  {
     "id": "2239857720634",
     "name": "Helene Angvoll Børrestuen",
-    "imageUrl": "",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Helene-Angvoll-Borrestuen-Baekkelaget.png?v=1773826257",
     "position": "Målvakt",
     "shirtNumber": 1
   },
   {
-    "id": "2239858733817",
-    "name": "Charlotte Trondal Elisenberg",
-    "imageUrl": "",
-    "position": "Linjespiller",
-    "shirtNumber": 18
-  },
-  {
-    "id": "2239858711766",
-    "name": "Frida Landås Gabrielsen",
-    "imageUrl": "",
-    "position": "Bakspiller",
-    "shirtNumber": 0
-  },
-  {
-    "id": "2239857009913",
-    "name": "Karoline Seligmann Andresen",
-    "imageUrl": "",
-    "position": "Kantspiller venstre",
-    "shirtNumber": 0
-  },
-  {
     "id": "2239858823383",
     "name": "Vilde Nilsen Hagen",
-    "imageUrl": "",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Vilde-Nilsen-Hagen-Baekkelaget.png?v=1773826257",
     "position": "Kantspiller høyre",
     "shirtNumber": 2
   },
   {
-    "id": "2239856901053",
-    "name": "Maria Kolodyazhnaya",
-    "imageUrl": "",
-    "position": "Bakspiller",
-    "shirtNumber": 13
-  },
-  {
-    "id": "2239858483568",
-    "name": "Oda Kongssund",
-    "imageUrl": "",
-    "position": "Bakspiller",
-    "shirtNumber": 0
-  },
-  {
-    "id": "2239859841766",
-    "name": "Mia Lundberg Lersbryggen",
-    "imageUrl": "",
-    "position": "Bakspiller venstre",
-    "shirtNumber": 0
-  },
-  {
-    "id": "2239856203229",
-    "name": "Kaja Løken",
-    "imageUrl": "",
-    "position": "Linjespiller",
-    "shirtNumber": 27
-  },
-  {
     "id": "2239859006800",
     "name": "Annika Skrettingland",
-    "imageUrl": "",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Annika-Skrettingland-Baekkelaget.png?v=1773826257",
     "position": "Bakspiller høyre",
     "shirtNumber": 6
   },
   {
-    "id": "2239856942508",
-    "name": "Felicia Celine Tangen",
-    "imageUrl": "",
-    "position": "Bakspiller",
-    "shirtNumber": 17
+    "id": "2239856231837",
+    "name": "Charlotte Pram Berger",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Charlotte-Pram-Berger-Baekkelaget.png?v=1773826257",
+    "position": "Kantspiller høyre",
+    "shirtNumber": 9
   },
   {
     "id": "2239854437777",
     "name": "Mari Lynne",
-    "imageUrl": "",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Mari-Lynne-Baekkelaget.png?v=1773826257",
     "position": "Kantspiller venstre",
     "shirtNumber": 10
   },
   {
-    "id": "2239857233091",
-    "name": "Kathinka Garmann Løvstad",
-    "imageUrl": "",
-    "position": "Bakspiller midt",
-    "shirtNumber": 8
+    "id": "2239858711766",
+    "name": "Frida Landås Gabrielsen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Frida-Landas-Gabrielsen-Baekkelaget.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 11
   },
   {
     "id": "2239856074641",
     "name": "Lotte Prøsch",
-    "imageUrl": "",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Lotte-Prosch-Baekkelaget.png?v=1773826257",
     "position": "Målvakt",
     "shirtNumber": 12
   },
   {
+    "id": "2239857831265",
+    "name": "Hedda Dahl Bøhleng",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Hedda-Dahl-Bohleng-Baekkelaget.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 15
+  },
+  {
+    "id": "2239856942508",
+    "name": "Felicia Celine Tangen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Felicia-Celine-Tangen-Baekkelaget.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 17
+  },
+  {
+    "id": "2239858733817",
+    "name": "Charlotte Trondal Elisenberg",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Charlotte-Trondal-Elisenberg-Baekkelaget.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 18
+  },
+  {
     "id": "22398510041223",
     "name": "Maja Ellen Sannholm",
-    "imageUrl": "",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Maja-Ellen-Sannholm-Baekkelaget.png?v=1773826257",
     "position": "Bakspiller",
     "shirtNumber": 19
+  },
+  {
+    "id": "2239858483568",
+    "name": "Oda Kongssund",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Oda-Kongssund-Baekkelaget.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 20
+  },
+  {
+    "id": "2239857009913",
+    "name": "Karoline Seligmann Andresen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Karoline-Seligmann-Andresen-Baekkelaget.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 22
+  },
+  {
+    "id": "2239859841766",
+    "name": "Mia Lundberg Lersbryggen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Mia-Lundberg-Lersbryggen-Baekkelaget.png?v=1773826257",
+    "position": "Bakspiller venstre",
+    "shirtNumber": 25
+  },
+  {
+    "id": "2239858825436",
+    "name": "Erle Christine Solstad",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Erle-Christine-Solstad-Baekkelaget.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 26
+  },
+  {
+    "id": "2239856203229",
+    "name": "Kaja Løken",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Kaja-Loken-Baekkelaget.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 27
   }
 ]

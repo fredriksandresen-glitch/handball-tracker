@@ -14,16 +14,9 @@
     "shirtNumber": 2
   },
   {
-    "id": "5321366743267",
-    "name": "Kine Hauge Kvalsund",
-    "imageUrl": "",
-    "position": "Kantspiller venstre",
-    "shirtNumber": 3
-  },
-  {
     "id": "5321369998605",
     "name": "June Skei Kaspersen",
-    "imageUrl": "",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/June-Skei-Kaspersen-Utleira.png?v=1773826257",
     "position": "Bakspiller",
     "shirtNumber": 4
   },
@@ -56,6 +49,13 @@
     "shirtNumber": 8
   },
   {
+    "id": "5321368504388",
+    "name": "Marion Skei Kaspersen",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/07/Marion-Skei-Kaspersen-Utleira.png?v=1773826257",
+    "position": "Bakspiller",
+    "shirtNumber": 9
+  },
+  {
     "id": "5321369640437",
     "name": "Kaja Røddesnes",
     "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/05/Kaja-Roddesnes-Utleira.png?v=1773826257",
@@ -77,25 +77,25 @@
     "shirtNumber": 12
   },
   {
-    "id": "5321367300207",
-    "name": "Ingvild Margrete Følstad",
-    "imageUrl": "https://utleira.admin.topphandball.no/wp-content/uploads/sites/66/2026/01/spillerkort-ingvild-margrete-folstad-8214403-match.jpg",
-    "position": "Bakspiller",
-    "shirtNumber": 13
-  },
-  {
     "id": "5321369486797",
     "name": "Linea Tangen Sunde",
-    "imageUrl": "",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Linea-Tangen-Sunde-Utleira.png?v=1773826257",
     "position": "Kantspiller venstre",
     "shirtNumber": 14
   },
   {
-    "id": "5321368278029",
-    "name": "Signe Berntzen-Trondmo",
-    "imageUrl": "",
-    "position": "Bakspiller",
-    "shirtNumber": 17
+    "id": "5321368140209",
+    "name": "Marin Sønstebø",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Marin-Sonstebo-Utleira.png?v=1773826257",
+    "position": "Målvakt",
+    "shirtNumber": 16
+  },
+  {
+    "id": "5321367818926",
+    "name": "Helene Grønning Strøm",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/09/Helene-Gronning-Strom-Utleira.png?v=1773826257",
+    "position": "Linjespiller",
+    "shirtNumber": 19
   },
   {
     "id": "5321365265882",
@@ -107,15 +107,22 @@
   {
     "id": "5321369024016",
     "name": "Regine Haugdal Nygård",
-    "imageUrl": "",
-    "position": "Kantspiller",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Regine-Haugdal-Nygard-Utleira.png?v=1773826257",
+    "position": "Bakspiller",
     "shirtNumber": 22
+  },
+  {
+    "id": "5321366743267",
+    "name": "Kine Hauge Kvalsund",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/06/Kine-Hauge-Kvalsund-Utleira.png?v=1773826257",
+    "position": "Kantspiller venstre",
+    "shirtNumber": 23
   },
   {
     "id": "5321367097701",
     "name": "Hanne Marie Tørhaug",
-    "imageUrl": "",
-    "position": "Kantspiller høyre",
+    "imageUrl": "https://nthapi.webcore.no/wp-content/uploads/2026/08/Hanne-Marie-Torhaug-Utleira.png?v=1773826257",
+    "position": "Bakspiller",
     "shirtNumber": 29
   }
 ]
