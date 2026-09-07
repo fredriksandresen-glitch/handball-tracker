@@ -1,8 +1,17 @@
 {
-  "commit": "842497eed03a3e32612da4bab8b8817c76683325",
-  "shortCommit": "842497e",
+  "commit": "b3130b017061105926fc1d28635fa557806a2621",
+  "shortCommit": "b3130b0",
   "branch": "fix/first-division-clickable-rows-and-image-history",
-  "dirty": false,
-  "buildTime": "2026-09-07T09:55:59.062Z",
-  "dirtyFiles": []
+  "dirty": true,
+  "buildTime": "2026-09-07T10:12:53.010Z",
+  "dirtyFiles": [
+    "src/frontend/scripts/sync-rosters.mjs",
+    "src/frontend/src/data/fanaRoster.json",
+    "src/frontend/src/data/hkRyggeRoster.json",
+    "src/frontend/src/data/kjelsaasRoster.json",
+    "src/frontend/src/data/levangerRoster.json",
+    "src/frontend/src/data/oppsalRoster.json",
+    "src/frontend/scripts/sync-upcoming-matches.mjs",
+    "src/frontend/src/data/upcomingMatches.json"
+  ]
 }
