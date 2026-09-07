@@ -29,7 +29,14 @@ const MODE = process.argv.includes("--check")
     ? "report"
     : "write";
 
-/** primeTeamId fra leagueStandings.ts. Kilden sin egen lag-ID. */
+/**
+ * primeTeamId fra leagueStandings.ts. Kilden sin egen lag-ID.
+ *
+ * MERK ligatilhoerighet: rettet 2026-09-07 etter kontroll mot tabellene.
+ * Fjellhammer spiller i Elkjoep-ligaen 26/27 (ikke 1. divisjon), mens Aker og
+ * Baekkelaget er i 1. divisjon. Jeg hadde gjettet ut fra fjoraaret.
+ * Fasit er alltid leagueStandingsCurrent*.json, ikke hukommelsen.
+ */
 export const TEAMS = {
   "Storhamar": { id: 746223, file: "storhamarRoster.json", league: "elite" },
   "Larvik": { id: 223994, file: "larvikRoster.json", league: "elite" },
@@ -44,9 +51,9 @@ export const TEAMS = {
   "Fredrikstad": { id: 441651, file: "fredrikstadRoster.json", league: "elite" },
   "Utleira": { id: 532136, file: "utleiraRoster.json", league: "elite" },
   "Follo Damer": { id: 583889, file: "folloRoster.json", league: "elite" },
-  "Bækkelaget": { id: 223985, file: "baekkelagetRoster.json", league: "elite" },
-  "Aker": { id: 816397, file: "akerRoster.json", league: "elite" },
-  "Fjellhammer": { id: 223982, file: "fjellhammerRoster.json", league: "first-division" },
+  "Bækkelaget": { id: 223985, file: "baekkelagetRoster.json", league: "first-division" },
+  "Aker": { id: 816397, file: "akerRoster.json", league: "first-division" },
+  "Fjellhammer": { id: 223982, file: "fjellhammerRoster.json", league: "elite" },
   "Fyllingen": { id: 224174, file: "fyllingenRoster.json", league: "first-division" },
   "Haslum": { id: 928836, file: "haslumRoster.json", league: "first-division" },
   "HK Rygge": { id: 450329, file: "hkRyggeRoster.json", league: "first-division" },
@@ -216,7 +223,15 @@ async function main() {
   if (MODE === "write") console.log("\nSkrev " + changedFiles + " rosterfiler.");
 }
 
-main().catch((error) => {
-  console.error("Synk feilet:", error.message);
-  process.exit(1);
-});
+// Kjoer BARE naar fila startes direkte. Uten denne vakten startet hele
+// rostersynken som sideeffekt av at et annet script importerte TEAMS
+// (oppdaget 2026-09-07: to synker kjoerte samtidig og skrev over hverandre).
+const isDirectRun =
+  process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+
+if (isDirectRun) {
+  main().catch((error) => {
+    console.error("Synk feilet:", error.message);
+    process.exit(1);
+  });
+}

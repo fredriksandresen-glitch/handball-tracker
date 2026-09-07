@@ -1,0 +1,2730 @@
+[
+  {
+    "matchId": 8393064,
+    "startTime": "2026-09-08T18:00:00+02:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Byåsen",
+    "venue": "OBOS Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393065,
+    "startTime": "2026-09-10T18:00:00+02:00",
+    "homeTeamName": "Larvik",
+    "awayTeamName": "Utleira",
+    "venue": "Jotron Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393068,
+    "startTime": "2026-09-10T18:00:00+02:00",
+    "homeTeamName": "Sola",
+    "awayTeamName": "Oppsal",
+    "venue": "SR Group Arena Åsenhallen A",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393066,
+    "startTime": "2026-09-10T18:00:00+02:00",
+    "homeTeamName": "Tertnes",
+    "awayTeamName": "Follo Damer",
+    "venue": "Åsane Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401524,
+    "startTime": "2026-09-10T18:00:00+02:00",
+    "homeTeamName": "Stavanger",
+    "awayTeamName": "Volda",
+    "venue": "Stavanger idrettshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393062,
+    "startTime": "2026-09-10T18:15:00+02:00",
+    "homeTeamName": "Fredrikstad",
+    "awayTeamName": "Flint",
+    "venue": "Installatøren Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401520,
+    "startTime": "2026-09-10T18:30:00+02:00",
+    "homeTeamName": "Aker",
+    "awayTeamName": "Byåsen",
+    "venue": "Ullern Flerbrukshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401523,
+    "startTime": "2026-09-12T15:00:00+02:00",
+    "homeTeamName": "Bækkelaget",
+    "awayTeamName": "Åsane",
+    "venue": "Bækkelagshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401525,
+    "startTime": "2026-09-12T15:00:00+02:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Levanger",
+    "venue": "OBOS Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393067,
+    "startTime": "2026-09-12T16:00:00+02:00",
+    "homeTeamName": "Molde",
+    "awayTeamName": "Fana",
+    "venue": "Molde Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393069,
+    "startTime": "2026-09-13T16:00:00+02:00",
+    "homeTeamName": "Flint",
+    "awayTeamName": "Fjellhammer",
+    "venue": "Sparebanken Norge Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401522,
+    "startTime": "2026-09-13T16:00:00+02:00",
+    "homeTeamName": "Kjelsås",
+    "awayTeamName": "Gjøvik",
+    "venue": "Kjelsåshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401521,
+    "startTime": "2026-09-13T17:30:00+02:00",
+    "homeTeamName": "Haslum",
+    "awayTeamName": "Fyllingen",
+    "venue": "Nadderud Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401526,
+    "startTime": "2026-09-13T18:00:00+02:00",
+    "homeTeamName": "HK Rygge",
+    "awayTeamName": "Trondheim TH",
+    "venue": "Øreåsenhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401528,
+    "startTime": "2026-09-19T14:00:00+02:00",
+    "homeTeamName": "Fyllingen",
+    "awayTeamName": "Aker",
+    "venue": "Framohallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393076,
+    "startTime": "2026-09-20T15:00:00+02:00",
+    "homeTeamName": "Fjellhammer",
+    "awayTeamName": "Fredrikstad",
+    "venue": "Fjellhamar Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401529,
+    "startTime": "2026-09-20T15:00:00+02:00",
+    "homeTeamName": "Gjøvik",
+    "awayTeamName": "Haslum",
+    "venue": "Campus Arena Gjøvik Stor",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401530,
+    "startTime": "2026-09-20T15:00:00+02:00",
+    "homeTeamName": "Åsane",
+    "awayTeamName": "Kjelsås",
+    "venue": "Åsane Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393071,
+    "startTime": "2026-09-20T17:00:00+02:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Larvik",
+    "venue": "Trondheim Spektrum D",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393072,
+    "startTime": "2026-09-20T17:00:00+02:00",
+    "homeTeamName": "Utleira",
+    "awayTeamName": "Tertnes",
+    "venue": "Utleira AB",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401531,
+    "startTime": "2026-09-20T17:00:00+02:00",
+    "homeTeamName": "Volda",
+    "awayTeamName": "Bækkelaget",
+    "venue": "Volda Campus Sparebank1 Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401532,
+    "startTime": "2026-09-20T17:00:00+02:00",
+    "homeTeamName": "Levanger",
+    "awayTeamName": "Stavanger",
+    "venue": "Trønderhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393073,
+    "startTime": "2026-09-20T18:00:00+02:00",
+    "homeTeamName": "Follo Damer",
+    "awayTeamName": "Molde",
+    "venue": "Stil Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393075,
+    "startTime": "2026-09-20T18:00:00+02:00",
+    "homeTeamName": "Oppsal",
+    "awayTeamName": "Flint",
+    "venue": "Oppsal Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401533,
+    "startTime": "2026-09-20T18:00:00+02:00",
+    "homeTeamName": "HK Rygge",
+    "awayTeamName": "Storhamar",
+    "venue": "Øreåsenhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401527,
+    "startTime": "2026-09-20T18:30:00+02:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Trondheim TH",
+    "venue": "Husebyhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401539,
+    "startTime": "2026-09-30T17:45:00+02:00",
+    "homeTeamName": "Stavanger",
+    "awayTeamName": "Storhamar",
+    "venue": "Stavanger idrettshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393081,
+    "startTime": "2026-09-30T18:00:00+02:00",
+    "homeTeamName": "Sola",
+    "awayTeamName": "Follo Damer",
+    "venue": "SR Group Arena Åsenhallen A",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393080,
+    "startTime": "2026-09-30T18:00:00+02:00",
+    "homeTeamName": "Molde",
+    "awayTeamName": "Utleira",
+    "venue": "Rekneshallen",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393070,
+    "startTime": "2026-09-30T18:00:00+02:00",
+    "homeTeamName": "Gjerpen",
+    "awayTeamName": "Fredrikstad",
+    "venue": "Skienshallen",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393078,
+    "startTime": "2026-09-30T18:15:00+02:00",
+    "homeTeamName": "Larvik",
+    "awayTeamName": "Storhamar",
+    "venue": "Jotron Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393079,
+    "startTime": "2026-09-30T18:30:00+02:00",
+    "homeTeamName": "Tertnes",
+    "awayTeamName": "Byåsen",
+    "venue": "Åsane Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401537,
+    "startTime": "2026-09-30T19:00:00+02:00",
+    "homeTeamName": "Kjelsås",
+    "awayTeamName": "Volda",
+    "venue": "Kjelsåshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401535,
+    "startTime": "2026-10-01T19:00:00+02:00",
+    "homeTeamName": "Aker",
+    "awayTeamName": "Gjøvik",
+    "venue": "Ullern Flerbrukshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401540,
+    "startTime": "2026-10-02T17:30:00+02:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "HK Rygge",
+    "venue": "Myrahallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393083,
+    "startTime": "2026-10-03T15:30:00+02:00",
+    "homeTeamName": "Fredrikstad",
+    "awayTeamName": "Oppsal",
+    "venue": "Installatøren Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401538,
+    "startTime": "2026-10-03T16:00:00+02:00",
+    "homeTeamName": "Bækkelaget",
+    "awayTeamName": "Levanger",
+    "venue": "Bækkelagshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401534,
+    "startTime": "2026-10-04T14:00:00+02:00",
+    "homeTeamName": "Trondheim TH",
+    "awayTeamName": "Fyllingen",
+    "venue": "Husebyhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393082,
+    "startTime": "2026-10-04T16:00:00+02:00",
+    "homeTeamName": "Flint",
+    "awayTeamName": "Fana",
+    "venue": "Sparebanken Norge Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401536,
+    "startTime": "2026-10-04T16:00:00+02:00",
+    "homeTeamName": "Haslum",
+    "awayTeamName": "Åsane",
+    "venue": "Nadderud Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393084,
+    "startTime": "2026-10-04T17:00:00+02:00",
+    "homeTeamName": "Gjerpen",
+    "awayTeamName": "Fjellhammer",
+    "venue": "Skienshallen",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401545,
+    "startTime": "2026-10-07T16:30:00+02:00",
+    "homeTeamName": "Levanger",
+    "awayTeamName": "Kjelsås",
+    "venue": "Trønderhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401543,
+    "startTime": "2026-10-07T17:00:00+02:00",
+    "homeTeamName": "Åsane",
+    "awayTeamName": "Aker",
+    "venue": "Åsane Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393091,
+    "startTime": "2026-10-07T18:00:00+02:00",
+    "homeTeamName": "Larvik",
+    "awayTeamName": "Gjerpen",
+    "venue": "Jotron Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393087,
+    "startTime": "2026-10-07T18:00:00+02:00",
+    "homeTeamName": "Utleira",
+    "awayTeamName": "Sola",
+    "venue": "Utleira AB",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393086,
+    "startTime": "2026-10-07T18:00:00+02:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Molde",
+    "venue": "Trondheim Spektrum D",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393085,
+    "startTime": "2026-10-07T18:15:00+02:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Tertnes",
+    "venue": "OBOS Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401541,
+    "startTime": "2026-10-10T14:00:00+02:00",
+    "homeTeamName": "Fyllingen",
+    "awayTeamName": "Byåsen",
+    "venue": "Framohallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401546,
+    "startTime": "2026-10-10T16:00:00+02:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Bækkelaget",
+    "venue": "OBOS Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401547,
+    "startTime": "2026-10-11T15:00:00+02:00",
+    "homeTeamName": "HK Rygge",
+    "awayTeamName": "Stavanger",
+    "venue": "Øreåsenhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401542,
+    "startTime": "2026-10-11T15:00:00+02:00",
+    "homeTeamName": "Gjøvik",
+    "awayTeamName": "Trondheim TH",
+    "venue": "Campus Arena Gjøvik Stor",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393089,
+    "startTime": "2026-10-11T16:00:00+02:00",
+    "homeTeamName": "Fana",
+    "awayTeamName": "Fredrikstad",
+    "venue": "Fana Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401544,
+    "startTime": "2026-10-11T17:00:00+02:00",
+    "homeTeamName": "Volda",
+    "awayTeamName": "Haslum",
+    "venue": "Volda Campus Sparebank1 Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393088,
+    "startTime": "2026-10-11T18:00:00+02:00",
+    "homeTeamName": "Follo Damer",
+    "awayTeamName": "Flint",
+    "venue": "Stil Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393090,
+    "startTime": "2026-10-11T18:00:00+02:00",
+    "homeTeamName": "Oppsal",
+    "awayTeamName": "Fjellhammer",
+    "venue": "Oppsal Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393094,
+    "startTime": "2026-10-14T18:00:00+02:00",
+    "homeTeamName": "Sola",
+    "awayTeamName": "Byåsen",
+    "venue": "SR Group Arena Åsenhallen A",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393098,
+    "startTime": "2026-10-14T18:00:00+02:00",
+    "homeTeamName": "Gjerpen",
+    "awayTeamName": "Oppsal",
+    "venue": "Skienshallen",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393093,
+    "startTime": "2026-10-14T18:15:00+02:00",
+    "homeTeamName": "Molde",
+    "awayTeamName": "Storhamar",
+    "venue": "Molde Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393092,
+    "startTime": "2026-10-15T18:15:00+02:00",
+    "homeTeamName": "Tertnes",
+    "awayTeamName": "Larvik",
+    "venue": "Åsane Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393096,
+    "startTime": "2026-10-15T18:30:00+02:00",
+    "homeTeamName": "Fredrikstad",
+    "awayTeamName": "Follo Damer",
+    "venue": "Installatøren Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401554,
+    "startTime": "2026-10-17T14:00:00+02:00",
+    "homeTeamName": "Fyllingen",
+    "awayTeamName": "HK Rygge",
+    "venue": "Framohallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401553,
+    "startTime": "2026-10-17T15:00:00+02:00",
+    "homeTeamName": "Bækkelaget",
+    "awayTeamName": "Stavanger",
+    "venue": "Bækkelagshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401551,
+    "startTime": "2026-10-17T15:00:00+02:00",
+    "homeTeamName": "Haslum",
+    "awayTeamName": "Levanger",
+    "venue": "Nadderud Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401548,
+    "startTime": "2026-10-18T15:30:00+02:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Gjøvik",
+    "venue": "Myrahallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393095,
+    "startTime": "2026-10-18T16:00:00+02:00",
+    "homeTeamName": "Flint",
+    "awayTeamName": "Utleira",
+    "venue": "Sparebanken Norge Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401549,
+    "startTime": "2026-10-18T16:00:00+02:00",
+    "homeTeamName": "Trondheim TH",
+    "awayTeamName": "Åsane",
+    "venue": "Husebyhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401552,
+    "startTime": "2026-10-18T16:00:00+02:00",
+    "homeTeamName": "Kjelsås",
+    "awayTeamName": "Storhamar",
+    "venue": "Kjelsåshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401550,
+    "startTime": "2026-10-18T17:00:00+02:00",
+    "homeTeamName": "Aker",
+    "awayTeamName": "Volda",
+    "venue": "Ullern Flerbrukshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393097,
+    "startTime": "2026-10-18T18:00:00+02:00",
+    "homeTeamName": "Fjellhammer",
+    "awayTeamName": "Fana",
+    "venue": "Fjellhamar Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401587,
+    "startTime": "2026-10-27T18:00:00+01:00",
+    "homeTeamName": "Bækkelaget",
+    "awayTeamName": "Trondheim TH",
+    "venue": "Bækkelagshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401561,
+    "startTime": "2026-10-31T14:00:00+01:00",
+    "homeTeamName": "HK Rygge",
+    "awayTeamName": "Bækkelaget",
+    "venue": "Øreåsenhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401556,
+    "startTime": "2026-10-31T14:30:00+01:00",
+    "homeTeamName": "Åsane",
+    "awayTeamName": "Byåsen",
+    "venue": "Åsane Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401558,
+    "startTime": "2026-10-31T15:00:00+01:00",
+    "homeTeamName": "Levanger",
+    "awayTeamName": "Aker",
+    "venue": "Trønderhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393100,
+    "startTime": "2026-10-31T16:15:00+01:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Sola",
+    "venue": "OBOS Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401555,
+    "startTime": "2026-11-01T15:00:00+01:00",
+    "homeTeamName": "Gjøvik",
+    "awayTeamName": "Fyllingen",
+    "venue": "Campus Arena Gjøvik Stor",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401560,
+    "startTime": "2026-11-01T15:00:00+01:00",
+    "homeTeamName": "Stavanger",
+    "awayTeamName": "Kjelsås",
+    "venue": "Stavanger idrettshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393104,
+    "startTime": "2026-11-01T16:00:00+01:00",
+    "homeTeamName": "Fana",
+    "awayTeamName": "Oppsal",
+    "venue": "Fana Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401559,
+    "startTime": "2026-11-01T16:00:00+01:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Haslum",
+    "venue": "OBOS Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393102,
+    "startTime": "2026-11-01T17:00:00+01:00",
+    "homeTeamName": "Utleira",
+    "awayTeamName": "Fredrikstad",
+    "venue": "Utleira AB",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401557,
+    "startTime": "2026-11-01T17:00:00+01:00",
+    "homeTeamName": "Volda",
+    "awayTeamName": "Trondheim TH",
+    "venue": "Volda Campus Sparebank1 Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393101,
+    "startTime": "2026-11-01T18:00:00+01:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Flint",
+    "venue": "Trondheim Spektrum D",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393105,
+    "startTime": "2026-11-01T18:00:00+01:00",
+    "homeTeamName": "Tertnes",
+    "awayTeamName": "Gjerpen",
+    "venue": "Åsane Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393103,
+    "startTime": "2026-11-01T18:00:00+01:00",
+    "homeTeamName": "Follo Damer",
+    "awayTeamName": "Fjellhammer",
+    "venue": "Stil Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393099,
+    "startTime": "2026-11-01T19:15:00+01:00",
+    "homeTeamName": "Larvik",
+    "awayTeamName": "Molde",
+    "venue": "Jotron Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393108,
+    "startTime": "2026-11-04T18:00:00+01:00",
+    "homeTeamName": "Flint",
+    "awayTeamName": "Storhamar",
+    "venue": "Sparebanken Norge Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393106,
+    "startTime": "2026-11-04T18:00:00+01:00",
+    "homeTeamName": "Molde",
+    "awayTeamName": "Tertnes",
+    "venue": "Molde Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401573,
+    "startTime": "2026-11-04T18:00:00+01:00",
+    "homeTeamName": "Stavanger",
+    "awayTeamName": "Aker",
+    "venue": "Stavanger idrettshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393107,
+    "startTime": "2026-11-04T18:15:00+01:00",
+    "homeTeamName": "Sola",
+    "awayTeamName": "Larvik",
+    "venue": "SR Group Arena Åsenhallen A",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401562,
+    "startTime": "2026-11-07T14:00:00+01:00",
+    "homeTeamName": "Fyllingen",
+    "awayTeamName": "Åsane",
+    "venue": "Framohallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401568,
+    "startTime": "2026-11-07T15:00:00+01:00",
+    "homeTeamName": "Gjøvik",
+    "awayTeamName": "HK Rygge",
+    "venue": "Campus Arena Gjøvik Stor",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393109,
+    "startTime": "2026-11-07T16:00:00+01:00",
+    "homeTeamName": "Fredrikstad",
+    "awayTeamName": "Byåsen",
+    "venue": "Installatøren Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401563,
+    "startTime": "2026-11-08T15:30:00+01:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Volda",
+    "venue": "Myrahallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401567,
+    "startTime": "2026-11-08T16:00:00+01:00",
+    "homeTeamName": "Kjelsås",
+    "awayTeamName": "Bækkelaget",
+    "venue": "Kjelsåshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401566,
+    "startTime": "2026-11-08T16:00:00+01:00",
+    "homeTeamName": "Haslum",
+    "awayTeamName": "Stavanger",
+    "venue": "Nadderud Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401564,
+    "startTime": "2026-11-08T16:00:00+01:00",
+    "homeTeamName": "Trondheim TH",
+    "awayTeamName": "Levanger",
+    "venue": "Husebyhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393112,
+    "startTime": "2026-11-08T17:00:00+01:00",
+    "homeTeamName": "Gjerpen",
+    "awayTeamName": "Fana",
+    "venue": "Skienshallen",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401565,
+    "startTime": "2026-11-08T17:00:00+01:00",
+    "homeTeamName": "Aker",
+    "awayTeamName": "Storhamar",
+    "venue": "Ullern Flerbrukshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393111,
+    "startTime": "2026-11-08T18:00:00+01:00",
+    "homeTeamName": "Oppsal",
+    "awayTeamName": "Follo Damer",
+    "venue": "Oppsal Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393110,
+    "startTime": "2026-11-08T18:00:00+01:00",
+    "homeTeamName": "Fjellhammer",
+    "awayTeamName": "Utleira",
+    "venue": "Fjellhamar Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393115,
+    "startTime": "2026-11-11T18:00:00+01:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Fredrikstad",
+    "venue": "OBOS Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393114,
+    "startTime": "2026-11-11T18:00:00+01:00",
+    "homeTeamName": "Larvik",
+    "awayTeamName": "Flint",
+    "venue": "Jotron Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393118,
+    "startTime": "2026-11-11T18:00:00+01:00",
+    "homeTeamName": "Follo Damer",
+    "awayTeamName": "Fana",
+    "venue": "Stil Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401571,
+    "startTime": "2026-11-11T18:00:00+01:00",
+    "homeTeamName": "Levanger",
+    "awayTeamName": "Byåsen",
+    "venue": "Trønderhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393113,
+    "startTime": "2026-11-11T18:15:00+01:00",
+    "homeTeamName": "Tertnes",
+    "awayTeamName": "Sola",
+    "venue": "Åsane Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393117,
+    "startTime": "2026-11-12T18:00:00+01:00",
+    "homeTeamName": "Utleira",
+    "awayTeamName": "Oppsal",
+    "venue": "Utleira AB",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401575,
+    "startTime": "2026-11-12T20:00:00+01:00",
+    "homeTeamName": "HK Rygge",
+    "awayTeamName": "Kjelsås",
+    "venue": "Øreåsenhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401574,
+    "startTime": "2026-11-14T15:00:00+01:00",
+    "homeTeamName": "Bækkelaget",
+    "awayTeamName": "Haslum",
+    "venue": "Bækkelagshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393119,
+    "startTime": "2026-11-14T16:00:00+01:00",
+    "homeTeamName": "Molde",
+    "awayTeamName": "Gjerpen",
+    "venue": "Molde Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401569,
+    "startTime": "2026-11-15T15:00:00+01:00",
+    "homeTeamName": "Åsane",
+    "awayTeamName": "Gjøvik",
+    "venue": "Åsane Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401570,
+    "startTime": "2026-11-15T17:00:00+01:00",
+    "homeTeamName": "Volda",
+    "awayTeamName": "Fyllingen",
+    "venue": "Volda Campus Sparebank1 Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393116,
+    "startTime": "2026-11-15T18:00:00+01:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Fjellhammer",
+    "venue": "Trondheim Spektrum D",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401572,
+    "startTime": "2026-11-15T18:00:00+01:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Trondheim TH",
+    "venue": "OBOS Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401583,
+    "startTime": "2026-11-18T18:00:00+01:00",
+    "homeTeamName": "Volda",
+    "awayTeamName": "Åsane",
+    "venue": "Volda Campus Sparebank1 Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393122,
+    "startTime": "2026-11-21T15:30:00+01:00",
+    "homeTeamName": "Fredrikstad",
+    "awayTeamName": "Larvik",
+    "venue": "Installatøren Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393120,
+    "startTime": "2026-11-21T16:15:00+01:00",
+    "homeTeamName": "Sola",
+    "awayTeamName": "Molde",
+    "venue": "SR Group Arena Åsenhallen A",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401582,
+    "startTime": "2026-11-21T16:15:00+01:00",
+    "homeTeamName": "Åsane",
+    "awayTeamName": "HK Rygge",
+    "venue": "Åsane Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393123,
+    "startTime": "2026-11-22T15:00:00+01:00",
+    "homeTeamName": "Fjellhammer",
+    "awayTeamName": "Storhamar",
+    "venue": "Fjellhamar Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401576,
+    "startTime": "2026-11-22T15:00:00+01:00",
+    "homeTeamName": "Gjøvik",
+    "awayTeamName": "Volda",
+    "venue": "Campus Arena Gjøvik Stor",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393121,
+    "startTime": "2026-11-22T16:00:00+01:00",
+    "homeTeamName": "Flint",
+    "awayTeamName": "Tertnes",
+    "venue": "Sparebanken Norge Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401581,
+    "startTime": "2026-11-22T16:00:00+01:00",
+    "homeTeamName": "Haslum",
+    "awayTeamName": "Kjelsås",
+    "venue": "Nadderud Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401579,
+    "startTime": "2026-11-22T16:00:00+01:00",
+    "homeTeamName": "Trondheim TH",
+    "awayTeamName": "Stavanger",
+    "venue": "Husebyhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393126,
+    "startTime": "2026-11-22T17:00:00+01:00",
+    "homeTeamName": "Gjerpen",
+    "awayTeamName": "Follo Damer",
+    "venue": "Skienshallen",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393125,
+    "startTime": "2026-11-22T17:00:00+01:00",
+    "homeTeamName": "Fana",
+    "awayTeamName": "Utleira",
+    "venue": "Fana Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401580,
+    "startTime": "2026-11-22T17:00:00+01:00",
+    "homeTeamName": "Aker",
+    "awayTeamName": "Bækkelaget",
+    "venue": "Ullern Flerbrukshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401577,
+    "startTime": "2026-11-22T17:00:00+01:00",
+    "homeTeamName": "Fyllingen",
+    "awayTeamName": "Levanger",
+    "venue": "Framohallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393124,
+    "startTime": "2026-11-22T18:00:00+01:00",
+    "homeTeamName": "Oppsal",
+    "awayTeamName": "Byåsen",
+    "venue": "Oppsal Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401585,
+    "startTime": "2026-12-05T15:00:00+01:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Fyllingen",
+    "venue": "OBOS Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401584,
+    "startTime": "2026-12-05T15:00:00+01:00",
+    "homeTeamName": "Levanger",
+    "awayTeamName": "Gjøvik",
+    "venue": "Trønderhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401586,
+    "startTime": "2026-12-06T15:00:00+01:00",
+    "homeTeamName": "Stavanger",
+    "awayTeamName": "Byåsen",
+    "venue": "Stavanger idrettshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401588,
+    "startTime": "2026-12-06T16:00:00+01:00",
+    "homeTeamName": "Kjelsås",
+    "awayTeamName": "Aker",
+    "venue": "Kjelsåshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401589,
+    "startTime": "2026-12-06T18:00:00+01:00",
+    "homeTeamName": "HK Rygge",
+    "awayTeamName": "Haslum",
+    "venue": "Øreåsenhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401590,
+    "startTime": "2026-12-12T13:00:00+01:00",
+    "homeTeamName": "Åsane",
+    "awayTeamName": "Levanger",
+    "venue": "Åsane Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401592,
+    "startTime": "2026-12-12T14:00:00+01:00",
+    "homeTeamName": "Fyllingen",
+    "awayTeamName": "Stavanger",
+    "venue": "Framohallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401593,
+    "startTime": "2026-12-12T15:00:00+01:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Bækkelaget",
+    "venue": "Myrahallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401591,
+    "startTime": "2026-12-12T15:00:00+01:00",
+    "homeTeamName": "Gjøvik",
+    "awayTeamName": "Storhamar",
+    "venue": "Campus Arena Gjøvik Stor",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401596,
+    "startTime": "2026-12-13T16:00:00+01:00",
+    "homeTeamName": "Volda",
+    "awayTeamName": "HK Rygge",
+    "venue": "Volda Campus Sparebank1 Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401594,
+    "startTime": "2026-12-13T16:30:00+01:00",
+    "homeTeamName": "Trondheim TH",
+    "awayTeamName": "Kjelsås",
+    "venue": "Husebyhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401595,
+    "startTime": "2026-12-13T17:00:00+01:00",
+    "homeTeamName": "Aker",
+    "awayTeamName": "Haslum",
+    "venue": "Ullern Flerbrukshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401603,
+    "startTime": "2026-12-16T18:30:00+01:00",
+    "homeTeamName": "HK Rygge",
+    "awayTeamName": "Aker",
+    "venue": "Øreåsenhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401600,
+    "startTime": "2026-12-19T15:00:00+01:00",
+    "homeTeamName": "Bækkelaget",
+    "awayTeamName": "Fyllingen",
+    "venue": "Bækkelagshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401602,
+    "startTime": "2026-12-19T15:00:00+01:00",
+    "homeTeamName": "Haslum",
+    "awayTeamName": "Trondheim TH",
+    "venue": "Nadderud Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401597,
+    "startTime": "2026-12-19T15:00:00+01:00",
+    "homeTeamName": "Levanger",
+    "awayTeamName": "Volda",
+    "venue": "Trønderhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401599,
+    "startTime": "2026-12-19T16:00:00+01:00",
+    "homeTeamName": "Stavanger",
+    "awayTeamName": "Gjøvik",
+    "venue": "Stavanger idrettshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401598,
+    "startTime": "2026-12-19T16:00:00+01:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Åsane",
+    "venue": "OBOS Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401601,
+    "startTime": "2026-12-19T16:00:00+01:00",
+    "homeTeamName": "Kjelsås",
+    "awayTeamName": "Byåsen",
+    "venue": "Kjelsåshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393149,
+    "startTime": "2026-12-30T18:00:00+01:00",
+    "homeTeamName": "Larvik",
+    "awayTeamName": "Follo Damer",
+    "venue": "Jotron Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393129,
+    "startTime": "2027-01-03T18:00:00+01:00",
+    "homeTeamName": "Larvik",
+    "awayTeamName": "Fjellhammer",
+    "venue": "Jotron Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393074,
+    "startTime": "2027-01-03T18:00:00+01:00",
+    "homeTeamName": "Fana",
+    "awayTeamName": "Sola",
+    "venue": "Fana Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393132,
+    "startTime": "2027-01-06T17:30:00+01:00",
+    "homeTeamName": "Utleira",
+    "awayTeamName": "Follo Damer",
+    "venue": "Utleira AB",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393130,
+    "startTime": "2027-01-06T18:00:00+01:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Oppsal",
+    "venue": "OBOS Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393133,
+    "startTime": "2027-01-06T18:00:00+01:00",
+    "homeTeamName": "Sola",
+    "awayTeamName": "Gjerpen",
+    "venue": "SR Group Arena Åsenhallen A",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393131,
+    "startTime": "2027-01-06T18:00:00+01:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Fana",
+    "venue": "Trondheim Spektrum D",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393128,
+    "startTime": "2027-01-06T18:00:00+01:00",
+    "homeTeamName": "Tertnes",
+    "awayTeamName": "Fredrikstad",
+    "venue": "Åsane Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393127,
+    "startTime": "2027-01-06T18:00:00+01:00",
+    "homeTeamName": "Molde",
+    "awayTeamName": "Flint",
+    "venue": "Molde Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401604,
+    "startTime": "2027-01-07T17:00:00+01:00",
+    "homeTeamName": "Aker",
+    "awayTeamName": "Trondheim TH",
+    "venue": "Ullern Flerbrukshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401607,
+    "startTime": "2027-01-09T16:00:00+01:00",
+    "homeTeamName": "Bækkelaget",
+    "awayTeamName": "Gjøvik",
+    "venue": "Bækkelagshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401609,
+    "startTime": "2027-01-09T16:00:00+01:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Volda",
+    "venue": "OBOS Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401610,
+    "startTime": "2027-01-10T15:00:00+01:00",
+    "homeTeamName": "HK Rygge",
+    "awayTeamName": "Levanger",
+    "venue": "Øreåsenhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401606,
+    "startTime": "2027-01-10T16:00:00+01:00",
+    "homeTeamName": "Kjelsås",
+    "awayTeamName": "Fyllingen",
+    "venue": "Kjelsåshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401605,
+    "startTime": "2027-01-10T16:00:00+01:00",
+    "homeTeamName": "Haslum",
+    "awayTeamName": "Byåsen",
+    "venue": "Nadderud Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401608,
+    "startTime": "2027-01-10T17:00:00+01:00",
+    "homeTeamName": "Stavanger",
+    "awayTeamName": "Åsane",
+    "venue": "Stavanger idrettshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393137,
+    "startTime": "2027-01-10T18:00:00+01:00",
+    "homeTeamName": "Oppsal",
+    "awayTeamName": "Larvik",
+    "venue": "Oppsal Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393136,
+    "startTime": "2027-01-10T18:00:00+01:00",
+    "homeTeamName": "Fjellhammer",
+    "awayTeamName": "Tertnes",
+    "venue": "Fjellhamar Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393138,
+    "startTime": "2027-01-13T18:00:00+01:00",
+    "homeTeamName": "Fana",
+    "awayTeamName": "Storhamar",
+    "venue": "Fana Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393134,
+    "startTime": "2027-01-13T18:00:00+01:00",
+    "homeTeamName": "Flint",
+    "awayTeamName": "Sola",
+    "venue": "Sparebanken Norge Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393139,
+    "startTime": "2027-01-13T18:00:00+01:00",
+    "homeTeamName": "Follo Damer",
+    "awayTeamName": "Byåsen",
+    "venue": "Stil Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393135,
+    "startTime": "2027-01-13T18:00:00+01:00",
+    "homeTeamName": "Fredrikstad",
+    "awayTeamName": "Molde",
+    "venue": "Installatøren Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393140,
+    "startTime": "2027-01-13T18:00:00+01:00",
+    "homeTeamName": "Gjerpen",
+    "awayTeamName": "Utleira",
+    "venue": "Skienshallen",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401612,
+    "startTime": "2027-01-16T14:00:00+01:00",
+    "homeTeamName": "Fyllingen",
+    "awayTeamName": "Haslum",
+    "venue": "Framohallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401616,
+    "startTime": "2027-01-16T14:00:00+01:00",
+    "homeTeamName": "Levanger",
+    "awayTeamName": "Storhamar",
+    "venue": "Trønderhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401617,
+    "startTime": "2027-01-17T14:00:00+01:00",
+    "homeTeamName": "Trondheim TH",
+    "awayTeamName": "HK Rygge",
+    "venue": "Husebyhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401614,
+    "startTime": "2027-01-17T15:00:00+01:00",
+    "homeTeamName": "Åsane",
+    "awayTeamName": "Bækkelaget",
+    "venue": "Åsane Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401613,
+    "startTime": "2027-01-17T15:00:00+01:00",
+    "homeTeamName": "Gjøvik",
+    "awayTeamName": "Kjelsås",
+    "venue": "Campus Arena Gjøvik Stor",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401611,
+    "startTime": "2027-01-17T15:30:00+01:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Aker",
+    "venue": "Myrahallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393143,
+    "startTime": "2027-01-17T17:00:00+01:00",
+    "homeTeamName": "Fana",
+    "awayTeamName": "Larvik",
+    "venue": "Fana Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393141,
+    "startTime": "2027-01-17T17:00:00+01:00",
+    "homeTeamName": "Utleira",
+    "awayTeamName": "Byåsen",
+    "venue": "Utleira AB",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393147,
+    "startTime": "2027-01-17T17:00:00+01:00",
+    "homeTeamName": "Gjerpen",
+    "awayTeamName": "Flint",
+    "venue": "Skienshallen",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401615,
+    "startTime": "2027-01-17T17:00:00+01:00",
+    "homeTeamName": "Volda",
+    "awayTeamName": "Stavanger",
+    "venue": "Volda Campus Sparebank1 Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393144,
+    "startTime": "2027-01-17T18:00:00+01:00",
+    "homeTeamName": "Oppsal",
+    "awayTeamName": "Tertnes",
+    "venue": "Oppsal Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401623,
+    "startTime": "2027-01-20T17:30:00+01:00",
+    "homeTeamName": "Stavanger",
+    "awayTeamName": "Levanger",
+    "venue": "Stavanger idrettshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393142,
+    "startTime": "2027-01-20T18:00:00+01:00",
+    "homeTeamName": "Follo Damer",
+    "awayTeamName": "Storhamar",
+    "venue": "Stil Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393146,
+    "startTime": "2027-01-20T18:00:00+01:00",
+    "homeTeamName": "Fredrikstad",
+    "awayTeamName": "Sola",
+    "venue": "Installatøren Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393145,
+    "startTime": "2027-01-20T18:00:00+01:00",
+    "homeTeamName": "Fjellhammer",
+    "awayTeamName": "Molde",
+    "venue": "Fjellhamar Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401624,
+    "startTime": "2027-01-21T19:30:00+01:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "HK Rygge",
+    "venue": "OBOS Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401622,
+    "startTime": "2027-01-23T15:00:00+01:00",
+    "homeTeamName": "Bækkelaget",
+    "awayTeamName": "Volda",
+    "venue": "Bækkelagshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393151,
+    "startTime": "2027-01-23T16:00:00+01:00",
+    "homeTeamName": "Molde",
+    "awayTeamName": "Oppsal",
+    "venue": "Molde Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401620,
+    "startTime": "2027-01-24T15:00:00+01:00",
+    "homeTeamName": "Haslum",
+    "awayTeamName": "Gjøvik",
+    "venue": "Nadderud Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393153,
+    "startTime": "2027-01-24T16:00:00+01:00",
+    "homeTeamName": "Flint",
+    "awayTeamName": "Fredrikstad",
+    "venue": "Sparebanken Norge Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401618,
+    "startTime": "2027-01-24T16:00:00+01:00",
+    "homeTeamName": "Trondheim TH",
+    "awayTeamName": "Byåsen",
+    "venue": "Husebyhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401621,
+    "startTime": "2027-01-24T16:00:00+01:00",
+    "homeTeamName": "Kjelsås",
+    "awayTeamName": "Åsane",
+    "venue": "Kjelsåshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401619,
+    "startTime": "2027-01-24T17:00:00+01:00",
+    "homeTeamName": "Aker",
+    "awayTeamName": "Fyllingen",
+    "venue": "Ullern Flerbrukshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393154,
+    "startTime": "2027-01-24T18:00:00+01:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Gjerpen",
+    "venue": "Trondheim Spektrum D",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393150,
+    "startTime": "2027-01-24T18:00:00+01:00",
+    "homeTeamName": "Tertnes",
+    "awayTeamName": "Fana",
+    "venue": "Åsane Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393148,
+    "startTime": "2027-01-27T18:00:00+01:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Utleira",
+    "venue": "OBOS Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393152,
+    "startTime": "2027-01-27T18:00:00+01:00",
+    "homeTeamName": "Sola",
+    "awayTeamName": "Fjellhammer",
+    "venue": "SR Group Arena Åsenhallen A",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401625,
+    "startTime": "2027-01-30T14:00:00+01:00",
+    "homeTeamName": "Fyllingen",
+    "awayTeamName": "Trondheim TH",
+    "venue": "Framohallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401626,
+    "startTime": "2027-01-30T15:00:00+01:00",
+    "homeTeamName": "Gjøvik",
+    "awayTeamName": "Aker",
+    "venue": "Campus Arena Gjøvik Stor",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401627,
+    "startTime": "2027-01-30T15:00:00+01:00",
+    "homeTeamName": "Åsane",
+    "awayTeamName": "Haslum",
+    "venue": "Åsane Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401631,
+    "startTime": "2027-01-30T15:00:00+01:00",
+    "homeTeamName": "HK Rygge",
+    "awayTeamName": "Byåsen",
+    "venue": "Øreåsenhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393157,
+    "startTime": "2027-01-30T16:00:00+01:00",
+    "homeTeamName": "Follo Damer",
+    "awayTeamName": "Tertnes",
+    "venue": "Stil Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393161,
+    "startTime": "2027-01-30T16:00:00+01:00",
+    "homeTeamName": "Fredrikstad",
+    "awayTeamName": "Gjerpen",
+    "venue": "Installatøren Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401630,
+    "startTime": "2027-01-30T16:00:00+01:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Stavanger",
+    "venue": "OBOS Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393156,
+    "startTime": "2027-01-30T17:00:00+01:00",
+    "homeTeamName": "Utleira",
+    "awayTeamName": "Larvik",
+    "venue": "Utleira AB",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393159,
+    "startTime": "2027-01-30T17:00:00+01:00",
+    "homeTeamName": "Oppsal",
+    "awayTeamName": "Sola",
+    "venue": "Oppsal Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393158,
+    "startTime": "2027-01-30T17:00:00+01:00",
+    "homeTeamName": "Fana",
+    "awayTeamName": "Molde",
+    "venue": "Fana Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393155,
+    "startTime": "2027-01-30T18:00:00+01:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Storhamar",
+    "venue": "Trondheim Spektrum D",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393160,
+    "startTime": "2027-01-30T18:00:00+01:00",
+    "homeTeamName": "Fjellhammer",
+    "awayTeamName": "Flint",
+    "venue": "Fjellhamar Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401629,
+    "startTime": "2027-01-30T18:00:00+01:00",
+    "homeTeamName": "Levanger",
+    "awayTeamName": "Bækkelaget",
+    "venue": "Trønderhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401628,
+    "startTime": "2027-01-31T17:00:00+01:00",
+    "homeTeamName": "Volda",
+    "awayTeamName": "Kjelsås",
+    "venue": "Volda Campus Sparebank1 Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393168,
+    "startTime": "2027-02-03T18:00:00+01:00",
+    "homeTeamName": "Gjerpen",
+    "awayTeamName": "Storhamar",
+    "venue": "Skienshallen",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393162,
+    "startTime": "2027-02-03T18:00:00+01:00",
+    "homeTeamName": "Larvik",
+    "awayTeamName": "Byåsen",
+    "venue": "Jotron Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393165,
+    "startTime": "2027-02-03T18:00:00+01:00",
+    "homeTeamName": "Sola",
+    "awayTeamName": "Fana",
+    "venue": "SR Group Arena Åsenhallen A",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393164,
+    "startTime": "2027-02-03T18:00:00+01:00",
+    "homeTeamName": "Molde",
+    "awayTeamName": "Follo Damer",
+    "venue": "Molde Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393166,
+    "startTime": "2027-02-03T18:00:00+01:00",
+    "homeTeamName": "Flint",
+    "awayTeamName": "Oppsal",
+    "venue": "Sparebanken Norge Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393167,
+    "startTime": "2027-02-03T18:00:00+01:00",
+    "homeTeamName": "Fredrikstad",
+    "awayTeamName": "Fjellhammer",
+    "venue": "Installatøren Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393163,
+    "startTime": "2027-02-03T18:30:00+01:00",
+    "homeTeamName": "Tertnes",
+    "awayTeamName": "Utleira",
+    "venue": "Åsane Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401637,
+    "startTime": "2027-02-06T15:00:00+01:00",
+    "homeTeamName": "Bækkelaget",
+    "awayTeamName": "Storhamar",
+    "venue": "Bækkelagshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401635,
+    "startTime": "2027-02-07T15:00:00+01:00",
+    "homeTeamName": "Haslum",
+    "awayTeamName": "Volda",
+    "venue": "Nadderud Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401633,
+    "startTime": "2027-02-07T15:00:00+01:00",
+    "homeTeamName": "Trondheim TH",
+    "awayTeamName": "Gjøvik",
+    "venue": "Husebyhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401632,
+    "startTime": "2027-02-07T15:30:00+01:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Fyllingen",
+    "venue": "Myrahallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401636,
+    "startTime": "2027-02-07T16:00:00+01:00",
+    "homeTeamName": "Kjelsås",
+    "awayTeamName": "Levanger",
+    "venue": "Kjelsåshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393171,
+    "startTime": "2027-02-07T17:00:00+01:00",
+    "homeTeamName": "Utleira",
+    "awayTeamName": "Molde",
+    "venue": "Utleira AB",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393173,
+    "startTime": "2027-02-07T17:00:00+01:00",
+    "homeTeamName": "Fana",
+    "awayTeamName": "Flint",
+    "venue": "Fana Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401634,
+    "startTime": "2027-02-07T17:00:00+01:00",
+    "homeTeamName": "Aker",
+    "awayTeamName": "Åsane",
+    "venue": "Ullern Flerbrukshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401638,
+    "startTime": "2027-02-07T17:00:00+01:00",
+    "homeTeamName": "Stavanger",
+    "awayTeamName": "HK Rygge",
+    "venue": "Stavanger idrettshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393175,
+    "startTime": "2027-02-07T18:00:00+01:00",
+    "homeTeamName": "Fjellhammer",
+    "awayTeamName": "Gjerpen",
+    "venue": "Fjellhamar Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393174,
+    "startTime": "2027-02-07T18:00:00+01:00",
+    "homeTeamName": "Oppsal",
+    "awayTeamName": "Fredrikstad",
+    "venue": "Oppsal Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393169,
+    "startTime": "2027-02-10T18:00:00+01:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Larvik",
+    "venue": "OBOS Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393172,
+    "startTime": "2027-02-10T18:00:00+01:00",
+    "homeTeamName": "Follo Damer",
+    "awayTeamName": "Sola",
+    "venue": "Stil Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393170,
+    "startTime": "2027-02-10T18:00:00+01:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Tertnes",
+    "venue": "Husebyhallen",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401642,
+    "startTime": "2027-02-13T15:00:00+01:00",
+    "homeTeamName": "Levanger",
+    "awayTeamName": "Haslum",
+    "venue": "Trønderhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401643,
+    "startTime": "2027-02-13T16:00:00+01:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Kjelsås",
+    "venue": "OBOS Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401639,
+    "startTime": "2027-02-13T16:00:00+01:00",
+    "homeTeamName": "Gjøvik",
+    "awayTeamName": "Byåsen",
+    "venue": "Campus Arena Gjøvik Stor",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401644,
+    "startTime": "2027-02-14T15:00:00+01:00",
+    "homeTeamName": "Stavanger",
+    "awayTeamName": "Bækkelaget",
+    "venue": "Stavanger idrettshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401645,
+    "startTime": "2027-02-14T15:00:00+01:00",
+    "homeTeamName": "HK Rygge",
+    "awayTeamName": "Fyllingen",
+    "venue": "Øreåsenhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401640,
+    "startTime": "2027-02-14T15:00:00+01:00",
+    "homeTeamName": "Åsane",
+    "awayTeamName": "Trondheim TH",
+    "venue": "Åsane Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393179,
+    "startTime": "2027-02-14T16:00:00+01:00",
+    "homeTeamName": "Flint",
+    "awayTeamName": "Follo Damer",
+    "venue": "Sparebanken Norge Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393182,
+    "startTime": "2027-02-14T17:00:00+01:00",
+    "homeTeamName": "Gjerpen",
+    "awayTeamName": "Larvik",
+    "venue": "Skienshallen",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393177,
+    "startTime": "2027-02-14T17:00:00+01:00",
+    "homeTeamName": "Molde",
+    "awayTeamName": "Byåsen",
+    "venue": "Molde Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401641,
+    "startTime": "2027-02-14T17:00:00+01:00",
+    "homeTeamName": "Volda",
+    "awayTeamName": "Aker",
+    "venue": "Volda Campus Sparebank1 Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393181,
+    "startTime": "2027-02-14T18:00:00+01:00",
+    "homeTeamName": "Fjellhammer",
+    "awayTeamName": "Oppsal",
+    "venue": "Fjellhamar Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393180,
+    "startTime": "2027-02-17T17:30:00+01:00",
+    "homeTeamName": "Fredrikstad",
+    "awayTeamName": "Fana",
+    "venue": "Installatøren Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393178,
+    "startTime": "2027-02-17T18:00:00+01:00",
+    "homeTeamName": "Sola",
+    "awayTeamName": "Utleira",
+    "venue": "SR Group Arena Åsenhallen A",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393176,
+    "startTime": "2027-02-17T18:30:00+01:00",
+    "homeTeamName": "Tertnes",
+    "awayTeamName": "Storhamar",
+    "venue": "Åsane Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401646,
+    "startTime": "2027-02-20T15:00:00+01:00",
+    "homeTeamName": "Fyllingen",
+    "awayTeamName": "Gjøvik",
+    "venue": "Framohallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401652,
+    "startTime": "2027-02-20T16:00:00+01:00",
+    "homeTeamName": "Bækkelaget",
+    "awayTeamName": "HK Rygge",
+    "venue": "Bækkelagshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401651,
+    "startTime": "2027-02-20T16:00:00+01:00",
+    "homeTeamName": "Kjelsås",
+    "awayTeamName": "Stavanger",
+    "venue": "Kjelsåshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401650,
+    "startTime": "2027-02-21T15:00:00+01:00",
+    "homeTeamName": "Haslum",
+    "awayTeamName": "Storhamar",
+    "venue": "Nadderud Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401647,
+    "startTime": "2027-02-21T15:30:00+01:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Åsane",
+    "venue": "Myrahallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401648,
+    "startTime": "2027-02-21T16:00:00+01:00",
+    "homeTeamName": "Trondheim TH",
+    "awayTeamName": "Volda",
+    "venue": "Husebyhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401649,
+    "startTime": "2027-02-21T17:00:00+01:00",
+    "homeTeamName": "Aker",
+    "awayTeamName": "Levanger",
+    "venue": "Ullern Flerbrukshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393185,
+    "startTime": "2027-02-21T18:00:00+01:00",
+    "homeTeamName": "Larvik",
+    "awayTeamName": "Fredrikstad",
+    "venue": "Jotron Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393187,
+    "startTime": "2027-02-21T18:00:00+01:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Oppsal",
+    "venue": "Trondheim Spektrum D",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393189,
+    "startTime": "2027-02-21T18:00:00+01:00",
+    "homeTeamName": "Follo Damer",
+    "awayTeamName": "Gjerpen",
+    "venue": "Stil Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393186,
+    "startTime": "2027-02-24T18:00:00+01:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Fjellhammer",
+    "venue": "OBOS Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393183,
+    "startTime": "2027-02-24T18:00:00+01:00",
+    "homeTeamName": "Molde",
+    "awayTeamName": "Sola",
+    "venue": "Molde Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393184,
+    "startTime": "2027-02-24T18:00:00+01:00",
+    "homeTeamName": "Tertnes",
+    "awayTeamName": "Flint",
+    "venue": "Åsane Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393188,
+    "startTime": "2027-02-24T18:00:00+01:00",
+    "homeTeamName": "Utleira",
+    "awayTeamName": "Fana",
+    "venue": "Utleira AB",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401657,
+    "startTime": "2027-02-24T18:00:00+01:00",
+    "homeTeamName": "Stavanger",
+    "awayTeamName": "Haslum",
+    "venue": "Stavanger idrettshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401655,
+    "startTime": "2027-02-24T18:00:00+01:00",
+    "homeTeamName": "Levanger",
+    "awayTeamName": "Trondheim TH",
+    "venue": "Trønderhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401656,
+    "startTime": "2027-02-25T19:00:00+01:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Aker",
+    "venue": "OBOS Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401658,
+    "startTime": "2027-02-27T15:00:00+01:00",
+    "homeTeamName": "Bækkelaget",
+    "awayTeamName": "Kjelsås",
+    "venue": "Bækkelagshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393192,
+    "startTime": "2027-02-27T16:00:00+01:00",
+    "homeTeamName": "Fredrikstad",
+    "awayTeamName": "Storhamar",
+    "venue": "Installatøren Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393190,
+    "startTime": "2027-02-27T16:00:00+01:00",
+    "homeTeamName": "Sola",
+    "awayTeamName": "Tertnes",
+    "venue": "SR Group Arena Åsenhallen A",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393194,
+    "startTime": "2027-02-27T16:00:00+01:00",
+    "homeTeamName": "Oppsal",
+    "awayTeamName": "Utleira",
+    "venue": "Oppsal Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393193,
+    "startTime": "2027-02-28T15:00:00+01:00",
+    "homeTeamName": "Fjellhammer",
+    "awayTeamName": "Byåsen",
+    "venue": "Fjellhamar Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401653,
+    "startTime": "2027-02-28T15:00:00+01:00",
+    "homeTeamName": "Åsane",
+    "awayTeamName": "Fyllingen",
+    "venue": "Åsane Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393191,
+    "startTime": "2027-02-28T16:00:00+01:00",
+    "homeTeamName": "Flint",
+    "awayTeamName": "Larvik",
+    "venue": "Sparebanken Norge Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393196,
+    "startTime": "2027-02-28T17:00:00+01:00",
+    "homeTeamName": "Gjerpen",
+    "awayTeamName": "Molde",
+    "venue": "Skienshallen",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393195,
+    "startTime": "2027-02-28T17:00:00+01:00",
+    "homeTeamName": "Fana",
+    "awayTeamName": "Follo Damer",
+    "venue": "Fana Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401654,
+    "startTime": "2027-02-28T17:00:00+01:00",
+    "homeTeamName": "Volda",
+    "awayTeamName": "Byåsen",
+    "venue": "Volda Campus Sparebank1 Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401659,
+    "startTime": "2027-02-28T18:00:00+01:00",
+    "homeTeamName": "HK Rygge",
+    "awayTeamName": "Gjøvik",
+    "venue": "Øreåsenhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393199,
+    "startTime": "2027-03-10T18:00:00+01:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Flint",
+    "venue": "OBOS Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393198,
+    "startTime": "2027-03-10T18:00:00+01:00",
+    "homeTeamName": "Larvik",
+    "awayTeamName": "Sola",
+    "venue": "Jotron Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393200,
+    "startTime": "2027-03-10T18:00:00+01:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Fredrikstad",
+    "venue": "Husebyhallen",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393202,
+    "startTime": "2027-03-10T18:00:00+01:00",
+    "homeTeamName": "Follo Damer",
+    "awayTeamName": "Oppsal",
+    "venue": "Stil Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393201,
+    "startTime": "2027-03-10T18:00:00+01:00",
+    "homeTeamName": "Utleira",
+    "awayTeamName": "Fjellhammer",
+    "venue": "Utleira AB",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393197,
+    "startTime": "2027-03-10T18:30:00+01:00",
+    "homeTeamName": "Tertnes",
+    "awayTeamName": "Molde",
+    "venue": "Åsane Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393203,
+    "startTime": "2027-03-11T18:00:00+01:00",
+    "homeTeamName": "Fana",
+    "awayTeamName": "Gjerpen",
+    "venue": "Fana Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401660,
+    "startTime": "2027-03-14T15:00:00+01:00",
+    "homeTeamName": "Gjøvik",
+    "awayTeamName": "Åsane",
+    "venue": "Campus Arena Gjøvik Stor",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393206,
+    "startTime": "2027-03-14T16:00:00+01:00",
+    "homeTeamName": "Flint",
+    "awayTeamName": "Byåsen",
+    "venue": "Sparebanken Norge Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401666,
+    "startTime": "2027-03-14T16:00:00+01:00",
+    "homeTeamName": "Kjelsås",
+    "awayTeamName": "HK Rygge",
+    "venue": "Kjelsåshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401663,
+    "startTime": "2027-03-14T16:00:00+01:00",
+    "homeTeamName": "Trondheim TH",
+    "awayTeamName": "Storhamar",
+    "venue": "Husebyhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393204,
+    "startTime": "2027-03-14T17:00:00+01:00",
+    "homeTeamName": "Molde",
+    "awayTeamName": "Larvik",
+    "venue": "Molde Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401664,
+    "startTime": "2027-03-14T17:00:00+01:00",
+    "homeTeamName": "Aker",
+    "awayTeamName": "Stavanger",
+    "venue": "Ullern Flerbrukshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393205,
+    "startTime": "2027-03-14T18:00:00+01:00",
+    "homeTeamName": "Sola",
+    "awayTeamName": "Storhamar",
+    "venue": "SR Group Arena Åsenhallen A",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393209,
+    "startTime": "2027-03-14T18:00:00+01:00",
+    "homeTeamName": "Oppsal",
+    "awayTeamName": "Fana",
+    "venue": "Oppsal Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393208,
+    "startTime": "2027-03-14T18:00:00+01:00",
+    "homeTeamName": "Fjellhammer",
+    "awayTeamName": "Follo Damer",
+    "venue": "Fjellhamar Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401665,
+    "startTime": "2027-03-14T18:00:00+01:00",
+    "homeTeamName": "Haslum",
+    "awayTeamName": "Bækkelaget",
+    "venue": "Nadderud Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401661,
+    "startTime": "2027-03-14T18:30:00+01:00",
+    "homeTeamName": "Fyllingen",
+    "awayTeamName": "Volda",
+    "venue": "Framohallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401662,
+    "startTime": "2027-03-14T18:30:00+01:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Levanger",
+    "venue": "Husebyhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393214,
+    "startTime": "2027-03-17T17:30:00+01:00",
+    "homeTeamName": "Utleira",
+    "awayTeamName": "Flint",
+    "venue": "Utleira AB",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393213,
+    "startTime": "2027-03-17T18:00:00+01:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Sola",
+    "venue": "Trondheim Spektrum D",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393210,
+    "startTime": "2027-03-17T18:00:00+01:00",
+    "homeTeamName": "Gjerpen",
+    "awayTeamName": "Tertnes",
+    "venue": "Skienshallen",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393215,
+    "startTime": "2027-03-17T18:00:00+01:00",
+    "homeTeamName": "Follo Damer",
+    "awayTeamName": "Fredrikstad",
+    "venue": "Stil Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401668,
+    "startTime": "2027-03-20T15:00:00+01:00",
+    "homeTeamName": "Levanger",
+    "awayTeamName": "Fyllingen",
+    "venue": "Trønderhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401673,
+    "startTime": "2027-03-20T15:00:00+01:00",
+    "homeTeamName": "HK Rygge",
+    "awayTeamName": "Åsane",
+    "venue": "Øreåsenhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393207,
+    "startTime": "2027-03-20T16:00:00+01:00",
+    "homeTeamName": "Fredrikstad",
+    "awayTeamName": "Utleira",
+    "venue": "Installatøren Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401671,
+    "startTime": "2027-03-20T17:30:00+01:00",
+    "homeTeamName": "Bækkelaget",
+    "awayTeamName": "Aker",
+    "venue": "Bækkelagshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393211,
+    "startTime": "2027-03-20T20:00:00+01:00",
+    "homeTeamName": "Larvik",
+    "awayTeamName": "Tertnes",
+    "venue": "Jotron Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401670,
+    "startTime": "2027-03-21T14:00:00+01:00",
+    "homeTeamName": "Stavanger",
+    "awayTeamName": "Trondheim TH",
+    "venue": "Stavanger idrettshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393212,
+    "startTime": "2027-03-21T16:00:00+01:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Molde",
+    "venue": "OBOS Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401672,
+    "startTime": "2027-03-21T16:00:00+01:00",
+    "homeTeamName": "Kjelsås",
+    "awayTeamName": "Haslum",
+    "venue": "Kjelsåshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393216,
+    "startTime": "2027-03-21T17:00:00+01:00",
+    "homeTeamName": "Fana",
+    "awayTeamName": "Fjellhammer",
+    "venue": "Fana Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401667,
+    "startTime": "2027-03-21T17:00:00+01:00",
+    "homeTeamName": "Volda",
+    "awayTeamName": "Gjøvik",
+    "venue": "Volda Campus Sparebank1 Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393217,
+    "startTime": "2027-03-21T18:00:00+01:00",
+    "homeTeamName": "Oppsal",
+    "awayTeamName": "Gjerpen",
+    "venue": "Oppsal Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393221,
+    "startTime": "2027-03-24T18:00:00+01:00",
+    "homeTeamName": "Larvik",
+    "awayTeamName": "Oppsal",
+    "venue": "Jotron Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393222,
+    "startTime": "2027-03-31T18:00:00+02:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Fana",
+    "venue": "OBOS Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393218,
+    "startTime": "2027-03-31T18:00:00+02:00",
+    "homeTeamName": "Sola",
+    "awayTeamName": "Flint",
+    "venue": "SR Group Arena Åsenhallen A",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393223,
+    "startTime": "2027-03-31T18:00:00+02:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Follo Damer",
+    "venue": "Trondheim Spektrum D",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393220,
+    "startTime": "2027-03-31T18:00:00+02:00",
+    "homeTeamName": "Tertnes",
+    "awayTeamName": "Fjellhammer",
+    "venue": "Åsane Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393219,
+    "startTime": "2027-03-31T18:00:00+02:00",
+    "homeTeamName": "Molde",
+    "awayTeamName": "Fredrikstad",
+    "venue": "Molde Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393224,
+    "startTime": "2027-03-31T18:00:00+02:00",
+    "homeTeamName": "Utleira",
+    "awayTeamName": "Gjerpen",
+    "venue": "Utleira AB",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401676,
+    "startTime": "2027-03-31T18:00:00+02:00",
+    "homeTeamName": "Fyllingen",
+    "awayTeamName": "Storhamar",
+    "venue": "Framohallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401677,
+    "startTime": "2027-04-01T19:00:00+02:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Stavanger",
+    "venue": "Myrahallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8393228,
+    "startTime": "2027-04-03T16:15:00+02:00",
+    "homeTeamName": "Oppsal",
+    "awayTeamName": "Storhamar",
+    "venue": "Oppsal Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393227,
+    "startTime": "2027-04-03T16:15:00+02:00",
+    "homeTeamName": "Fjellhammer",
+    "awayTeamName": "Larvik",
+    "venue": "Fjellhamar Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393231,
+    "startTime": "2027-04-03T16:15:00+02:00",
+    "homeTeamName": "Gjerpen",
+    "awayTeamName": "Sola",
+    "venue": "Skienshallen",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393226,
+    "startTime": "2027-04-03T16:15:00+02:00",
+    "homeTeamName": "Fredrikstad",
+    "awayTeamName": "Tertnes",
+    "venue": "Installatøren Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393225,
+    "startTime": "2027-04-03T16:15:00+02:00",
+    "homeTeamName": "Flint",
+    "awayTeamName": "Molde",
+    "venue": "Sparebanken Norge Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393230,
+    "startTime": "2027-04-03T16:15:00+02:00",
+    "homeTeamName": "Follo Damer",
+    "awayTeamName": "Utleira",
+    "venue": "Stil Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8393229,
+    "startTime": "2027-04-03T18:15:00+02:00",
+    "homeTeamName": "Fana",
+    "awayTeamName": "Byåsen",
+    "venue": "Fana Arena",
+    "league": "elite"
+  },
+  {
+    "matchId": 8401678,
+    "startTime": "2027-04-04T14:00:00+02:00",
+    "homeTeamName": "Trondheim TH",
+    "awayTeamName": "Bækkelaget",
+    "venue": "Husebyhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401674,
+    "startTime": "2027-04-04T14:30:00+02:00",
+    "homeTeamName": "Åsane",
+    "awayTeamName": "Volda",
+    "venue": "Åsane Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401675,
+    "startTime": "2027-04-04T15:00:00+02:00",
+    "homeTeamName": "Gjøvik",
+    "awayTeamName": "Levanger",
+    "venue": "Campus Arena Gjøvik Stor",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401680,
+    "startTime": "2027-04-04T16:00:00+02:00",
+    "homeTeamName": "Haslum",
+    "awayTeamName": "HK Rygge",
+    "venue": "Nadderud Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401679,
+    "startTime": "2027-04-04T17:00:00+02:00",
+    "homeTeamName": "Aker",
+    "awayTeamName": "Kjelsås",
+    "venue": "Ullern Flerbrukshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401681,
+    "startTime": "2027-04-14T17:00:00+02:00",
+    "homeTeamName": "Levanger",
+    "awayTeamName": "Åsane",
+    "venue": "Trønderhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401686,
+    "startTime": "2027-04-14T18:00:00+02:00",
+    "homeTeamName": "Haslum",
+    "awayTeamName": "Aker",
+    "venue": "Nadderud Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401683,
+    "startTime": "2027-04-14T18:00:00+02:00",
+    "homeTeamName": "Stavanger",
+    "awayTeamName": "Fyllingen",
+    "venue": "Stavanger idrettshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401685,
+    "startTime": "2027-04-14T18:00:00+02:00",
+    "homeTeamName": "Kjelsås",
+    "awayTeamName": "Trondheim TH",
+    "venue": "Kjelsåshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401687,
+    "startTime": "2027-04-14T18:30:00+02:00",
+    "homeTeamName": "HK Rygge",
+    "awayTeamName": "Volda",
+    "venue": "ikke oppgitt",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401684,
+    "startTime": "2027-04-15T18:30:00+02:00",
+    "homeTeamName": "Bækkelaget",
+    "awayTeamName": "Byåsen",
+    "venue": "Bækkelagshallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401682,
+    "startTime": "2027-04-15T19:00:00+02:00",
+    "homeTeamName": "Storhamar",
+    "awayTeamName": "Gjøvik",
+    "venue": "OBOS Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401691,
+    "startTime": "2027-04-18T16:00:00+02:00",
+    "homeTeamName": "Fyllingen",
+    "awayTeamName": "Bækkelaget",
+    "venue": "Framohallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401694,
+    "startTime": "2027-04-18T16:00:00+02:00",
+    "homeTeamName": "Aker",
+    "awayTeamName": "HK Rygge",
+    "venue": "Ullern Flerbrukshall",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401693,
+    "startTime": "2027-04-18T16:00:00+02:00",
+    "homeTeamName": "Trondheim TH",
+    "awayTeamName": "Haslum",
+    "venue": "Husebyhallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401688,
+    "startTime": "2027-04-18T16:00:00+02:00",
+    "homeTeamName": "Volda",
+    "awayTeamName": "Levanger",
+    "venue": "Volda Campus Sparebank1 Arena",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401690,
+    "startTime": "2027-04-18T16:00:00+02:00",
+    "homeTeamName": "Gjøvik",
+    "awayTeamName": "Stavanger",
+    "venue": "Campus Arena Gjøvik Stor",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401689,
+    "startTime": "2027-04-18T16:00:00+02:00",
+    "homeTeamName": "Åsane",
+    "awayTeamName": "Storhamar",
+    "venue": "Åsanehallen",
+    "league": "first-division"
+  },
+  {
+    "matchId": 8401692,
+    "startTime": "2027-04-18T16:00:00+02:00",
+    "homeTeamName": "Byåsen",
+    "awayTeamName": "Kjelsås",
+    "venue": "Myrahallen",
+    "league": "first-division"
+  }
+]

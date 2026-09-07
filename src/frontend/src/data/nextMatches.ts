@@ -1,3 +1,4 @@
+import upcomingMatchesData from "./upcomingMatches.json";
 import type { Match } from "../types/handball";
 import { MatchStatus } from "../types/handball";
 import type { LeagueId } from "./seasons";
@@ -19,119 +20,17 @@ type MatchEntry = {
   homeTeamName: string;
   awayTeamName: string;
   venue: string;
+  league?: string;
 };
 
-// Official 1st division fixtures from NHF, refreshed for the current season.
-const UPCOMING_MATCHES: MatchEntry[] = [
-  {
-    matchId: 44650301,
-    startTime: "2026-08-30T14:00:00+02:00",
-    homeTeamName: "Fyllingen",
-    awayTeamName: "Kjelsås",
-    venue: "Framohallen",
-  },
-  {
-    matchId: 44650302,
-    startTime: "2026-08-30T15:00:00+02:00",
-    homeTeamName: "Gjøvik",
-    awayTeamName: "Bækkelaget",
-    venue: "Gjøvik",
-  },
-  {
-    matchId: 44650303,
-    startTime: "2026-09-05T15:00:00+02:00",
-    homeTeamName: "Levanger",
-    awayTeamName: "Ravens",
-    venue: "Trønderhallen",
-  },
-  {
-    matchId: 44650304,
-    startTime: "2026-09-06T14:00:00+02:00",
-    homeTeamName: "Trondheim",
-    awayTeamName: "Aker Topphåndball",
-    venue: "Nidarøhallen",
-  },
-  {
-    matchId: 44650305,
-    startTime: "2026-09-06T15:30:00+02:00",
-    homeTeamName: "Byåsen Rekrutt",
-    awayTeamName: "Haslum",
-    venue: "Byåsen Arena",
-  },
-  {
-    matchId: 44650306,
-    startTime: "2026-09-06T17:00:00+02:00",
-    homeTeamName: "Volda",
-    awayTeamName: "Storhamar Rekrutt",
-    venue: "Volda Campus Sparebank 1 Arena",
-  },
-  {
-    matchId: 44650307,
-    startTime: "2026-09-06T18:00:00+02:00",
-    homeTeamName: "Åsane",
-    awayTeamName: "Stavanger",
-    venue: "Åsane Arena",
-  },
-];
-
-const ELITE_UPCOMING_MATCHES: MatchEntry[] = [
-  {
-    matchId: 8393077,
-    startTime: "2026-08-26T18:15:00+02:00",
-    homeTeamName: "Storhamar",
-    awayTeamName: "Gjerpen",
-    venue: "OBOS Arena",
-  },
-  {
-    matchId: 8393054,
-    startTime: "2026-08-30T16:00:00+02:00",
-    homeTeamName: "Molde",
-    awayTeamName: "Fjellhammer",
-    venue: "Molde Arena",
-  },
-  {
-    matchId: 8393056,
-    startTime: "2026-08-30T16:00:00+02:00",
-    homeTeamName: "Flint",
-    awayTeamName: "Gjerpen",
-    venue: "Sparebanken Norge Arena",
-  },
-  {
-    matchId: 8393055,
-    startTime: "2026-08-30T17:00:00+02:00",
-    homeTeamName: "Sola",
-    awayTeamName: "Fredrikstad",
-    venue: "Åsenhallen A",
-  },
-  {
-    matchId: 8393053,
-    startTime: "2026-08-30T17:00:00+02:00",
-    homeTeamName: "Tertnes",
-    awayTeamName: "Oppsal",
-    venue: "Åsane Arena",
-  },
-  {
-    matchId: 8393052,
-    startTime: "2026-08-30T18:00:00+02:00",
-    homeTeamName: "Larvik",
-    awayTeamName: "Fana",
-    venue: "Jotron Arena",
-  },
-  {
-    matchId: 8393050,
-    startTime: "2026-08-30T19:15:00+02:00",
-    homeTeamName: "Byåsen",
-    awayTeamName: "Utleira",
-    venue: "Trondheim Spektrum D",
-  },
-  {
-    matchId: 8393051,
-    startTime: "2026-08-30T15:00:00+02:00",
-    homeTeamName: "Storhamar",
-    awayTeamName: "Follo Damer",
-    venue: "OBOS Arena",
-  },
-];
+/**
+ * Terminliste for inneverende sesong.
+ *
+ * Var tidligere en haandskrevet liste som stoppet 30. august 2026. Da var
+ * alle kamper spilt, og "neste kamp" var tom for samtlige lag.
+ * Synkes naa fra kilden av scripts/sync-upcoming-matches.mjs.
+ */
+const ALL_UPCOMING: MatchEntry[] = upcomingMatchesData as MatchEntry[];
 
 function stableTeamId(teamName: string): bigint {
   let hash = 0;
@@ -168,15 +67,18 @@ export function getStaticNextMatchForTeam(
   leagueId?: LeagueId,
   now: number = Date.now(),
 ): NextMatchResult | null {
-  const matches =
-    leagueId === "elite" ? ELITE_UPCOMING_MATCHES : UPCOMING_MATCHES;
-  const entry = matches
-    .filter(
-      (match) =>
-        match.homeTeamName === teamName || match.awayTeamName === teamName,
-    )
-    .filter((match) => Date.parse(match.startTime) > now)
-    .sort((a, b) => Date.parse(a.startTime) - Date.parse(b.startTime))[0];
+  const upcomingForTeam = ALL_UPCOMING.filter(
+    (match) =>
+      (match.homeTeamName === teamName || match.awayTeamName === teamName) &&
+      Date.parse(match.startTime) > now,
+  ).sort((a, b) => Date.parse(a.startTime) - Date.parse(b.startTime));
+
+  // Ligaen er en PREFERANSE, ikke et krav. Fjellhammer stod feilklassifisert
+  // som 1. divisjon mens laget spiller i Elkjoep-ligaen; med hardt filter
+  // ville kampene deres blitt usynlige. Feil liga skal ikke skjule en kamp.
+  const entry =
+    upcomingForTeam.find((match) => !leagueId || match.league === leagueId) ??
+    upcomingForTeam[0];
   if (!entry) return null;
 
   return {

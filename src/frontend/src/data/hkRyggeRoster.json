@@ -63,6 +63,13 @@
     "shirtNumber": 18
   },
   {
+    "id": "4503296083391",
+    "name": "Celine Zahl",
+    "imageUrl": "",
+    "position": "",
+    "shirtNumber": 19
+  },
+  {
     "id": "4503297706764",
     "name": "Enja Louise Larsen Molvig",
     "imageUrl": "",
@@ -70,11 +77,25 @@
     "shirtNumber": 20
   },
   {
+    "id": "4503298572568",
+    "name": "Marte Sofie Syverud",
+    "imageUrl": "",
+    "position": "",
+    "shirtNumber": 21
+  },
+  {
     "id": "4503298200323",
     "name": "Ine-Sofie Mandfloen Gudbrandsen",
     "imageUrl": "",
     "position": "",
     "shirtNumber": 24
+  },
+  {
+    "id": "4503298774286",
+    "name": "Maravilha Celestina Pedro",
+    "imageUrl": "",
+    "position": "",
+    "shirtNumber": 28
   },
   {
     "id": "4503297863620",
@@ -89,5 +110,12 @@
     "imageUrl": "",
     "position": "",
     "shirtNumber": 32
+  },
+  {
+    "id": "4503297104031",
+    "name": "Lone Frisell Bjørnsen",
+    "imageUrl": "",
+    "position": "",
+    "shirtNumber": 42
   }
 ]
