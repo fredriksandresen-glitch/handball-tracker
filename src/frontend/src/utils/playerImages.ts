@@ -1,6 +1,7 @@
 import playerCardImageManifest from "../data/playerCardImageManifest.json";
 import playerFullImageManifest from "../data/playerFullImageManifest.json";
 import playerImageLegacyManifest from "../data/playerImageLegacyManifest.json";
+import playerImageHistory from "../data/playerImageHistory.json";
 import playerImageManifest from "../data/playerImageManifest.json";
 import type { Player } from "../types/handball";
 
@@ -32,19 +33,51 @@ const LEGACY_IMAGE_MANIFEST = playerImageLegacyManifest as Record<
 >;
 
 /** Alle tilgjengelige bildevarianter for en spiller, nyeste først. */
+/**
+ * Alle kjente bilde-URL-er per spillernavn, paa tvers av sesonger.
+ * Bygges av scripts/build-roster-archive.mjs.
+ *
+ * Noekles paa NAVN, ikke ID: topphandball sine spiller-ID-er er lag-prefikset,
+ * saa samme person faar ny ID naar hun bytter klubb.
+ */
+const IMAGE_HISTORY = playerImageHistory as Record<string, string[]>;
+
+const normalizeHistoryName = (value: string) =>
+  value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z ]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+/**
+ * Alle tilgjengelige bildevarianter for en spiller, nyeste først.
+ * Med navn faar vi ogsaa bilder fra tidligere klubber.
+ */
 export function getPlayerImageVariants(
   url: string | null | undefined,
+  playerName?: string,
 ): string[] {
+  const variants: string[] = [];
   const current = resolveImageUrl(url);
-  if (!current) return [];
+  if (current) variants.push(current);
+
+  // Historikken er ferdig resolvert og deduplisert av
+  // scripts/build-roster-archive.mjs, saa her er det bare aa flette inn.
+  if (playerName) {
+    for (const full of IMAGE_HISTORY[normalizeHistoryName(playerName)] ?? []) {
+      if (!variants.includes(full)) variants.push(full);
+    }
+  }
 
   const originalUrl = (url ? (getOriginalImageUrl(url) ?? url) : "").split(
     "?",
   )[0];
   const legacy = LEGACY_IMAGE_MANIFEST[originalUrl];
+  if (legacy && !variants.includes(legacy)) variants.push(legacy);
 
-  if (!legacy || legacy === current) return [current];
-  return [current, legacy];
+  return variants;
 }
 
 const ORIGINAL_URL_BY_LOCAL_PATH = Object.fromEntries(

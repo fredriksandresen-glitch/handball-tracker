@@ -324,7 +324,7 @@ function PlayerHero({
 
   // Klubbene bytter portrettbilde på samme URL. Vi beholder forrige versjon
   // lokalt, så her kan brukeren bla mellom nytt og gammelt bilde.
-  const imageVariants = getPlayerImageVariants(player.imageUrl);
+  const imageVariants = getPlayerImageVariants(player.imageUrl, player.name);
   const [variantIndex, setVariantIndex] = useState(0);
   const activeImage = imageVariants[variantIndex] ?? imageVariants[0];
   const hasMultipleImages = imageVariants.length > 1;
@@ -1256,6 +1256,7 @@ function PlayerComparison({
                 <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold">
                   Valgt spiller
                 </p>
+
                 <p className="font-display font-black text-sm text-foreground truncate">
                   {selected.player.name}
                 </p>
