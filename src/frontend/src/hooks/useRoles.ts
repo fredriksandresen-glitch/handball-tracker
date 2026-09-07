@@ -1,4 +1,4 @@
-import { useActor } from "@caffeineai/core-infrastructure";
+import { useActor, useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Principal } from "@icp-sdk/core/principal";
 import { createActor } from "../backend";
@@ -52,11 +52,32 @@ function firstOrUndefined<T>(opt: [] | [T]): T | undefined {
   return opt.length > 0 ? opt[0] : undefined;
 }
 
+/**
+ * Identiteten som noekkel for cachen.
+ *
+ * BEKREFTET 2026-09-07: useInternetIdentity holder tilstanden i useState inne
+ * i hver provider, saa hver InternetIdentityProvider starter med
+ * identity = undefined og hydrerer asynkront. useActor lager da foerst en
+ * ANONYM actor. Uten principal i queryKey ble det anonyme svaret
+ * (isAdmin: false) liggende i cachen og vist til en innlogget admin.
+ * useActor har principalet i sin egen queryKey - vi maa gjoere det samme.
+ */
+function useIdentityKey() {
+  const { identity } = useInternetIdentity();
+  const principal = identity?.getPrincipal();
+  const isAuthenticated = Boolean(principal && !principal.isAnonymous());
+  return {
+    identityKey: isAuthenticated ? principal!.toText() : "anonymous",
+    isAuthenticated,
+  };
+}
+
 /** Min rolle slik BACKEND ser den. */
 export function useBackendRole() {
   const { actor, isFetching } = useActor(createActor);
+  const { identityKey, isAuthenticated } = useIdentityKey();
   return useQuery({
-    queryKey: ["backendRole"],
+    queryKey: ["backendRole", identityKey],
     queryFn: async () => {
       if (!actor) return null;
       const res = await actor.getMyRole();
@@ -66,15 +87,18 @@ export function useBackendRole() {
         isAdmin: res.isAdmin as boolean,
       };
     },
-    enabled: !isFetching && Boolean(actor),
+    // Ikke spoer backend foer identiteten er hydrert - et anonymt svar er
+    // korrekt, men ubrukelig, og ville bare forurenset cachen.
+    enabled: isAuthenticated && !isFetching && Boolean(actor),
     staleTime: 30_000,
   });
 }
 
 export function useRoleAssignments(enabled: boolean) {
   const { actor, isFetching } = useActor(createActor);
+  const { identityKey, isAuthenticated } = useIdentityKey();
   return useQuery<RoleAssignment[]>({
-    queryKey: ["roleAssignments"],
+    queryKey: ["roleAssignments", identityKey],
     queryFn: async () => {
       if (!actor) return [];
       const rows = await actor.listRoleAssignments();
@@ -86,14 +110,15 @@ export function useRoleAssignments(enabled: boolean) {
         assignedAt: r.assignedAt,
       }));
     },
-    enabled: enabled && !isFetching && Boolean(actor),
+    enabled: enabled && isAuthenticated && !isFetching && Boolean(actor),
   });
 }
 
 export function useRoleAuditLog(enabled: boolean) {
   const { actor, isFetching } = useActor(createActor);
+  const { identityKey, isAuthenticated } = useIdentityKey();
   return useQuery<RoleAuditEntry[]>({
-    queryKey: ["roleAuditLog"],
+    queryKey: ["roleAuditLog", identityKey],
     queryFn: async () => {
       if (!actor) return [];
       const rows = await actor.listRoleAuditLog();
@@ -112,7 +137,7 @@ export function useRoleAuditLog(enabled: boolean) {
         }))
         .sort((a, b) => Number(b.at - a.at));
     },
-    enabled: enabled && !isFetching && Boolean(actor),
+    enabled: enabled && isAuthenticated && !isFetching && Boolean(actor),
   });
 }
 
