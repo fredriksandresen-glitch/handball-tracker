@@ -1,10 +1,8 @@
 {
-  "commit": "367edb6a8b73860a1036cbeb03ad809418e9719c",
-  "shortCommit": "367edb6",
+  "commit": "842497eed03a3e32612da4bab8b8817c76683325",
+  "shortCommit": "842497e",
   "branch": "fix/first-division-clickable-rows-and-image-history",
-  "dirty": true,
-  "buildTime": "2026-09-07T09:00:28.997Z",
-  "dirtyFiles": [
-    "scripts/auto-update-standings.sh"
-  ]
+  "dirty": false,
+  "buildTime": "2026-09-07T09:55:59.062Z",
+  "dirtyFiles": []
 }
